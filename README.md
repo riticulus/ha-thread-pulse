@@ -25,6 +25,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - **Weak-spot hints:** rules of thumb for weak parent signals, unstable connections, routers that probably lose power regularly and routers at the edge of the mesh – suggestions, not measurements
 - **Room view:** arrange the devices by Home Assistant area, with a coloured area per room – shows at a glance which links cross rooms
 - **Search:** find a device by name or area; matches are highlighted and zoomed to, Enter opens the details
+- **Response time:** how long a device takes to confirm a command from Home Assistant – measured while the page is open
 - **Live counter per device:** messages to and from Home Assistant since the page was opened (last minute, last hour, last message)
 - Optional table: battery devices and their parents, weakest first, plus weak router-to-router links
 - Follows the Home Assistant theme (light/dark); English and German (from your Home Assistant language)
