@@ -2,7 +2,7 @@
 // MIT License. https://github.com/riticulus/ha-thread-pulse
 // This file is assembled into both outputs by build.py – edit it here, then run `python3 build.py`.
 
-const VERSION = "1.0.0+dev";   // set to the release number when releasing
+const VERSION = "1.2.0";   // set to the release number when releasing, "<release>+dev" in between
 
 const TP_CSS = `
   :root, :host { --bg: #ffffff; --fg: #1f2733; --muted: #6b7684; --card: #f6f8fb; --line: #d6dde6; }

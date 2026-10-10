@@ -50,7 +50,7 @@ There are three ways to use Thread Pulse. All of them show the same map.
 2. Search for **Thread Pulse** in HACS, open it and click **Download**. Reload the browser when HACS asks for it.
 3. Edit a dashboard → **Add card** → **Thread Pulse** (or, in YAML, `type: custom:thread-pulse-card`).
 
-HACS shows updates like for any other card. HACS installs from the latest *release*, so the card is available from the first release after 1.0.0.
+HACS shows updates like for any other card. HACS installs from the latest *release*; the card is available from version 1.2.0.
 
 **Card options** (all optional; also available in the visual card editor):
 
