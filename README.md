@@ -23,6 +23,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - **Badges on the map:** battery level on battery devices, ⚠ on devices that look unstable or have a low battery
 - **Traffic heat:** links glow the more messages travelled over them in the last 10 minutes, so the busy routes of the mesh stand out (estimate based on the computed paths); routers show how many messages they forwarded for others
 - **Weak-spot hints:** rules of thumb for weak parent signals, unstable connections, routers that probably lose power regularly and routers at the edge of the mesh – suggestions, not measurements
+- **Change log:** checks the network every 5 minutes and lists what changed (new parent, device offline / back, role, links), the device flashes on the map
 - **Room view:** arrange the devices by Home Assistant area, with a coloured area per room – shows at a glance which links cross rooms
 - **Search:** find a device by name or area; matches are highlighted and zoomed to, Enter opens the details
 - **Response time:** how long a device takes to confirm a command from Home Assistant – measured while the page is open
@@ -123,6 +124,7 @@ The graph library (`thread-pulse-vis-network.js`, ~1.6 MB) is only loaded when a
 - **Warning badge thresholds are a heuristic:** ⚠ is shown at ≥ 5 attach attempts or ≥ 3 drop-offs since the device's last restart, or battery below 20 %. The thresholds come from one real network of ~20 devices, where healthy devices showed 0–2 attempts and 1–2 drop-offs. Restart counts are shown but not used for warnings, because bulbs on a wall switch restart every time the switch is turned off.
 - **Some values are snapshots.** Thread data (neighbours, signal, counters) is what the device last reported; some devices report these rarely. Uptime is not shown because devices practically never update it.
 - **Weak-spot hints are rules of thumb.** A high restart count suggests that a router loses power regularly, but restarts also come from firmware updates or power outages. Switching a smart plug off does not stop it from routing (only its socket is switched), so that is not reported.
+- **Change log:** reachability is reported live, but parent, role and link changes only appear once the devices report them, which can take a while. Only changes while a Thread Pulse page is open are seen; the list is stored per browser.
 - **Live counters start at zero** when the page is opened and are lost on reload.
 - Tested with Home Assistant 2026.10, one OpenThread Border Router (SONOFF Dongle Plus MG24) and about 20 Matter-over-Thread devices. Other setups are untested.
 
