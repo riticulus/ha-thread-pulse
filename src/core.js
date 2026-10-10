@@ -31,6 +31,10 @@ const TP_CSS = `
   #live b { color: var(--fg); font-weight: 600; }
   #info { padding: 8px 12px 14px; border-top: 1px solid var(--line); font-size: 13px; max-height: 45%; overflow: auto; }
   #info.hidden { display: none; }
+  /* ambient mode (issue #11): only the pulsing mesh, dark, for wall tablets */
+  #wrap.ambient { background: #05070a !important; }
+  #wrap.ambient #bar, #wrap.ambient #live, #wrap.ambient #info:not(.errshown) { display: none !important; }
+  #wrap.ambient #info.errshown { display: block !important; }
   table { border-collapse: collapse; width: 100%; }
   td, th { text-align: left; padding: 3px 6px; border-bottom: 1px solid var(--line); }
   th { color: var(--muted); font-weight: 600; }
@@ -202,6 +206,7 @@ function createThreadPulse(root, opts, host) {
   const every = (fn, ms) => timers.push(setInterval(fn, ms));
   let destroyed = false;
   const DEMO = !!opts.demo;
+  const AMBIENT = !!opts.ambient, AMBIENT_MOTION = AMBIENT && opts.ambientMotion !== false;
   let lang = (opts.lang || navigator.language || "en").slice(0, 2);
   let T = TEXT[lang] || TEXT.en;
 
@@ -263,6 +268,11 @@ function createThreadPulse(root, opts, host) {
   let network = null;
 
   function theme() {
+    if (AMBIENT) {               // fixed dark palette, independent of the Home Assistant theme
+      const set = (k, val) => host.styleTarget.style.setProperty(k, val);
+      set("--bg", "#05070a"); set("--fg", "#cfd6df"); set("--muted", "#7d8794"); set("--line", "#1c232c"); set("--card", "#0d1117");
+      return;
+    }
     try {
       const cs = getComputedStyle(host.themeSource());
       const v = n => cs.getPropertyValue(n).trim();
@@ -769,7 +779,11 @@ function createThreadPulse(root, opts, host) {
     return out;
   }
 
-  function openPanel(id) { panelNode = id; renderPanel(); $("panel").hidden = false; }
+  let ambientClose = null;
+  function openPanel(id) {
+    panelNode = id; renderPanel(); $("panel").hidden = false;
+    if (AMBIENT) { clearTimeout(ambientClose); ambientClose = setTimeout(closePanel, 15000); }    // ambient: close by itself
+  }
   function closePanel() { panelNode = null; $("panel").hidden = true; if (network) network.unselectAll(); }
   function row(k, v) { return v === undefined || v === null || v === "" ? "" : `<dt>${esc(k)}</dt><dd>${v}</dd>`; }
   function rssiTxt(r) { const [, cls, txt] = QUAL(r); return `<span class="${cls}">${r} dBm · ${txt}</span>`; }
@@ -1169,6 +1183,7 @@ function createThreadPulse(root, opts, host) {
   }
   function showErr(e) {
     setList(true, false);
+    $("info").classList.add("errshown");
     $("status").textContent = T.error;
     $("info").innerHTML = `<div id="err">${esc(e.message || e)}</div>`;
   }
@@ -1185,6 +1200,25 @@ function createThreadPulse(root, opts, host) {
   }
 
   theme();
+  // ---------- ambient mode (issue #11) ----------
+  // Only the mesh, dark. Every 25 s the view glides slowly to a router and back to the whole mesh (against burn-in).
+  // Paused for 60 s after the screen was touched. Asks the browser to keep the screen on (needs HTTPS – fails silently otherwise).
+  if (AMBIENT) {
+    $("wrap").classList.add("ambient");
+    let lastTouch = 0, step = 0;
+    root.addEventListener("pointerdown", () => { lastTouch = Date.now(); }, true);
+    if (AMBIENT_MOTION) every(() => {
+      if (!network || roomTween || panelNode || Date.now() - lastTouch < 60000) return;
+      const routers = Object.values(nodeById).filter(n => n.type === "routing_end_device");
+      const ease = "easeInOutQuad";
+      if (step++ % 2 === 0 && routers.length) {
+        const n = routers[Math.floor(Math.random() * routers.length)];
+        network.focus(n.id, { scale: Math.min(1.6, network.getScale() * 1.6), animation: { duration: 8000, easingFunction: ease } });
+      } else network.fit({ animation: { duration: 8000, easingFunction: ease } });
+    }, 25000);
+    const wake = async () => { try { if (navigator.wakeLock && document.visibilityState === "visible") await navigator.wakeLock.request("screen"); } catch (e) {} };
+    wake(); document.addEventListener("visibilitychange", wake);
+  }
   let startList = false, startLegend = (host.width ? host.width() : window.innerWidth) > 700;
   try { heatOn = localStorage.getItem("threadPulseHeat") !== "0"; roomOn = localStorage.getItem("threadPulseRooms") === "1"; } catch (e) {}
   try { startList = localStorage.getItem("threadPulseList") === "1"; const l = localStorage.getItem("threadPulseLegend"); if (l !== null) startLegend = l === "1"; } catch (e) {}

@@ -44,7 +44,7 @@ class ThreadPulseCard extends HTMLElement {
     catch (e) { root.querySelector("#status").textContent = e.message; this._starting = false; return; }
     if (!this._starting) return;            // removed while loading
     this._dark = this._hass.themes && this._hass.themes.darkMode;
-    this._tp = createThreadPulse(root, { demo: !!this._config.demo, lang: this._config.language || "" }, {
+    this._tp = createThreadPulse(root, { demo: !!this._config.demo, lang: this._config.language || "", ambient: !!this._config.ambient, ambientMotion: this._config.ambient_motion !== false }, {
       embedded: true,
       hass: () => this._hass,
       themeSource: () => this,
@@ -64,9 +64,11 @@ class ThreadPulseCard extends HTMLElement {
         { name: "height", selector: { text: {} } },
         { name: "language", selector: { select: { mode: "dropdown", options: [
           { value: "", label: "Home Assistant language" }, { value: "en", label: "English" }, { value: "de", label: "Deutsch" }] } } },
+        { name: "ambient", selector: { boolean: {} } },
+        { name: "ambient_motion", selector: { boolean: {} } },
         { name: "demo", selector: { boolean: {} } },
       ],
-      computeLabel: s => ({ height: "Height (e.g. 600px or calc(100vh - 120px); empty = fill the space)", language: "Language", demo: "Demo mode (invented devices)" })[s.name],
+      computeLabel: s => ({ height: "Height (e.g. 600px or calc(100vh - 120px); empty = fill the space)", language: "Language", ambient: "Ambient mode for wall tablets (only the mesh, dark)", ambient_motion: "Ambient mode: slow automatic zoom (default on)", demo: "Demo mode (invented devices)" })[s.name],
     };
   }
 }
