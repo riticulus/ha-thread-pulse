@@ -48,6 +48,8 @@
   #panel dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 0; }
   #panel dt { color: var(--muted); } #panel dd { margin: 0; overflow-wrap: anywhere; }
   #panel .warn { background: color-mix(in srgb, #fb8c00 18%, transparent); border: 1px solid #fb8c00; border-radius: 8px; padding: 6px 8px; margin: 6px 0; }
+  #panel .hint { background: color-mix(in srgb, #1e88e5 14%, transparent); border: 1px solid #1e88e5; border-radius: 8px; padding: 6px 8px; margin: 6px 0; }
+  #info a { color: inherit; }
   #panel .note { color: var(--muted); font-size: 11px; margin-top: 2px; }
   #panel .btn { display: inline-block; margin-top: 12px; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 10px; cursor: pointer; font: inherit; }
 </style>
@@ -109,6 +111,13 @@ const TEXT = {
     warnDetached: n => `Dropped off the network ${n} times since restart`,
     warnBattery: p => `Battery low (${p} %)`,
     stale: "Thread data as last reported by the device, may be outdated.",
+    secHints: "Hints", hintsHead: "Hints for the network", listHints: n => ` · ${n} hint${n === 1 ? "" : "s"}`,
+    hintsNote: "Hints are rules of thumb based on the data the devices report – suggestions, not measurements.",
+    noHints: "No weak spots found.",
+    hWeakParent: (p, r, unsure) => `Weak signal to its parent ${p} (${r} dBm${unsure ? ", measured by the device itself – uncertain" : ""}). A mains-powered Thread device (plug or bulb) placed closer to this device could improve the connection.`,
+    hUnstable: "Possible causes of the unstable connection: weak signal to the parent, the parent lost power, radio interference (e.g. Wi-Fi or other 2.4 GHz devices nearby) or a weak battery.",
+    hPowerCut: (n, kids) => `Restarted ${n} times in total – it probably loses power from time to time (e.g. a bulb on a wall switch, or a plug that gets unplugged). While it is off, it cannot forward messages${kids.length ? `; ${kids.join(", ")} then ${kids.length === 1 ? "has" : "have"} to find a new parent` : ""}. Tip: leave it powered and switch it via Home Assistant.`,
+    hEdge: r => `Only weak links to other routers (best: ${r} dBm) – it sits at the edge of the mesh. Another router in between would strengthen it.`,
   },
   de: {
     reload: "↻ Neu laden", showList: "☰ Liste anzeigen", hideList: "☰ Liste ausblenden", pause: "⏸ Live pausieren", resume: "▶ Live starten",
@@ -148,6 +157,13 @@ const TEXT = {
     warnDetached: n => `${n}× Netz verloren seit Neustart`,
     warnBattery: p => `Batterie schwach (${p} %)`,
     stale: "Thread-Daten: letzter Stand, den das Gerät gemeldet hat – kann veraltet sein.",
+    secHints: "Hinweise", hintsHead: "Hinweise zum Netz", listHints: n => ` · ${n} Hinweis${n === 1 ? "" : "e"}`,
+    hintsNote: "Hinweise sind Faustregeln aus den Daten, die die Geräte melden – Vorschläge, keine Messungen.",
+    noHints: "Keine Schwachstellen gefunden.",
+    hWeakParent: (p, r, unsure) => `Schwaches Signal zum Parent ${p} (${r} dBm${unsure ? ", vom Gerät selbst gemessen – unsicher" : ""}). Ein Thread-Gerät mit Netzstrom (Steckdose oder Lampe) näher bei diesem Gerät könnte die Verbindung verbessern.`,
+    hUnstable: "Mögliche Ursachen der instabilen Verbindung: schwaches Signal zum Parent, Parent war stromlos, Funkstörungen (z. B. WLAN oder andere 2,4-GHz-Geräte in der Nähe) oder eine schwache Batterie.",
+    hPowerCut: (n, kids) => `Insgesamt ${n}× neu gestartet – wird wahrscheinlich ab und zu stromlos (z. B. Lampe am Wandschalter oder ausgesteckte Steckdose). Solange er aus ist, kann er keine Nachrichten weiterleiten${kids.length ? `; ${kids.join(", ")} ${kids.length === 1 ? "muss" : "müssen"} sich dann einen neuen Parent suchen` : ""}. Tipp: am Strom lassen und über Home Assistant schalten.`,
+    hEdge: r => `Nur schwache Verbindungen zu anderen Routern (beste: ${r} dBm) – liegt am Rand des Netzes. Ein weiterer Router dazwischen würde ihn besser anbinden.`,
   },
 };
 // German names for common English entity names (only used when the dashboard language is German)
@@ -314,7 +330,7 @@ async function loadHa() {
 }
 
 // ---------- graph ----------
-let nodeById = {}, linksOf = {}, battOf = {}, brExt = null, devToNode = {}, entToNode = {}, nodeName = {}, onMap = new Set(), ridToId = {}, routeOf = {}, parentRid = {}, ownRid = {};
+let hintsOf = {}, nodeById = {}, linksOf = {}, battOf = {}, brExt = null, devToNode = {}, entToNode = {}, nodeName = {}, onMap = new Set(), ridToId = {}, routeOf = {}, parentRid = {}, ownRid = {};
 
 function render(model) {
   const { nodes } = model;
@@ -398,6 +414,7 @@ function render(model) {
     (linksOf[e.b] = linksOf[e.b] || []).push({ id: e.a, name: nm(e.a), rssi: r, kind: e.parent ? "child" : "neighbour" });
   }
   refreshBattery(model.hass);
+  hintsOf = computeHints(parents);
   onMap = ids;
   buildRouting(nodes);
   devToNode = Object.fromEntries(nodes.filter(n => n.devId).map(n => [n.devId, n.id]));
@@ -408,7 +425,12 @@ function render(model) {
   const weak = Object.values(edges).filter(e => !e.parent && ids.has(e.b))
     .map(e => ({ a: (byId[e.a] || {}).name || T.brLabel, b: (byId[e.b] || {}).name || (e.b === brExt ? T.brLabel : "…" + e.b.slice(-4)), r: avg(e) }))
     .filter(e => e.r < -80).sort((p, q) => p.r - q.r);
-  let h = `<b>${T.parentsHead}</b> ${T.parentsSub}<table><tr><th>${T.thDevice}</th><th>${T.thVia}</th><th>${T.thSignal}</th></tr>`;
+  const allHints = Object.entries(hintsOf).flatMap(([id, hs]) => hs.map(t => [id, t]));
+  let h = `<b>${T.hintsHead}</b>` + (allHints.length
+    ? `<table>${allHints.map(([id, t]) => `<tr><td style="white-space:nowrap;vertical-align:top"><a href="#" onclick="openPanel('${id}');return false">${esc(nodeById[id].name)}</a></td><td>${esc(t)}</td></tr>`).join("")}</table>`
+    : `<div>${T.noHints}</div>`) + `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${T.hintsNote}</div>`;
+  hintCount = allHints.length; setList(!document.getElementById("info").classList.contains("hidden"), false);
+  h += `<b>${T.parentsHead}</b> ${T.parentsSub}<table><tr><th>${T.thDevice}</th><th>${T.thVia}</th><th>${T.thSignal}</th></tr>`;
   for (const p of parents.filter(p => p.type !== "end_device")) {
     const [, cls, txt] = QUAL(p.rssi);
     h += `<tr><td>${esc(p.child)}</td><td>${esc(p.parent)}</td><td class="${cls}">${p.rssi} dBm · ${txt}${p.src === "device" ? ` <span style="color:var(--muted)">${T.selfMeasured}</span>` : ""}</td></tr>`;
@@ -560,6 +582,12 @@ function drawBadges(ctx) {
       const b = battOf[n.id];
       pill(ctx, p.x + r * 0.55, p.y + r * 0.75, b + "%", b < 20 ? "#e53935" : b < 40 ? "#fb8c00" : "#607d8b");
     }
+    if (!warningsOf(n).length && (hintsOf[n.id] || []).length) {
+      const x = p.x + r * 0.75, y = p.y - r * 0.85;
+      ctx.fillStyle = "#1e88e5"; ctx.strokeStyle = "white"; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(x, y, 7, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "white"; ctx.font = "bold 10px serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("i", x, y + 0.5);
+    }
     if (warningsOf(n).length) {
       ctx.fillStyle = "#fb8c00"; ctx.strokeStyle = "white"; ctx.lineWidth = 1.5;
       const x = p.x + r * 0.75, y = p.y - r * 0.95;
@@ -569,6 +597,32 @@ function drawBadges(ctx) {
     ctx.restore();
   }
 }
+// ---------- weak-spot hints (issue #10) ----------
+// Rules of thumb from the reported data. Thresholds: signal below −80 dBm is "weak" (same as the link colours);
+// ≥ 5 attach attempts / ≥ 3 drop-offs as for the warnings; ≥ 50 restarts in total for a router suggests it loses power regularly.
+// Note: switching a smart plug off does NOT stop it from routing – only its socket is switched – so that is not a hint.
+function computeHints(parents) {
+  const out = {}, add = (id, t) => (out[id] = out[id] || []).push(t);
+  const isRouterId = id => (nodeById[id] && nodeById[id].type === "routing_end_device") || id === brExt;
+  for (const n of Object.values(nodeById)) {
+    const i = n.info || {}, links = linksOf[n.id] || [];
+    if (n.type !== "routing_end_device") {
+      const par = links.find(l => l.kind === "parent") || links.slice().sort((a, b) => b.rssi - a.rssi)[0];
+      const pinfo = parents.find(p => p.child === n.name);
+      if (par && par.rssi < -80) add(n.id, T.hWeakParent(par.name, par.rssi, pinfo && pinfo.src === "device"));
+    } else {
+      if (i.reboots >= 50) {
+        const kids = links.filter(l => l.kind === "child").map(l => l.name);
+        add(n.id, T.hPowerCut(i.reboots, kids));
+      }
+      const rl = links.filter(l => l.kind === "neighbour" && isRouterId(l.id));
+      if (rl.length) { const best = Math.max(...rl.map(l => l.rssi)); if (best < -80) add(n.id, T.hEdge(best)); }
+    }
+    if (i.attach >= 5 || i.detached >= 3) add(n.id, T.hUnstable);
+  }
+  return out;
+}
+
 function openPanel(id) { panelNode = id; renderPanel(); document.getElementById("panel").hidden = false; }
 function closePanel() { panelNode = null; document.getElementById("panel").hidden = true; if (network) network.unselectAll(); }
 function row(k, v) { return v === undefined || v === null || v === "" ? "" : `<dt>${esc(k)}</dt><dd>${v}</dd>`; }
@@ -582,6 +636,7 @@ function renderPanel() {
           `<div class="s">${esc(T.roles[n.role] || T.types[n.type] || "")}${n.area ? " · " + esc(n.area) : ""}${n.available ? "" : esc(T.unreachable)}</div></div>` +
           `<button class="x" title="×" onclick="closePanel()">×</button></div>`;
   for (const w of warningsOf(n)) h += `<div class="warn">⚠ ${esc(w)}</div>`;
+  if ((hintsOf[n.id] || []).length) h += `<h4>${T.secHints}</h4>` + hintsOf[n.id].map(t => `<div class="hint">💡 ${esc(t)}</div>`).join("") + `<div class="note">${T.hintsNote}</div>`;
   // live
   const c = counts[n.id], now = Date.now();
   h += `<h4>${T.secLive}</h4><dl>`;
@@ -737,6 +792,9 @@ function demoModel() {
       : n.icon === "thermometer" ? [[de ? "Temperatur" : "Temperature", "21.4 °C", 2 * m], [de ? "Luftfeuchte" : "Humidity", "48 %", 5 * m]]
       : n.icon === "lightbulb" ? [[de ? "Licht" : "Light", T.states.on, 40 * m]] : [[T.state, T.states.off, 90 * m]]; });
   sleepy[1].info.attach = 9; sleepy[1].info.detached = 3;
+  routers[2].info.reboots = 140;   // a bulb on a wall switch
+  sleepy[2].neigh[0]["6"] = -86;   // weak parent link (as seen by the device and by its parent router)
+  for (const r of routers) for (const x of r.neigh) if (x["0"] === dec(sleepy[2].id)) x["6"] = -86;
   return { nodes: [...routers, ...ends, ...sleepy], brExt: br.id };
 }
 function demoTraffic(model) {
@@ -759,9 +817,10 @@ function demoTraffic(model) {
 }
 
 // ---------- UI ----------
+let hintCount = 0;
 function setList(show, save = true) {
   document.getElementById("info").classList.toggle("hidden", !show);
-  document.getElementById("toggle").textContent = show ? T.hideList : T.showList;
+  document.getElementById("toggle").textContent = (show ? T.hideList : T.showList) + (hintCount ? T.listHints(hintCount) : "");
   if (save) try { localStorage.setItem("threadPulseList", show ? "1" : "0"); } catch (e) {}
   if (network && save) setTimeout(() => { network.redraw(); network.fit({ animation: { duration: 300 } }); }, 50);
 }
