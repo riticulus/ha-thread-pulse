@@ -42,6 +42,41 @@ Tap a device on the map to open its details (shown here from the demo mode with 
 
 ## Installation
 
+There are three ways to use Thread Pulse. All of them show the same map.
+
+### A) Dashboard card via HACS (recommended)
+
+1. In Home Assistant open **HACS → ⋮ (top right) → Custom repositories**, enter `https://github.com/riticulus/ha-thread-pulse`, type **Dashboard**, and add it.
+2. Search for **Thread Pulse** in HACS, open it and click **Download**. Reload the browser when HACS asks for it.
+3. Edit a dashboard → **Add card** → **Thread Pulse** (or, in YAML, `type: custom:thread-pulse-card`).
+
+HACS shows updates like for any other card. HACS installs from the latest *release*, so the card is available from the first release after 1.0.0.
+
+**Card options** (all optional; also available in the visual card editor):
+
+| Option | Default | Description |
+|---|---|---|
+| `height` | fills the available space (at least 450 px) | Any CSS height, e.g. `600px`, or `calc(100vh - 120px)` for a full-screen panel view |
+| `language` | Home Assistant language | `en` or `de` |
+| `demo` | `false` | Show invented devices instead of your network |
+
+```yaml
+type: custom:thread-pulse-card
+height: calc(100vh - 120px)
+```
+
+In a *sections* view the card can be resized like other cards; in a *panel* view set `height` so it fills the screen.
+
+### B) Dashboard card, manual installation
+
+1. Copy `dist/ha-thread-pulse.js` and `dist/thread-pulse-vis-network.js` into `/config/www/`.
+2. *Settings → Dashboards → ⋮ → Resources → Add resource*: URL `/local/ha-thread-pulse.js`, type **JavaScript module**.
+3. Add the card as in A). After an update, replace both files and reload the browser.
+
+The graph library (`thread-pulse-vis-network.js`, ~1.6 MB) is only loaded when a Thread Pulse card is actually shown; other dashboards only load the small card file (~75 kB).
+
+### C) Standalone page in an iframe
+
 1. Download the latest release from the [Releases page](https://github.com/riticulus/ha-thread-pulse/releases) (`thread-pulse-x.y.z.zip`) and unpack it. It contains `thread-pulse.html` and `thread-pulse-vis-network.js`.
 2. Copy both files into the `www` folder of your Home Assistant configuration (`/config/www/`, for example with the *File editor* or *Samba share* add-on). Create the folder if it does not exist – if you have to create it, restart Home Assistant once.
 3. Add a card to a dashboard. Easiest is a full-page view (*panel* view) with an iframe card:
@@ -91,6 +126,18 @@ Tap a device on the map to open its details (shown here from the demo mode with 
 ## Privacy
 
 Everything runs in your browser. The page uses the session of the logged-in Home Assistant user to read data from your own Home Assistant and sends nothing anywhere else. No external scripts or fonts are loaded.
+
+## Development
+
+The code lives in `src/`:
+
+| File | Content |
+|---|---|
+| `src/core.js` | Everything that draws and updates the map – shared by the page and the card |
+| `src/standalone.html` | Shell of the standalone page (iframe) |
+| `src/card.js` | Shell of the dashboard card (`custom:thread-pulse-card`) |
+
+`python3 build.py` generates `thread-pulse.html`, `dist/ha-thread-pulse.js` and `dist/thread-pulse-vis-network.js` – do not edit those by hand. A GitHub action checks on every pull request that the generated files are up to date and runs the HACS validation.
 
 ## Related projects
 
