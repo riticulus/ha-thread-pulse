@@ -554,6 +554,8 @@ function renderPanel() {
       v += row(name, `${esc(fmtState(st))} <span style="color:var(--muted)">· ${T.ago(Math.max(0, Math.round((now - new Date(st.last_changed)) / 1000)))}</span>`);
     }
     if (v) h += `<h4>${T.secValues}</h4><dl>${v}</dl>`;
+  } else if (DEMO && n.demoValues) {
+    h += `<h4>${T.secValues}</h4><dl>` + n.demoValues.map(([k, v, ago]) => row(k, `${esc(v)} <span style="color:var(--muted)">· ${T.ago(ago)}</span>`)).join("") + `</dl>`;
   }
   // battery
   if (battOf[n.id] !== undefined || i.batType) {
@@ -676,7 +678,12 @@ function demoModel() {
   all2.forEach((n, k) => { n.area = de ? ["Wohnzimmer", "Küche", "Flur", "Büro", "Schlafzimmer", "Bad"][k % 6] : ["Living room", "Kitchen", "Hallway", "Office", "Bedroom", "Bathroom"][k % 6];
     n.info = { vendor: "Demo Inc.", product: n.name, sw: "1." + (k % 4) + ".2", hw: "2.0", reboots: 2 + k % 5, bootReason: 1, detached: 1, attach: 1, parentChanges: 0,
                batType: n.type === "sleepy_end_device" ? (k % 2 ? "CR2032" : "AAA") : "" };
-    if (n.type === "sleepy_end_device") n.demoBattery = [88, 64, 100, 15, 42, 97][k % 6]; });
+    if (n.type === "sleepy_end_device") n.demoBattery = [88, 64, 100, 15, 42, 97][k % 6];
+    const m = 60;
+    n.demoValues = n.icon === "power-plug" ? [[de ? "Schalter" : "Switch", T.states.on, 26 * 3600], [de ? "Leistung" : "Power", "42.7 W", 4 * m], [de ? "Energie" : "Energy", "18.304 kWh", 6 * m]]
+      : n.icon === "door" || n.icon === "window-closed-variant" ? [[de ? "Kontakt" : "Contact", T.states.closed, 12 * m], [de ? "Batterie" : "Battery", n.demoBattery + " %", 3 * 3600]]
+      : n.icon === "thermometer" ? [[de ? "Temperatur" : "Temperature", "21.4 °C", 2 * m], [de ? "Luftfeuchte" : "Humidity", "48 %", 5 * m]]
+      : n.icon === "lightbulb" ? [[de ? "Licht" : "Light", T.states.on, 40 * m]] : [[T.state, T.states.off, 90 * m]]; });
   sleepy[1].info.attach = 9; sleepy[1].info.detached = 3;
   return { nodes: [...routers, ...ends, ...sleepy], brExt: br.id };
 }

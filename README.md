@@ -26,6 +26,12 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - Follows the Home Assistant theme (light/dark); English and German (from your Home Assistant language)
 - Does **not** wake up battery devices: it only reads data Home Assistant already has
 
+### Detail view
+
+Tap a device on the map to open its details (shown here from the demo mode with invented devices):
+
+<img src="docs/detail-view.png" alt="Thread Pulse detail view of a device" width="372">
+
 ## Requirements
 
 - Home Assistant with the **Matter** integration and Matter devices on **Thread**
