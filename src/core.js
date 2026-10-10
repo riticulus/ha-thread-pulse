@@ -23,7 +23,7 @@ const TP_CSS = `
   .ln { width: 18px; height: 3px; display: inline-block; border-radius: 2px; }
   .heatln { height: 7px; opacity: .6; filter: blur(.6px); }
   #stage { flex: 1; min-height: 300px; position: relative; container-type: size; }
-  #net { position: absolute; inset: 0; }
+  #net { position: absolute; inset: 0; touch-action: none; }   /* no browser page zoom on double tap inside the map */
   #live { position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px); font-size: 12px; color: var(--muted);
           background: color-mix(in srgb, var(--bg) 85%, transparent); border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; pointer-events: none; }
   #live:empty { display: none; }
@@ -439,6 +439,16 @@ function createThreadPulse(root, opts, host) {
     if (roomOn) applyRooms(true, false);
     network.on("afterDrawing", ctx => { drawBadges(ctx); drawFlashes(ctx); drawPackets(ctx); });
     network.on("click", p => { if (p.nodes.length && nodeById[p.nodes[0]]) openPanel(p.nodes[0]); else closePanel(); });
+    // double click / double tap (issue #23): on empty space center and fit the whole mesh, on a device zoom to it
+    network.on("doubleClick", p => {
+      if (p.nodes.length && !String(p.nodes[0]).startsWith("room:")) {
+        // center the device in the part of the map that the detail panel does not cover
+        const pn = $("panel"), st = $("stage").getBoundingClientRect(), r = pn.hidden ? null : pn.getBoundingClientRect();
+        const offset = !r ? { x: 0, y: 0 } : r.width < st.width * 0.8 ? { x: -(r.width + 8) / 2, y: 0 } : { x: 0, y: -(r.height) / 2 };
+        network.focus(p.nodes[0], { scale: Math.max(1.2, network.getScale()), offset, animation: { duration: 400 } });
+      }
+      else network.fit({ animation: { duration: 400 } });
+    });
     network.on("hoverNode", () => { $("net").style.cursor = "pointer"; });
     network.on("blurNode", () => { $("net").style.cursor = ""; });
     nodeById = byId;

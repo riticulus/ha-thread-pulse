@@ -27,6 +27,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - **Weak-spot hints:** rules of thumb for weak parent signals, unstable connections, routers that probably lose power regularly and routers at the edge of the mesh – suggestions, not measurements
 - **Change log:** checks the network every 5 minutes and lists what changed (new parent, device offline / back, role, links), the device flashes on the map
 - **Room view:** arrange the devices by Home Assistant area, with a coloured area per room – shows at a glance which links cross rooms
+- **Double-click** on empty space to center and fit the whole mesh, on a device to zoom to it
 - **Search:** find a device by name or area; matches are highlighted and zoomed to, Enter opens the details
 - **Response time:** how long a device takes to confirm a command from Home Assistant – measured while the page is open
 - **Live counter per device:** messages to and from Home Assistant since the page was opened (last minute, last hour, last message)
