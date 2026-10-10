@@ -40,7 +40,7 @@ Tap a device on the map to open its details (shown here from the demo mode with 
 
 ## Installation
 
-1. Download `thread-pulse.html` and `thread-pulse-vis-network.js` from this repository.
+1. Download the latest release from the [Releases page](https://github.com/riticulus/ha-thread-pulse/releases) (`thread-pulse-x.y.z.zip`) and unpack it. It contains `thread-pulse.html` and `thread-pulse-vis-network.js`.
 2. Copy both files into the `www` folder of your Home Assistant configuration (`/config/www/`, for example with the *File editor* or *Samba share* add-on). Create the folder if it does not exist – if you have to create it, restart Home Assistant once.
 3. Add a card to a dashboard. Easiest is a full-page view (*panel* view) with an iframe card:
 
@@ -57,7 +57,7 @@ Tap a device on the map to open its details (shown here from the demo mode with 
 
    Or, in the UI: *Edit dashboard → Add view → View type “Panel (single card)”*, then add a *Webpage* card with the URL `/local/thread-pulse.html?v=1`.
 
-After updating the files, raise the number in `?v=1` so browsers and the companion app load the new version.
+**Updating:** download the new release, replace both files and raise the number in `?v=1` (e.g. to `?v=2`) so browsers and the companion app load the new version. The installed version is shown at the end of the status line (e.g. `v1.0.0`). To get notified about new versions, use *Watch → Custom → Releases* on GitHub. Changes are listed in the [changelog](CHANGELOG.md).
 
 **Try it without Home Assistant:** open `thread-pulse.html?demo` in a browser (invented devices, simulated traffic). `&lang=de` switches to German.
 
