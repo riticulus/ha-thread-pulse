@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+- Search box: find devices by name or area (case and accents ignored); matches are selected and zoomed to, the rest fades out; Enter opens the first match, Esc clears ([#9](https://github.com/riticulus/ha-thread-pulse/issues/9))
+
 ### Changed
 - Releases no longer carry a zip attachment (HACS would download the attachment instead of the card); manual installation uses *Source code (zip)* of the release
 
