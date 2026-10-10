@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 ### Added
+- Weak-spot hints: rules of thumb that point out weak parent signals (below −80 dBm), unstable connections with likely causes, routers that probably lose power regularly (≥ 50 restarts, e.g. a bulb on a wall switch) and routers at the edge of the mesh; shown in the detail panel, at the top of the list (count on the list button) and as a small "i" badge on the map ([#10](https://github.com/riticulus/ha-thread-pulse/issues/10))
 - Traffic heat: links glow wider and brighter the more messages travelled over them in the last 10 minutes (estimate based on the computed paths); toggle button "≋ Traffic", legend entry, link tooltip with the message count ([#3](https://github.com/riticulus/ha-thread-pulse/issues/3))
 - Detail panel of routers shows how many messages they forwarded for other devices (last 10 min / last hour) ([#3](https://github.com/riticulus/ha-thread-pulse/issues/3))
 

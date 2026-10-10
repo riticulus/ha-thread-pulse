@@ -22,6 +22,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - **Tap a device for details:** manufacturer, model, firmware, area, Thread role, parent and neighbours with signal strength, battery level and type, current values with “last changed”, stability counters (restarts, drop-offs, attach attempts, parent changes) and a button to open the device in Home Assistant
 - **Badges on the map:** battery level on battery devices, ⚠ on devices that look unstable or have a low battery
 - **Traffic heat:** links glow the more messages travelled over them in the last 10 minutes, so the busy routes of the mesh stand out (estimate based on the computed paths); routers show how many messages they forwarded for others
+- **Weak-spot hints:** rules of thumb for weak parent signals, unstable connections, routers that probably lose power regularly and routers at the edge of the mesh – suggestions, not measurements
 - **Live counter per device:** messages to and from Home Assistant since the page was opened (last minute, last hour, last message)
 - Optional table: battery devices and their parents, weakest first, plus weak router-to-router links
 - Follows the Home Assistant theme (light/dark); English and German (from your Home Assistant language)
@@ -83,6 +84,7 @@ Tap a device on the map to open its details (shown here from the demo mode with 
 - **Admins only** (see requirements).
 - **Warning badge thresholds are a heuristic:** ⚠ is shown at ≥ 5 attach attempts or ≥ 3 drop-offs since the device's last restart, or battery below 20 %. The thresholds come from one real network of ~20 devices, where healthy devices showed 0–2 attempts and 1–2 drop-offs. Restart counts are shown but not used for warnings, because bulbs on a wall switch restart every time the switch is turned off.
 - **Some values are snapshots.** Thread data (neighbours, signal, counters) is what the device last reported; some devices report these rarely. Uptime is not shown because devices practically never update it.
+- **Weak-spot hints are rules of thumb.** A high restart count suggests that a router loses power regularly, but restarts also come from firmware updates or power outages. Switching a smart plug off does not stop it from routing (only its socket is switched), so that is not reported.
 - **Live counters start at zero** when the page is opened and are lost on reload.
 - Tested with Home Assistant 2026.10, one OpenThread Border Router (SONOFF Dongle Plus MG24) and about 20 Matter-over-Thread devices. Other setups are untested.
 
