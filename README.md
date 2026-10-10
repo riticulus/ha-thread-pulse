@@ -60,6 +60,8 @@ Tap a device on the map to open its details (shown here from the demo mode with 
 
 **Updating:** download the new release, replace both files and raise the number in `?v=1` (e.g. to `?v=2`) so browsers and the companion app load the new version. The installed version is shown at the end of the status line (e.g. `v1.0.0`). To get notified about new versions, use *Watch → Custom → Releases* on GitHub. Changes are listed in the [changelog](CHANGELOG.md).
 
+> **Note:** this README describes the current development state. Features listed under *Unreleased* in the [changelog](CHANGELOG.md) are not part of a release yet – the [latest release](https://github.com/riticulus/ha-thread-pulse/releases/latest) does not contain them.
+
 **Try it without Home Assistant:** open `thread-pulse.html?demo` in a browser (invented devices, simulated traffic). `&lang=de` switches to German.
 
 ## How it works
