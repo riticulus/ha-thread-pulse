@@ -557,7 +557,7 @@ function createThreadPulse(root, opts, host) {
   // Calculated layout: every Home Assistant area gets its own spot on a grid, its devices sit in a ring around it,
   // and a coloured area with the room name is drawn behind them. Devices without an area and the border router share
   // one extra spot (top left). Physics is paused while the room view is on; the mesh links are still drawn.
-  let roomOn = false, roomTween = null;
+  let roomOn = false, roomTween = null, preRoomPos = null;
   const ROOM_COLORS = ["#42a5f5", "#66bb6a", "#ffa726", "#ab47bc", "#26c6da", "#ec407a", "#9ccc65", "#8d6e63", "#5c6bc0", "#d4e157"];
   const roomsOf = () => {
     const m = {};
@@ -568,14 +568,20 @@ function createThreadPulse(root, opts, host) {
     if (!network) return;
     if (roomTween) { cancelAnimationFrame(roomTween); roomTween = null; }
     if (!on) {
+      // Back to the mesh layout (issue #22): glide back to the positions from before the room view, then fit.
+      // Without saved positions (room view was already on when the page loaded), let the physics finish the layout
+      // first (stabilize runs the iterations before the map is shown again) and fit only afterwards.
+      const ids = network.body.data.nodes.getIds();
+      const saved = preRoomPos && ids.filter(id => preRoomPos[id]).length >= ids.length * 0.8 ? preRoomPos : null;
+      preRoomPos = null;
+      const done = () => { if (!network || destroyed) return; network.setOptions({ physics: { enabled: true } }); network.fit({ animation: { duration: 400 } }); };
+      if (saved) { tweenTo(Object.fromEntries(ids.filter(id => saved[id]).map(id => [id, saved[id]])), animate ? 600 : 0, done); return; }
       network.setOptions({ physics: { enabled: true } });
-      network.stabilize(200);
-      let fitted = false;
-      const fit = () => { if (!fitted && network && !destroyed) { fitted = true; network.fit({ animation: { duration: 400 } }); } };
-      network.once("stabilized", fit);
-      setTimeout(fit, 2500);          // in case the simulation keeps moving for a while
+      network.once("stabilizationIterationsDone", () => network.fit({ animation: { duration: 400 } }));
+      network.stabilize(600);
       return;
     }
+    if (animate && !preRoomPos) preRoomPos = network.getPositions();
     const rooms = roomsOf(), names = Object.keys(rooms).sort();
     const grouped = new Set(names.flatMap(a => rooms[a]));
     const rest = network.body.data.nodes.getIds().filter(id => !grouped.has(id));
@@ -592,12 +598,17 @@ function createThreadPulse(root, opts, host) {
       g.forEach((id, j) => { const a = 2 * Math.PI * j / g.length - Math.PI / 2; target[id] = { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) }; });
     });
     network.setOptions({ physics: { enabled: false } });
-    const from = network.getPositions(), t0 = performance.now(), D = animate ? 600 : 0;
+    tweenTo(target, animate ? 600 : 0, () => network.fit({ animation: animate ? { duration: 400 } : false }));
+  }
+  function tweenTo(target, D, done) {          // move nodes smoothly to target positions (physics must be off)
+    network.setOptions({ physics: { enabled: false } });
+    const from = network.getPositions(), t0 = performance.now();
     const step = () => {
+      if (!network || destroyed) return;
       const k = D ? Math.min(1, (performance.now() - t0) / D) : 1, e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
       for (const id in target) { const f = from[id] || target[id]; network.moveNode(id, f.x + (target[id].x - f.x) * e, f.y + (target[id].y - f.y) * e); }
-      if (k < 1 && !destroyed) roomTween = requestAnimationFrame(step);
-      else { roomTween = null; network.fit({ animation: animate ? { duration: 400 } : false }); }
+      if (k < 1) roomTween = requestAnimationFrame(step);
+      else { roomTween = null; done && done(); }
     };
     step();
   }
