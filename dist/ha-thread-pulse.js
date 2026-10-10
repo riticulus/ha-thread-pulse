@@ -76,6 +76,11 @@ const TP_HTML = `
 const TEXT = {
   en: {
     reload: "↻ Reload", showList: "☰ Show list", hideList: "☰ Hide list", pause: "⏸ Pause live", resume: "▶ Resume live",
+    changesHead: "Changes in the network", changesNone: "No changes detected yet.", changesClear: "Clear list",
+    changesNote: "Checked every 5 minutes and kept in this browser. Reachability is reported live; parent, role and link changes only show up once the devices report them.",
+    chNew: "new in the network", chGone: "no longer in the network", chOffline: "not reachable", chOnline: "reachable again",
+    chParent: (a, b, r) => `new parent: ${a} → ${b} (${r} dBm)`, chSignal: (p, q1, q2, r) => `signal to parent ${p}: ${q1} → ${q2} (${r} dBm)`,
+    chRole: (a, b) => `role: ${a} → ${b}`, chLinkNew: o => `new link to ${o}`, chLinkGone: o => `link to ${o} lost`,
     roomsOn: "⌂ Rooms", roomsOff: "⌂ Rooms off", noArea: "No area",
     searchPh: "🔍 Find device or room", hits: n => n === 0 ? "no match" : `${n} found`,
     showLegend: "ⓘ Legend", hideLegend: "ⓘ Hide legend", heatOn: "≋ Traffic", heatOff: "≋ Traffic off", lgHeat: "Traffic (10 min)",
@@ -127,6 +132,11 @@ const TEXT = {
   },
   de: {
     reload: "↻ Neu laden", showList: "☰ Liste anzeigen", hideList: "☰ Liste ausblenden", pause: "⏸ Live pausieren", resume: "▶ Live starten",
+    changesHead: "Änderungen im Netz", changesNone: "Noch keine Änderungen festgestellt.", changesClear: "Liste leeren",
+    changesNote: "Wird alle 5 Minuten geprüft und in diesem Browser gespeichert. Erreichbarkeit wird live gemeldet; Parent-, Rollen- und Verbindungsänderungen erscheinen erst, wenn die Geräte sie melden.",
+    chNew: "neu im Netz", chGone: "nicht mehr im Netz", chOffline: "nicht erreichbar", chOnline: "wieder erreichbar",
+    chParent: (a, b, r) => `neuer Parent: ${a} → ${b} (${r} dBm)`, chSignal: (p, q1, q2, r) => `Signal zum Parent ${p}: ${q1} → ${q2} (${r} dBm)`,
+    chRole: (a, b) => `Rolle: ${a} → ${b}`, chLinkNew: o => `neue Verbindung zu ${o}`, chLinkGone: o => `Verbindung zu ${o} verloren`,
     roomsOn: "⌂ Räume", roomsOff: "⌂ Räume aus", noArea: "Ohne Bereich",
     searchPh: "🔍 Gerät oder Raum suchen", hits: n => n === 0 ? "kein Treffer" : `${n} gefunden`,
     showLegend: "ⓘ Legende", hideLegend: "ⓘ Legende ausblenden", heatOn: "≋ Verkehr", heatOff: "≋ Verkehr aus", lgHeat: "Verkehr (10 min)",
@@ -355,7 +365,7 @@ function createThreadPulse(root, opts, host) {
   let searchHits = [], searchActive = false;
   let hintsOf = {}, nodeById = {}, linksOf = {}, battOf = {}, brExt = null, devToNode = {}, entToNode = {}, nodeName = {}, onMap = new Set(), ridToId = {}, routeOf = {}, parentRid = {}, ownRid = {};
 
-  function render(model) {
+  function render(model, keep) {      // keep: positions of the previous map (refresh without layout jump)
     const { nodes } = model;
     brExt = model.brExt;
     const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
@@ -364,6 +374,7 @@ function createThreadPulse(root, opts, host) {
     for (const n of nodes) {
       const color = !n.available ? COLORS.off : isRouter(n) ? COLORS.router : n.type === "end_device" ? COLORS.end : COLORS.sleepy;
       visNodes.push({ id: n.id, label: n.name, shape: "image", image: iconImg(n.icon, color, 64), size: isRouter(n) ? 20 : 14,
+                      ...(keep && keep[n.id] ? { x: keep[n.id].x, y: keep[n.id].y } : {}),
                       shapeProperties: { useBorderWithImage: false },
                       title: `${n.name}\n${T.types[n.type] || n.type}${n.available ? "" : T.unreachable}` });
     }
@@ -416,15 +427,18 @@ function createThreadPulse(root, opts, host) {
     const fg = getComputedStyle(host.styleTarget).getPropertyValue("--fg").trim() || "#1f2733";
     const data = { nodes: new VIS.DataSet(visNodes), edges: new VIS.DataSet(visEdges) };
     const opts = { nodes: { font: { color: fg, size: 13 } }, edges: { smooth: false },
-                   physics: { solver: "forceAtlas2Based", forceAtlas2Based: { gravitationalConstant: -60, springLength: 140 }, stabilization: { iterations: 300 } },
+                   physics: { solver: "forceAtlas2Based", forceAtlas2Based: { gravitationalConstant: -60, springLength: 140 }, stabilization: keep ? false : { iterations: 300 } },
                    interaction: { hover: true, tooltipDelay: 120 } };
     if (network) network.destroy();
     network = new VIS.Network($("net"), data, opts);
-    network.once("stabilizationIterationsDone", () => network.fit({ animation: false }));
-    network.once("stabilized", () => network.fit({ animation: { duration: 300 } }));
+    if (keep) { const view = keep.__view; if (view) network.moveTo({ position: view.position, scale: view.scale, animation: false }); }
+    else {
+      network.once("stabilizationIterationsDone", () => network.fit({ animation: false }));
+      network.once("stabilized", () => network.fit({ animation: { duration: 300 } }));
+    }
     network.on("beforeDrawing", ctx => { drawRooms(ctx); drawHeat(ctx); });
     if (roomOn) applyRooms(true, false);
-    network.on("afterDrawing", ctx => { drawBadges(ctx); drawPackets(ctx); });
+    network.on("afterDrawing", ctx => { drawBadges(ctx); drawFlashes(ctx); drawPackets(ctx); });
     network.on("click", p => { if (p.nodes.length && nodeById[p.nodes[0]]) openPanel(p.nodes[0]); else closePanel(); });
     network.on("hoverNode", () => { $("net").style.cursor = "pointer"; });
     network.on("blurNode", () => { $("net").style.cursor = ""; });
@@ -450,7 +464,7 @@ function createThreadPulse(root, opts, host) {
       .map(e => ({ a: (byId[e.a] || {}).name || T.brLabel, b: (byId[e.b] || {}).name || (e.b === brExt ? T.brLabel : "…" + e.b.slice(-4)), r: avg(e) }))
       .filter(e => e.r < -80).sort((p, q) => p.r - q.r);
     const allHints = Object.entries(hintsOf).flatMap(([id, hs]) => hs.map(t => [id, t]));
-    let h = `<b>${T.hintsHead}</b>` + (allHints.length
+    let h = `<div id="changes"></div><b>${T.hintsHead}</b>` + (allHints.length
       ? `<table>${allHints.map(([id, t]) => `<tr><td style="white-space:nowrap;vertical-align:top"><a href="#" data-open="${id}">${esc(nodeById[id].name)}</a></td><td>${esc(t)}</td></tr>`).join("")}</table>`
       : `<div>${T.noHints}</div>`) + `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${T.hintsNote}</div>`;
     hintCount = allHints.length; setList(!$("info").classList.contains("hidden"), false);
@@ -469,6 +483,9 @@ function createThreadPulse(root, opts, host) {
     $("info").innerHTML = h;
     const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
     if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
+    renderChanges();
+    if (panelNode && nodeById[panelNode]) renderPanel(); else if (panelNode) closePanel();
+    lastSnap = snapshotOf(nodes, edges, byId);
     $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + " · " + T.tapHint + " · v" + VERSION;
   }
 
@@ -839,8 +856,101 @@ function createThreadPulse(root, opts, host) {
     e.preventDefault();
     if (t.dataset.open) openPanel(t.dataset.open);
     else if (t.dataset.act === "close") closePanel();
+    else if (t.dataset.act === "clearchanges") { changes = []; try { localStorage.removeItem(LOG_KEY); } catch (e) {} renderChanges(); }
     else if (t.dataset.device) openDevice(t.dataset.device);
   });
+
+  // ---------- change log (issue #7) ----------
+  // Every 5 minutes the data is loaded again (map positions kept) and compared with the previous state. Reachability
+  // changes are logged live from Home Assistant. The list is kept in this browser (localStorage), max. 100 entries.
+  const REFRESH_MS = DEMO ? 40000 : 5 * 60000, LOG_KEY = "threadPulseChanges";
+  let lastSnap = null, changes = [], flashes = [], flashing = false, refreshing = false;
+  const availNow = {};
+  try { changes = JSON.parse(localStorage.getItem(LOG_KEY) || "[]"); } catch (e) { changes = []; }
+  if (DEMO) changes = [];
+  function snapshotOf(nodes, edges, byId) {
+    const snap = { nodes: {}, parent: {}, links: {} };
+    for (const n of nodes) snap.nodes[n.id] = { name: n.name, available: n.available, role: n.role, type: n.type };
+    for (const e of Object.values(edges)) {
+      const r = Math.round(e.rssi.reduce((a, v) => a + v, 0) / e.rssi.length);
+      if (e.parent) snap.parent[e.a] = { id: e.b, rssi: r };
+      else if (r >= -80 && byId[e.a] && byId[e.b] && byId[e.a].type === "routing_end_device" && byId[e.b].type === "routing_end_device")
+        snap.links[e.a < e.b ? e.a + "|" + e.b : e.b + "|" + e.a] = r;      // usable router-to-router links only (less noise)
+    }
+    for (const n of nodes) if (availNow[n.id] === undefined) availNow[n.id] = n.available;
+    return snap;
+  }
+  const nameIn = (snap, id) => (snap.nodes[id] || {}).name || (id === brExt ? T.brLabel : "…" + id.slice(-4));
+  function diffSnaps(a, b) {
+    if (!a || !b) return;
+    for (const id in b.nodes) if (!a.nodes[id]) logChange(id, b.nodes[id].name, T.chNew, "new");
+    for (const id in a.nodes) if (!b.nodes[id]) logChange(id, a.nodes[id].name, T.chGone, "gone");
+    for (const id in b.nodes) {
+      const x = a.nodes[id], y = b.nodes[id]; if (!x) continue;
+      if (x.available !== y.available && availNow[id] !== y.available) { availNow[id] = y.available; logChange(id, y.name, y.available ? T.chOnline : T.chOffline, y.available ? "online" : "offline"); }
+      if (x.role !== y.role && x.role !== undefined && y.role !== undefined)
+        logChange(id, y.name, T.chRole(T.roles[x.role] || x.role, T.roles[y.role] || y.role), "role");
+      const p = a.parent[id], q = b.parent[id];
+      if (p && q && p.id !== q.id) logChange(id, y.name, T.chParent(nameIn(a, p.id), nameIn(b, q.id), q.rssi), "parent");
+      else if (p && q && QUAL(p.rssi)[2] !== QUAL(q.rssi)[2]) logChange(id, y.name, T.chSignal(nameIn(b, q.id), QUAL(p.rssi)[2], QUAL(q.rssi)[2], q.rssi), "signal");
+    }
+    for (const k in b.links) if (!(k in a.links)) { const [u, v] = k.split("|"); logChange(u, nameIn(b, u), T.chLinkNew(nameIn(b, v)), "link"); }
+    for (const k in a.links) if (!(k in b.links) && b.nodes[k.split("|")[0]] && b.nodes[k.split("|")[1]]) { const [u, v] = k.split("|"); logChange(u, nameIn(b, u), T.chLinkGone(nameIn(b, v)), "link"); }
+  }
+  const CH_COLOR = { new: "#43a047", online: "#43a047", gone: "#e53935", offline: "#e53935", parent: "#ab47bc", role: "#ab47bc", signal: "#fb8c00", link: "#fb8c00" };
+  function logChange(id, name, text, kind) {
+    changes.unshift({ t: Date.now(), id, name, text, kind });
+    changes = changes.slice(0, 100);
+    if (!DEMO) try { localStorage.setItem(LOG_KEY, JSON.stringify(changes)); } catch (e) {}
+    flashes.push({ id, t0: performance.now(), color: CH_COLOR[kind] || "#ab47bc" });
+    if (!flashing) { flashing = true; requestAnimationFrame(flashTick); }
+    renderChanges();
+  }
+  function flashTick() {
+    const now = performance.now();
+    flashes = flashes.filter(f => now - f.t0 < 3000);
+    if (network) network.redraw();
+    if (flashes.length && !destroyed) requestAnimationFrame(flashTick); else flashing = false;
+  }
+  function drawFlashes(ctx) {
+    if (!flashes.length) return;
+    const pos = network.getPositions(), now = performance.now();
+    for (const f of flashes) {
+      const p = pos[f.id]; if (!p) continue;
+      const k = ((now - f.t0) % 1000) / 1000;              // three pulses
+      ctx.save(); ctx.strokeStyle = f.color; ctx.lineWidth = 4; ctx.globalAlpha = 1 - k;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 16 + k * 30, 0, 2 * Math.PI); ctx.stroke(); ctx.restore();
+    }
+  }
+  function renderChanges() {
+    const el = $("changes"); if (!el) return;
+    const fmt = t => new Date(t).toLocaleString(lang, { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+    el.innerHTML = `<b>${T.changesHead}</b>` + (changes.length
+      ? ` <a href="#" data-act="clearchanges" style="font-size:12px;margin-left:8px">${T.changesClear}</a><table>` + changes.slice(0, 30).map(c =>
+          `<tr><td style="white-space:nowrap;color:var(--muted);vertical-align:top">${fmt(c.t)}</td><td style="white-space:nowrap;vertical-align:top"><span style="color:${CH_COLOR[c.kind] || "inherit"}">●</span> ` +
+          (nodeById[c.id] ? `<a href="#" data-open="${c.id}">${esc(c.name)}</a>` : esc(c.name)) + `</td><td>${esc(c.text)}</td></tr>`).join("") + `</table>`
+      : `<div>${T.changesNone}</div>`) + `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${T.changesNote}</div>`;
+  }
+  async function refresh() {
+    if (refreshing || destroyed || !network) return;
+    refreshing = true;
+    try {
+      const keep = network.getPositions(); keep.__view = { position: network.getViewPosition(), scale: network.getScale() };
+      const prev = lastSnap;
+      const m = DEMO ? demoMutate() : await loadHa();
+      render(m, keep);
+      diffSnaps(prev, lastSnap);
+    } catch (e) { console.warn("Thread Pulse refresh:", e); }
+    refreshing = false;
+  }
+  every(refresh, REFRESH_MS);
+  // live reachability from Home Assistant (called by the state_changed handler)
+  function liveAvailability(nodeId, available) {
+    if (availNow[nodeId] === available || !nodeById[nodeId]) return;
+    availNow[nodeId] = available;
+    const n = nodeById[nodeId];
+    logChange(nodeId, n.name, available ? T.chOnline : T.chOffline, available ? "online" : "offline");
+  }
 
   function drawPackets(ctx) {
     if (!packets.length) return;
@@ -909,6 +1019,10 @@ function createThreadPulse(root, opts, host) {
     const conn = hass.connection;
     const u1 = await conn.subscribeEvents(ev => {
       const d = ev.data, n = entToNode[d.entity_id];
+      if (n && d.new_state && d.old_state && (d.new_state.state === "unavailable") !== (d.old_state.state === "unavailable")) {
+        const mainIds = (nodeById[n] && nodeById[n].mainEntities) || [];
+        if (!mainIds.length || mainIds.includes(d.entity_id)) liveAvailability(n, d.new_state.state !== "unavailable");
+      }
       if (!n || !d.new_state || !d.old_state || d.new_state.state === "unavailable" || d.old_state.state === "unavailable") return;
       if (d.new_state.state === d.old_state.state && JSON.stringify(d.new_state.attributes) === JSON.stringify(d.old_state.attributes)) return;
       const what = deName((d.new_state.attributes.friendly_name || d.entity_id).replace(nodeName[n], "").trim()) || T.state;
@@ -978,7 +1092,24 @@ function createThreadPulse(root, opts, host) {
     routers[2].info.reboots = 140;   // a bulb on a wall switch
     sleepy[2].neigh[0]["6"] = -86;   // weak parent link (as seen by the device and by its parent router)
     for (const r of routers) for (const x of r.neigh) if (x["0"] === dec(sleepy[2].id)) x["6"] = -86;
-    return { nodes: [...routers, ...ends, ...sleepy], brExt: br.id };
+    return { nodes: [...routers, ...ends, ...sleepy], brExt: br.id, demo: { routers, sleepy, dec, rid } };
+  }
+  // demo: one invented change per refresh – a battery device moves to another parent, or a device drops out / comes back
+  function demoMutate() {
+    const m = demoState, { routers, sleepy, dec, rid } = m.demo;
+    if (Math.random() < 0.6) {
+      const s = sleepy.filter(x => x.available)[Math.floor(Math.random() * 5)] || sleepy[0];
+      const oldP = routers.find(r => r.neigh.some(x => x["13"] && x["0"] === dec(s.id)));
+      const newP = routers.filter(r => r !== oldP)[Math.floor(Math.random() * (routers.length - 1))];
+      const rs = Math.round(-55 - Math.random() * 30);
+      if (oldP) oldP.neigh = oldP.neigh.filter(x => x["0"] !== dec(s.id));
+      newP.neigh.push({ "0": dec(s.id), "6": rs, "11": false, "13": true });
+      s.neigh = [{ "0": dec(newP.id), "6": rs }]; s.routes = [{ "0": dec(newP.id), "2": rid[newP.id], "3": 0, "4": 0, "9": true }];
+    } else {
+      const n = m.nodes.filter(x => x !== sleepy[3])[Math.floor(Math.random() * (m.nodes.length - 1))];
+      n.available = !n.available;
+    }
+    return m;
   }
   function demoTraffic(model) {
     const de = lang === "de";
@@ -1021,11 +1152,14 @@ function createThreadPulse(root, opts, host) {
     $("status").textContent = T.error;
     $("info").innerHTML = `<div id="err">${esc(e.message || e)}</div>`;
   }
+  let demoState = null;
   async function load() {
     $("status").textContent = T.loading;
-    if (DEMO) { const m = demoModel(); render(m); return m; }
+    const prev = lastSnap;
+    if (DEMO) { const m = demoState || (demoState = demoModel()); render(m); diffSnaps(prev, lastSnap); return m; }
     const m = await loadHa();
     render(m);
+    diffSnaps(prev, lastSnap);
     await subscribeLive(m.hass);
     return m;
   }
