@@ -2,6 +2,8 @@
 
 **A live map of your Thread network for Home Assistant – watch your Matter devices talk.**
 
+📖 **[User guide in the wiki](https://github.com/riticulus/ha-thread-pulse/wiki)** – installation, configuration, every feature explained, troubleshooting.
+
 ![Thread Pulse demo](docs/screenshot.png)
 
 Thread Pulse draws the mesh of your Matter-over-Thread devices (routers, battery devices, border router, signal strength) and animates every message as it happens:
