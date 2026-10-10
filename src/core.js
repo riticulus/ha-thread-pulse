@@ -78,7 +78,10 @@ const TEXT = {
     roomsOn: "⌂ Rooms", roomsOff: "⌂ Rooms off", noArea: "No area",
     searchPh: "🔍 Find device or room", hits: n => n === 0 ? "no match" : `${n} found`,
     showLegend: "ⓘ Legend", hideLegend: "ⓘ Hide legend", heatOn: "≋ Traffic", heatOff: "≋ Traffic off", lgHeat: "Traffic (10 min)",
-    heatTitle: n => `${n} message${n === 1 ? "" : "s"} in the last 10 min`, forwarded: "Forwarded for others", forwardedVal: (m, h) => `${m} last 10 min · ${h} last hour`,
+    heatTitle: n => `${n} message${n === 1 ? "" : "s"} in the last 10 min`, forwarded: "Forwarded for others", respTime: "Response time", respVal: (last, med, n) => `${last} ms last · median ${med} ms (${n} measurement${n === 1 ? "" : "s"})`,
+    respNone: "not measured yet – measured when Home Assistant switches the device while this page is open",
+    respNote: "Time from the command in Home Assistant until the device confirmed it (Home Assistant time stamps).",
+    hSlow: (med, n) => `Responds slowly: median ${med} ms over ${n} commands (Matter over Thread usually takes well under a second). Possible causes: weak signal, many hops, a busy or restarting router, or the device itself.`, forwardedVal: (m, h) => `${m} last 10 min · ${h} last hour`,
     lgBr: "Border router", lgRouter: "Router (forwards)", lgEnd: "Mains end device", lgSleepy: "Battery device",
     good: "good", medium: "medium", weak: "weak", lgUp: "Message → HA", lgDown: "Command HA →",
     loading: "loading …", asOf: (t, n) => `as of ${t} · ${n} devices`, error: "Error",
@@ -126,7 +129,10 @@ const TEXT = {
     roomsOn: "⌂ Räume", roomsOff: "⌂ Räume aus", noArea: "Ohne Bereich",
     searchPh: "🔍 Gerät oder Raum suchen", hits: n => n === 0 ? "kein Treffer" : `${n} gefunden`,
     showLegend: "ⓘ Legende", hideLegend: "ⓘ Legende ausblenden", heatOn: "≋ Verkehr", heatOff: "≋ Verkehr aus", lgHeat: "Verkehr (10 min)",
-    heatTitle: n => `${n} Nachricht${n === 1 ? "" : "en"} in den letzten 10 min`, forwarded: "Für andere weitergeleitet", forwardedVal: (m, h) => `${m} letzte 10 min · ${h} letzte Stunde`,
+    heatTitle: n => `${n} Nachricht${n === 1 ? "" : "en"} in den letzten 10 min`, forwarded: "Für andere weitergeleitet", respTime: "Antwortzeit", respVal: (last, med, n) => `${last} ms zuletzt · Median ${med} ms (${n} Messung${n === 1 ? "" : "en"})`,
+    respNone: "noch nicht gemessen – wird gemessen, wenn Home Assistant das Gerät schaltet, während diese Seite offen ist",
+    respNote: "Zeit vom Befehl in Home Assistant bis zur Bestätigung durch das Gerät (Zeitstempel von Home Assistant).",
+    hSlow: (med, n) => `Reagiert langsam: Median ${med} ms über ${n} Befehle (Matter über Thread braucht meist deutlich unter einer Sekunde). Mögliche Ursachen: schwaches Signal, viele Zwischenstationen, ein ausgelasteter oder neu startender Router oder das Gerät selbst.`, forwardedVal: (m, h) => `${m} letzte 10 min · ${h} letzte Stunde`,
     lgBr: "Border Router", lgRouter: "Router (leitet weiter)", lgEnd: "Endgerät am Strom", lgSleepy: "Batteriegerät",
     good: "gut", medium: "mittel", weak: "schwach", lgUp: "Meldung → HA", lgDown: "Befehl HA →",
     loading: "lade …", asOf: (t, n) => `Stand ${t} · ${n} Geräte`, error: "Fehler",
@@ -684,7 +690,7 @@ function createThreadPulse(root, opts, host) {
         const b = battOf[n.id];
         pill(ctx, p.x + r * 0.55, p.y + r * 0.75, b + "%", b < 20 ? "#e53935" : b < 40 ? "#fb8c00" : "#607d8b");
       }
-      if (!warningsOf(n).length && (hintsOf[n.id] || []).length) {
+      if (!warningsOf(n).length && ((hintsOf[n.id] || []).length || slowHint(n))) {
         const x = p.x + r * 0.75, y = p.y - r * 0.85;
         ctx.fillStyle = "#1e88e5"; ctx.strokeStyle = "white"; ctx.lineWidth = 1.5;
         ctx.beginPath(); ctx.arc(x, y, 7, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
@@ -738,7 +744,8 @@ function createThreadPulse(root, opts, host) {
             `<div class="s">${esc(T.roles[n.role] || T.types[n.type] || "")}${n.area ? " · " + esc(n.area) : ""}${n.available ? "" : esc(T.unreachable)}</div></div>` +
             `<button class="x" title="×" data-act="close">×</button></div>`;
     for (const w of warningsOf(n)) h += `<div class="warn">⚠ ${esc(w)}</div>`;
-    if ((hintsOf[n.id] || []).length) h += `<h4>${T.secHints}</h4>` + hintsOf[n.id].map(t => `<div class="hint">💡 ${esc(t)}</div>`).join("") + `<div class="note">${T.hintsNote}</div>`;
+    const hs = (hintsOf[n.id] || []).concat(slowHint(n) || []);
+    if (hs.length) h += `<h4>${T.secHints}</h4>` + hs.map(t => `<div class="hint">💡 ${esc(t)}</div>`).join("") + `<div class="note">${T.hintsNote}</div>`;
     // live
     const c = counts[n.id], now = Date.now();
     h += `<h4>${T.secLive}</h4><dl>`;
@@ -749,6 +756,9 @@ function createThreadPulse(root, opts, host) {
            row(T.msgsHour, `${inWin(c.up, 3600000)} ${T.toHa} · ${inWin(c.down, 3600000)} ${T.fromHa}`) +
            row(T.lastMsg, `${T.ago(Math.round((now - c.last.t) / 1000))} (${c.last.down ? T.fromHa : T.toHa})`);
     } else h += row(T.msgsTotal, T.none);
+    const rs = respSummary(n.id);
+    if (rs) h += row(T.respTime, T.respVal(rs.last, rs.med, rs.n));
+    else if (controllable(n) || n.demoValues) h += row(T.respTime, `<span style="color:var(--muted)">${T.respNone}</span>`);
     if (n.type === "routing_end_device") {
       const f = fwdHits[n.id] || [];
       h += row(T.forwarded, T.forwardedVal(f.filter(t => now - t < HEAT_MS).length, f.length));
@@ -867,6 +877,32 @@ function createThreadPulse(root, opts, host) {
     const u = st.attributes && st.attributes.unit_of_measurement;
     return (T.states[st.state] || st.state) + (u ? " " + u : "");
   }
+  // ---------- response time per device (issue #2) ----------
+  // Command (call_service) → first state report of the same entity (state_changed), both with Home Assistant's own
+  // time stamps (time_fired), so the browser's connection does not distort the result. Matched by context id, or else
+  // the first report within 10 s. Commands that change nothing (e.g. turn_on on a light that is on) get no report.
+  const RESP_WINDOW = 10000, SLOW_MS = 1000, SLOW_MIN = 3;
+  const pendingCmd = {}, respOf = {};
+  const haTime = iso => {                              // HA sends microseconds; keep milliseconds (Safari cannot parse more)
+    const m = String(iso || "").match(/^(.*T\d\d:\d\d:\d\d)(\.\d+)?(.*)$/);
+    return m ? Date.parse(m[1] + (m[2] ? m[2].slice(0, 4) : "") + m[3]) : NaN;
+  };
+  const median = a => { const b = a.slice().sort((x, y) => x - y), m = b.length >> 1; return b.length % 2 ? b[m] : Math.round((b[m - 1] + b[m]) / 2); };
+  function recordResponse(nodeId, ms) {
+    const a = respOf[nodeId] = respOf[nodeId] || [];
+    a.push({ ms: Math.round(ms), t: Date.now() }); if (a.length > 20) a.shift();
+    if (panelNode === nodeId) renderPanel();
+  }
+  function respSummary(nodeId) {
+    const a = respOf[nodeId]; if (!a || !a.length) return null;
+    return { last: a[a.length - 1].ms, med: median(a.map(x => x.ms)), n: a.length };
+  }
+  function slowHint(n) {
+    const r = respSummary(n.id);
+    return r && r.n >= SLOW_MIN && r.med >= SLOW_MS ? T.hSlow(r.med, r.n) : null;
+  }
+  const controllable = n => (n.mainEntities || []).some(e => ["light", "switch", "cover", "lock", "fan", "climate", "valve", "media_player"].includes(e.split(".")[0]));
+
   async function subscribeLive(hass) {
     if (unsub) return;
     const conn = hass.connection;
@@ -875,10 +911,21 @@ function createThreadPulse(root, opts, host) {
       if (!n || !d.new_state || !d.old_state || d.new_state.state === "unavailable" || d.old_state.state === "unavailable") return;
       if (d.new_state.state === d.old_state.state && JSON.stringify(d.new_state.attributes) === JSON.stringify(d.old_state.attributes)) return;
       const what = deName((d.new_state.attributes.friendly_name || d.entity_id).replace(nodeName[n], "").trim()) || T.state;
-      launch(n, false, `<b>${esc(nodeName[n])}</b> → HA: ${esc(what)} ${esc(fmtState(d.new_state))}`);
+      let resp = "";
+      const p = pendingCmd[d.entity_id];
+      if (p) {
+        const tState = haTime(ev.time_fired), ctxMatch = p.ctx && d.new_state.context && d.new_state.context.id === p.ctx;
+        const ms = tState - p.t;
+        if (ms >= 0 && (ctxMatch || ms <= RESP_WINDOW)) { recordResponse(n, ms); resp = ` · ${Math.round(ms)} ms`; }
+        if (ms >= 0) delete pendingCmd[d.entity_id];
+      }
+      launch(n, false, `<b>${esc(nodeName[n])}</b> → HA: ${esc(what)} ${esc(fmtState(d.new_state))}${resp}`);
     }, "state_changed");
     const u2 = await conn.subscribeEvents(ev => {
       const sd = ev.data.service_data || {};
+      const t = haTime(ev.time_fired), now = Date.now();
+      for (const e of [].concat(sd.entity_id || [])) if (entToNode[e] && !isNaN(t)) pendingCmd[e] = { t, ctx: ev.context && ev.context.id, at: now };
+      for (const e in pendingCmd) if (now - pendingCmd[e].at > RESP_WINDOW) delete pendingCmd[e];
       const targets = new Set([].concat(sd.entity_id || []).map(e => entToNode[e]).filter(Boolean));
       for (const dv of [].concat(sd.device_id || [])) if (devToNode[dv]) targets.add(devToNode[dv]);
       for (const n of targets) launch(n, true, `HA → <b>${esc(nodeName[n])}</b>: ${esc(ev.data.domain + "." + ev.data.service)}`);
@@ -943,8 +990,11 @@ function createThreadPulse(root, opts, host) {
     const step = () => {
       if (destroyed) return;
       const n = live[Math.floor(Math.random() * live.length)];
-      if (Math.random() < 0.2 && ["lightbulb", "power-plug", "blinds"].includes(n.icon))
+      if (Math.random() < 0.35 && ["lightbulb", "power-plug", "blinds"].includes(n.icon)) {
         launch(n.id, true, `HA → <b>${esc(n.name)}</b>: ${n.icon === "blinds" ? "cover.open_cover" : n.icon === "lightbulb" ? "light.toggle" : "switch.toggle"}`);
+        const ms = n.icon === "blinds" ? 900 + Math.random() * 900 : 120 + Math.random() * 380;      // the demo blinds are slow
+        setTimeout(() => { if (destroyed) return; recordResponse(n.id, ms); launch(n.id, false, `<b>${esc(n.name)}</b> → HA: ${T.state} ${T.states.on} · ${Math.round(ms)} ms`); }, ms);
+      }
       else { const [what, val] = msgs(n); launch(n.id, false, `<b>${esc(n.name)}</b> → HA: ${what} ${val}`); }
       setTimeout(step, 600 + Math.random() * 1800);
     };

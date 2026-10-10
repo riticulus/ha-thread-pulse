@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 ### Added
+- Response time per device: time from a command in Home Assistant until the device confirms it (Home Assistant time stamps, matched by context); shown in the detail panel (last / median / number of measurements) and in the live ticker; hint for devices that respond slowly (median ≥ 1 s over at least 3 commands) ([#2](https://github.com/riticulus/ha-thread-pulse/issues/2))
 - Room view: button "⌂ Rooms" arranges the devices by Home Assistant area – every room gets its own spot with a coloured area and its name, the border router and devices without an area share one spot; links between rooms stay visible ([#8](https://github.com/riticulus/ha-thread-pulse/issues/8))
 - Search box: find devices by name or area (case and accents ignored); matches are selected and zoomed to, the rest fades out; Enter opens the first match, Esc clears ([#9](https://github.com/riticulus/ha-thread-pulse/issues/9))
 
