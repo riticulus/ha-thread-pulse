@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.2.0] – 2026-10-10
+
 ### Added
 - Dashboard card `custom:thread-pulse-card`, installable with HACS (custom repository, type Dashboard) or manually; options `height`, `language`, `demo` in the visual card editor; the graph library is only loaded when a card is shown ([#13](https://github.com/riticulus/ha-thread-pulse/issues/13))
 - GitHub action: HACS validation and a check that the generated files match `src/`
@@ -40,6 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Demo mode (`?demo`) that works without Home Assistant
 - Readable (unminified) vis-network build
 
-[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.0.0...v1.2.0
 [1.0.0]: https://github.com/riticulus/ha-thread-pulse/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/riticulus/ha-thread-pulse/releases/tag/v0.1.0
