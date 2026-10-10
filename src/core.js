@@ -15,7 +15,7 @@ const TP_CSS = `
   #legend.hidden .lg { display: none; }
   #status { color: var(--muted); font-size: 12px; }
   #searchbox { display: inline-flex; align-items: center; gap: 6px; }
-  #search { width: 150px; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 8px; font: inherit; }
+  #search { width: 200px; max-width: 60vw; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 8px; font: inherit; }
   #search:focus { outline: 2px solid #1e88e5; outline-offset: -1px; }
   #hits { color: var(--muted); font-size: 12px; }
   .lg { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
@@ -61,6 +61,7 @@ const TP_HTML = `
     <button id="toggle"></button>
     <button id="livebtn"></button>
     <button id="heatbtn"></button>
+    <button id="roombtn"></button>
     <button id="legbtn"></button>
     <span id="searchbox"><input id="search" type="search" autocomplete="off" spellcheck="false"><span id="hits"></span></span>
     <span id="legend"></span>
@@ -74,6 +75,7 @@ const TP_HTML = `
 const TEXT = {
   en: {
     reload: "↻ Reload", showList: "☰ Show list", hideList: "☰ Hide list", pause: "⏸ Pause live", resume: "▶ Resume live",
+    roomsOn: "⌂ Rooms", roomsOff: "⌂ Rooms off", noArea: "No area",
     searchPh: "🔍 Find device or room", hits: n => n === 0 ? "no match" : `${n} found`,
     showLegend: "ⓘ Legend", hideLegend: "ⓘ Hide legend", heatOn: "≋ Traffic", heatOff: "≋ Traffic off", lgHeat: "Traffic (10 min)",
     heatTitle: n => `${n} message${n === 1 ? "" : "s"} in the last 10 min`, forwarded: "Forwarded for others", forwardedVal: (m, h) => `${m} last 10 min · ${h} last hour`,
@@ -121,6 +123,7 @@ const TEXT = {
   },
   de: {
     reload: "↻ Neu laden", showList: "☰ Liste anzeigen", hideList: "☰ Liste ausblenden", pause: "⏸ Live pausieren", resume: "▶ Live starten",
+    roomsOn: "⌂ Räume", roomsOff: "⌂ Räume aus", noArea: "Ohne Bereich",
     searchPh: "🔍 Gerät oder Raum suchen", hits: n => n === 0 ? "kein Treffer" : `${n} gefunden`,
     showLegend: "ⓘ Legende", hideLegend: "ⓘ Legende ausblenden", heatOn: "≋ Verkehr", heatOff: "≋ Verkehr aus", lgHeat: "Verkehr (10 min)",
     heatTitle: n => `${n} Nachricht${n === 1 ? "" : "en"} in den letzten 10 min`, forwarded: "Für andere weitergeleitet", forwardedVal: (m, h) => `${m} letzte 10 min · ${h} letzte Stunde`,
@@ -281,6 +284,7 @@ function createThreadPulse(root, opts, host) {
     lang = (opts.lang || l || "en").slice(0, 2); T = TEXT[lang] || TEXT.en;
     host.styleTarget.lang = lang;
     $("reload").textContent = T.reload;
+    $("roombtn").textContent = roomOn ? T.roomsOff : T.roomsOn;
   $("search").placeholder = T.searchPh;
     $("livebtn").textContent = liveOn ? T.pause : T.resume;
     $("heatbtn").textContent = heatOn ? T.heatOff : T.heatOn;
@@ -411,7 +415,8 @@ function createThreadPulse(root, opts, host) {
     network = new VIS.Network($("net"), data, opts);
     network.once("stabilizationIterationsDone", () => network.fit({ animation: false }));
     network.once("stabilized", () => network.fit({ animation: { duration: 300 } }));
-    network.on("beforeDrawing", drawHeat);
+    network.on("beforeDrawing", ctx => { drawRooms(ctx); drawHeat(ctx); });
+    if (roomOn) applyRooms(true, false);
     network.on("afterDrawing", ctx => { drawBadges(ctx); drawPackets(ctx); });
     network.on("click", p => { if (p.nodes.length && nodeById[p.nodes[0]]) openPanel(p.nodes[0]); else closePanel(); });
     network.on("hoverNode", () => { $("net").style.cursor = "pointer"; });
@@ -524,10 +529,93 @@ function createThreadPulse(root, opts, host) {
     }
     ctx.restore();
   }
+  // ---------- room view (issue #8) ----------
+  // Calculated layout: every Home Assistant area gets its own spot on a grid, its devices sit in a ring around it,
+  // and a coloured area with the room name is drawn behind them. Devices without an area and the border router share
+  // one extra spot (top left). Physics is paused while the room view is on; the mesh links are still drawn.
+  let roomOn = false, roomTween = null;
+  const ROOM_COLORS = ["#42a5f5", "#66bb6a", "#ffa726", "#ab47bc", "#26c6da", "#ec407a", "#9ccc65", "#8d6e63", "#5c6bc0", "#d4e157"];
+  const roomsOf = () => {
+    const m = {};
+    for (const n of Object.values(nodeById)) if (n.area) (m[n.area] = m[n.area] || []).push(n.id);
+    return m;
+  };
+  function applyRooms(on, animate = true) {
+    if (!network) return;
+    if (roomTween) { cancelAnimationFrame(roomTween); roomTween = null; }
+    if (!on) {
+      network.setOptions({ physics: { enabled: true } });
+      network.stabilize(200);
+      let fitted = false;
+      const fit = () => { if (!fitted && network && !destroyed) { fitted = true; network.fit({ animation: { duration: 400 } }); } };
+      network.once("stabilized", fit);
+      setTimeout(fit, 2500);          // in case the simulation keeps moving for a while
+      return;
+    }
+    const rooms = roomsOf(), names = Object.keys(rooms).sort();
+    const grouped = new Set(names.flatMap(a => rooms[a]));
+    const rest = network.body.data.nodes.getIds().filter(id => !grouped.has(id));
+    const isR = id => nodeById[id] && nodeById[id].type === "routing_end_device";
+    const groups = names.map(a => rooms[a].slice().sort((a2, b2) => isR(b2) - isR(a2)));   // routers first in the ring
+    if (rest.length) groups.unshift(rest);   // first (top left): the bottom left is covered by the live ticker
+    const ring = k => k <= 1 ? 0 : 40 + 22 * k;
+    const cell = 2 * Math.max(...groups.map(g => ring(g.length))) + 170;
+    const st = $("stage"), aspect = st && st.clientHeight ? st.clientWidth / st.clientHeight : 1.5;
+    const cols = Math.max(1, Math.round(Math.sqrt(groups.length * aspect)));                  // grid follows the shape of the map area
+    const target = {};
+    groups.forEach((g, i) => {
+      const cx = (i % cols) * cell, cy = Math.floor(i / cols) * cell, r = ring(g.length);
+      g.forEach((id, j) => { const a = 2 * Math.PI * j / g.length - Math.PI / 2; target[id] = { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) }; });
+    });
+    network.setOptions({ physics: { enabled: false } });
+    const from = network.getPositions(), t0 = performance.now(), D = animate ? 600 : 0;
+    const step = () => {
+      const k = D ? Math.min(1, (performance.now() - t0) / D) : 1, e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      for (const id in target) { const f = from[id] || target[id]; network.moveNode(id, f.x + (target[id].x - f.x) * e, f.y + (target[id].y - f.y) * e); }
+      if (k < 1 && !destroyed) roomTween = requestAnimationFrame(step);
+      else { roomTween = null; network.fit({ animation: animate ? { duration: 400 } : false }); }
+    };
+    step();
+  }
+  function hull(points) {     // convex hull (monotone chain)
+    const p = points.slice().sort((a, b) => a.x - b.x || a.y - b.y);
+    if (p.length < 3) return p;
+    const cross = (o, a, b) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+    const lo = [], up = [];
+    for (const q of p) { while (lo.length >= 2 && cross(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+    for (const q of p.slice().reverse()) { while (up.length >= 2 && cross(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+    return lo.slice(0, -1).concat(up.slice(0, -1));
+  }
+  let roomCanvas = null;
+  function drawRooms(ctx) {
+    if (!roomOn || !network) return;
+    const rooms = roomsOf(), pos = network.getPositions(), PAD = 34;
+    const cv = ctx.canvas;
+    if (!roomCanvas) roomCanvas = document.createElement("canvas");
+    if (roomCanvas.width !== cv.width || roomCanvas.height !== cv.height) { roomCanvas.width = cv.width; roomCanvas.height = cv.height; }
+    const names = Object.keys(rooms).sort();
+    const labels = [];
+    names.forEach((area, i) => {
+      const pts = rooms[area].map(id => pos[id]).filter(Boolean); if (!pts.length) return;
+      const color = ROOM_COLORS[i % ROOM_COLORS.length], h = hull(pts);
+      // draw the padded blob opaque on a helper canvas, then copy it with low opacity (no darker overlaps inside a room)
+      const o = roomCanvas.getContext("2d");
+      o.setTransform(1, 0, 0, 1, 0, 0); o.clearRect(0, 0, roomCanvas.width, roomCanvas.height); o.setTransform(ctx.getTransform());
+      o.fillStyle = o.strokeStyle = color; o.lineJoin = o.lineCap = "round"; o.lineWidth = PAD * 2;
+      o.beginPath(); o.moveTo(h[0].x, h[0].y); for (const q of h.slice(1)) o.lineTo(q.x, q.y); o.closePath(); o.fill(); o.stroke();
+      ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 0.13; ctx.drawImage(roomCanvas, 0, 0); ctx.restore();
+      const top = pts.reduce((a, q) => q.y < a.y ? q : a, pts[0]);
+      labels.push({ text: area.toUpperCase(), x: pts.reduce((a, q) => a + q.x, 0) / pts.length, y: top.y - PAD - 8, color });
+    });
+    ctx.save(); ctx.font = "600 12px -apple-system, Segoe UI, Roboto, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+    for (const l of labels) { ctx.fillStyle = l.color; ctx.globalAlpha = 0.9; ctx.fillText(l.text, l.x, l.y); }
+    ctx.restore();
+  }
+
   function updateEdgeTitles() {
     if (!network) return;
     const ds = network.body.data.edges, upd = [];
-    ds.forEach(e => { const n = (linkHits[e.id] || []).length; const title = e.rssiTitle + (n ? "\n" + T.heatTitle(n) : ""); if (title !== e.title) upd.push({ id: e.id, title }); });
+    ds.forEach(e => { if (e.room) return; const n = (linkHits[e.id] || []).length; const title = e.rssiTitle + (n ? "\n" + T.heatTitle(n) : ""); if (title !== e.title) upd.push({ id: e.id, title }); });
     if (upd.length) ds.update(upd);
   }
   every(() => { pruneHeat(); updateEdgeTitles(); if (network && !animating) network.redraw(); }, 5000);
@@ -893,13 +981,18 @@ function createThreadPulse(root, opts, host) {
 
   theme();
   let startList = false, startLegend = (host.width ? host.width() : window.innerWidth) > 700;
-  try { heatOn = localStorage.getItem("threadPulseHeat") !== "0"; } catch (e) {}
+  try { heatOn = localStorage.getItem("threadPulseHeat") !== "0"; roomOn = localStorage.getItem("threadPulseRooms") === "1"; } catch (e) {}
   try { startList = localStorage.getItem("threadPulseList") === "1"; const l = localStorage.getItem("threadPulseLegend"); if (l !== null) startLegend = l === "1"; } catch (e) {}
   $("info").classList.toggle("hidden", !startList);
   $("legend").classList.toggle("hidden", !startLegend);
   setLanguage(lang);
   $("reload").onclick = () => load().catch(showErr);
   $("toggle").onclick = () => setList($("info").classList.contains("hidden"));
+  $("roombtn").onclick = () => {
+    roomOn = !roomOn; $("roombtn").textContent = roomOn ? T.roomsOff : T.roomsOn;
+    try { localStorage.setItem("threadPulseRooms", roomOn ? "1" : "0"); } catch (e) {}
+    applyRooms(roomOn);
+  };
   $("heatbtn").onclick = () => {
     heatOn = !heatOn; $("heatbtn").textContent = heatOn ? T.heatOff : T.heatOn;
     try { localStorage.setItem("threadPulseHeat", heatOn ? "1" : "0"); } catch (e) {}

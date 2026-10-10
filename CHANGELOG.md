@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 ### Added
+- Room view: button "⌂ Rooms" arranges the devices by Home Assistant area – every room gets its own spot with a coloured area and its name, the border router and devices without an area share one spot; links between rooms stay visible ([#8](https://github.com/riticulus/ha-thread-pulse/issues/8))
 - Search box: find devices by name or area (case and accents ignored); matches are selected and zoomed to, the rest fades out; Enter opens the first match, Esc clears ([#9](https://github.com/riticulus/ha-thread-pulse/issues/9))
 
 ### Changed

@@ -23,6 +23,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - **Badges on the map:** battery level on battery devices, ⚠ on devices that look unstable or have a low battery
 - **Traffic heat:** links glow the more messages travelled over them in the last 10 minutes, so the busy routes of the mesh stand out (estimate based on the computed paths); routers show how many messages they forwarded for others
 - **Weak-spot hints:** rules of thumb for weak parent signals, unstable connections, routers that probably lose power regularly and routers at the edge of the mesh – suggestions, not measurements
+- **Room view:** arrange the devices by Home Assistant area, with a coloured area per room – shows at a glance which links cross rooms
 - **Search:** find a device by name or area; matches are highlighted and zoomed to, Enter opens the details
 - **Live counter per device:** messages to and from Home Assistant since the page was opened (last minute, last hour, last message)
 - Optional table: battery devices and their parents, weakest first, plus weak router-to-router links
