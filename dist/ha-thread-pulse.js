@@ -15,6 +15,10 @@ const TP_CSS = `
   #legend { display: contents; }
   #legend.hidden .lg { display: none; }
   #status { color: var(--muted); font-size: 12px; }
+  #searchbox { display: inline-flex; align-items: center; gap: 6px; }
+  #search { width: 150px; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 8px; font: inherit; }
+  #search:focus { outline: 2px solid #1e88e5; outline-offset: -1px; }
+  #hits { color: var(--muted); font-size: 12px; }
   .lg { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
   .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
   .ln { width: 18px; height: 3px; display: inline-block; border-radius: 2px; }
@@ -59,6 +63,7 @@ const TP_HTML = `
     <button id="livebtn"></button>
     <button id="heatbtn"></button>
     <button id="legbtn"></button>
+    <span id="searchbox"><input id="search" type="search" autocomplete="off" spellcheck="false"><span id="hits"></span></span>
     <span id="legend"></span>
     <span id="status"></span>
   </div>
@@ -70,6 +75,7 @@ const TP_HTML = `
 const TEXT = {
   en: {
     reload: "↻ Reload", showList: "☰ Show list", hideList: "☰ Hide list", pause: "⏸ Pause live", resume: "▶ Resume live",
+    searchPh: "🔍 Find device or room", hits: n => n === 0 ? "no match" : `${n} found`,
     showLegend: "ⓘ Legend", hideLegend: "ⓘ Hide legend", heatOn: "≋ Traffic", heatOff: "≋ Traffic off", lgHeat: "Traffic (10 min)",
     heatTitle: n => `${n} message${n === 1 ? "" : "s"} in the last 10 min`, forwarded: "Forwarded for others", forwardedVal: (m, h) => `${m} last 10 min · ${h} last hour`,
     lgBr: "Border router", lgRouter: "Router (forwards)", lgEnd: "Mains end device", lgSleepy: "Battery device",
@@ -116,6 +122,7 @@ const TEXT = {
   },
   de: {
     reload: "↻ Neu laden", showList: "☰ Liste anzeigen", hideList: "☰ Liste ausblenden", pause: "⏸ Live pausieren", resume: "▶ Live starten",
+    searchPh: "🔍 Gerät oder Raum suchen", hits: n => n === 0 ? "kein Treffer" : `${n} gefunden`,
     showLegend: "ⓘ Legende", hideLegend: "ⓘ Legende ausblenden", heatOn: "≋ Verkehr", heatOff: "≋ Verkehr aus", lgHeat: "Verkehr (10 min)",
     heatTitle: n => `${n} Nachricht${n === 1 ? "" : "en"} in den letzten 10 min`, forwarded: "Für andere weitergeleitet", forwardedVal: (m, h) => `${m} letzte 10 min · ${h} letzte Stunde`,
     lgBr: "Border Router", lgRouter: "Router (leitet weiter)", lgEnd: "Endgerät am Strom", lgSleepy: "Batteriegerät",
@@ -275,6 +282,7 @@ function createThreadPulse(root, opts, host) {
     lang = (opts.lang || l || "en").slice(0, 2); T = TEXT[lang] || TEXT.en;
     host.styleTarget.lang = lang;
     $("reload").textContent = T.reload;
+  $("search").placeholder = T.searchPh;
     $("livebtn").textContent = liveOn ? T.pause : T.resume;
     $("heatbtn").textContent = heatOn ? T.heatOff : T.heatOn;
     const lg = (cls, color, text) => `<span class="lg"><span class="${cls}" style="background:${color}"></span>${text}</span>`;
@@ -334,6 +342,7 @@ function createThreadPulse(root, opts, host) {
   }
 
   // ---------- graph ----------
+  let searchHits = [], searchActive = false;
   let hintsOf = {}, nodeById = {}, linksOf = {}, battOf = {}, brExt = null, devToNode = {}, entToNode = {}, nodeName = {}, onMap = new Set(), ridToId = {}, routeOf = {}, parentRid = {}, ownRid = {};
 
   function render(model) {
@@ -391,7 +400,7 @@ function createThreadPulse(root, opts, host) {
     const seenEdge = new Set();
     const visEdges = Object.values(edges).filter(e => ids.has(e.b)).filter(e => { const k = linkKey(e.a, e.b); if (seenEdge.has(k)) return false; seenEdge.add(k); return true; }).map(e => {
       const r = avg(e), [c] = QUAL(r);
-      return { id: linkKey(e.a, e.b), rssiTitle: `${r} dBm`, from: e.a, to: e.b, color: { color: c, opacity: e.parent ? 0.95 : 0.55 }, width: e.parent ? 3 : 1.5,
+      return { id: linkKey(e.a, e.b), rssiTitle: `${r} dBm`, from: e.a, to: e.b, color: { color: c, highlight: c, hover: c, opacity: e.parent ? 0.95 : 0.55 }, width: e.parent ? 3 : 1.5,
                dashes: !!e.parent, title: `${r} dBm`, length: e.parent ? 90 : 180 };
     });
     const fg = getComputedStyle(host.styleTarget).getPropertyValue("--fg").trim() || "#1f2733";
@@ -448,6 +457,7 @@ function createThreadPulse(root, opts, host) {
     h += `<br><span style="color:var(--muted);font-size:12px">${T.foot(nodes.length)}</span>`;
     $("info").innerHTML = h;
     const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
+    if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
     $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + " · " + T.tapHint + " · v" + VERSION;
   }
 
@@ -582,6 +592,7 @@ function createThreadPulse(root, opts, host) {
       const p = pos[n.id]; if (!p) continue;
       const r = n.type === "routing_end_device" ? 20 : 14;
       ctx.save();
+      if (searchActive && !searchHits.includes(n.id)) ctx.globalAlpha = 0.18;
       if (battOf[n.id] !== undefined) {
         const b = battOf[n.id];
         pill(ctx, p.x + r * 0.55, p.y + r * 0.75, b + "%", b < 20 ? "#e53935" : b < 40 ? "#fb8c00" : "#607d8b");
@@ -696,7 +707,35 @@ function createThreadPulse(root, opts, host) {
     host.navigate("/config/devices/device/" + devId);
   }
   every(() => { if (panelNode) renderPanel(); }, 5000);
-  root.addEventListener("keydown", e => { if (e.key === "Escape") closePanel(); });
+  root.addEventListener("keydown", e => { if (e.key === "Escape" && e.target.id !== "search") closePanel(); });
+
+  // ---------- search (issue #9) ----------
+  // Matches device name and area (case and accents ignored). Matches stay bright and are selected, the rest fades out,
+  // the map zooms to the matches. Enter opens the first match, Esc clears the search.
+  const norm = t => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  function applySearch() {
+    if (!network) return;
+    const q = norm($("search").value.trim());
+    const fg = getComputedStyle(host.styleTarget).getPropertyValue("--fg").trim() || "#1f2733";
+    searchActive = !!q;
+    searchHits = q ? Object.values(nodeById).filter(n => norm(n.name).includes(q) || norm(n.area).includes(q)).map(n => n.id) : [];
+    const hit = new Set(searchHits), upd = [];
+    network.body.data.nodes.forEach(v => {
+      const on = !q || hit.has(v.id);
+      upd.push({ id: v.id, opacity: on ? 1 : 0.18, font: { color: on ? fg : "rgba(128,128,128,.35)" } });
+    });
+    network.body.data.nodes.update(upd);
+    $("hits").textContent = q ? T.hits(searchHits.length) : "";
+    if (q && searchHits.length === 1) { network.selectNodes(searchHits); network.focus(searchHits[0], { scale: 1.3, animation: { duration: 400 } }); }
+    else if (q && searchHits.length) { network.selectNodes(searchHits); network.fit({ nodes: searchHits, animation: { duration: 400 } }); }
+    else if (!q) { network.unselectAll(); network.fit({ animation: { duration: 400 } }); }
+  }
+  let searchTimer = null;
+  $("search").addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(applySearch, 150); });
+  $("search").addEventListener("keydown", e => {
+    if (e.key === "Enter" && searchHits.length) { e.preventDefault(); openPanel(searchHits[0]); }
+    else if (e.key === "Escape") { e.preventDefault(); $("search").value = ""; applySearch(); $("search").blur(); }
+  });
   root.addEventListener("click", e => {
     const t = e.target.closest && e.target.closest("[data-open],[data-act],[data-device]"); if (!t) return;
     e.preventDefault();
