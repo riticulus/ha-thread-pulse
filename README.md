@@ -31,7 +31,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 
 ## Installation
 
-1. Download `thread-pulse.html` and `thread-pulse-vis-network.min.js` from this repository.
+1. Download `thread-pulse.html` and `thread-pulse-vis-network.js` from this repository.
 2. Copy both files into the `www` folder of your Home Assistant configuration (`/config/www/`, for example with the *File editor* or *Samba share* add-on). Create the folder if it does not exist – if you have to create it, restart Home Assistant once.
 3. Add a card to a dashboard. Easiest is a full-page view (*panel* view) with an iframe card:
 

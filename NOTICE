@@ -1,6 +1,6 @@
 Thread Pulse includes the following third-party components:
 
-vis-network 9.1.9 (thread-pulse-vis-network.min.js, unmodified)
+vis-network 9.1.9 (thread-pulse-vis-network.js, unminified standalone build, unmodified)
   https://github.com/visjs/vis-network
   Copyright (c) 2011-2017 Almende B.V., (c) 2017-2019 visjs contributors
   Dual licensed under the Apache License 2.0 and the MIT License; used here under the MIT License.
