@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Fixed
+- Switching the room view off left the mesh off-center and too small: the devices now glide back to their positions from before the room view and the map is fitted afterwards; if the room view was already on when the page was loaded, the layout is calculated completely before fitting ([#22](https://github.com/riticulus/ha-thread-pulse/issues/22))
+
 ### Added
 - Change log: the network is checked every 5 minutes (map positions are kept) and changes are listed with time stamps – devices new / gone, reachable / not reachable (live), new parent, signal to the parent changing quality, role changes, usable router links appearing / lost; the affected device flashes on the map; the list is kept in the browser ([#7](https://github.com/riticulus/ha-thread-pulse/issues/7))
 - Response time per device: time from a command in Home Assistant until the device confirms it (Home Assistant time stamps, matched by context); shown in the detail panel (last / median / number of measurements) and in the live ticker; hint for devices that respond slowly (median ≥ 1 s over at least 3 commands) ([#2](https://github.com/riticulus/ha-thread-pulse/issues/2))
