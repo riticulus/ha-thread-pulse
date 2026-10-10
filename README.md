@@ -19,6 +19,9 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - Link colours by signal strength (RSSI): green ≥ −65 dBm, orange ≥ −80 dBm, red below
 - Battery devices are linked to their parent router (dashed); their signal is taken from the router's measurement, which is more reliable than the device's own
 - Live animation of messages to and from Home Assistant, with a ticker
+- **Tap a device for details:** manufacturer, model, firmware, area, Thread role, parent and neighbours with signal strength, battery level and type, current values with “last changed”, stability counters (restarts, drop-offs, attach attempts, parent changes) and a button to open the device in Home Assistant
+- **Badges on the map:** battery level on battery devices, ⚠ on devices that look unstable or have a low battery
+- **Live counter per device:** messages to and from Home Assistant since the page was opened (last minute, last hour, last message)
 - Optional table: battery devices and their parents, weakest first, plus weak router-to-router links
 - Follows the Home Assistant theme (light/dark); English and German (from your Home Assistant language)
 - Does **not** wake up battery devices: it only reads data Home Assistant already has
@@ -69,6 +72,9 @@ After updating the files, raise the number in `?v=1` so browsers and the compani
 - **Several border routers / no OpenThread add-on:** if Thread Pulse cannot identify the border router, the map still works, but messages are not animated. With several border routers (e.g. HA plus an Apple TV), messages may actually leave the mesh through another border router than the one shown.
 - **Relies on Home Assistant's diagnostics format**, which is not an official API. A future Home Assistant or Matter server update may break it.
 - **Admins only** (see requirements).
+- **Warning badge thresholds are a heuristic:** ⚠ is shown at ≥ 5 attach attempts or ≥ 3 drop-offs since the device's last restart, or battery below 20 %. The thresholds come from one real network of ~20 devices, where healthy devices showed 0–2 attempts and 1–2 drop-offs. Restart counts are shown but not used for warnings, because bulbs on a wall switch restart every time the switch is turned off.
+- **Some values are snapshots.** Thread data (neighbours, signal, counters) is what the device last reported; some devices report these rarely. Uptime is not shown because devices practically never update it.
+- **Live counters start at zero** when the page is opened and are lost on reload.
 - Tested with Home Assistant 2026.10, one OpenThread Border Router (SONOFF Dongle Plus MG24) and about 20 Matter-over-Thread devices. Other setups are untested.
 
 ## Privacy

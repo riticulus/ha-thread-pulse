@@ -34,6 +34,21 @@
   th { color: var(--muted); font-weight: 600; }
   .g { color: #2e7d32; } .o { color: #ef6c00; } .r { color: #c62828; }
   #err { color: #c62828; padding: 12px; white-space: pre-wrap; }
+  #panel { position: absolute; top: 8px; right: 8px; bottom: 8px; width: 340px; max-width: calc(100% - 16px); overflow: auto; z-index: 5;
+           background: var(--bg); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.25); padding: 12px 14px; font-size: 13px; }
+  #panel[hidden] { display: none; }
+  @media (max-width: 600px) { #panel { top: auto; left: 0; right: 0; bottom: 0; width: auto; max-width: none; max-height: 62%; border-radius: 14px 14px 0 0; } }
+  #panel .hd { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }
+  #panel .hd img { width: 40px; height: 40px; flex: none; }
+  #panel .hd .t { font-size: 16px; font-weight: 600; line-height: 1.2; }
+  #panel .hd .s { color: var(--muted); font-size: 12px; }
+  #panel .x { margin-left: auto; align-self: flex-start; border: 0; background: none; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; padding: 0 2px; }
+  #panel h4 { margin: 12px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; }
+  #panel dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 0; }
+  #panel dt { color: var(--muted); } #panel dd { margin: 0; overflow-wrap: anywhere; }
+  #panel .warn { background: color-mix(in srgb, #fb8c00 18%, transparent); border: 1px solid #fb8c00; border-radius: 8px; padding: 6px 8px; margin: 6px 0; }
+  #panel .note { color: var(--muted); font-size: 11px; margin-top: 2px; }
+  #panel .btn { display: inline-block; margin-top: 12px; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 10px; cursor: pointer; font: inherit; }
 </style>
 </head>
 <body>
@@ -46,7 +61,7 @@
     <span id="legend"></span>
     <span id="status"></span>
   </div>
-  <div id="stage"><div id="net"></div><div id="live"></div></div>
+  <div id="stage"><div id="net"></div><div id="live"></div><div id="panel" hidden></div></div>
   <div id="info" class="hidden"></div>
 </div>
 <script>
@@ -74,6 +89,22 @@ const TEXT = {
     noMatter: "The Matter integration is not set up in this Home Assistant.",
     noDevices: "No Matter devices on Thread were found.",
     demo: "DEMO",
+    tapHint: "Tap a device for details",
+    secDevice: "Device", secThread: "Thread", secStability: "Stability", secBattery: "Battery", secValues: "Current values", secLive: "Live (since this page was opened)",
+    manufacturer: "Manufacturer", model: "Model", firmware: "Firmware", hardware: "Hardware", area: "Area", role: "Role",
+    roles: { 2: "Sleepy end device", 3: "End device", 4: "End device (can become router)", 5: "Router", 6: "Router (leader)" },
+    parent: "Parent", children: "Children", neighbours: "Neighbours", address: "Address",
+    reboots: "Restarts (total)", bootReason: "Last restart", detached: "Dropped off the network", attach: "Attach attempts", parentChanges: "Parent changes",
+    sinceRestart: "Counters since the device's last restart. Restarts also count power cuts (e.g. a bulb on a wall switch).",
+    bootReasons: ["unknown", "power on", "brown-out", "software watchdog", "hardware watchdog", "firmware update", "software reset"],
+    level: "Level", type: "Type",
+    msgsTotal: "Messages", msgsMin: "Last minute", msgsHour: "Last hour", lastMsg: "Last message", toHa: "to HA", fromHa: "from HA", none: "none yet",
+    ago: s => s < 60 ? `${s} s ago` : s < 3600 ? `${Math.round(s / 60)} min ago` : s < 86400 ? `${Math.round(s / 3600)} h ago` : `${Math.round(s / 86400)} d ago`,
+    openDevice: "Open device in Home Assistant",
+    warnAttach: n => `${n} attach attempts since restart – the connection is unstable`,
+    warnDetached: n => `Dropped off the network ${n} times since restart`,
+    warnBattery: p => `Battery low (${p} %)`,
+    stale: "Thread data as last reported by the device, may be outdated.",
   },
   de: {
     reload: "↻ Neu laden", showList: "☰ Liste anzeigen", hideList: "☰ Liste ausblenden", pause: "⏸ Live pausieren", resume: "▶ Live starten",
@@ -96,6 +127,22 @@ const TEXT = {
     noMatter: "Die Matter-Integration ist in diesem Home Assistant nicht eingerichtet.",
     noDevices: "Keine Matter-Geräte im Thread-Netz gefunden.",
     demo: "DEMO",
+    tapHint: "Gerät antippen für Details",
+    secDevice: "Gerät", secThread: "Thread", secStability: "Stabilität", secBattery: "Batterie", secValues: "Aktuelle Werte", secLive: "Live (seit Seitenaufruf)",
+    manufacturer: "Hersteller", model: "Modell", firmware: "Firmware", hardware: "Hardware", area: "Bereich", role: "Rolle",
+    roles: { 2: "Batteriegerät (schläft)", 3: "Endgerät", 4: "Endgerät (kann Router werden)", 5: "Router", 6: "Router (Leader)" },
+    parent: "Parent", children: "Kinder", neighbours: "Nachbarn", address: "Adresse",
+    reboots: "Neustarts (gesamt)", bootReason: "Letzter Neustart", detached: "Netz verloren", attach: "Verbindungsversuche", parentChanges: "Parent-Wechsel",
+    sinceRestart: "Zähler seit dem letzten Neustart des Geräts. Neustarts zählen auch Stromunterbrüche (z. B. Lampe am Wandschalter).",
+    bootReasons: ["unbekannt", "Einschalten", "Unterspannung", "Software-Watchdog", "Hardware-Watchdog", "Firmware-Update", "Software-Neustart"],
+    level: "Ladestand", type: "Typ",
+    msgsTotal: "Nachrichten", msgsMin: "letzte Minute", msgsHour: "letzte Stunde", lastMsg: "Letzte Nachricht", toHa: "an HA", fromHa: "von HA", none: "noch keine",
+    ago: s => s < 60 ? `vor ${s} s` : s < 3600 ? `vor ${Math.round(s / 60)} min` : s < 86400 ? `vor ${Math.round(s / 3600)} h` : `vor ${Math.round(s / 86400)} d`,
+    openDevice: "Gerät in Home Assistant öffnen",
+    warnAttach: n => `${n} Verbindungsversuche seit Neustart – Verbindung instabil`,
+    warnDetached: n => `${n}× Netz verloren seit Neustart`,
+    warnBattery: p => `Batterie schwach (${p} %)`,
+    stale: "Thread-Daten: letzter Stand, den das Gerät gemeldet hat – kann veraltet sein.",
   },
 };
 // German names for common English entity names (only used when the dashboard language is German)
@@ -223,10 +270,16 @@ async function loadHa() {
   catch (e) { throw Object.assign(new Error(T.notAdmin), { fatal: true }); }
   if (!entries.length) throw Object.assign(new Error(T.noMatter), { fatal: true });
   const entry = entries[0].entry_id;
-  const [devReg, entReg] = await Promise.all([hass.callWS({ type: "config/device_registry/list" }), hass.callWS({ type: "config/entity_registry/list" })]);
+  const [devReg, entReg, areaReg] = await Promise.all([hass.callWS({ type: "config/device_registry/list" }), hass.callWS({ type: "config/entity_registry/list" }),
+                                                      hass.callWS({ type: "config/area_registry/list" }).catch(() => [])]);
+  const areaName = Object.fromEntries(areaReg.map(x => [x.area_id, x.name]));
   const devs = devReg.filter(d => d.config_entries.includes(entry));
   const entsByDev = {};
-  for (const e of entReg) if (e.device_id) (entsByDev[e.device_id] = entsByDev[e.device_id] || []).push(e.entity_id);
+  const mainEnts = {};   // entities a user would look at (no diagnostic/config entities, not hidden or disabled)
+  for (const e of entReg) if (e.device_id) {
+    (entsByDev[e.device_id] = entsByDev[e.device_id] || []).push(e.entity_id);
+    if (!e.entity_category && !e.hidden_by && !e.disabled_by) (mainEnts[e.device_id] = mainEnts[e.device_id] || []).push(e.entity_id);
+  }
   const st = document.getElementById("status");
   const nodes = [];
   let done = 0;
@@ -240,7 +293,11 @@ async function loadHa() {
       const type = role >= 5 ? "routing_end_device" : role >= 3 ? "end_device" : "sleepy_end_device";
       const ents = (entsByDev[d.id] || []).map(id => ({ domain: id.split(".")[0], dc: ((hass.states[id] || {}).attributes || {}).device_class }));
       nodes.push({ id: mac, name: d.name_by_user || d.name, icon: iconFor(ents), type, available: node.available,
-                   neigh: a["0/53/7"] || [], routes: a["0/53/8"] || [], role, devId: d.id, entities: entsByDev[d.id] || [] });
+                   neigh: a["0/53/7"] || [], routes: a["0/53/8"] || [], role, devId: d.id, entities: entsByDev[d.id] || [],
+                   mainEntities: mainEnts[d.id] || [], area: areaName[d.area_id] || "",
+                   info: { vendor: a["0/40/1"] || d.manufacturer, product: a["0/40/3"] || d.model, sw: a["0/40/10"] || d.sw_version, hw: a["0/40/8"] || d.hw_version,
+                           reboots: a["0/51/1"], bootReason: a["0/51/4"], detached: a["0/53/14"], attach: a["0/53/18"], parentChanges: a["0/53/21"],
+                           batType: Object.entries(a).filter(([k]) => /^\d+\/47\/19$/.test(k)).map(([, v]) => v).find(Boolean) || "" } });
     } catch (e) { if (e.fatal) throw e; console.warn("Thread Pulse:", d.name, e); }
     st.textContent = `${T.loading} ${++done}/${devs.length}`;
   }));
@@ -251,7 +308,7 @@ async function loadHa() {
 }
 
 // ---------- graph ----------
-let brExt = null, devToNode = {}, entToNode = {}, nodeName = {}, onMap = new Set(), ridToId = {}, routeOf = {}, parentRid = {}, ownRid = {};
+let nodeById = {}, linksOf = {}, battOf = {}, brExt = null, devToNode = {}, entToNode = {}, nodeName = {}, onMap = new Set(), ridToId = {}, routeOf = {}, parentRid = {}, ownRid = {};
 
 function render(model) {
   const { nodes } = model;
@@ -319,7 +376,20 @@ function render(model) {
   network = new vis.Network(document.getElementById("net"), data, opts);
   network.once("stabilizationIterationsDone", () => network.fit({ animation: false }));
   network.once("stabilized", () => network.fit({ animation: { duration: 300 } }));
-  network.on("afterDrawing", drawPackets);
+  network.on("afterDrawing", ctx => { drawBadges(ctx); drawPackets(ctx); });
+  network.on("click", p => { if (p.nodes.length && nodeById[p.nodes[0]]) openPanel(p.nodes[0]); else closePanel(); });
+  network.on("hoverNode", () => { document.getElementById("net").style.cursor = "pointer"; });
+  network.on("blurNode", () => { document.getElementById("net").style.cursor = ""; });
+  nodeById = byId;
+  linksOf = {};
+  const nm = id => (byId[id] || {}).name || (id === brExt ? T.brLabel : "…" + id.slice(-4));
+  for (const e of Object.values(edges)) {
+    if (!ids.has(e.b)) continue;
+    const r = avg(e);
+    (linksOf[e.a] = linksOf[e.a] || []).push({ id: e.b, name: nm(e.b), rssi: r, kind: e.parent ? "parent" : "neighbour" });
+    (linksOf[e.b] = linksOf[e.b] || []).push({ id: e.a, name: nm(e.a), rssi: r, kind: e.parent ? "child" : "neighbour" });
+  }
+  refreshBattery(model.hass);
   onMap = ids;
   buildRouting(nodes);
   devToNode = Object.fromEntries(nodes.filter(n => n.devId).map(n => [n.devId, n.id]));
@@ -344,7 +414,7 @@ function render(model) {
   h += `<br><span style="color:var(--muted);font-size:12px">${T.foot(nodes.length)}</span>`;
   document.getElementById("info").innerHTML = h;
   const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
-  document.getElementById("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length);
+  document.getElementById("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + " · " + T.tapHint;
 }
 
 // ---------- live data flow ----------
@@ -380,11 +450,17 @@ function pathToBr(nodeId) {
   const p = ids.filter((id, i) => id && onMap.has(id) && id !== ids[i - 1]);
   return p.length > 1 ? p : null;
 }
+const counts = {};   // per device: timestamps of messages since the page was opened
 function launch(nodeId, down, html) {
-  if (!liveOn || !network) return;
   const now = performance.now(), key = nodeId + down;
   if (lastPkt[key] && now - lastPkt[key] < 400) return;        // one radio message often updates several entities
   lastPkt[key] = now;
+  const c = counts[nodeId] = counts[nodeId] || { up: [], down: [], last: null };
+  (down ? c.down : c.up).push(Date.now()); c.last = { t: Date.now(), down };
+  const cut = Date.now() - 3600000; c.up = c.up.filter(t => t > cut); c.down = c.down.filter(t => t > cut);
+  c.total = (c.total || 0) + 1;
+  if (panelNode === nodeId) renderPanel();
+  if (!liveOn || !network) return;
   let path = pathToBr(nodeId); if (!path) return;
   if (down) path = path.slice().reverse();
   packets.push({ path, t0: now, color: down ? COLORS.down : COLORS.up, origin: down ? path[path.length - 1] : nodeId });
@@ -398,6 +474,118 @@ function tick() {
   if (network) network.redraw();
   if (packets.length) requestAnimationFrame(tick); else animating = false;
 }
+// ---------- badges and detail panel ----------
+let panelNode = null;
+function freshHass() { try { return parent.document.querySelector("home-assistant").hass; } catch (e) { return null; } }
+function refreshBattery(hass) {
+  battOf = {};
+  for (const n of Object.values(nodeById)) {
+    if (n.demoBattery !== undefined) { battOf[n.id] = n.demoBattery; continue; }
+    if (!hass) continue;
+    for (const id of n.entities || []) {
+      const st = hass.states[id];
+      if (st && st.attributes.device_class === "battery" && st.attributes.unit_of_measurement === "%" && !isNaN(parseFloat(st.state))) { battOf[n.id] = Math.round(parseFloat(st.state)); break; }
+    }
+  }
+}
+function warningsOf(n) {
+  const w = [], i = n.info || {};
+  if (i.attach >= 5) w.push(T.warnAttach(i.attach));            // thresholds from real networks: normal is 0–2 attempts, 1–2 drop-offs
+  if (i.detached >= 3) w.push(T.warnDetached(i.detached));
+  if (battOf[n.id] !== undefined && battOf[n.id] < 20) w.push(T.warnBattery(battOf[n.id]));
+  return w;
+}
+function pill(ctx, x, y, text, bg) {
+  ctx.font = "600 10px -apple-system, Segoe UI, Roboto, sans-serif";
+  const w = ctx.measureText(text).width + 8;
+  ctx.fillStyle = bg; ctx.strokeStyle = "white"; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.roundRect(x, y - 7, w, 14, 7); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = "white"; ctx.textBaseline = "middle"; ctx.fillText(text, x + 4, y + 0.5);
+}
+function drawBadges(ctx) {
+  const pos = network.getPositions();
+  for (const n of Object.values(nodeById)) {
+    const p = pos[n.id]; if (!p) continue;
+    const r = n.type === "routing_end_device" ? 20 : 14;
+    ctx.save();
+    if (battOf[n.id] !== undefined) {
+      const b = battOf[n.id];
+      pill(ctx, p.x + r * 0.55, p.y + r * 0.75, b + "%", b < 20 ? "#e53935" : b < 40 ? "#fb8c00" : "#607d8b");
+    }
+    if (warningsOf(n).length) {
+      ctx.fillStyle = "#fb8c00"; ctx.strokeStyle = "white"; ctx.lineWidth = 1.5;
+      const x = p.x + r * 0.75, y = p.y - r * 0.95;
+      ctx.beginPath(); ctx.moveTo(x, y - 8); ctx.lineTo(x + 8, y + 6); ctx.lineTo(x - 8, y + 6); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "white"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("!", x, y + 1.5);
+    }
+    ctx.restore();
+  }
+}
+function openPanel(id) { panelNode = id; renderPanel(); document.getElementById("panel").hidden = false; }
+function closePanel() { panelNode = null; document.getElementById("panel").hidden = true; if (network) network.unselectAll(); }
+function row(k, v) { return v === undefined || v === null || v === "" ? "" : `<dt>${esc(k)}</dt><dd>${v}</dd>`; }
+function rssiTxt(r) { const [, cls, txt] = QUAL(r); return `<span class="${cls}">${r} dBm · ${txt}</span>`; }
+function renderPanel() {
+  const n = nodeById[panelNode]; if (!n) return closePanel();
+  const i = n.info || {}, hass = DEMO ? null : freshHass();
+  if (hass) refreshBattery(hass);
+  const color = !n.available ? COLORS.off : n.type === "routing_end_device" ? COLORS.router : n.type === "end_device" ? COLORS.end : COLORS.sleepy;
+  let h = `<div class="hd"><img src="${iconImg(n.icon, color, 80)}" alt=""><div><div class="t">${esc(n.name)}</div>` +
+          `<div class="s">${esc(T.roles[n.role] || T.types[n.type] || "")}${n.area ? " · " + esc(n.area) : ""}${n.available ? "" : esc(T.unreachable)}</div></div>` +
+          `<button class="x" title="×" onclick="closePanel()">×</button></div>`;
+  for (const w of warningsOf(n)) h += `<div class="warn">⚠ ${esc(w)}</div>`;
+  // live
+  const c = counts[n.id], now = Date.now();
+  h += `<h4>${T.secLive}</h4><dl>`;
+  if (c) {
+    const inWin = (arr, ms) => arr.filter(t => now - t < ms).length;
+    h += row(T.msgsTotal, `${c.total}`) +
+         row(T.msgsMin, `${inWin(c.up, 60000)} ${T.toHa} · ${inWin(c.down, 60000)} ${T.fromHa}`) +
+         row(T.msgsHour, `${inWin(c.up, 3600000)} ${T.toHa} · ${inWin(c.down, 3600000)} ${T.fromHa}`) +
+         row(T.lastMsg, `${T.ago(Math.round((now - c.last.t) / 1000))} (${c.last.down ? T.fromHa : T.toHa})`);
+  } else h += row(T.msgsTotal, T.none);
+  h += `</dl>`;
+  // current values
+  if (hass && (n.mainEntities || []).length) {
+    let v = "";
+    for (const id of n.mainEntities.slice(0, 10)) {
+      const st = hass.states[id]; if (!st) continue;
+      const name = deName((st.attributes.friendly_name || id).replace(n.name, "").trim()) || T.state;
+      v += row(name, `${esc(fmtState(st))} <span style="color:var(--muted)">· ${T.ago(Math.max(0, Math.round((now - new Date(st.last_changed)) / 1000)))}</span>`);
+    }
+    if (v) h += `<h4>${T.secValues}</h4><dl>${v}</dl>`;
+  }
+  // battery
+  if (battOf[n.id] !== undefined || i.batType) {
+    const b = battOf[n.id];
+    h += `<h4>${T.secBattery}</h4><dl>` + row(T.level, b !== undefined ? `<span class="${b < 20 ? "r" : b < 40 ? "o" : "g"}">${b} %</span>` : "") + row(T.type, esc(i.batType)) + `</dl>`;
+  }
+  // thread
+  const links = (linksOf[n.id] || []).slice().sort((p, q) => q.rssi - p.rssi);
+  const par = links.filter(l => l.kind === "parent"), kids = links.filter(l => l.kind === "child"), nb = links.filter(l => l.kind === "neighbour");
+  h += `<h4>${T.secThread}</h4><dl>` + row(T.role, esc(T.roles[n.role] || T.types[n.type] || ""));
+  for (const l of par) h += row(T.parent, `${esc(l.name)} · ${rssiTxt(l.rssi)}`);
+  if (nb.length) h += row(`${T.neighbours} (${nb.length})`, nb.map(l => `${esc(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
+  if (kids.length) h += row(`${T.children} (${kids.length})`, kids.map(l => `${esc(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
+  h += row(T.address, `<span style="font-family:monospace">${esc(n.id)}</span>`) + `</dl><div class="note">${T.stale}</div>`;
+  // stability
+  if ([i.reboots, i.detached, i.attach, i.parentChanges].some(x => x !== undefined && x !== null)) {
+    h += `<h4>${T.secStability}</h4><dl>` + row(T.reboots, i.reboots) + row(T.bootReason, i.bootReason !== undefined && i.bootReason !== null ? esc(T.bootReasons[i.bootReason] || i.bootReason) : "") +
+         row(T.detached, i.detached) + row(T.attach, i.attach) + row(T.parentChanges, i.parentChanges) + `</dl><div class="note">${T.sinceRestart}</div>`;
+  }
+  // device
+  h += `<h4>${T.secDevice}</h4><dl>` + row(T.manufacturer, esc(i.vendor || "")) + row(T.model, esc(i.product || "")) +
+       row(T.firmware, esc(i.sw || "")) + row(T.hardware, esc(i.hw || "")) + row(T.area, esc(n.area || "")) + `</dl>`;
+  if (n.devId && !DEMO) h += `<button class="btn" onclick="openDevice('${esc(n.devId)}')">${T.openDevice} ↗</button>`;
+  document.getElementById("panel").innerHTML = h;
+}
+function openDevice(devId) {
+  try { parent.history.pushState(null, "", "/config/devices/device/" + devId); parent.dispatchEvent(new CustomEvent("location-changed")); }
+  catch (e) { window.open("/config/devices/device/" + devId, "_top"); }
+}
+setInterval(() => { if (panelNode) renderPanel(); }, 5000);
+document.addEventListener("keydown", e => { if (e.key === "Escape") closePanel(); });
+
 function drawPackets(ctx) {
   if (!packets.length) return;
   const now = performance.now(), pos = network.getPositions();
@@ -484,6 +672,12 @@ function demoModel() {
     s.neigh = [{ "0": dec(p.id), "6": rs }]; s.routes = [{ "0": dec(p.id), "2": rid[p.id], "3": 0, "4": 0, "9": true }];
     p.neigh.push({ "0": dec(s.id), "6": rs, "11": false, "13": true }); });
   sleepy[3].available = false;
+  const all2 = [...routers, ...ends, ...sleepy];
+  all2.forEach((n, k) => { n.area = de ? ["Wohnzimmer", "Küche", "Flur", "Büro", "Schlafzimmer", "Bad"][k % 6] : ["Living room", "Kitchen", "Hallway", "Office", "Bedroom", "Bathroom"][k % 6];
+    n.info = { vendor: "Demo Inc.", product: n.name, sw: "1." + (k % 4) + ".2", hw: "2.0", reboots: 2 + k % 5, bootReason: 1, detached: 1, attach: 1, parentChanges: 0,
+               batType: n.type === "sleepy_end_device" ? (k % 2 ? "CR2032" : "AAA") : "" };
+    if (n.type === "sleepy_end_device") n.demoBattery = [88, 64, 100, 15, 42, 97][k % 6]; });
+  sleepy[1].info.attach = 9; sleepy[1].info.detached = 3;
   return { nodes: [...routers, ...ends, ...sleepy], brExt: br.id };
 }
 function demoTraffic(model) {
