@@ -28,6 +28,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - **Change log:** checks the network every 5 minutes and lists what changed (new parent, device offline / back, role, links), the device flashes on the map
 - **Room view:** arrange the devices by Home Assistant area, with a coloured area per room – shows at a glance which links cross rooms
 - **Double-click** on empty space to center and fit the whole mesh, on a device to zoom to it
+- **Ambient mode** for wall tablets: only the pulsing mesh, dark, with a slow automatic zoom
 - **Search:** find a device by name or area; matches are highlighted and zoomed to, Enter opens the details
 - **Response time:** how long a device takes to confirm a command from Home Assistant – measured while the page is open
 - **Live counter per device:** messages to and from Home Assistant since the page was opened (last minute, last hour, last message)
@@ -65,6 +66,8 @@ HACS shows updates like for any other card. HACS installs from the latest *relea
 |---|---|---|
 | `height` | fills the available space (at least 450 px) | Any CSS height, e.g. `600px`, or `calc(100vh - 120px)` for a full-screen panel view |
 | `language` | Home Assistant language | `en` or `de` |
+| `ambient` | `false` | Ambient mode for wall tablets: only the mesh, dark, slow automatic zoom |
+| `ambient_motion` | `true` | In ambient mode: slow automatic zoom on (`true`) or off (`false`) |
 | `demo` | `false` | Show invented devices instead of your network |
 
 ```yaml
