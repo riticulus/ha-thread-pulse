@@ -5,8 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-### Fixed
-- Switching the room view off left the mesh off-center and too small: the devices now glide back to their positions from before the room view and the map is fitted afterwards; if the room view was already on when the page was loaded, the layout is calculated completely before fitting ([#22](https://github.com/riticulus/ha-thread-pulse/issues/22))
+## [1.3.0] – 2026-10-10
 
 ### Added
 - Change log: the network is checked every 5 minutes (map positions are kept) and changes are listed with time stamps – devices new / gone, reachable / not reachable (live), new parent, signal to the parent changing quality, role changes, usable router links appearing / lost; the affected device flashes on the map; the list is kept in the browser ([#7](https://github.com/riticulus/ha-thread-pulse/issues/7))
@@ -16,6 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 - Releases no longer carry a zip attachment (HACS would download the attachment instead of the card); manual installation uses *Source code (zip)* of the release
+
+### Fixed
+- Switching the room view off left the mesh off-center and too small: the devices now glide back to their positions from before the room view and the map is fitted afterwards; if the room view was already on when the page was loaded, the layout is calculated completely before fitting ([#22](https://github.com/riticulus/ha-thread-pulse/issues/22))
 
 ## [1.2.0] – 2026-10-10
 
@@ -54,7 +56,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Demo mode (`?demo`) that works without Home Assistant
 - Readable (unminified) vis-network build
 
-[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.0.0...v1.2.0
 [1.0.0]: https://github.com/riticulus/ha-thread-pulse/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/riticulus/ha-thread-pulse/releases/tag/v0.1.0
