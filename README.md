@@ -69,7 +69,7 @@ In a *sections* view the card can be resized like other cards; in a *panel* view
 
 ### B) Dashboard card, manual installation
 
-1. Copy `dist/ha-thread-pulse.js` and `dist/thread-pulse-vis-network.js` into `/config/www/`.
+1. From the [latest release](https://github.com/riticulus/ha-thread-pulse/releases/latest) download **Source code (zip)**, unpack it and copy `dist/ha-thread-pulse.js` and `dist/thread-pulse-vis-network.js` into `/config/www/`.
 2. *Settings → Dashboards → ⋮ → Resources → Add resource*: URL `/local/ha-thread-pulse.js`, type **JavaScript module**.
 3. Add the card as in A). After an update, replace both files and reload the browser.
 
@@ -77,7 +77,7 @@ The graph library (`thread-pulse-vis-network.js`, ~1.6 MB) is only loaded when a
 
 ### C) Standalone page in an iframe
 
-1. Download the latest release from the [Releases page](https://github.com/riticulus/ha-thread-pulse/releases) (`thread-pulse-x.y.z.zip`) and unpack it. It contains `thread-pulse.html` and `thread-pulse-vis-network.js`.
+1. Open the [latest release](https://github.com/riticulus/ha-thread-pulse/releases/latest), download **Source code (zip)** and unpack it. You need `thread-pulse.html` and `thread-pulse-vis-network.js` from the top folder.
 2. Copy both files into the `www` folder of your Home Assistant configuration (`/config/www/`, for example with the *File editor* or *Samba share* add-on). Create the folder if it does not exist – if you have to create it, restart Home Assistant once.
 3. Add a card to a dashboard. Easiest is a full-page view (*panel* view) with an iframe card:
 
