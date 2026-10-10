@@ -21,6 +21,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - Live animation of messages to and from Home Assistant, with a ticker
 - **Tap a device for details:** manufacturer, model, firmware, area, Thread role, parent and neighbours with signal strength, battery level and type, current values with “last changed”, stability counters (restarts, drop-offs, attach attempts, parent changes) and a button to open the device in Home Assistant
 - **Badges on the map:** battery level on battery devices, ⚠ on devices that look unstable or have a low battery
+- **Traffic heat:** links glow the more messages travelled over them in the last 10 minutes, so the busy routes of the mesh stand out (estimate based on the computed paths); routers show how many messages they forwarded for others
 - **Live counter per device:** messages to and from Home Assistant since the page was opened (last minute, last hour, last message)
 - Optional table: battery devices and their parents, weakest first, plus weak router-to-router links
 - Follows the Home Assistant theme (light/dark); English and German (from your Home Assistant language)

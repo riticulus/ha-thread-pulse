@@ -20,6 +20,7 @@
   .lg { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
   .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
   .ln { width: 18px; height: 3px; display: inline-block; border-radius: 2px; }
+  .heatln { height: 7px; opacity: .6; filter: blur(.6px); }
   #stage { flex: 1; min-height: 380px; position: relative; }
   #net { position: absolute; inset: 0; }
   #live { position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px); font-size: 12px; color: var(--muted);
@@ -57,6 +58,7 @@
     <button id="reload"></button>
     <button id="toggle"></button>
     <button id="livebtn"></button>
+    <button id="heatbtn"></button>
     <button id="legbtn"></button>
     <span id="legend"></span>
     <span id="status"></span>
@@ -71,7 +73,8 @@ const VERSION = "1.0.0";
 const TEXT = {
   en: {
     reload: "↻ Reload", showList: "☰ Show list", hideList: "☰ Hide list", pause: "⏸ Pause live", resume: "▶ Resume live",
-    showLegend: "ⓘ Legend", hideLegend: "ⓘ Hide legend",
+    showLegend: "ⓘ Legend", hideLegend: "ⓘ Hide legend", heatOn: "≋ Traffic", heatOff: "≋ Traffic off", lgHeat: "Traffic (10 min)",
+    heatTitle: n => `${n} message${n === 1 ? "" : "s"} in the last 10 min`, forwarded: "Forwarded for others", forwardedVal: (m, h) => `${m} last 10 min · ${h} last hour`,
     lgBr: "Border router", lgRouter: "Router (forwards)", lgEnd: "Mains end device", lgSleepy: "Battery device",
     good: "good", medium: "medium", weak: "weak", lgUp: "Message → HA", lgDown: "Command HA →",
     loading: "loading …", asOf: (t, n) => `as of ${t} · ${n} devices`, error: "Error",
@@ -109,7 +112,8 @@ const TEXT = {
   },
   de: {
     reload: "↻ Neu laden", showList: "☰ Liste anzeigen", hideList: "☰ Liste ausblenden", pause: "⏸ Live pausieren", resume: "▶ Live starten",
-    showLegend: "ⓘ Legende", hideLegend: "ⓘ Legende ausblenden",
+    showLegend: "ⓘ Legende", hideLegend: "ⓘ Legende ausblenden", heatOn: "≋ Verkehr", heatOff: "≋ Verkehr aus", lgHeat: "Verkehr (10 min)",
+    heatTitle: n => `${n} Nachricht${n === 1 ? "" : "en"} in den letzten 10 min`, forwarded: "Für andere weitergeleitet", forwardedVal: (m, h) => `${m} letzte 10 min · ${h} letzte Stunde`,
     lgBr: "Border Router", lgRouter: "Router (leitet weiter)", lgEnd: "Endgerät am Strom", lgSleepy: "Batteriegerät",
     good: "gut", medium: "mittel", weak: "schwach", lgUp: "Meldung → HA", lgDown: "Befehl HA →",
     loading: "lade …", asOf: (t, n) => `Stand ${t} · ${n} Geräte`, error: "Fehler",
@@ -137,7 +141,7 @@ const TEXT = {
     sinceRestart: "Zähler seit dem letzten Neustart des Geräts. Neustarts zählen auch Stromunterbrüche (z. B. Lampe am Wandschalter).",
     bootReasons: ["unbekannt", "Einschalten", "Unterspannung", "Software-Watchdog", "Hardware-Watchdog", "Firmware-Update", "Software-Neustart"],
     level: "Ladestand", type: "Typ",
-    msgsTotal: "Nachrichten", msgsMin: "letzte Minute", msgsHour: "letzte Stunde", lastMsg: "Letzte Nachricht", toHa: "an HA", fromHa: "von HA", none: "noch keine",
+    msgsTotal: "Nachrichten", msgsMin: "Letzte Minute", msgsHour: "Letzte Stunde", lastMsg: "Letzte Nachricht", toHa: "an HA", fromHa: "von HA", none: "noch keine",
     ago: s => s < 60 ? `vor ${s} s` : s < 3600 ? `vor ${Math.round(s / 60)} min` : s < 86400 ? `vor ${Math.round(s / 3600)} h` : `vor ${Math.round(s / 86400)} d`,
     openDevice: "Gerät in Home Assistant öffnen",
     warnAttach: n => `${n} Verbindungsversuche seit Neustart – Verbindung instabil`,
@@ -157,7 +161,7 @@ let lang = (params.get("lang") || navigator.language || "en").slice(0, 2);
 let T = TEXT[lang] || TEXT.en;
 
 // ---------- helpers ----------
-const COLORS = { br: "#7b1fa2", router: "#1e88e5", end: "#90caf9", sleepy: "#43a047", off: "#9e9e9e", up: "#00bcd4", down: "#e91e63" };
+const COLORS = { heat: "#ffb300", br: "#7b1fa2", router: "#1e88e5", end: "#90caf9", sleepy: "#43a047", off: "#9e9e9e", up: "#00bcd4", down: "#e91e63" };
 const QUAL = rssi => rssi >= -65 ? ["#43a047", "g", T.good] : rssi >= -80 ? ["#fb8c00", "o", T.medium] : ["#e53935", "r", T.weak];
 const hex16 = s => BigInt(s).toString(16).padStart(16, "0");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -252,10 +256,11 @@ function setLanguage(l) {
   document.documentElement.lang = lang;
   document.getElementById("reload").textContent = T.reload;
   document.getElementById("livebtn").textContent = liveOn ? T.pause : T.resume;
+  document.getElementById("heatbtn").textContent = heatOn ? T.heatOff : T.heatOn;
   const lg = (cls, color, text) => `<span class="lg"><span class="${cls}" style="background:${color}"></span>${text}</span>`;
   document.getElementById("legend").innerHTML =
     lg("dot", COLORS.br, T.lgBr) + lg("dot", COLORS.router, T.lgRouter) + lg("dot", COLORS.end, T.lgEnd) + lg("dot", COLORS.sleepy, T.lgSleepy) +
-    lg("ln", "#43a047", T.good) + lg("ln", "#fb8c00", T.medium) + lg("ln", "#e53935", T.weak) + lg("dot", COLORS.up, T.lgUp) + lg("dot", COLORS.down, T.lgDown);
+    lg("ln", "#43a047", T.good) + lg("ln", "#fb8c00", T.medium) + lg("ln", "#e53935", T.weak) + lg("dot", COLORS.up, T.lgUp) + lg("dot", COLORS.down, T.lgDown) + lg("ln heatln", COLORS.heat, T.lgHeat);
   setList(!document.getElementById("info").classList.contains("hidden"), false);
   setLegend(!document.getElementById("legend").classList.contains("hidden"), false);
 }
@@ -363,9 +368,10 @@ function render(model) {
   }
   const ids = new Set(visNodes.map(v => v.id));
   const avg = e => Math.round(e.rssi.reduce((s, v) => s + v, 0) / e.rssi.length);
-  const visEdges = Object.values(edges).filter(e => ids.has(e.b)).map(e => {
+  const seenEdge = new Set();
+  const visEdges = Object.values(edges).filter(e => ids.has(e.b)).filter(e => { const k = linkKey(e.a, e.b); if (seenEdge.has(k)) return false; seenEdge.add(k); return true; }).map(e => {
     const r = avg(e), [c] = QUAL(r);
-    return { from: e.a, to: e.b, color: { color: c, opacity: e.parent ? 0.95 : 0.55 }, width: e.parent ? 3 : 1.5,
+    return { id: linkKey(e.a, e.b), rssiTitle: `${r} dBm`, from: e.a, to: e.b, color: { color: c, opacity: e.parent ? 0.95 : 0.55 }, width: e.parent ? 3 : 1.5,
              dashes: !!e.parent, title: `${r} dBm`, length: e.parent ? 90 : 180 };
   });
   const fg = getComputedStyle(document.documentElement).getPropertyValue("--fg").trim() || "#1f2733";
@@ -377,6 +383,7 @@ function render(model) {
   network = new vis.Network(document.getElementById("net"), data, opts);
   network.once("stabilizationIterationsDone", () => network.fit({ animation: false }));
   network.once("stabilized", () => network.fit({ animation: { duration: 300 } }));
+  network.on("beforeDrawing", drawHeat);
   network.on("afterDrawing", ctx => { drawBadges(ctx); drawPackets(ctx); });
   network.on("click", p => { if (p.nodes.length && nodeById[p.nodes[0]]) openPanel(p.nodes[0]); else closePanel(); });
   network.on("hoverNode", () => { document.getElementById("net").style.cursor = "pointer"; });
@@ -452,6 +459,43 @@ function pathToBr(nodeId) {
   return p.length > 1 ? p : null;
 }
 const counts = {};   // per device: timestamps of messages since the page was opened
+// ---------- traffic heat (issue #3) ----------
+// Every message counts on each link of its (computed) path. Shown as a glow under the links, window HEAT_MS.
+// This is an estimate of where traffic flows, based on the most likely paths – not measured radio traffic.
+const HEAT_MS = 10 * 60000;
+let heatOn = true, linkHits = {}, fwdHits = {};
+const linkKey = (a, b) => a < b ? a + "|" + b : b + "|" + a;
+function recordTraffic(path) {
+  const t = Date.now();
+  for (let i = 0; i < path.length - 1; i++) (linkHits[linkKey(path[i], path[i + 1])] = linkHits[linkKey(path[i], path[i + 1])] || []).push(t);
+  for (const id of path.slice(1, -1)) (fwdHits[id] = fwdHits[id] || []).push(t);   // routers in the middle forwarded the message
+  if (!animating && network) network.redraw();
+}
+function pruneHeat() {
+  const cut = Date.now() - HEAT_MS, cutH = Date.now() - 3600000;
+  for (const k in linkHits) { linkHits[k] = linkHits[k].filter(t => t > cut); if (!linkHits[k].length) delete linkHits[k]; }
+  for (const k in fwdHits) { fwdHits[k] = fwdHits[k].filter(t => t > cutH); if (!fwdHits[k].length) delete fwdHits[k]; }
+}
+function drawHeat(ctx) {
+  if (!heatOn || !network) return;
+  const keys = Object.keys(linkHits); if (!keys.length) return;
+  const pos = network.getPositions(), max = Math.max(...keys.map(k => linkHits[k].length));
+  ctx.save(); ctx.lineCap = "round"; ctx.strokeStyle = COLORS.heat;
+  for (const k of keys) {
+    const [a, b] = k.split("|"), pa = pos[a], pb = pos[b]; if (!pa || !pb) continue;
+    const f = Math.sqrt(linkHits[k].length / max);
+    ctx.globalAlpha = 0.10 + 0.30 * f; ctx.lineWidth = 3 + 11 * f; ctx.shadowColor = COLORS.heat; ctx.shadowBlur = 6 + 10 * f;
+    ctx.beginPath(); ctx.moveTo(pa.x, pa.y); ctx.lineTo(pb.x, pb.y); ctx.stroke();
+  }
+  ctx.restore();
+}
+function updateEdgeTitles() {
+  if (!network) return;
+  const ds = network.body.data.edges, upd = [];
+  ds.forEach(e => { const n = (linkHits[e.id] || []).length; const title = e.rssiTitle + (n ? "\n" + T.heatTitle(n) : ""); if (title !== e.title) upd.push({ id: e.id, title }); });
+  if (upd.length) ds.update(upd);
+}
+setInterval(() => { pruneHeat(); updateEdgeTitles(); if (network && !animating) network.redraw(); }, 5000);
 function launch(nodeId, down, html) {
   const now = performance.now(), key = nodeId + down;
   if (lastPkt[key] && now - lastPkt[key] < 400) return;        // one radio message often updates several entities
@@ -460,10 +504,13 @@ function launch(nodeId, down, html) {
   (down ? c.down : c.up).push(Date.now()); c.last = { t: Date.now(), down };
   const cut = Date.now() - 3600000; c.up = c.up.filter(t => t > cut); c.down = c.down.filter(t => t > cut);
   c.total = (c.total || 0) + 1;
+  let path = network ? pathToBr(nodeId) : null;
+  if (path) {
+    if (down) path = path.slice().reverse();
+    recordTraffic(path);
+  }
   if (panelNode === nodeId) renderPanel();
-  if (!liveOn || !network) return;
-  let path = pathToBr(nodeId); if (!path) return;
-  if (down) path = path.slice().reverse();
+  if (!liveOn || !network || !path) return;
   packets.push({ path, t0: now, color: down ? COLORS.down : COLORS.up, origin: down ? path[path.length - 1] : nodeId });
   recent.unshift({ t: new Date(), html, down }); recent = recent.slice(0, 60);
   showTicker();
@@ -545,6 +592,10 @@ function renderPanel() {
          row(T.msgsHour, `${inWin(c.up, 3600000)} ${T.toHa} · ${inWin(c.down, 3600000)} ${T.fromHa}`) +
          row(T.lastMsg, `${T.ago(Math.round((now - c.last.t) / 1000))} (${c.last.down ? T.fromHa : T.toHa})`);
   } else h += row(T.msgsTotal, T.none);
+  if (n.type === "routing_end_device") {
+    const f = fwdHits[n.id] || [];
+    h += row(T.forwarded, T.forwardedVal(f.filter(t => now - t < HEAT_MS).length, f.length));
+  }
   h += `</dl>`;
   // current values
   if (hass && (n.mainEntities || []).length) {
@@ -735,12 +786,18 @@ async function load() {
 
 theme();
 let startList = false, startLegend = window.innerWidth > 700;
+try { heatOn = localStorage.getItem("threadPulseHeat") !== "0"; } catch (e) {}
 try { startList = localStorage.getItem("threadPulseList") === "1"; const l = localStorage.getItem("threadPulseLegend"); if (l !== null) startLegend = l === "1"; } catch (e) {}
 document.getElementById("info").classList.toggle("hidden", !startList);
 document.getElementById("legend").classList.toggle("hidden", !startLegend);
 setLanguage(lang);
 document.getElementById("reload").onclick = () => load().catch(showErr);
 document.getElementById("toggle").onclick = () => setList(document.getElementById("info").classList.contains("hidden"));
+document.getElementById("heatbtn").onclick = () => {
+  heatOn = !heatOn; document.getElementById("heatbtn").textContent = heatOn ? T.heatOff : T.heatOn;
+  try { localStorage.setItem("threadPulseHeat", heatOn ? "1" : "0"); } catch (e) {}
+  if (network) network.redraw();
+};
 document.getElementById("legbtn").onclick = () => setLegend(document.getElementById("legend").classList.contains("hidden"));
 document.getElementById("livebtn").onclick = () => {
   liveOn = !liveOn; document.getElementById("livebtn").textContent = liveOn ? T.pause : T.resume;
