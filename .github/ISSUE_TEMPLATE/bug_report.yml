@@ -1,0 +1,91 @@
+name: Bug report
+description: Something does not work as described in the user guide
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please check the [Troubleshooting & FAQ](https://github.com/riticulus/ha-thread-pulse/wiki/Troubleshooting-and-FAQ) first – many error messages are explained there.
+        **Do not post your Thread network key or other secrets.** Device names in screenshots can be anonymised.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you see?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the dashboard with Thread Pulse
+        2. Click …
+        3. …
+  - type: input
+    id: tp_version
+    attributes:
+      label: Thread Pulse version
+      description: Shown at the end of the status line above the map, e.g. v1.3.0
+      placeholder: v1.3.0
+    validations:
+      required: true
+  - type: input
+    id: ha_version
+    attributes:
+      label: Home Assistant version
+      description: Settings → About
+      placeholder: "2026.10.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: Installation
+      options:
+        - Dashboard card via HACS
+        - Dashboard card, manual installation
+        - Standalone page in an iframe
+        - Demo mode only
+    validations:
+      required: true
+  - type: dropdown
+    id: border_router
+    attributes:
+      label: Thread border router(s)
+      multiple: true
+      options:
+        - OpenThread Border Router add-on
+        - Apple (Apple TV / HomePod)
+        - Google (Nest)
+        - Amazon (Echo)
+        - Other / not sure
+    validations:
+      required: true
+  - type: input
+    id: devices
+    attributes:
+      label: Number of Thread devices
+      description: Shown in the status line, e.g. "19 devices"
+  - type: input
+    id: client
+    attributes:
+      label: Browser or app
+      placeholder: e.g. Chrome 140 on Windows, Home Assistant Companion app on iPhone
+  - type: textarea
+    id: console
+    attributes:
+      label: Errors in the browser console
+      description: Desktop browser – press F12, open the *Console* tab, reload the page and copy red messages that mention Thread Pulse.
+      render: text
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Optional – drag images here. Use the demo mode or blur device names if you prefer.

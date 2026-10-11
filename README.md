@@ -168,6 +168,15 @@ Thread Pulse focuses on the live view of messages. For a detailed, static analys
 - The network map of the Home Assistant **Matter Server**
 - [Matter Navigator](https://github.com/teh-hippo/ha-matter-navigator)
 
+## Contributing
+
+- **Found a bug?** Open a [bug report](https://github.com/riticulus/ha-thread-pulse/issues/new?template=bug_report.yml) – the form asks for the details that are needed (versions, border router, number of devices, browser).
+- **Have an idea?** Open a [feature request](https://github.com/riticulus/ha-thread-pulse/issues/new?template=feature_request.yml).
+- **Better wording in your language?** Open a [translation correction](https://github.com/riticulus/ha-thread-pulse/issues/new?template=translation.yml) or a pull request against `src/i18n/`.
+- **Pull requests** are welcome; the template lists what to check. How the code is organised: [Development](https://github.com/riticulus/ha-thread-pulse/wiki/Development).
+
+Labels: `bug` (something does not work), `New Feature` (new functionality), `enhancement` (restructuring and maintenance), `documentation`, `translation`.
+
 ## Support
 
 This is a hobby project, provided as is. Issues with a description of your setup (border router, number and type of devices, Home Assistant version) are welcome, but there is no guarantee of a fix.

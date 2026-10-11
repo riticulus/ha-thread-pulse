@@ -1,0 +1,26 @@
+name: Feature request
+description: Suggest a new feature or an improvement
+labels: ["New Feature"]
+body:
+  - type: markdown
+    attributes:
+      value: Please check the [open issues](https://github.com/riticulus/ha-thread-pulse/issues) first – your idea may already be planned.
+  - type: textarea
+    id: idea
+    attributes:
+      label: Idea
+      description: What should Thread Pulse do?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why is it useful?
+      description: Which problem does it solve for you?
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: How could it look or work? Data sources you know of? Optional.
