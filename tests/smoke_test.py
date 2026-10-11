@@ -1,0 +1,105 @@
+"""Smoke test of all features in demo mode (no Home Assistant needed).
+
+    python3 tests/smoke_test.py            # all checks (about 2 minutes)
+    python3 tests/smoke_test.py --quick    # without the change-log check (waits 45 s for a demo change)
+
+Builds nothing – run `python3 build.py` first. Exit code 1 if a check fails or a JavaScript error occurs.
+"""
+import asyncio, json, sys
+from browser import Browser, Results, search_js
+
+PAGE = "dist/thread-pulse.html?demo&lang=en"
+G = "document.getElementById"
+PANEL_TITLE = "document.getElementById('panel').hidden ? null : document.querySelector('#panel .t').textContent"
+PANEL_SECTIONS = "[...document.querySelectorAll('#panel h4')].map(h => h.textContent)"
+CLOSE = "(() => { const x = document.querySelector('#panel [data-act=close]'); if (x) x.click(); const i = document.getElementById('search'); i.value = ''; i.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'})); return true; })()"
+
+
+async def main_page(r, quick):
+    async with Browser(fake_audio=True) as b:
+        await b.open(PAGE)
+        status = await b.js(f"{G}('status').textContent")
+        r.check("demo loads (status line)", status.startswith("DEMO") and "14 devices" in status, status)
+        r.check("map is drawn", await b.js("!!document.querySelector('#net canvas')"))
+        r.check("legend shows Wi-Fi entry (demo has Wi-Fi devices)", await b.js(f"!{G}('lgwifi').hidden"))
+
+        # list and hints
+        await b.js(f"{G}('toggle').click()")
+        r.check("list opens", await b.js(f"!{G}('info').classList.contains('hidden')"))
+        hints = await b.js("document.querySelectorAll('#info table')[0] ? document.querySelectorAll('#info table')[0].rows.length : 0")
+        r.check("hints listed", hints >= 2, f"{hints} hint rows")
+        r.check("list button shows hint count", "hint" in await b.js(f"{G}('toggle').textContent"))
+
+        # search + panel
+        await b.js(search_js("plug", enter=False)); await asyncio.sleep(0.6)
+        r.check("search finds plugs", (await b.js(f"{G}('hits').textContent")).endswith("found"))
+        await b.js(search_js("Front door")); await asyncio.sleep(1.2)
+        r.check("Enter opens the detail panel", await b.js(PANEL_TITLE) == "Front door")
+        sections = await b.js(PANEL_SECTIONS)
+        for s in ("Hints", "Live (since this page was opened)", "Battery", "Thread", "Stability", "Device"):
+            r.check(f"device panel has section '{s}'", s in sections, str(sections))
+        r.check("battery forecast row", await b.js("[...document.querySelectorAll('#panel dt')].some(d => d.textContent === 'Forecast')"))
+        r.check("warning box shown (unstable demo device)", await b.js("!!document.querySelector('#panel .warn')"))
+        await b.js(CLOSE); await asyncio.sleep(0.3)
+        r.check("Esc / × close panel and clear search", await b.js(f"{G}('panel').hidden && {G}('search').value === ''"))
+
+        # Wi-Fi device
+        await b.js(search_js("Air quality")); await asyncio.sleep(1.2)
+        r.check("Wi-Fi device panel opens", await b.js(PANEL_TITLE) == "Air quality monitor")
+        r.check("Wi-Fi panel has Wi-Fi section", "Wi-Fi" in await b.js(PANEL_SECTIONS))
+        await b.js(CLOSE)
+
+        # toolbar toggles
+        for btn, on, off in (("roombtn", "⌂ Rooms off", "⌂ Rooms"), ("heatbtn", "≋ Traffic", "≋ Traffic off"), ("livebtn", "▶ Resume live", "⏸ Pause live"),
+                             ("soundbtn", "🔊 Sound off", "🔇 Sound")):
+            await b.js(f"{G}('{btn}').click()"); await asyncio.sleep(2.2 if btn == "roombtn" else 0.2)
+            first = await b.js(f"{G}('{btn}').textContent")
+            if btn == "soundbtn":
+                await asyncio.sleep(15)        # let some messages arrive with sound on
+                ticks = await b.js("window.__ticks.length")
+                freqs = await b.js("[...new Set(window.__ticks.map(t => t.f))]")
+                r.check("sound plays ticks", ticks > 0, f"{ticks} ticks")
+                r.check("sound ticks use the expected tones", set(freqs) <= {440, 880}, str(freqs))
+                gaps = await b.js("window.__ticks.slice(1).map((t, i) => t.t - window.__ticks[i].t)")
+                r.check("sound rate limit (≥ 150 ms apart)", all(g >= 149 for g in gaps), str(min(gaps) if gaps else None))
+            await b.js(f"{G}('{btn}').click()"); await asyncio.sleep(2.2 if btn == "roombtn" else 0.2)
+            second = await b.js(f"{G}('{btn}').textContent")
+            r.check(f"toolbar button {btn} toggles", (first, second) == (on, off), f"{first!r} / {second!r}")
+        await b.js(f"{G}('livebtn').click(); window.__p = window.__ticks.length; {G}('soundbtn').click()")
+        await asyncio.sleep(6)
+        r.check("no sound while live is paused", await b.js("window.__ticks.length === window.__p"))
+
+        if not quick:
+            await b.js(f"{G}('livebtn').click()")
+            await asyncio.sleep(45)               # the demo invents a change every 40 seconds
+            entries = await b.js("document.querySelectorAll('#changes table tr').length")
+            r.check("change log records a demo change", entries >= 1, f"{entries} entries")
+        r.errors("main page", b.errors)
+
+
+async def other_pages(r):
+    async with Browser() as b:
+        await b.open("dist/thread-pulse.html?demo&ambient&lang=de", wait=7)
+        r.check("ambient mode hides the toolbar", await b.js(f"getComputedStyle({G}('bar')).display") == "none")
+        r.check("ambient mode uses its dark background", await b.js(f"getComputedStyle({G}('wrap')).backgroundColor") == "rgb(5, 7, 10)")
+        r.errors("ambient mode", b.errors)
+    async with Browser() as b:
+        await b.open("dist/thread-pulse.html?demo&nowifi&lang=fr", wait=7)
+        r.check("?nowifi hides the Wi-Fi group", await b.js(f"{G}('lgwifi').hidden"))
+        r.check("French texts", (await b.js(f"{G}('reload').textContent")) == "↻ Recharger")
+        r.errors("nowifi / French", b.errors)
+    async with Browser() as b:
+        await b.open("dist/thread-pulse.html?lang=en", wait=3)
+        err = await b.js("document.getElementById('err') ? document.getElementById('err').textContent : ''")
+        r.check("without Home Assistant an error message is shown", err.startswith("No connection to Home Assistant"), err[:60])
+
+
+async def main():
+    quick = "--quick" in sys.argv
+    r = Results()
+    print("main page (demo):"); await main_page(r, quick)
+    print("other modes:"); await other_pages(r)
+    r.done()
+
+if __name__ == "__main__":
+    asyncio.run(main())

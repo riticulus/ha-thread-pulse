@@ -164,7 +164,7 @@ The code lives in `src/`, one file per topic:
 | `src/ui.js`, `src/start.js` | List, legend, errors, event handling; start-up |
 | `src/standalone.html`, `src/card.js` | Shells for the standalone page and the dashboard card |
 
-`python3 build.py` assembles the files (in a fixed order, no bundler) into `dist/thread-pulse.html` and `dist/ha-thread-pulse.js` – do not edit those by hand. `dist/thread-pulse-vis-network.js` is the graph library (unmodified, the only copy in the repository). The feature files are placed *inside* `createThreadPulse()` and share its state. A GitHub action checks on every pull request that the generated files are up to date and runs the HACS validation. More in the [wiki](https://github.com/riticulus/ha-thread-pulse/wiki/Development).
+`python3 build.py` assembles the files (in a fixed order, no bundler) into `dist/thread-pulse.html` and `dist/ha-thread-pulse.js` – do not edit those by hand. `dist/thread-pulse-vis-network.js` is the graph library (unmodified, the only copy in the repository). The feature files are placed *inside* `createThreadPulse()` and share its state. A GitHub action checks on every pull request that the generated files are up to date and runs the HACS validation. Browser tests (demo mode, headless Chrome) are in [`tests/`](tests/README.md). More in the [wiki](https://github.com/riticulus/ha-thread-pulse/wiki/Development).
 
 ## Related projects
 
