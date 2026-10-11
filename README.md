@@ -142,7 +142,7 @@ Everything runs in your browser. The page uses the session of the logged-in Home
 
 ## Translations
 
-Thread Pulse speaks English, German, French, Italian, Spanish and Dutch. The French, Italian, Spanish and Dutch texts have **not been checked by native speakers** yet. Corrections are very welcome – the texts are in [`src/i18n.js`](src/i18n.js); please open an issue or a pull request.
+Thread Pulse speaks English, German, French, Italian, Spanish and Dutch. The French, Italian, Spanish and Dutch texts have **not been checked by native speakers** yet. Corrections are very welcome – every language has its own file in [`src/i18n/`](src/i18n/) (e.g. `fr.js`); please open an issue or a pull request. `node tests/check-i18n.js` checks that a translation is complete.
 
 ## Development
 
@@ -151,7 +151,7 @@ The code lives in `src/`, one file per topic:
 | File | Content |
 |---|---|
 | `src/version.js` | Version number |
-| `src/i18n.js` | Texts (English, German) |
+| `src/i18n/<lang>.js` | Texts, one file per language (`en`, `de`, `fr`, `it`, `es`, `nl`) |
 | `src/styles.css`, `src/markup.html` | Styles and HTML skeleton |
 | `src/core.js` | Start of `createThreadPulse()` and the state shared by all parts |
 | `src/helpers.js`, `data.js`, `graph.js` | Helpers and Home Assistant connection, loading the data, drawing the map |
