@@ -11,6 +11,7 @@
 - [Hints and warnings](Hints-and-Warnings)
 - [Response time](Response-Time)
 - [Change log](Change-Log)
+- [Offline notification](Offline-Notification)
 - [Room view](Room-View)
 - [Search](Search)
 - [Saving an image](Saving-an-Image)

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 ### Added
+- Automation blueprint *Thread Pulse: device offline notification* (`blueprints/automation/thread-device-offline.yaml`, import button in the README): notifies when a selected Matter device has been unavailable for a delay (default 5 min), optionally when it is back (with the duration) and in the Home Assistant notifications; any notify action, own texts with placeholders. Runs in Home Assistant in the background, unlike the change log ([#42](https://github.com/riticulus/ha-thread-pulse/issues/42))
 - Save the map as an image: button **📷 Image** in the toolbar, *with names* or *anonymised* (devices *Device 1, 2 …* numbered by position on the map, rooms *Room A, B …*, no address suffixes). The PNG shows the map as it is on screen (zoom, links, badges, room areas, traffic, messages) on the page background, with a line for version, date and number of devices; file name `thread-pulse-<date>.png` / `…-anonymised.png`. On phones and tablets the share sheet opens where available ([#40](https://github.com/riticulus/ha-thread-pulse/issues/40))
 
 ### Changed

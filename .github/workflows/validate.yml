@@ -29,6 +29,16 @@ jobs:
         run: git diff --exit-code -- dist/
       - name: Translations complete
         run: node tests/check-i18n.js
+      - name: Blueprints are valid YAML
+        run: |
+          pip install --quiet pyyaml
+          python3 -c "
+          import glob, yaml
+          class L(yaml.SafeLoader): pass
+          L.add_constructor('!input', lambda l, n: l.construct_scalar(n))
+          for f in glob.glob('blueprints/**/*.yaml', recursive=True):
+              d = yaml.load(open(f), L); assert d['blueprint']['domain'] == 'automation' and d['triggers'] and d['actions'], f; print('ok', f)
+          "
       - name: User guide (docs/wiki) links and images
         run: python3 tools/wiki.py check
       - name: Syntax check

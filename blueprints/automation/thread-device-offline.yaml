@@ -1,0 +1,148 @@
+blueprint:
+  name: "Thread Pulse: device offline notification"
+  description: >
+    Sends a notification when a Matter device (e.g. on Thread) has been **unreachable** for a while,
+    and optionally when it is **back**.
+
+    Select **one entity per device** – for example its light, switch or contact sensor. When a Matter device
+    loses its connection, all its entities become *unavailable* at the same time; selecting several entities of
+    the same device would send several notifications.
+
+    Runs in Home Assistant in the background – unlike the change log of the Thread Pulse card, which only sees
+    changes while the card is open. Part of [Thread Pulse](https://github.com/riticulus/ha-thread-pulse).
+  domain: automation
+  source_url: https://github.com/riticulus/ha-thread-pulse/blob/main/blueprints/automation/thread-device-offline.yaml
+  author: Thread Pulse contributors
+  homeassistant:
+    min_version: "2024.6.0"
+  input:
+    devices:
+      name: Devices
+      description: One entity per device to watch (Matter integration).
+      selector:
+        entity:
+          multiple: true
+          filter:
+            - integration: matter
+    delay:
+      name: Delay
+      description: Only notify when the device has been unreachable for this many minutes (short drop-outs are normal, e.g. during a router restart).
+      default: 5
+      selector:
+        number:
+          min: 1
+          max: 240
+          unit_of_measurement: min
+    notify_action:
+      name: Notify action
+      description: >
+        Action that sends the message, e.g. `notify.mobile_app_<your_phone>` for the Home Assistant app
+        (see Developer tools → Actions, search for "notify"). Leave empty to use only the notification in Home Assistant.
+      default: ""
+      selector:
+        text: {}
+    persistent:
+      name: Notification in Home Assistant
+      description: Also show the message in the notifications of Home Assistant (bell icon); it is removed when the device is back.
+      default: true
+      selector:
+        boolean: {}
+    notify_back:
+      name: Notify when back
+      description: Send a second message when the device is reachable again (only after it was unreachable at least for the delay). The notification in Home Assistant is removed either way.
+      default: true
+      selector:
+        boolean: {}
+    title_offline:
+      name: Title (unreachable)
+      description: "Available placeholders: {{ device }}, {{ area }}, {{ minutes }}."
+      default: "Thread: {{ device }} unreachable"
+      selector:
+        text: {}
+    message_offline:
+      name: Message (unreachable)
+      default: "{{ device }}{{ ' (' ~ area ~ ')' if area and area | lower not in device | lower else '' }} has not been reachable for {{ minutes }} minutes."
+      selector:
+        text:
+          multiline: true
+    title_back:
+      name: Title (back)
+      default: "Thread: {{ device }} back"
+      selector:
+        text: {}
+    message_back:
+      name: Message (back)
+      description: "Also available: {{ duration }} – how long the device was unreachable."
+      default: "{{ device }}{{ ' (' ~ area ~ ')' if area and area | lower not in device | lower else '' }} is reachable again after {{ duration }}."
+      selector:
+        text:
+          multiline: true
+
+mode: parallel
+max: 50
+
+triggers:
+  - trigger: state
+    id: offline
+    entity_id: !input devices
+    to: unavailable
+    for:
+      minutes: !input delay
+  - trigger: state
+    id: back
+    entity_id: !input devices
+    from: unavailable
+
+variables:
+  delay: !input delay
+  notify_action: !input notify_action
+  persistent: !input persistent
+  notify_back: !input notify_back
+  device_id_: "{{ device_id(trigger.entity_id) }}"
+  device: >-
+    {{ (device_attr(device_id_, 'name_by_user') or device_attr(device_id_, 'name') if device_id_ else none)
+       or state_attr(trigger.entity_id, 'friendly_name') or trigger.entity_id }}
+  area: "{{ area_name(trigger.entity_id) or '' }}"
+  minutes: "{{ delay | int }}"
+  offline_seconds: >-
+    {{ (trigger.to_state.last_changed - trigger.from_state.last_changed).total_seconds() | int
+       if trigger.id == 'back' else 0 }}
+  duration: >-
+    {%- set s = offline_seconds | int -%}
+    {%- if s >= 86400 -%}{{ s // 86400 }} d {{ (s % 86400) // 3600 }} h
+    {%- elif s >= 3600 -%}{{ s // 3600 }} h {{ (s % 3600) // 60 }} min
+    {%- else -%}{{ s // 60 }} min{%- endif -%}
+  notification_id: "thread_pulse_offline_{{ trigger.entity_id | replace('.', '_') }}"
+
+conditions:
+  # "back" only after a real outage of at least the delay – not the short "unavailable" while Home Assistant starts
+  - condition: template
+    value_template: "{{ trigger.id == 'offline' or offline_seconds | int >= delay | int * 60 }}"
+
+actions:
+  - choose:
+      - conditions: "{{ trigger.id == 'offline' }}"
+        sequence:
+          - if: "{{ notify_action | trim != '' }}"
+            then:
+              - action: "{{ notify_action | trim }}"
+                data:
+                  title: !input title_offline
+                  message: !input message_offline
+          - if: "{{ persistent }}"
+            then:
+              - action: persistent_notification.create
+                data:
+                  notification_id: "{{ notification_id }}"
+                  title: !input title_offline
+                  message: !input message_offline
+    default:
+      - if: "{{ notify_back and notify_action | trim != '' }}"
+        then:
+          - action: "{{ notify_action | trim }}"
+            data:
+              title: !input title_back
+              message: !input message_back
+      - action: persistent_notification.dismiss
+        data:
+          notification_id: "{{ notification_id }}"
