@@ -29,6 +29,7 @@
       return m;
     }
     const m = await loadHa();
+    await initChangeStore(m.hass);        // before the first comparison: the stored list comes from Home Assistant
     render(m);
     diffSnaps(prev, lastSnap);
     loadBatteryForecasts(m.hass);          // runs in the background, panel and badges update when it arrives
@@ -49,7 +50,7 @@
     if (t.dataset.open) openPanel(t.dataset.open);
     else if (t.dataset.act === "close") closePanel();
     else if (t.dataset.act === "export" || t.dataset.act === "exportanon") exportImage(t.dataset.act === "exportanon");
-    else if (t.dataset.act === "clearchanges") { changes = []; prefs.remove("changes"); renderChanges(); }
+    else if (t.dataset.act === "clearchanges") clearChanges();
     else if (t.dataset.device) openDevice(t.dataset.device);
     else if (t.dataset.identify) pressIdentify(t.dataset.identify);
   });

@@ -11,7 +11,7 @@
     rooms:   { key: "threadPulseRooms", type: "bool", def: false },     // room view
     sound:   { key: "threadPulseSound", type: "bool", def: false },
     volume:  { key: "threadPulseVolume", type: "number", def: 0.4 },
-    changes: { key: "threadPulseChanges", type: "json", def: [] },      // change log, max. 100 entries
+    changes: { key: "threadPulseChanges", type: "json", def: [] },      // change log – only until it is moved to Home Assistant (#86)
   };
   const prefs = {
     get(name, fallback) {

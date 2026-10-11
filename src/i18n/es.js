@@ -8,7 +8,7 @@ const TEXT_ES = {
   anonDevice: i => `Dispositivo ${i}`, anonRoom: c => `Habitación ${c}`, anonNote: "anonimizada", exportFailed: "No se pudo guardar la imagen", exportDevices: n => `${n} dispositivos`,
   reload: "↻ Recargar", showList: "☰ Mostrar lista", hideList: "☰ Ocultar lista", pause: "⏸ Pausar directo", resume: "▶ Reanudar directo",
   changesHead: "Cambios en la red", changesNone: "Todavía no se han detectado cambios.", changesClear: "Vaciar lista",
-  changesNote: "Se comprueba cada 5 minutos y se guarda en este navegador. La accesibilidad se informa en directo; los cambios de padre, rol y enlaces solo aparecen cuando los dispositivos los informan.",
+  changesNote: "Se comprueba cada 5 minutos y se guarda en Home Assistant para tu usuario: la misma lista en todos tus dispositivos. La accesibilidad se informa en directo; los cambios de padre, rol y enlaces solo aparecen cuando los dispositivos los informan.",
   chNew: "nuevo en la red", chGone: "ya no está en la red", chOffline: "no accesible", chOnline: "accesible de nuevo",
   chParent: (a, b, r) => `nuevo padre: ${a} → ${b} (${r} dBm)`, chSignal: (p, q1, q2, r) => `señal hacia el padre ${p}: ${q1} → ${q2} (${r} dBm)`,
   chRole: (a, b) => `rol: ${a} → ${b}`, chLinkNew: o => `nuevo enlace con ${o}`, chLinkGone: o => `enlace con ${o} perdido`,

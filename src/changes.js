@@ -2,12 +2,70 @@
 //# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
   // ---------- change log (issue #7) ----------
   // Every 5 minutes the data is loaded again (map positions kept) and compared with the previous state. Reachability
-  // changes are logged live from Home Assistant. The list is kept in this browser (prefs), max. 100 entries.
+  // changes are logged live from Home Assistant. The list is stored in Home Assistant per user (issue #86), so it is
+  // the same on every device, and synchronised live between open pages; until that connection is up (and as a
+  // fallback without it) it is kept in the browser. Max. 200 entries.
   const REFRESH_MS = DEMO ? 40000 : 5 * 60000;
+  const STORE_KEY = "thread_pulse_changes", MAX_CHANGES = 200, SAME_MS = 10 * 60000;
   let lastSnap = null, changes = [], flashes = [], flashing = false, refreshing = false;
+  let store = null, saveTimer = null, clearedAt = 0;     // store: { conn, unsub } once Home Assistant's user data is used
   const availNow = {};
-  changes = prefs.get("changes");
-  if (DEMO) changes = [];
+  changes = DEMO ? [] : prefs.get("changes");
+  // Several open pages (phone, tablet, desktop) see the same change – keep it once: an entry is a duplicate when the
+  // next newer entry of the same device says the same within 10 minutes (so a device going offline, online and
+  // offline again still shows all three).
+  const sameChange = (a, b) => a.kind === b.kind && a.text === b.text && Math.abs(a.t - b.t) < SAME_MS;
+  function mergeChanges(...lists) {
+    const out = [], newest = {};
+    for (const c of lists.flat().filter(c => c && c.t > clearedAt).sort((a, b) => b.t - a.t)) {
+      const prev = newest[c.id];
+      if (prev && sameChange(prev, c)) continue;
+      newest[c.id] = c; out.push(c);
+    }
+    return out.slice(0, MAX_CHANGES);
+  }
+  function fromStore(value) {                 // { entries, cleared } as stored in Home Assistant
+    if (!value) return [];
+    clearedAt = Math.max(clearedAt, value.cleared || 0);
+    return Array.isArray(value.entries) ? value.entries : [];
+  }
+  async function initChangeStore(hass) {
+    if (DEMO || store || !hass || !hass.connection) return;
+    const conn = hass.connection;
+    try {
+      const r = await conn.sendMessagePromise({ type: "frontend/get_user_data", key: STORE_KEY });
+      const remote = fromStore(r && r.value), local = prefs.get("changes");
+      changes = mergeChanges(changes, remote, local);
+      store = { conn, unsub: null };
+      if (local.length || changes.length !== remote.length) saveChanges(true);   // migrate the entries of this browser once
+      prefs.remove("changes");
+      store.unsub = await conn.subscribeMessage(ev => {      // changes logged or cleared on another device
+        const remote2 = fromStore(ev && ev.value);
+        const merged = mergeChanges(changes, remote2);
+        if (JSON.stringify(merged) !== JSON.stringify(changes)) { changes = merged; renderChanges(); }
+      }, { type: "frontend/subscribe_user_data", key: STORE_KEY });
+      renderChanges();
+    } catch (e) { store = null; }               // older Home Assistant or no permission: keep using the browser
+  }
+  function saveChanges(now = false) {
+    if (DEMO) return;
+    if (!store) { prefs.set("changes", changes.slice(0, MAX_CHANGES)); return; }
+    clearTimeout(saveTimer);
+    const write = async () => {
+      try {      // read first: another device may have added entries since the last sync
+        const r = await store.conn.sendMessagePromise({ type: "frontend/get_user_data", key: STORE_KEY });
+        const before = changes.length;
+        changes = mergeChanges(changes, fromStore(r && r.value));
+        if (changes.length !== before) renderChanges();
+        await store.conn.sendMessagePromise({ type: "frontend/set_user_data", key: STORE_KEY, value: { version: 1, entries: changes, cleared: clearedAt } });
+      } catch (e) { prefs.set("changes", changes); }        // keep them in the browser if Home Assistant refuses
+    };
+    if (now) write(); else saveTimer = setTimeout(write, 2000);
+  }
+  function clearChanges() {
+    clearedAt = Date.now(); changes = [];
+    prefs.remove("changes"); saveChanges(true); renderChanges();
+  }
   function snapshotOf(nodes, edges, byId) {
     const snap = { nodes: {}, parent: {}, links: {} };
     for (const n of nodes) snap.nodes[n.id] = { name: n.name, available: n.available, role: n.role, type: n.type };
@@ -39,9 +97,8 @@
   }
   const CH_COLOR = { new: COLORS.good, online: COLORS.good, gone: COLORS.weak, offline: COLORS.weak, parent: COLORS.change, role: COLORS.change, signal: COLORS.medium, link: COLORS.medium };
   function logChange(id, name, text, kind) {
-    changes.unshift({ t: Date.now(), id, name, text, kind });
-    changes = changes.slice(0, 100);
-    if (!DEMO) prefs.set("changes", changes);
+    changes = mergeChanges([{ t: Date.now(), id, name, text, kind }], changes);
+    saveChanges();
     flashes.push({ id, t0: performance.now(), color: CH_COLOR[kind] || COLORS.change });
     if (!flashing) { flashing = true; requestAnimationFrame(flashTick); }
     renderChanges();

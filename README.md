@@ -146,7 +146,7 @@ The graph library (`thread-pulse-vis-network.js`, ~1.6 MB) is only loaded when a
 - **Warning badge thresholds are a heuristic:** ⚠ is shown at ≥ 5 attach attempts or ≥ 3 drop-offs since the device's last restart, or battery below 20 %. The thresholds come from one real network of ~20 devices, where healthy devices showed 0–2 attempts and 1–2 drop-offs. Restart counts are shown but not used for warnings, because bulbs on a wall switch restart every time the switch is turned off.
 - **Some values are snapshots.** Thread data (neighbours, signal, counters) is what the device last reported; some devices report these rarely. Uptime is not shown because devices practically never update it.
 - **Weak-spot hints are rules of thumb.** A high restart count suggests that a router loses power regularly, but restarts also come from firmware updates or power outages. Switching a smart plug off does not stop it from routing (only its socket is switched), so that is not reported.
-- **Change log:** reachability is reported live, but parent, role and link changes only appear once the devices report them, which can take a while. Only changes while a Thread Pulse page is open are seen; the list is stored per browser.
+- **Change log:** reachability is reported live, but parent, role and link changes only appear once the devices report them, which can take a while. Only changes while a Thread Pulse page is open are seen; the list is stored in Home Assistant per user and shared by all your devices.
 - **Live counters start at zero** when the page is opened and are lost on reload.
 - Tested with Home Assistant 2026.10, one OpenThread Border Router (SONOFF Dongle Plus MG24) and about 20 Matter-over-Thread devices. Other setups are untested.
 
