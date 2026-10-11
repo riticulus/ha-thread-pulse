@@ -59,6 +59,7 @@
   let ambientClose = null;
   function openPanel(id) {
     panelNode = id; renderPanel(); $("panel").hidden = false;
+    if (!prefs.get("tapped")) prefs.set("tapped", true);
     if (AMBIENT) { clearTimeout(ambientClose); ambientClose = setTimeout(closePanel, 15000); }    // ambient: close by itself
   }
   function closePanel() { panelNode = null; $("panel").hidden = true; if (network) network.unselectAll(); }

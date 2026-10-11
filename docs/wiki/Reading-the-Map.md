@@ -6,18 +6,20 @@
 
 ![Toolbar](images/toolbar.png)
 
+*After version 1.5.2* the toolbar is one row: the search, the view switches, the list and a **⋯** menu for everything else. Up to version 1.5.2 all buttons and the legend were in the toolbar.
+
 | Element | Function |
 |---|---|
-| **↻ Reload** | Load the network data again and redraw the map (also compares with the previous state for the [change log](Change-Log)) |
-| **☰ Show list / Hide list** | Show the [list below the map](The-List). The button also shows the number of [hints](Hints-and-Warnings), e.g. *· 3 hints* |
+| **🔍 Find device or room** | [Search](Search) |
 | **⏸ Pause live / ▶ Resume live** | Stop or restart the [live animation](Live-Data-Flow). Counting continues while paused |
 | **≋ Traffic / Traffic off** | Switch the [traffic heat](Live-Data-Flow#traffic-heat) on or off |
 | **⌂ Rooms / Rooms off** | Switch the [room view](Room-View) on or off |
-| **🔇 Sound / 🔊 Sound off** | Switch the [sound](Live-Data-Flow#sound) on or off; while it is on, a volume slider appears next to it *(from version 1.4.0)* |
-| **📤 Export** | [Save the map as a PNG image](Saving-an-Image), with names or anonymised *(from version 1.5.0; up to 1.5.2 the button is called **📷 Image**)*, or copy a [text report](Text-Report) for forums *(after version 1.5.2)* |
-| **ⓘ Legend** | Show or hide the colour legend |
-| **🔍 Find device or room** | [Search](Search) |
-| Status line | Time of the last update, number of devices, version |
+| **☰ Show list / Hide list** | Show the [list below the map](The-List). The blue number is the number of [hints](Hints-and-Warnings) |
+| **⋯** | Menu: **↻ Reload** (load the network data again and redraw the map, also compares with the previous state for the [change log](Change-Log)), **🔇 Sound** with its volume slider (see [sound](Live-Data-Flow#sound)), **Export**: [save the map as an image](Saving-an-Image) with names or anonymised, or copy a [text report](Text-Report), and the installed version |
+| Status line | Time of the last update and number of devices; *Tap a device for details* until you have opened a device once. **Tap the status line to reload** |
+| **?** (top left on the map) | Show or hide the colour legend |
+
+Buttons that switch something on (live, traffic, rooms, list) are **highlighted while it is on**. Tooltips show what a button does.
 
 ## Devices (nodes)
 
@@ -80,4 +82,4 @@ The box in the bottom left shows how many messages arrived in the last minute an
 
 ![Phone](images/phone.png)
 
-On narrow screens the toolbar wraps, the legend starts hidden and the [detail panel](Detail-Panel) slides up from the bottom.
+On narrow screens (a card narrower than 640 px, e.g. a phone) the toolbar buttons show **icons only** – the highlighted ones are on – and the search is a 🔍 icon that widens when you tap it. The [detail panel](Detail-Panel) slides up from the bottom.

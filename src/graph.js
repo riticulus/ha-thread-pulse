@@ -156,7 +156,8 @@
     if (panelNode && (nodeById[panelNode] || extraIds.has(panelNode) || wifiById[panelNode])) renderPanel(); else if (panelNode) closePanel();
     lastSnap = snapshotOf(nodes, edges, byId);
     lastSnap.grade = (computeHealth() || {}).grade;    // grade changes go to the change log (issue #84)
-    $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + " · " + T.tapHint + " · v" + VERSION;
+    // short (issue #107): the version is in the ⋯ menu; the tap hint only until a device was opened once
+    $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + (prefs.get("tapped") ? "" : " · " + T.tapHint);
   }
 
   // hints and the list below the map – rebuilt when names of border routers arrive (#71)

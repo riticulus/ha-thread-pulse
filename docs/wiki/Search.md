@@ -16,6 +16,8 @@ The search field **🔍 Find device or room** in the toolbar finds devices by **
 | **Enter** | Open the [detail panel](Detail-Panel) of the first match |
 | **Esc** | Clear the search and show the whole network again |
 
+On a phone the search field is a 🔍 icon that widens when you tap it *(after version 1.5.2)*.
+
 The search stays active after **↻ Reload** and after the automatic checks of the [change log](Change-Log).
 
 ## Examples

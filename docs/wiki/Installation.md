@@ -74,7 +74,7 @@ The page only works inside a Home Assistant dashboard. Opened on its own it show
 
 ## Which version do I have?
 
-The installed version is shown at the end of the status line above the map, e.g. `v1.3.0`. A version ending in `+dev` is a development state between two releases.
+The installed version is shown at the bottom of the **⋯** menu, e.g. *Thread Pulse 1.6.0* (up to version 1.5.2 at the end of the status line above the map, e.g. `v1.3.0`). A version ending in `+dev` is a development state between two releases.
 
 ## Uninstalling
 

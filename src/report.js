@@ -81,7 +81,7 @@
     return L.join("\n") + "\n";
   }
   function showReport() {
-    setExportMenu(false);
+    setMoreMenu(false);
     if (!network || !listData) return;
     const box = $("report");
     box.innerHTML = `<div class="hd"><b>${T.reportHead}</b><button class="x" data-act="reportclose" aria-label="${T.reportClose}">×</button></div>` +

@@ -124,7 +124,7 @@ The graph library (`thread-pulse-vis-network.js`, ~1.6 MB) is only loaded when a
 
    Or, in the UI: *Edit dashboard → Add view → View type “Panel (single card)”*, then add a *Webpage* card with the URL `/local/thread-pulse.html?v=1`.
 
-**Updating:** download the new release, replace both files and raise the number in `?v=1` (e.g. to `?v=2`) so browsers and the companion app load the new version. The installed version is shown at the end of the status line (e.g. `v1.0.0`). To get notified about new versions, use *Watch → Custom → Releases* on GitHub. Changes are listed in the [changelog](CHANGELOG.md).
+**Updating:** download the new release, replace both files and raise the number in `?v=1` (e.g. to `?v=2`) so browsers and the companion app load the new version. The installed version is shown at the bottom of the **⋯** menu (up to 1.5.2 at the end of the status line). To get notified about new versions, use *Watch → Custom → Releases* on GitHub. Changes are listed in the [changelog](CHANGELOG.md).
 
 > **Note:** this README describes the current development state. Features listed under *Unreleased* in the [changelog](CHANGELOG.md) are not part of a release yet – the [latest release](https://github.com/riticulus/ha-thread-pulse/releases/latest) does not contain them.
 

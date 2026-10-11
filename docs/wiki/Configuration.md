@@ -66,16 +66,16 @@ Parameters can be combined: `/local/thread-pulse.html?v=3&lang=en`.
 
 Some choices are remembered per browser (and per Home Assistant address), not per card:
 
-| Setting | Toolbar button |
+| Setting | Where |
 |---|---|
 | List below the map shown or hidden | ☰ Show list / Hide list |
-| Legend shown or hidden | ⓘ Legend |
+| Legend shown or hidden | **?** on the map (up to version 1.5.2: ⓘ Legend in the toolbar) |
 | Traffic heat on or off | ≋ Traffic |
 | Room view on or off | ⌂ Rooms |
-| Sound on or off, volume | 🔇 Sound |
+| Sound on or off, volume | **⋯** → 🔇 Sound (up to version 1.5.2: in the toolbar) |
 | Change log entries | – |
 
-On narrow screens (below 700 px) the legend starts hidden.
+The legend starts hidden *(after version 1.5.2; before, it started shown on screens wider than 700 px)*. Whether a device was opened once is also remembered: until then the status line shows *Tap a device for details*.
 
 ## Language
 
