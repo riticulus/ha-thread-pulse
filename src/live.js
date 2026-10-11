@@ -95,9 +95,9 @@
     $("live").innerHTML = `<div><b>Live</b> · ${T.perMin(perMin)}</div>` +
       recent.slice(0, 3).map(r => `<div><span style="color:${r.down ? COLORS.down : COLORS.up}">●</span> ${r.t.toLocaleTimeString(lang)} ${r.html}</div>`).join("");
   }
-  function deName(t) {
-    if (lang !== "de") return t;
-    for (const [en, de] of DE_NAMES) if (t.toLowerCase().startsWith(en.toLowerCase())) return de + t.slice(en.length);
+  function deName(t) {           // translate common English entity names into the dashboard language (name kept from German-only times)
+    const list = LOCAL_NAMES[lang]; if (!list) return t;
+    for (const [en, tr] of list) if (t.toLowerCase().startsWith(en.toLowerCase())) return tr + t.slice(en.length);
     return t;
   }
   function fmtState(st) {

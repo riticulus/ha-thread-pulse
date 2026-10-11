@@ -34,10 +34,10 @@
                  batType: n.type === "sleepy_end_device" ? (k % 2 ? "CR2032" : "AAA") : "" };
       if (n.type === "sleepy_end_device") n.demoBattery = [88, 64, 100, 15, 42, 97][k % 6];
       const m = 60;
-      n.demoValues = n.icon === "power-plug" ? [[de ? "Schalter" : "Switch", T.states.on, 26 * 3600], [de ? "Leistung" : "Power", "42.7 W", 4 * m], [de ? "Energie" : "Energy", "18.304 kWh", 6 * m]]
-        : n.icon === "door" || n.icon === "window-closed-variant" ? [[de ? "Kontakt" : "Contact", T.states.closed, 12 * m], [de ? "Batterie" : "Battery", n.demoBattery + " %", 3 * 3600]]
-        : n.icon === "thermometer" ? [[de ? "Temperatur" : "Temperature", "21.4 °C", 2 * m], [de ? "Luftfeuchte" : "Humidity", "48 %", 5 * m]]
-        : n.icon === "lightbulb" ? [[de ? "Licht" : "Light", T.states.on, 40 * m]] : [[T.state, T.states.off, 90 * m]]; });
+      n.demoValues = n.icon === "power-plug" ? [[deName("Switch"), T.states.on, 26 * 3600], [deName("Power"), "42.7 W", 4 * m], [deName("Energy"), "18.304 kWh", 6 * m]]
+        : n.icon === "door" || n.icon === "window-closed-variant" ? [[deName("Contact"), T.states.closed, 12 * m], [deName("Battery"), n.demoBattery + " %", 3 * 3600]]
+        : n.icon === "thermometer" ? [[deName("Temperature"), "21.4 °C", 2 * m], [deName("Humidity"), "48 %", 5 * m]]
+        : n.icon === "lightbulb" ? [[deName("Light"), T.states.on, 40 * m]] : [[T.state, T.states.off, 90 * m]]; });
     sleepy[1].info.attach = 9; sleepy[1].info.detached = 3;
     routers[2].info.reboots = 140;   // a bulb on a wall switch
     sleepy[2].neigh[0]["6"] = -86;   // weak parent link (as seen by the device and by its parent router)
@@ -66,10 +66,10 @@
   }
   function demoTraffic(model) {
     const de = lang === "de";
-    const msgs = n => n.icon === "power-plug" ? [de ? "Leistung" : "Power", `${(Math.random() * 120).toFixed(1)} W`]
-      : n.icon === "thermometer" || n.icon === "thermostat" ? [de ? "Temperatur" : "Temperature", `${(19 + Math.random() * 4).toFixed(1)} °C`]
-      : n.icon === "window-closed-variant" || n.icon === "door" ? [de ? "Kontakt" : "Contact", Math.random() < 0.5 ? T.states.open : T.states.closed]
-      : n.icon === "motion-sensor" ? [de ? "Bewegung" : "Motion", Math.random() < 0.5 ? T.states.on : T.states.off]
+    const msgs = n => n.icon === "power-plug" ? [deName("Power"), `${(Math.random() * 120).toFixed(1)} W`]
+      : n.icon === "thermometer" || n.icon === "thermostat" ? [deName("Temperature"), `${(19 + Math.random() * 4).toFixed(1)} °C`]
+      : n.icon === "window-closed-variant" || n.icon === "door" ? [deName("Contact"), Math.random() < 0.5 ? T.states.open : T.states.closed]
+      : n.icon === "motion-sensor" ? [deName("Motion"), Math.random() < 0.5 ? T.states.on : T.states.off]
       : [T.state, Math.random() < 0.5 ? T.states.on : T.states.off];
     const live = model.nodes.filter(n => n.available);
     const step = () => {

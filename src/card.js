@@ -63,7 +63,8 @@ class ThreadPulseCard extends HTMLElement {
       schema: [
         { name: "height", selector: { text: {} } },
         { name: "language", selector: { select: { mode: "dropdown", options: [
-          { value: "", label: "Home Assistant language" }, { value: "en", label: "English" }, { value: "de", label: "Deutsch" }] } } },
+          { value: "", label: "Home Assistant language" }, { value: "en", label: "English" }, { value: "de", label: "Deutsch" },
+          { value: "fr", label: "Français" }, { value: "it", label: "Italiano" }, { value: "es", label: "Español" }, { value: "nl", label: "Nederlands" }] } } },
         { name: "ambient", selector: { boolean: {} } },
         { name: "ambient_motion", selector: { boolean: {} } },
         { name: "demo", selector: { boolean: {} } },
