@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+- Settings remembered by the browser are handled in one place (`src/prefs.js`: keys, types, defaults). Same storage keys and formats as before – existing settings keep working; safe when storage is blocked ([#50](https://github.com/riticulus/ha-thread-pulse/issues/50))
+
 ## [1.4.0] – 2026-10-11
 
 ### Added

@@ -2,11 +2,11 @@
 //# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
   // ---------- change log (issue #7) ----------
   // Every 5 minutes the data is loaded again (map positions kept) and compared with the previous state. Reachability
-  // changes are logged live from Home Assistant. The list is kept in this browser (localStorage), max. 100 entries.
-  const REFRESH_MS = DEMO ? 40000 : 5 * 60000, LOG_KEY = "threadPulseChanges";
+  // changes are logged live from Home Assistant. The list is kept in this browser (prefs), max. 100 entries.
+  const REFRESH_MS = DEMO ? 40000 : 5 * 60000;
   let lastSnap = null, changes = [], flashes = [], flashing = false, refreshing = false;
   const availNow = {};
-  try { changes = JSON.parse(localStorage.getItem(LOG_KEY) || "[]"); } catch (e) { changes = []; }
+  changes = prefs.get("changes");
   if (DEMO) changes = [];
   function snapshotOf(nodes, edges, byId) {
     const snap = { nodes: {}, parent: {}, links: {} };
@@ -41,7 +41,7 @@
   function logChange(id, name, text, kind) {
     changes.unshift({ t: Date.now(), id, name, text, kind });
     changes = changes.slice(0, 100);
-    if (!DEMO) try { localStorage.setItem(LOG_KEY, JSON.stringify(changes)); } catch (e) {}
+    if (!DEMO) prefs.set("changes", changes);
     flashes.push({ id, t0: performance.now(), color: CH_COLOR[kind] || "#ab47bc" });
     if (!flashing) { flashing = true; requestAnimationFrame(flashTick); }
     renderChanges();

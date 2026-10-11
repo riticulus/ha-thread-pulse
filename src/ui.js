@@ -5,13 +5,13 @@
   function setList(show, save = true) {
     $("info").classList.toggle("hidden", !show);
     $("toggle").textContent = (show ? T.hideList : T.showList) + (hintCount ? T.listHints(hintCount) : "");
-    if (save) try { localStorage.setItem("threadPulseList", show ? "1" : "0"); } catch (e) {}
+    if (save) prefs.set("list", show);
     if (network && save) setTimeout(() => { network.redraw(); network.fit({ animation: { duration: 300 } }); }, 50);
   }
   function setLegend(show, save = true) {
     $("legend").classList.toggle("hidden", !show);
     $("legbtn").textContent = show ? T.hideLegend : T.showLegend;
-    if (save) try { localStorage.setItem("threadPulseLegend", show ? "1" : "0"); } catch (e) {}
+    if (save) prefs.set("legend", show);
   }
   function showErr(e) {
     setList(true, false);
@@ -41,6 +41,6 @@
     e.preventDefault();
     if (t.dataset.open) openPanel(t.dataset.open);
     else if (t.dataset.act === "close") closePanel();
-    else if (t.dataset.act === "clearchanges") { changes = []; try { localStorage.removeItem(LOG_KEY); } catch (e) {} renderChanges(); }
+    else if (t.dataset.act === "clearchanges") { changes = []; prefs.remove("changes"); renderChanges(); }
     else if (t.dataset.device) openDevice(t.dataset.device);
   });

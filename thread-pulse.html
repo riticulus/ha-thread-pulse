@@ -567,6 +567,36 @@ function createThreadPulse(root, opts, host) {
   let lang = (opts.lang || navigator.language || "en").slice(0, 2);
   let T = TEXT[lang] || TEXT.en;
 
+  // ---------- settings remembered by the browser (issue #50) ----------
+  // One place for every key, type and default. Values are stored in localStorage per browser and per Home Assistant
+  // address; formats are unchanged from earlier versions ("1"/"0", numbers, JSON), so existing settings keep working.
+  // All access is safe when storage is blocked (e.g. private mode): reads return the default, writes are skipped.
+  const PREFS = {
+    list:    { key: "threadPulseList", type: "bool", def: false },      // list below the map shown
+    legend:  { key: "threadPulseLegend", type: "bool", def: null },     // default depends on the width – passed by the caller
+    heat:    { key: "threadPulseHeat", type: "bool", def: true },       // traffic heat
+    rooms:   { key: "threadPulseRooms", type: "bool", def: false },     // room view
+    sound:   { key: "threadPulseSound", type: "bool", def: false },
+    volume:  { key: "threadPulseVolume", type: "number", def: 0.4 },
+    changes: { key: "threadPulseChanges", type: "json", def: [] },      // change log, max. 100 entries
+  };
+  const prefs = {
+    get(name, fallback) {
+      const p = PREFS[name], def = fallback !== undefined ? fallback : p.def;
+      let raw = null;
+      try { raw = localStorage.getItem(p.key); } catch (e) {}
+      if (raw === null) return p.type === "json" ? JSON.parse(JSON.stringify(def)) : def;
+      if (p.type === "bool") return raw === "1" ? true : raw === "0" ? false : def;
+      if (p.type === "number") { const v = parseFloat(raw); return isNaN(v) ? def : v; }
+      try { return JSON.parse(raw); } catch (e) { return JSON.parse(JSON.stringify(def)); }
+    },
+    set(name, value) {
+      const p = PREFS[name];
+      const raw = p.type === "bool" ? (value ? "1" : "0") : p.type === "number" ? String(value) : JSON.stringify(value);
+      try { localStorage.setItem(p.key, raw); } catch (e) {}
+    },
+    remove(name) { try { localStorage.removeItem(PREFS[name].key); } catch (e) {} },
+  };
   // ---------- helpers ----------
   const COLORS = { wifi: "#78909c", heat: "#ffb300", br: "#7b1fa2", router: "#1e88e5", end: "#90caf9", sleepy: "#43a047", off: "#9e9e9e", up: "#00bcd4", down: "#e91e63" };
   const QUAL = rssi => rssi >= -65 ? ["#43a047", "g", T.good] : rssi >= -80 ? ["#fb8c00", "o", T.medium] : ["#e53935", "r", T.weak];
@@ -1410,11 +1440,11 @@ function createThreadPulse(root, opts, host) {
   });
   // ---------- change log (issue #7) ----------
   // Every 5 minutes the data is loaded again (map positions kept) and compared with the previous state. Reachability
-  // changes are logged live from Home Assistant. The list is kept in this browser (localStorage), max. 100 entries.
-  const REFRESH_MS = DEMO ? 40000 : 5 * 60000, LOG_KEY = "threadPulseChanges";
+  // changes are logged live from Home Assistant. The list is kept in this browser (prefs), max. 100 entries.
+  const REFRESH_MS = DEMO ? 40000 : 5 * 60000;
   let lastSnap = null, changes = [], flashes = [], flashing = false, refreshing = false;
   const availNow = {};
-  try { changes = JSON.parse(localStorage.getItem(LOG_KEY) || "[]"); } catch (e) { changes = []; }
+  changes = prefs.get("changes");
   if (DEMO) changes = [];
   function snapshotOf(nodes, edges, byId) {
     const snap = { nodes: {}, parent: {}, links: {} };
@@ -1449,7 +1479,7 @@ function createThreadPulse(root, opts, host) {
   function logChange(id, name, text, kind) {
     changes.unshift({ t: Date.now(), id, name, text, kind });
     changes = changes.slice(0, 100);
-    if (!DEMO) try { localStorage.setItem(LOG_KEY, JSON.stringify(changes)); } catch (e) {}
+    if (!DEMO) prefs.set("changes", changes);
     flashes.push({ id, t0: performance.now(), color: CH_COLOR[kind] || "#ab47bc" });
     if (!flashing) { flashing = true; requestAnimationFrame(flashTick); }
     renderChanges();
@@ -1671,7 +1701,7 @@ function createThreadPulse(root, opts, host) {
     $("soundbtn").textContent = on ? T.soundOff : T.soundOn;
     $("volume").hidden = !on;
     if (on) ensureAudio();
-    if (save) try { localStorage.setItem("threadPulseSound", on ? "1" : "0"); } catch (e) {}
+    if (save) prefs.set("sound", on);
   }
   root.addEventListener("pointerdown", () => { if (soundOn) ensureAudio(); }, true);   // unlock audio after a reload
   // ---------- demo (invented devices, works without Home Assistant) ----------
@@ -1774,13 +1804,13 @@ function createThreadPulse(root, opts, host) {
   function setList(show, save = true) {
     $("info").classList.toggle("hidden", !show);
     $("toggle").textContent = (show ? T.hideList : T.showList) + (hintCount ? T.listHints(hintCount) : "");
-    if (save) try { localStorage.setItem("threadPulseList", show ? "1" : "0"); } catch (e) {}
+    if (save) prefs.set("list", show);
     if (network && save) setTimeout(() => { network.redraw(); network.fit({ animation: { duration: 300 } }); }, 50);
   }
   function setLegend(show, save = true) {
     $("legend").classList.toggle("hidden", !show);
     $("legbtn").textContent = show ? T.hideLegend : T.showLegend;
-    if (save) try { localStorage.setItem("threadPulseLegend", show ? "1" : "0"); } catch (e) {}
+    if (save) prefs.set("legend", show);
   }
   function showErr(e) {
     setList(true, false);
@@ -1810,7 +1840,7 @@ function createThreadPulse(root, opts, host) {
     e.preventDefault();
     if (t.dataset.open) openPanel(t.dataset.open);
     else if (t.dataset.act === "close") closePanel();
-    else if (t.dataset.act === "clearchanges") { changes = []; try { localStorage.removeItem(LOG_KEY); } catch (e) {} renderChanges(); }
+    else if (t.dataset.act === "clearchanges") { changes = []; prefs.remove("changes"); renderChanges(); }
     else if (t.dataset.device) openDevice(t.dataset.device);
   });
   // ---------- ambient mode (issue #11) ----------
@@ -1833,11 +1863,11 @@ function createThreadPulse(root, opts, host) {
     wake(); document.addEventListener("visibilitychange", wake);
   }
   let startList = false, startLegend = (host.width ? host.width() : window.innerWidth) > 700;
-  try { const v = parseFloat(localStorage.getItem("threadPulseVolume")); if (!isNaN(v)) soundVolume = v; } catch (e) {}
+  soundVolume = prefs.get("volume");
   $("volume").value = String(soundVolume);
-  try { if (localStorage.getItem("threadPulseSound") === "1") setSound(true, false); } catch (e) {}
-  try { heatOn = localStorage.getItem("threadPulseHeat") !== "0"; roomOn = localStorage.getItem("threadPulseRooms") === "1"; } catch (e) {}
-  try { startList = localStorage.getItem("threadPulseList") === "1"; const l = localStorage.getItem("threadPulseLegend"); if (l !== null) startLegend = l === "1"; } catch (e) {}
+  if (prefs.get("sound")) setSound(true, false);
+  heatOn = prefs.get("heat"); roomOn = prefs.get("rooms");
+  startList = prefs.get("list"); startLegend = prefs.get("legend", startLegend);
   $("info").classList.toggle("hidden", !startList);
   $("legend").classList.toggle("hidden", !startLegend);
   setLanguage(lang);
@@ -1845,14 +1875,14 @@ function createThreadPulse(root, opts, host) {
   $("toggle").onclick = () => setList($("info").classList.contains("hidden"));
   $("roombtn").onclick = () => {
     roomOn = !roomOn; $("roombtn").textContent = roomOn ? T.roomsOff : T.roomsOn;
-    try { localStorage.setItem("threadPulseRooms", roomOn ? "1" : "0"); } catch (e) {}
+    prefs.set("rooms", roomOn);
     applyRooms(roomOn);
   };
   $("soundbtn").onclick = () => setSound(!soundOn);
-  $("volume").oninput = () => { soundVolume = Number($("volume").value); try { localStorage.setItem("threadPulseVolume", String(soundVolume)); } catch (e) {} playTick(false); };
+  $("volume").oninput = () => { soundVolume = Number($("volume").value); prefs.set("volume", soundVolume); playTick(false); };
   $("heatbtn").onclick = () => {
     heatOn = !heatOn; $("heatbtn").textContent = heatOn ? T.heatOff : T.heatOn;
-    try { localStorage.setItem("threadPulseHeat", heatOn ? "1" : "0"); } catch (e) {}
+    prefs.set("heat", heatOn);
     if (network) network.redraw();
   };
   $("legbtn").onclick = () => setLegend($("legend").classList.contains("hidden"));
