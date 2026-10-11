@@ -3,7 +3,7 @@
   // ---------- helpers ----------
   // All colours used by the map, badges and boxes. The CSS gets the semantic ones as variables (--c-<name>), see applyColorVars().
   const COLORS = { good: "#43a047", medium: "#fb8c00", weak: "#e53935", warn: "#fb8c00", hint: "#1e88e5", battOk: "#607d8b", change: "#ab47bc",
-                   wifi: "#78909c", heat: "#ffb300", br: "#7b1fa2", router: "#1e88e5", end: "#90caf9", sleepy: "#43a047", off: "#9e9e9e", up: "#00bcd4", down: "#e91e63" };
+                   wifi: "#78909c", heat: "#ffb300", br: "#7b1fa2", router: "#1e88e5", end: "#90caf9", sleepy: "#43a047", off: "#9e9e9e", up: "#00bcd4", down: "#e91e63", update: "#00897b" };
   const QUAL = rssi => rssi >= -65 ? [COLORS.good, "g", T.good] : rssi >= -80 ? [COLORS.medium, "o", T.medium] : [COLORS.weak, "r", T.weak];
   function applyColorVars() { for (const k of ["good", "medium", "weak", "warn", "hint"]) host.styleTarget.style.setProperty("--c-" + k, COLORS[k]); }
   const hex16 = s => BigInt(s).toString(16).padStart(16, "0");

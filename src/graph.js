@@ -147,6 +147,7 @@
     parents.sort((p, q) => p.rssi - q.rssi);
     listData = { parents, count: nodes.length,
                  weak: Object.values(edges).filter(e => !e.parent && ids.has(e.b)).map(e => ({ a: e.a, b: e.b, r: avg(e) })).filter(e => e.r < -80).sort((p, q) => p.r - q.r) };
+    refreshFirmware(model.hass);
     renderList();
     const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
     if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
@@ -177,6 +178,7 @@
       for (const w of weak) h += `<tr><td>${esc(nameOf(w.a))} ↔ ${esc(nameOf(w.b))}</td><td class="r">${w.r} dBm</td></tr>`;
       h += `</table>`;
     }
+    h += firmwareListHtml();
     h += `<br><span style="color:var(--muted);font-size:12px">${T.foot(count)}</span>`;
     $("info").innerHTML = h;
   }

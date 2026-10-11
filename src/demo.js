@@ -41,6 +41,14 @@
         : n.icon === "thermometer" ? [[localName("Temperature"), "21.4 °C", 2 * m], [localName("Humidity"), "48 %", 5 * m]]
         : n.icon === "lightbulb" ? [[localName("Light"), T.states.on, 40 * m]] : [[T.state, T.states.off, 90 * m]]; });
     for (const n of all2) n.demoIdentify = true;
+    // firmware (issue #81): same models with different versions, one update available, one skipped, one installing
+    for (const n of all2) {
+      if (n.icon === "power-plug") n.info.product = "Smart Plug"; else if (n.icon === "lightbulb") n.info.product = "Smart Bulb";
+      n.demoUpdate = { installed: n.info.sw, latest: n.info.sw, available: false, skipped: false, progress: null };
+    }
+    routers[1].demoUpdate = { installed: routers[1].info.sw, latest: "1.4.0", available: true, skipped: false, progress: null };
+    routers[3].demoUpdate = { installed: routers[3].info.sw, latest: "1.4.0", available: false, skipped: true, progress: null };
+    sleepy[5].demoUpdate = { installed: sleepy[5].info.sw, latest: "2.1.0", available: true, skipped: false, progress: 40 };
     sleepy[1].info.attach = 9; sleepy[1].info.detached = 3;
     routers[2].info.reboots = 140;   // a bulb on a wall switch
     sleepy[2].neigh[0]["6"] = -86;   // weak parent link (as seen by the device and by its parent router)

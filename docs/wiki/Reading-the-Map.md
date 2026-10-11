@@ -61,6 +61,8 @@ Hover a line (desktop) to see its signal strength and – with traffic heat on �
 | **15%** (red) | Battery below 20 % |
 | **⚠** (orange triangle) | Warning: unstable connection or battery below 20 % – see [Hints and warnings](Hints-and-Warnings) |
 | **i** (blue circle) | Hint: a possible weak spot – see [Hints and warnings](Hints-and-Warnings) |
+| **↑** (green circle, top left) | A firmware update is available in Home Assistant (not shown for skipped updates) *(after version 1.5.2)* |
+| **…** (green circle, top left) | A firmware update is being installed *(after version 1.5.2)* |
 
 ## Moving around
 

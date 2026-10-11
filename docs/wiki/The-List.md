@@ -22,6 +22,10 @@ Every battery device with the router it talks through and the signal strength, *
 
 Router-to-router links weaker than −80 dBm, weakest first. The section is only shown if there are any.
 
+### Firmware
+
+*After version 1.5.2.* Devices with a firmware update (available, skipped or being installed) with installed and new version, and models whose devices run **different firmware versions**, e.g. *MYGGBETT door/window sensor: 1.0.9 (4) · 1.1.4 (Front door)*. The section is only shown if there is something to show.
+
 ### Footnote
 
 Number of Thread devices and a short explanation of the lines and data sources.
