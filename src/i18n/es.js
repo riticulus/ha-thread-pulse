@@ -1,6 +1,7 @@
 //# Spanish texts. Defines TEXT_ES and NAMES_ES (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_ES = {
+  identifyBtn: "💡 Identificar", identifyNote: "Envía un comando real: el dispositivo parpadea, pita o se ilumina unos segundos, si lo admite.", identifySleepy: "Los dispositivos con batería solo reaccionan cuando se despiertan; puede tardar un poco.", identifySending: "enviando …", identifySent: "enviado – observa el dispositivo", identifyFailed: "Error",
   exportBtn: "📷 Imagen", exportTitle: "Guardar el mapa como imagen", exportPlain: "Guardar imagen (con nombres)", exportAnon: "Guardar imagen anonimizada (sin nombres)",
   anonDevice: i => `Dispositivo ${i}`, anonRoom: c => `Habitación ${c}`, anonNote: "anonimizada", exportFailed: "No se pudo guardar la imagen", exportDevices: n => `${n} dispositivos`,
   reload: "↻ Recargar", showList: "☰ Mostrar lista", hideList: "☰ Ocultar lista", pause: "⏸ Pausar directo", resume: "▶ Reanudar directo",

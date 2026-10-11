@@ -58,4 +58,7 @@
   #panel .hint { background: color-mix(in srgb, var(--c-hint, #1e88e5) 14%, transparent); border: 1px solid var(--c-hint, #1e88e5); border-radius: 8px; padding: 6px 8px; margin: 6px 0; }
   #info a { color: inherit; }
   #panel .note { color: var(--muted); font-size: 11px; margin-top: 2px; }
+  #panel .ident { margin-top: 12px; }
+  #panel .ident .btn { margin-top: 0; }
+  #panel .btn:disabled { opacity: .55; cursor: default; }
   #panel .btn { display: inline-block; margin-top: 12px; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 10px; cursor: pointer; font: inherit; }

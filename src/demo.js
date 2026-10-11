@@ -38,6 +38,7 @@
         : n.icon === "door" || n.icon === "window-closed-variant" ? [[localName("Contact"), T.states.closed, 12 * m], [localName("Battery"), n.demoBattery + " %", 3 * 3600]]
         : n.icon === "thermometer" ? [[localName("Temperature"), "21.4 °C", 2 * m], [localName("Humidity"), "48 %", 5 * m]]
         : n.icon === "lightbulb" ? [[localName("Light"), T.states.on, 40 * m]] : [[T.state, T.states.off, 90 * m]]; });
+    for (const n of all2) n.demoIdentify = true;
     sleepy[1].info.attach = 9; sleepy[1].info.detached = 3;
     routers[2].info.reboots = 140;   // a bulb on a wall switch
     sleepy[2].neigh[0]["6"] = -86;   // weak parent link (as seen by the device and by its parent router)
@@ -46,7 +47,7 @@
     const wifi = [
       { id: "wifi:demo-air", kind: "wifi", name: de ? "Luftqualität" : "Air quality monitor", icon: "air-filter", available: true, area: de ? "Büro" : "Office",
         entities: [], mainEntities: [], demoValues: [["CO₂", "612 ppm", 3 * 60], ["PM2.5", "4 µg/m³", 3 * 60]],
-        info: { vendor: "Demo Inc.", product: "Air quality monitor", sw: "1.0.4", hw: "1.0", reboots: 3, bootReason: 1, rssi: -52, channel: 6, wifiVersion: 3 } },
+        demoIdentify: true, info: { vendor: "Demo Inc.", product: "Air quality monitor", sw: "1.0.4", hw: "1.0", reboots: 3, bootReason: 1, rssi: -52, channel: 6, wifiVersion: 3 } },
       { id: "wifi:demo-tv", kind: "ethernet", name: de ? "Fernseher" : "TV", icon: "speaker", available: true, area: de ? "Wohnzimmer" : "Living room",
         entities: [], mainEntities: [], demoValues: [[T.state, T.states.on, 40 * 60]],
         info: { vendor: "Demo Inc.", product: "Smart TV", sw: "7.2", hw: "2", reboots: 41, bootReason: 1 } },

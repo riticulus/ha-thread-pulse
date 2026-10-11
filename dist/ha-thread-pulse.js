@@ -66,6 +66,9 @@ const TP_CSS = `
   #panel .hint { background: color-mix(in srgb, var(--c-hint, #1e88e5) 14%, transparent); border: 1px solid var(--c-hint, #1e88e5); border-radius: 8px; padding: 6px 8px; margin: 6px 0; }
   #info a { color: inherit; }
   #panel .note { color: var(--muted); font-size: 11px; margin-top: 2px; }
+  #panel .ident { margin-top: 12px; }
+  #panel .ident .btn { margin-top: 0; }
+  #panel .btn:disabled { opacity: .55; cursor: default; }
   #panel .btn { display: inline-block; margin-top: 12px; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 10px; cursor: pointer; font: inherit; }
 `;
 const TP_HTML = `
@@ -90,6 +93,7 @@ const TP_HTML = `
 `;
 // ---------- texts (one file per language in src/i18n/) ----------
 const TEXT_EN = {
+  identifyBtn: "💡 Identify", identifyNote: "Sends a real command: the device blinks, beeps or flashes for a few seconds, if it supports it.", identifySleepy: "Battery devices react only when they wake up – this can take a while.", identifySending: "sending …", identifySent: "sent – watch the device", identifyFailed: "Failed",
   exportBtn: "📷 Image", exportTitle: "Save the map as an image", exportPlain: "Save image (with names)", exportAnon: "Save anonymised image (no names)",
   anonDevice: i => `Device ${i}`, anonRoom: c => `Room ${c}`, anonNote: "anonymised", exportFailed: "The image could not be saved", exportDevices: n => `${n} devices`,
   reload: "↻ Reload", showList: "☰ Show list", hideList: "☰ Hide list", pause: "⏸ Pause live", resume: "▶ Resume live",
@@ -163,6 +167,7 @@ const TEXT_EN = {
   hEdge: r => `Only weak links to other routers (best: ${r} dBm) – it sits at the edge of the mesh. Another router in between would strengthen it.`,
 };
 const TEXT_DE = {
+  identifyBtn: "💡 Identifizieren", identifyNote: "Sendet einen echten Befehl: Das Gerät blinkt, piept oder leuchtet einige Sekunden lang, wenn es das unterstützt.", identifySleepy: "Batteriegeräte reagieren erst, wenn sie aufwachen – das kann etwas dauern.", identifySending: "wird gesendet …", identifySent: "gesendet – achte auf das Gerät", identifyFailed: "Fehlgeschlagen",
   exportBtn: "📷 Bild", exportTitle: "Karte als Bild speichern", exportPlain: "Bild speichern (mit Namen)", exportAnon: "Anonymisiertes Bild speichern (ohne Namen)",
   anonDevice: i => `Gerät ${i}`, anonRoom: c => `Raum ${c}`, anonNote: "anonymisiert", exportFailed: "Das Bild konnte nicht gespeichert werden", exportDevices: n => `${n} Geräte`,
   reload: "↻ Neu laden", showList: "☰ Liste anzeigen", hideList: "☰ Liste ausblenden", pause: "⏸ Live pausieren", resume: "▶ Live starten",
@@ -242,6 +247,7 @@ const NAMES_DE = [["Effective current", "Strom (effektiv)"], ["Effective voltage
   ["Occupancy", "Anwesenheit"], ["Door", "Kontakt"], ["Opening", "Kontakt"], ["Temperature", "Temperatur"], ["Humidity", "Luftfeuchte"],
   ["Identify", "Identifizieren"], ["Button", "Taste"], ["Light", "Licht"], ["Switch", "Schalter"], ["Motion", "Bewegung"]];
 const TEXT_ES = {
+  identifyBtn: "💡 Identificar", identifyNote: "Envía un comando real: el dispositivo parpadea, pita o se ilumina unos segundos, si lo admite.", identifySleepy: "Los dispositivos con batería solo reaccionan cuando se despiertan; puede tardar un poco.", identifySending: "enviando …", identifySent: "enviado – observa el dispositivo", identifyFailed: "Error",
   exportBtn: "📷 Imagen", exportTitle: "Guardar el mapa como imagen", exportPlain: "Guardar imagen (con nombres)", exportAnon: "Guardar imagen anonimizada (sin nombres)",
   anonDevice: i => `Dispositivo ${i}`, anonRoom: c => `Habitación ${c}`, anonNote: "anonimizada", exportFailed: "No se pudo guardar la imagen", exportDevices: n => `${n} dispositivos`,
   reload: "↻ Recargar", showList: "☰ Mostrar lista", hideList: "☰ Ocultar lista", pause: "⏸ Pausar directo", resume: "▶ Reanudar directo",
@@ -321,6 +327,7 @@ const NAMES_ES = [["Effective current", "Corriente (eficaz)"], ["Effective volta
   ["Occupancy", "Presencia"], ["Door", "Contacto"], ["Opening", "Contacto"], ["Temperature", "Temperatura"], ["Humidity", "Humedad"],
   ["Identify", "Identificar"], ["Button", "Botón"], ["Light", "Luz"], ["Switch", "Interruptor"], ["Motion", "Movimiento"]];
 const TEXT_FR = {
+  identifyBtn: "💡 Identifier", identifyNote: "Envoie une vraie commande : l'appareil clignote, bipe ou s'allume quelques secondes, s'il le prend en charge.", identifySleepy: "Les appareils sur batterie ne réagissent qu'à leur réveil – cela peut prendre un moment.", identifySending: "envoi …", identifySent: "envoyé – regardez l'appareil", identifyFailed: "Échec",
   exportBtn: "📷 Image", exportTitle: "Enregistrer la carte en image", exportPlain: "Enregistrer l'image (avec les noms)", exportAnon: "Enregistrer une image anonymisée (sans noms)",
   anonDevice: i => `Appareil ${i}`, anonRoom: c => `Pièce ${c}`, anonNote: "anonymisée", exportFailed: "L'image n'a pas pu être enregistrée", exportDevices: n => `${n} appareils`,
   reload: "↻ Recharger", showList: "☰ Afficher la liste", hideList: "☰ Masquer la liste", pause: "⏸ Mettre en pause", resume: "▶ Reprendre le direct",
@@ -400,6 +407,7 @@ const NAMES_FR = [["Effective current", "Courant (efficace)"], ["Effective volta
   ["Occupancy", "Présence"], ["Door", "Contact"], ["Opening", "Contact"], ["Temperature", "Température"], ["Humidity", "Humidité"],
   ["Identify", "Identifier"], ["Button", "Bouton"], ["Light", "Lumière"], ["Switch", "Interrupteur"], ["Motion", "Mouvement"]];
 const TEXT_IT = {
+  identifyBtn: "💡 Identifica", identifyNote: "Invia un comando reale: il dispositivo lampeggia, emette un suono o si illumina per alcuni secondi, se lo supporta.", identifySleepy: "I dispositivi a batteria reagiscono solo quando si risvegliano – può volerci un po'.", identifySending: "invio …", identifySent: "inviato – osserva il dispositivo", identifyFailed: "Non riuscito",
   exportBtn: "📷 Immagine", exportTitle: "Salva la mappa come immagine", exportPlain: "Salva immagine (con i nomi)", exportAnon: "Salva immagine anonimizzata (senza nomi)",
   anonDevice: i => `Dispositivo ${i}`, anonRoom: c => `Stanza ${c}`, anonNote: "anonimizzata", exportFailed: "Non è stato possibile salvare l'immagine", exportDevices: n => `${n} dispositivi`,
   reload: "↻ Ricarica", showList: "☰ Mostra elenco", hideList: "☰ Nascondi elenco", pause: "⏸ Metti in pausa", resume: "▶ Riprendi diretta",
@@ -479,6 +487,7 @@ const NAMES_IT = [["Effective current", "Corrente (efficace)"], ["Effective volt
   ["Occupancy", "Presenza"], ["Door", "Contatto"], ["Opening", "Contatto"], ["Temperature", "Temperatura"], ["Humidity", "Umidità"],
   ["Identify", "Identifica"], ["Button", "Pulsante"], ["Light", "Luce"], ["Switch", "Interruttore"], ["Motion", "Movimento"]];
 const TEXT_NL = {
+  identifyBtn: "💡 Identificeren", identifyNote: "Stuurt een echt commando: het apparaat knippert, piept of licht enkele seconden op, als het dat ondersteunt.", identifySleepy: "Apparaten op batterij reageren pas als ze wakker worden – dat kan even duren.", identifySending: "versturen …", identifySent: "verstuurd – let op het apparaat", identifyFailed: "Mislukt",
   exportBtn: "📷 Afbeelding", exportTitle: "Kaart opslaan als afbeelding", exportPlain: "Afbeelding opslaan (met namen)", exportAnon: "Geanonimiseerde afbeelding opslaan (zonder namen)",
   anonDevice: i => `Apparaat ${i}`, anonRoom: c => `Ruimte ${c}`, anonNote: "geanonimiseerd", exportFailed: "De afbeelding kon niet worden opgeslagen", exportDevices: n => `${n} apparaten`,
   reload: "↻ Herladen", showList: "☰ Lijst tonen", hideList: "☰ Lijst verbergen", pause: "⏸ Live pauzeren", resume: "▶ Live hervatten",
@@ -1052,6 +1061,7 @@ function createThreadPulse(root, opts, host) {
         if (!mainIds.length || mainIds.includes(d.entity_id)) liveAvailability(n, d.new_state.state !== "unavailable");
       }
       if (!n || !d.new_state || !d.old_state || d.new_state.state === "unavailable" || d.old_state.state === "unavailable") return;
+      if (d.entity_id.startsWith("button.")) return;   // the state of a button is the time of the last press, set by HA itself – not a message from the device
       if (d.new_state.state === d.old_state.state && JSON.stringify(d.new_state.attributes) === JSON.stringify(d.old_state.attributes)) return;
       const what = localName((d.new_state.attributes.friendly_name || d.entity_id).replace(nodeName[n], "").trim()) || T.state;
       let resp = "";
@@ -1067,7 +1077,7 @@ function createThreadPulse(root, opts, host) {
     const u2 = await conn.subscribeEvents(ev => {
       const sd = ev.data.service_data || {};
       const t = haTime(ev.time_fired), now = Date.now();
-      for (const e of [].concat(sd.entity_id || [])) if (entToNode[e] && !isNaN(t)) pendingCmd[e] = { t, ctx: ev.context && ev.context.id, at: now };
+      for (const e of [].concat(sd.entity_id || [])) if (entToNode[e] && !isNaN(t) && !e.startsWith("button.")) pendingCmd[e] = { t, ctx: ev.context && ev.context.id, at: now };
       for (const e in pendingCmd) if (now - pendingCmd[e].at > RESP_WINDOW) delete pendingCmd[e];
       const targets = new Set([].concat(sd.entity_id || []).map(e => entToNode[e]).filter(Boolean));
       for (const dv of [].concat(sd.device_id || [])) if (devToNode[dv]) targets.add(devToNode[dv]);
@@ -1384,6 +1394,7 @@ function createThreadPulse(root, opts, host) {
     // device
     h += `<h4>${T.secDevice}</h4><dl>` + row(T.manufacturer, esc(i.vendor || "")) + row(T.model, esc(i.product || "")) +
          row(T.firmware, esc(i.sw || "")) + row(T.hardware, esc(i.hw || "")) + row(T.area, esc(n.area || "")) + `</dl>`;
+    h += identifyHtml(n, hass);
     if (n.devId && !DEMO) h += `<button class="btn" data-device="${esc(n.devId)}">${T.openDevice} ↗</button>`;
     $("panel").innerHTML = h;
   }
@@ -1391,6 +1402,41 @@ function createThreadPulse(root, opts, host) {
     host.navigate("/config/devices/device/" + devId);
   }
   every(() => { if (panelNode) renderPanel(); }, 5000);
+  // ---------- identify (issue #4) ----------
+  // Matter devices with the Identify cluster get an "identify" button entity in Home Assistant (device class identify,
+  // a config entity). Pressing it makes the device blink, beep or flash for a few seconds. This is a real command to the
+  // device, so the button says so; the command is animated like every other command (call_service event).
+  const IDENTIFY_LOCK = 4000;                   // ms the button stays disabled after a press (no accidental double press)
+  let identifyState = null;                     // { id, until, text, ok } – survives the panel refresh every 5 s
+  function identifyEntity(dev, hass) {
+    if (DEMO) return dev.demoIdentify && dev.available ? "button.demo_identify" : null;    // like the real entity: unavailable while the device is
+    if (!hass) return null;
+    return (dev.entities || []).filter(e => e.startsWith("button.") && hass.states[e] &&
+      hass.states[e].attributes.device_class === "identify" && hass.states[e].state !== "unavailable").sort()[0] || null;
+  }
+  function identifyHtml(dev, hass) {
+    const ent = identifyEntity(dev, hass);
+    if (!ent) return "";
+    const s = identifyState && identifyState.id === dev.id && Date.now() < identifyState.until ? identifyState : null;
+    return `<div class="ident"><button class="btn" data-identify="${esc(dev.id)}"${s ? " disabled" : ""}>${T.identifyBtn}</button>` +
+           (s ? ` <span class="${s.ok ? "g" : "r"}">${esc(s.text)}</span>` : "") +
+           `<div class="note">${T.identifyNote}${dev.type === "sleepy_end_device" ? " " + T.identifySleepy : ""}</div></div>`;
+  }
+  async function pressIdentify(id) {
+    const dev = nodeById[id] || wifiById[id]; if (!dev) return;
+    const hass = DEMO ? null : freshHass(), ent = identifyEntity(dev, hass);
+    if (!ent || (identifyState && identifyState.id === id && Date.now() < identifyState.until)) return;
+    const done = (ok, text) => {
+      const ms = ok ? IDENTIFY_LOCK : 8000;
+      identifyState = { id, until: Date.now() + ms, text, ok };
+      if (panelNode === id) renderPanel();
+      setTimeout(() => { if (!destroyed && panelNode === id) renderPanel(); }, ms + 50);    // unlock the button right away
+    };
+    identifyState = { id, until: Date.now() + IDENTIFY_LOCK, text: T.identifySending, ok: true }; renderPanel();
+    if (DEMO) { launch(id, true, `HA → <b>${esc(dev.name)}</b>: button.press`); done(true, T.identifySent); return; }
+    try { await hass.callService("button", "press", { entity_id: ent }); done(true, T.identifySent); }
+    catch (e) { done(false, T.identifyFailed + ((e && e.message) ? ": " + e.message : "")); }
+  }
   // ---------- weak-spot hints (issue #10) ----------
   // Rules of thumb from the reported data. Thresholds: signal below −80 dBm is "weak" (same as the link colours);
   // ≥ 5 attach attempts / ≥ 3 drop-offs as for the warnings; ≥ 50 restarts in total for a router suggests it loses power regularly.
@@ -1670,6 +1716,7 @@ function createThreadPulse(root, opts, host) {
       h += `<h4>${T.secStability}</h4><dl>` + row(T.reboots, i.reboots) + row(T.bootReason, i.bootReason !== undefined && i.bootReason !== null ? esc(T.bootReasons[i.bootReason] || i.bootReason) : "") + `</dl>`;
     h += `<h4>${T.secDevice}</h4><dl>` + row(T.manufacturer, esc(i.vendor || "")) + row(T.model, esc(i.product || "")) +
          row(T.firmware, esc(i.sw || "")) + row(T.hardware, esc(i.hw || "")) + row(T.area, esc(w.area || "")) + `</dl>`;
+    h += identifyHtml(w, hass);
     if (w.devId && !DEMO) h += `<button class="btn" data-device="${esc(w.devId)}">${T.openDevice} ↗</button>`;
     $("panel").innerHTML = h;
   }
@@ -1822,6 +1869,7 @@ function createThreadPulse(root, opts, host) {
         : n.icon === "door" || n.icon === "window-closed-variant" ? [[localName("Contact"), T.states.closed, 12 * m], [localName("Battery"), n.demoBattery + " %", 3 * 3600]]
         : n.icon === "thermometer" ? [[localName("Temperature"), "21.4 °C", 2 * m], [localName("Humidity"), "48 %", 5 * m]]
         : n.icon === "lightbulb" ? [[localName("Light"), T.states.on, 40 * m]] : [[T.state, T.states.off, 90 * m]]; });
+    for (const n of all2) n.demoIdentify = true;
     sleepy[1].info.attach = 9; sleepy[1].info.detached = 3;
     routers[2].info.reboots = 140;   // a bulb on a wall switch
     sleepy[2].neigh[0]["6"] = -86;   // weak parent link (as seen by the device and by its parent router)
@@ -1830,7 +1878,7 @@ function createThreadPulse(root, opts, host) {
     const wifi = [
       { id: "wifi:demo-air", kind: "wifi", name: de ? "Luftqualität" : "Air quality monitor", icon: "air-filter", available: true, area: de ? "Büro" : "Office",
         entities: [], mainEntities: [], demoValues: [["CO₂", "612 ppm", 3 * 60], ["PM2.5", "4 µg/m³", 3 * 60]],
-        info: { vendor: "Demo Inc.", product: "Air quality monitor", sw: "1.0.4", hw: "1.0", reboots: 3, bootReason: 1, rssi: -52, channel: 6, wifiVersion: 3 } },
+        demoIdentify: true, info: { vendor: "Demo Inc.", product: "Air quality monitor", sw: "1.0.4", hw: "1.0", reboots: 3, bootReason: 1, rssi: -52, channel: 6, wifiVersion: 3 } },
       { id: "wifi:demo-tv", kind: "ethernet", name: de ? "Fernseher" : "TV", icon: "speaker", available: true, area: de ? "Wohnzimmer" : "Living room",
         entities: [], mainEntities: [], demoValues: [[T.state, T.states.on, 40 * 60]],
         info: { vendor: "Demo Inc.", product: "Smart TV", sw: "7.2", hw: "2", reboots: 41, bootReason: 1 } },
@@ -1918,13 +1966,14 @@ function createThreadPulse(root, opts, host) {
   root.addEventListener("pointerdown", e => { if (!e.target.closest || !e.target.closest("#exportbox")) setExportMenu(false); });
 
   root.addEventListener("click", e => {
-    const t = e.target.closest && e.target.closest("[data-open],[data-act],[data-device]"); if (!t) return;
+    const t = e.target.closest && e.target.closest("[data-open],[data-act],[data-device],[data-identify]"); if (!t) return;
     e.preventDefault();
     if (t.dataset.open) openPanel(t.dataset.open);
     else if (t.dataset.act === "close") closePanel();
     else if (t.dataset.act === "export" || t.dataset.act === "exportanon") exportImage(t.dataset.act === "exportanon");
     else if (t.dataset.act === "clearchanges") { changes = []; prefs.remove("changes"); renderChanges(); }
     else if (t.dataset.device) openDevice(t.dataset.device);
+    else if (t.dataset.identify) pressIdentify(t.dataset.identify);
   });
   // ---------- ambient mode (issue #11) ----------
   // Only the mesh, dark. Every 25 s the view glides slowly to a router and back to the whole mesh (against burn-in).

@@ -99,6 +99,17 @@ Devices in the grey-blue column on the right use Wi-Fi or Ethernet instead of Th
 | Channel | Wi-Fi channel |
 | Standard | Wi-Fi standard, e.g. 802.11n |
 
+## Identify
+
+*Available in the next release after version 1.4.0.*
+
+**💡 Identify** makes the device show itself for a few seconds – a lamp blinks, a plug flashes its LED, some sensors beep. Useful when several devices have similar names or you are not sure which one is which on the map.
+
+- The button is only shown when Home Assistant has an *identify* button for the device (Matter devices that support the Identify function; Thread and Wi-Fi). Not every device supports it; it disappears while the device is unreachable.
+- **It sends a real command to the device.** That is why the button says so and is locked for a few seconds after pressing it.
+- **Battery devices** only react when they wake up, which can take a while.
+- The command appears on the map like every other command (magenta dot, *button.press* in the live ticker). It is not counted as a response time, because Home Assistant does not get a confirmation for it.
+
 ## Open device in Home Assistant
 
 The button at the bottom opens the device page in Home Assistant (*Settings → Devices*).

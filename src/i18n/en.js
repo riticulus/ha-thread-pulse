@@ -1,6 +1,7 @@
 //# English texts. Defines TEXT_EN; build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_EN = {
+  identifyBtn: "💡 Identify", identifyNote: "Sends a real command: the device blinks, beeps or flashes for a few seconds, if it supports it.", identifySleepy: "Battery devices react only when they wake up – this can take a while.", identifySending: "sending …", identifySent: "sent – watch the device", identifyFailed: "Failed",
   exportBtn: "📷 Image", exportTitle: "Save the map as an image", exportPlain: "Save image (with names)", exportAnon: "Save anonymised image (no names)",
   anonDevice: i => `Device ${i}`, anonRoom: c => `Room ${c}`, anonNote: "anonymised", exportFailed: "The image could not be saved", exportDevices: n => `${n} devices`,
   reload: "↻ Reload", showList: "☰ Show list", hideList: "☰ Hide list", pause: "⏸ Pause live", resume: "▶ Resume live",
