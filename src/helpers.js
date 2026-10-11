@@ -93,7 +93,7 @@
     if (r.status === 401 || r.status === 403) throw Object.assign(new Error(T.notAdmin), { fatal: true });
     if (!r.ok) throw new Error("diagnostics " + r.status);
     // Thread addresses are 64-bit numbers: keep them exact by turning them into strings before parsing
-    const txt = (await r.text()).replace(/"0":\s*(\d{15,})/g, '"0":"$1"');
+    const txt = (await r.text()).replace(/"0":\s*(\d{15,})/g, '"0":"$1"').replace(/"0\/53\/4":\s*(\d+)/, '"0/53/4":"$1"');
     return JSON.parse(txt).data.node;
   }
   function setLanguage(l) {

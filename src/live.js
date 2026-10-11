@@ -47,8 +47,13 @@
     if (path) {
       if (down) path = path.slice().reverse();
       recordTraffic(path);
+      if (brExt && path.includes(brExt)) {             // every animated message passes the border router
+        const b = counts[brExt] = counts[brExt] || { up: [], down: [], last: null };
+        (down ? b.down : b.up).push(Date.now()); b.last = { t: Date.now(), down };
+        b.up = b.up.filter(t => t > cut); b.down = b.down.filter(t => t > cut); b.total = (b.total || 0) + 1;
+      }
     }
-    if (panelNode === nodeId) renderPanel();
+    if (panelNode === nodeId || (panelNode && panelNode === brExt)) renderPanel();
     if (!liveOn || !network || !path) return;
     playTick(down);
     packets.push({ path, t0: now, color: down ? COLORS.down : COLORS.up, origin: down ? path[path.length - 1] : nodeId });

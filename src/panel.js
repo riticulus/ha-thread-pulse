@@ -63,7 +63,63 @@
   function closePanel() { panelNode = null; $("panel").hidden = true; if (network) network.unselectAll(); }
   function row(k, v) { return v === undefined || v === null || v === "" ? "" : `<dt>${esc(k)}</dt><dd>${v}</dd>`; }
   function rssiTxt(r) { const [, cls, txt] = QUAL(r); return `<span class="${cls}">${r} dBm · ${txt}</span>`; }
+  // ---------- detail panel of the border router and other Thread routers (issue #36) ----------
+  function liveRows(id) {
+    const c = counts[id], now = Date.now(), inWin = (arr, ms) => arr.filter(t => now - t < ms).length;
+    if (!c) return row(T.msgsTotal, T.none);
+    return row(T.msgsTotal, `${c.total}`) +
+      row(T.msgsMin, `${inWin(c.up, 60000)} ${T.toHa} · ${inWin(c.down, 60000)} ${T.fromHa}`) +
+      row(T.msgsHour, `${inWin(c.up, 3600000)} ${T.toHa} · ${inWin(c.down, 3600000)} ${T.fromHa}`) +
+      row(T.lastMsg, `${T.ago(Math.round((now - c.last.t) / 1000))} (${c.last.down ? T.fromHa : T.toHa})`);
+  }
+  function renderRouterPanel(id) {
+    const isBr = id === brExt, nodes = Object.values(nodeById);
+    let h = `<div class="hd"><img src="${iconImg(isBr ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 80)}" alt=""><div>` +
+            `<div class="t">${esc(isBr ? T.brLabel : T.foreignLabel(id).replace("\n", " "))}</div><div class="s">${esc(isBr ? T.brSub : T.foreignSub)}</div></div>` +
+            `<button class="x" title="×" data-act="close">×</button></div>`;
+    if (isBr) h += `<h4>${T.secLive} · ${T.msgsThrough}</h4><dl>` + liveRows(id) + `</dl>`;
+    if (isBr) {
+      // network values: OTBR / preferred dataset first, else what the Matter devices report
+      const ds = (threadInfo && threadInfo.datasets || []).find(d => d.preferred) || (threadInfo && threadInfo.datasets || [])[0];
+      const nets = nodes.map(n => (n.info || {}).net).filter(x => x && x.name);
+      const net = nets[0] || {};
+      // datasets give hex strings, the Matter diagnostics give decimal numbers
+      const fromHex = (v, len) => String(v).toLowerCase().padStart(len, "0").toUpperCase();
+      const fromDec = (v, len) => BigInt(v).toString(16).padStart(len, "0").toUpperCase();
+      const panId = ds && ds.panId ? fromHex(ds.panId, 4) : net.panId !== undefined && net.panId !== null ? fromDec(net.panId, 4) : "";
+      const extPanId = ds && ds.extPanId ? fromHex(ds.extPanId, 16) : net.extPanId ? fromDec(net.extPanId, 16) : "";
+      const leaders = nodes.map(n => (n.info || {}).leader).filter(x => x !== undefined && x !== null);
+      const leaderRid = leaders.sort((a, b) => leaders.filter(x => x === b).length - leaders.filter(x => x === a).length)[0];
+      const leaderId = leaderRid !== undefined ? ridToId[leaderRid] : null;
+      const leaderName = !leaderId ? "" : nodeById[leaderId] ? nodeById[leaderId].name : leaderId === brExt ? T.brLabel : "…" + leaderId.slice(-4);
+      const routers = Object.keys(ridToId).length || nodes.filter(n => n.type === "routing_end_device").length + extraIds.size;
+      h += `<h4>${T.secNetwork}</h4><dl>` +
+        row(T.networkName, esc((ds && ds.name) || net.name || "")) +
+        row(T.channel, esc(String((threadInfo && threadInfo.otbr && threadInfo.otbr.channel) || (ds && ds.channel) || net.channel || ""))) +
+        row(T.panId, panId ? `<span style="font-family:monospace">0x${esc(panId)}</span>` : "") +
+        row(T.extPanId, extPanId ? `<span style="font-family:monospace">${esc(extPanId)}</span>` : "") +
+        row(T.routersInMesh, T.ofMax(routers)) +
+        row(T.devicesInMesh, String(nodes.length + extraIds.size)) +
+        row(T.leader, esc(leaderName)) + `</dl>`;
+      const o = threadInfo && threadInfo.otbr && threadInfo.otbr.extAddr && threadInfo.otbr.extAddr.toLowerCase() === id ? threadInfo.otbr : null;
+      h += `<h4>${T.secBorderRouter}</h4><dl>` + row(T.brKind, o ? esc(T.brOtbr) : "") +
+        row(T.address, `<span style="font-family:monospace">${esc(id)}</span>`) +
+        row(T.borderAgent, o && o.borderAgentId ? `<span style="font-family:monospace">${esc(o.borderAgentId)}</span>` : "");
+      const dsl = threadInfo && threadInfo.datasets || [];
+      if (dsl.length) h += row(T.datasets, dsl.map(d => `${esc(d.name)} · ${esc(T.channel)} ${esc(String(d.channel))}${d.preferred ? ` · <b>${T.preferred}</b>` : ""}`).join("<br>"));
+      h += `</dl>`;
+    }
+    const links = (linksOf[id] || []).slice().sort((p, q) => q.rssi - p.rssi);
+    const nb = links.filter(l => l.kind === "neighbour"), kids = links.filter(l => l.kind === "child");
+    h += `<h4>${T.secThread}</h4><dl>`;
+    if (nb.length) h += row(`${T.neighbours} (${nb.length})`, nb.map(l => `${esc(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
+    if (kids.length) h += row(`${T.children} (${kids.length})`, kids.map(l => `${esc(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
+    if (!isBr) h += row(T.address, `<span style="font-family:monospace">${esc(id)}</span>`);
+    h += `</dl><div class="note">${isBr ? T.stale : T.foreignNote}</div>`;
+    $("panel").innerHTML = h;
+  }
   function renderPanel() {
+    if (!nodeById[panelNode] && extraIds.has(panelNode)) return renderRouterPanel(panelNode);
     const n = nodeById[panelNode]; if (!n) return closePanel();
     const i = n.info || {}, hass = DEMO ? null : freshHass();
     if (hass) refreshBattery(hass);

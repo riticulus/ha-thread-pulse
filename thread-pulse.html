@@ -142,6 +142,12 @@ const TEXT = {
     warnDetached: n => `Dropped off the network ${n} times since restart`,
     warnBattery: p => `Battery low (${p} %)`,
     stale: "Thread data as last reported by the device, may be outdated.",
+    brSub: "Connects the Thread network to Home Assistant", foreignSub: "Thread router that is not a Matter device of Home Assistant",
+    foreignNote: "Home Assistant has no further data about this device – only what the neighbouring routers report.",
+    secNetwork: "Thread network", networkName: "Network name", channel: "Channel", panId: "PAN ID", extPanId: "Extended PAN ID",
+    routersInMesh: "Routers in the mesh", ofMax: n => `${n} of max. 32`, devicesInMesh: "Thread devices", leader: "Leader",
+    secBorderRouter: "Border router", brKind: "Type", brOtbr: "OpenThread Border Router (add-on)", borderAgent: "Border agent ID",
+    datasets: "Known Thread networks", preferred: "preferred", msgsThrough: "Messages through it",
     secHints: "Hints", hintsHead: "Hints for the network", listHints: n => ` · ${n} hint${n === 1 ? "" : "s"}`,
     hintsNote: "Hints are rules of thumb based on the data the devices report – suggestions, not measurements.",
     noHints: "No weak spots found.",
@@ -198,6 +204,12 @@ const TEXT = {
     warnDetached: n => `${n}× Netz verloren seit Neustart`,
     warnBattery: p => `Batterie schwach (${p} %)`,
     stale: "Thread-Daten: letzter Stand, den das Gerät gemeldet hat – kann veraltet sein.",
+    brSub: "Verbindet das Thread-Netz mit Home Assistant", foreignSub: "Thread-Router, der kein Matter-Gerät von Home Assistant ist",
+    foreignNote: "Home Assistant hat keine weiteren Daten zu diesem Gerät – nur das, was die benachbarten Router melden.",
+    secNetwork: "Thread-Netz", networkName: "Netzwerkname", channel: "Kanal", panId: "PAN-ID", extPanId: "Erweiterte PAN-ID",
+    routersInMesh: "Router im Netz", ofMax: n => `${n} von max. 32`, devicesInMesh: "Thread-Geräte", leader: "Leader",
+    secBorderRouter: "Border Router", brKind: "Typ", brOtbr: "OpenThread Border Router (Add-on)", borderAgent: "Border-Agent-ID",
+    datasets: "Bekannte Thread-Netze", preferred: "bevorzugt", msgsThrough: "Nachrichten darüber",
     secHints: "Hinweise", hintsHead: "Hinweise zum Netz", listHints: n => ` · ${n} Hinweis${n === 1 ? "" : "e"}`,
     hintsNote: "Hinweise sind Faustregeln aus den Daten, die die Geräte melden – Vorschläge, keine Messungen.",
     noHints: "Keine Schwachstellen gefunden.",
@@ -320,7 +332,7 @@ function createThreadPulse(root, opts, host) {
     if (r.status === 401 || r.status === 403) throw Object.assign(new Error(T.notAdmin), { fatal: true });
     if (!r.ok) throw new Error("diagnostics " + r.status);
     // Thread addresses are 64-bit numbers: keep them exact by turning them into strings before parsing
-    const txt = (await r.text()).replace(/"0":\s*(\d{15,})/g, '"0":"$1"');
+    const txt = (await r.text()).replace(/"0":\s*(\d{15,})/g, '"0":"$1"').replace(/"0\/53\/4":\s*(\d+)/, '"0/53/4":"$1"');
     return JSON.parse(txt).data.node;
   }
   function setLanguage(l) {
@@ -377,19 +389,27 @@ function createThreadPulse(root, opts, host) {
                      neigh: a["0/53/7"] || [], routes: a["0/53/8"] || [], role, devId: d.id, entities: entsByDev[d.id] || [],
                      mainEntities: mainEnts[d.id] || [], area: areaName[d.area_id] || "",
                      info: { vendor: a["0/40/1"] || d.manufacturer, product: a["0/40/3"] || d.model, sw: a["0/40/10"] || d.sw_version, hw: a["0/40/8"] || d.hw_version,
-                             reboots: a["0/51/1"], bootReason: a["0/51/4"], detached: a["0/53/14"], attach: a["0/53/18"], parentChanges: a["0/53/21"],
+                             reboots: a["0/51/1"], bootReason: a["0/51/4"], detached: a["0/53/14"], attach: a["0/53/18"], parentChanges: a["0/53/21"], leader: a["0/53/13"],
+                             net: { name: a["0/53/2"], channel: a["0/53/0"], panId: a["0/53/3"], extPanId: a["0/53/4"] },
                              batType: Object.entries(a).filter(([k]) => /^\d+\/47\/19$/.test(k)).map(([, v]) => v).find(Boolean) || "" } });
       } catch (e) { if (e.fatal) throw e; console.warn("Thread Pulse:", d.name, e); }
       st.textContent = `${T.loading} ${++done}/${devs.length}`;
     }));
     if (!nodes.length) throw Object.assign(new Error(T.noDevices), { fatal: true });
-    let brExt = null;
-    try { brExt = Object.values(await hass.callWS({ type: "otbr/info" }))[0].extended_address.toLowerCase(); } catch (e) {}   // no OTBR add-on
-    return { nodes, brExt, hass };
+    let brExt = null, otbr = null, datasets = [];
+    try { otbr = Object.values(await hass.callWS({ type: "otbr/info" }))[0]; brExt = otbr.extended_address.toLowerCase(); } catch (e) {}   // no OTBR add-on
+    try { datasets = (await hass.callWS({ type: "thread/list_datasets" })).datasets || []; } catch (e) {}
+    // keep only what the panel shows – never the dataset TLVs, they contain the network key
+    const thread = {
+      otbr: otbr && { extAddr: otbr.extended_address, borderAgentId: otbr.border_agent_id, channel: otbr.channel, extPanId: otbr.extended_pan_id },
+      datasets: datasets.map(d => ({ name: d.network_name, channel: d.channel, panId: d.pan_id, extPanId: d.extended_pan_id, preferred: d.preferred, source: d.source })),
+    };
+    return { nodes, brExt, hass, thread };
   }
 
   // ---------- graph ----------
   let searchHits = [], searchActive = false;
+  let extraIds = new Set(), threadInfo = null;
   let hintsOf = {}, nodeById = {}, linksOf = {}, battOf = {}, brExt = null, devToNode = {}, entToNode = {}, nodeName = {}, onMap = new Set(), ridToId = {}, routeOf = {}, parentRid = {}, ownRid = {};
 
   function render(model, keep) {      // keep: positions of the previous map (refresh without layout jump)
@@ -418,6 +438,7 @@ function createThreadPulse(root, opts, host) {
       }
     }
     const extras = Object.keys(extra);
+    extraIds = new Set(extras); threadInfo = model.thread || null;
     if (!brExt && extras.length === 1) brExt = extras[0];         // no OTBR info: a single unknown router is most likely the border router
     for (const id of extras) {
       const isBr = id === brExt;
@@ -466,7 +487,7 @@ function createThreadPulse(root, opts, host) {
     network.on("beforeDrawing", ctx => { drawRooms(ctx); drawHeat(ctx); });
     if (roomOn) applyRooms(true, false);
     network.on("afterDrawing", ctx => { drawBadges(ctx); drawFlashes(ctx); drawPackets(ctx); });
-    network.on("click", p => { if (p.nodes.length && nodeById[p.nodes[0]]) openPanel(p.nodes[0]); else closePanel(); });
+    network.on("click", p => { if (p.nodes.length && (nodeById[p.nodes[0]] || extraIds.has(p.nodes[0]))) openPanel(p.nodes[0]); else closePanel(); });
     // double click / double tap (issue #23): on empty space center and fit the whole mesh, on a device zoom to it
     network.on("doubleClick", p => {
       if (p.nodes.length && !String(p.nodes[0]).startsWith("room:")) {
@@ -521,7 +542,7 @@ function createThreadPulse(root, opts, host) {
     const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
     if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
     renderChanges();
-    if (panelNode && nodeById[panelNode]) renderPanel(); else if (panelNode) closePanel();
+    if (panelNode && (nodeById[panelNode] || extraIds.has(panelNode))) renderPanel(); else if (panelNode) closePanel();
     lastSnap = snapshotOf(nodes, edges, byId);
     $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + " · " + T.tapHint + " · v" + VERSION;
   }
@@ -573,8 +594,13 @@ function createThreadPulse(root, opts, host) {
     if (path) {
       if (down) path = path.slice().reverse();
       recordTraffic(path);
+      if (brExt && path.includes(brExt)) {             // every animated message passes the border router
+        const b = counts[brExt] = counts[brExt] || { up: [], down: [], last: null };
+        (down ? b.down : b.up).push(Date.now()); b.last = { t: Date.now(), down };
+        b.up = b.up.filter(t => t > cut); b.down = b.down.filter(t => t > cut); b.total = (b.total || 0) + 1;
+      }
     }
-    if (panelNode === nodeId) renderPanel();
+    if (panelNode === nodeId || (panelNode && panelNode === brExt)) renderPanel();
     if (!liveOn || !network || !path) return;
     playTick(down);
     packets.push({ path, t0: now, color: down ? COLORS.down : COLORS.up, origin: down ? path[path.length - 1] : nodeId });
@@ -855,7 +881,63 @@ function createThreadPulse(root, opts, host) {
   function closePanel() { panelNode = null; $("panel").hidden = true; if (network) network.unselectAll(); }
   function row(k, v) { return v === undefined || v === null || v === "" ? "" : `<dt>${esc(k)}</dt><dd>${v}</dd>`; }
   function rssiTxt(r) { const [, cls, txt] = QUAL(r); return `<span class="${cls}">${r} dBm · ${txt}</span>`; }
+  // ---------- detail panel of the border router and other Thread routers (issue #36) ----------
+  function liveRows(id) {
+    const c = counts[id], now = Date.now(), inWin = (arr, ms) => arr.filter(t => now - t < ms).length;
+    if (!c) return row(T.msgsTotal, T.none);
+    return row(T.msgsTotal, `${c.total}`) +
+      row(T.msgsMin, `${inWin(c.up, 60000)} ${T.toHa} · ${inWin(c.down, 60000)} ${T.fromHa}`) +
+      row(T.msgsHour, `${inWin(c.up, 3600000)} ${T.toHa} · ${inWin(c.down, 3600000)} ${T.fromHa}`) +
+      row(T.lastMsg, `${T.ago(Math.round((now - c.last.t) / 1000))} (${c.last.down ? T.fromHa : T.toHa})`);
+  }
+  function renderRouterPanel(id) {
+    const isBr = id === brExt, nodes = Object.values(nodeById);
+    let h = `<div class="hd"><img src="${iconImg(isBr ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 80)}" alt=""><div>` +
+            `<div class="t">${esc(isBr ? T.brLabel : T.foreignLabel(id).replace("\n", " "))}</div><div class="s">${esc(isBr ? T.brSub : T.foreignSub)}</div></div>` +
+            `<button class="x" title="×" data-act="close">×</button></div>`;
+    if (isBr) h += `<h4>${T.secLive} · ${T.msgsThrough}</h4><dl>` + liveRows(id) + `</dl>`;
+    if (isBr) {
+      // network values: OTBR / preferred dataset first, else what the Matter devices report
+      const ds = (threadInfo && threadInfo.datasets || []).find(d => d.preferred) || (threadInfo && threadInfo.datasets || [])[0];
+      const nets = nodes.map(n => (n.info || {}).net).filter(x => x && x.name);
+      const net = nets[0] || {};
+      // datasets give hex strings, the Matter diagnostics give decimal numbers
+      const fromHex = (v, len) => String(v).toLowerCase().padStart(len, "0").toUpperCase();
+      const fromDec = (v, len) => BigInt(v).toString(16).padStart(len, "0").toUpperCase();
+      const panId = ds && ds.panId ? fromHex(ds.panId, 4) : net.panId !== undefined && net.panId !== null ? fromDec(net.panId, 4) : "";
+      const extPanId = ds && ds.extPanId ? fromHex(ds.extPanId, 16) : net.extPanId ? fromDec(net.extPanId, 16) : "";
+      const leaders = nodes.map(n => (n.info || {}).leader).filter(x => x !== undefined && x !== null);
+      const leaderRid = leaders.sort((a, b) => leaders.filter(x => x === b).length - leaders.filter(x => x === a).length)[0];
+      const leaderId = leaderRid !== undefined ? ridToId[leaderRid] : null;
+      const leaderName = !leaderId ? "" : nodeById[leaderId] ? nodeById[leaderId].name : leaderId === brExt ? T.brLabel : "…" + leaderId.slice(-4);
+      const routers = Object.keys(ridToId).length || nodes.filter(n => n.type === "routing_end_device").length + extraIds.size;
+      h += `<h4>${T.secNetwork}</h4><dl>` +
+        row(T.networkName, esc((ds && ds.name) || net.name || "")) +
+        row(T.channel, esc(String((threadInfo && threadInfo.otbr && threadInfo.otbr.channel) || (ds && ds.channel) || net.channel || ""))) +
+        row(T.panId, panId ? `<span style="font-family:monospace">0x${esc(panId)}</span>` : "") +
+        row(T.extPanId, extPanId ? `<span style="font-family:monospace">${esc(extPanId)}</span>` : "") +
+        row(T.routersInMesh, T.ofMax(routers)) +
+        row(T.devicesInMesh, String(nodes.length + extraIds.size)) +
+        row(T.leader, esc(leaderName)) + `</dl>`;
+      const o = threadInfo && threadInfo.otbr && threadInfo.otbr.extAddr && threadInfo.otbr.extAddr.toLowerCase() === id ? threadInfo.otbr : null;
+      h += `<h4>${T.secBorderRouter}</h4><dl>` + row(T.brKind, o ? esc(T.brOtbr) : "") +
+        row(T.address, `<span style="font-family:monospace">${esc(id)}</span>`) +
+        row(T.borderAgent, o && o.borderAgentId ? `<span style="font-family:monospace">${esc(o.borderAgentId)}</span>` : "");
+      const dsl = threadInfo && threadInfo.datasets || [];
+      if (dsl.length) h += row(T.datasets, dsl.map(d => `${esc(d.name)} · ${esc(T.channel)} ${esc(String(d.channel))}${d.preferred ? ` · <b>${T.preferred}</b>` : ""}`).join("<br>"));
+      h += `</dl>`;
+    }
+    const links = (linksOf[id] || []).slice().sort((p, q) => q.rssi - p.rssi);
+    const nb = links.filter(l => l.kind === "neighbour"), kids = links.filter(l => l.kind === "child");
+    h += `<h4>${T.secThread}</h4><dl>`;
+    if (nb.length) h += row(`${T.neighbours} (${nb.length})`, nb.map(l => `${esc(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
+    if (kids.length) h += row(`${T.children} (${kids.length})`, kids.map(l => `${esc(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
+    if (!isBr) h += row(T.address, `<span style="font-family:monospace">${esc(id)}</span>`);
+    h += `</dl><div class="note">${isBr ? T.stale : T.foreignNote}</div>`;
+    $("panel").innerHTML = h;
+  }
   function renderPanel() {
+    if (!nodeById[panelNode] && extraIds.has(panelNode)) return renderRouterPanel(panelNode);
     const n = nodeById[panelNode]; if (!n) return closePanel();
     const i = n.info || {}, hass = DEMO ? null : freshHass();
     if (hass) refreshBattery(hass);
@@ -1170,7 +1252,10 @@ function createThreadPulse(root, opts, host) {
     routers[2].info.reboots = 140;   // a bulb on a wall switch
     sleepy[2].neigh[0]["6"] = -86;   // weak parent link (as seen by the device and by its parent router)
     for (const r of routers) for (const x of r.neigh) if (x["0"] === dec(sleepy[2].id)) x["6"] = -86;
-    return { nodes: [...routers, ...ends, ...sleepy], brExt: br.id, demo: { routers, sleepy, dec, rid } };
+    for (const n of all2) { n.info.leader = rid[routers[2].id]; n.info.net = { name: "demo-thread", channel: 15, panId: 4660, extPanId: "dead00beef00cafe" }; }
+    return { nodes: [...routers, ...ends, ...sleepy], brExt: br.id, demo: { routers, sleepy, dec, rid },
+             thread: { otbr: { extAddr: br.id, borderAgentId: "00000000000000000000000000demo00", channel: 15, extPanId: "dead00beef00cafe" },
+                       datasets: [{ name: "demo-thread", channel: 15, panId: "1234", extPanId: "dead00beef00cafe", preferred: true, source: "otbr" }] } };
   }
   // demo: one invented change per refresh – a battery device moves to another parent, or a device drops out / comes back
   function demoMutate() {

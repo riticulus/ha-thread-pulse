@@ -42,7 +42,10 @@
     routers[2].info.reboots = 140;   // a bulb on a wall switch
     sleepy[2].neigh[0]["6"] = -86;   // weak parent link (as seen by the device and by its parent router)
     for (const r of routers) for (const x of r.neigh) if (x["0"] === dec(sleepy[2].id)) x["6"] = -86;
-    return { nodes: [...routers, ...ends, ...sleepy], brExt: br.id, demo: { routers, sleepy, dec, rid } };
+    for (const n of all2) { n.info.leader = rid[routers[2].id]; n.info.net = { name: "demo-thread", channel: 15, panId: 4660, extPanId: "dead00beef00cafe" }; }
+    return { nodes: [...routers, ...ends, ...sleepy], brExt: br.id, demo: { routers, sleepy, dec, rid },
+             thread: { otbr: { extAddr: br.id, borderAgentId: "00000000000000000000000000demo00", channel: 15, extPanId: "dead00beef00cafe" },
+                       datasets: [{ name: "demo-thread", channel: 15, panId: "1234", extPanId: "dead00beef00cafe", preferred: true, source: "otbr" }] } };
   }
   // demo: one invented change per refresh – a battery device moves to another parent, or a device drops out / comes back
   function demoMutate() {

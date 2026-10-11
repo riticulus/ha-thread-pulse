@@ -37,14 +37,21 @@
                      neigh: a["0/53/7"] || [], routes: a["0/53/8"] || [], role, devId: d.id, entities: entsByDev[d.id] || [],
                      mainEntities: mainEnts[d.id] || [], area: areaName[d.area_id] || "",
                      info: { vendor: a["0/40/1"] || d.manufacturer, product: a["0/40/3"] || d.model, sw: a["0/40/10"] || d.sw_version, hw: a["0/40/8"] || d.hw_version,
-                             reboots: a["0/51/1"], bootReason: a["0/51/4"], detached: a["0/53/14"], attach: a["0/53/18"], parentChanges: a["0/53/21"],
+                             reboots: a["0/51/1"], bootReason: a["0/51/4"], detached: a["0/53/14"], attach: a["0/53/18"], parentChanges: a["0/53/21"], leader: a["0/53/13"],
+                             net: { name: a["0/53/2"], channel: a["0/53/0"], panId: a["0/53/3"], extPanId: a["0/53/4"] },
                              batType: Object.entries(a).filter(([k]) => /^\d+\/47\/19$/.test(k)).map(([, v]) => v).find(Boolean) || "" } });
       } catch (e) { if (e.fatal) throw e; console.warn("Thread Pulse:", d.name, e); }
       st.textContent = `${T.loading} ${++done}/${devs.length}`;
     }));
     if (!nodes.length) throw Object.assign(new Error(T.noDevices), { fatal: true });
-    let brExt = null;
-    try { brExt = Object.values(await hass.callWS({ type: "otbr/info" }))[0].extended_address.toLowerCase(); } catch (e) {}   // no OTBR add-on
-    return { nodes, brExt, hass };
+    let brExt = null, otbr = null, datasets = [];
+    try { otbr = Object.values(await hass.callWS({ type: "otbr/info" }))[0]; brExt = otbr.extended_address.toLowerCase(); } catch (e) {}   // no OTBR add-on
+    try { datasets = (await hass.callWS({ type: "thread/list_datasets" })).datasets || []; } catch (e) {}
+    // keep only what the panel shows – never the dataset TLVs, they contain the network key
+    const thread = {
+      otbr: otbr && { extAddr: otbr.extended_address, borderAgentId: otbr.border_agent_id, channel: otbr.channel, extPanId: otbr.extended_pan_id },
+      datasets: datasets.map(d => ({ name: d.network_name, channel: d.channel, panId: d.pan_id, extPanId: d.extended_pan_id, preferred: d.preferred, source: d.source })),
+    };
+    return { nodes, brExt, hass, thread };
   }
 
