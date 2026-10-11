@@ -164,7 +164,7 @@ The code lives in `src/`, one file per topic:
 | `src/ui.js`, `src/start.js` | List, legend, errors, event handling; start-up |
 | `src/standalone.html`, `src/card.js` | Shells for the standalone page and the dashboard card |
 
-`python3 build.py` assembles the files (in a fixed order, no bundler) into `dist/thread-pulse.html` and `dist/ha-thread-pulse.js` – do not edit those by hand. `dist/thread-pulse-vis-network.js` is the graph library (unmodified, the only copy in the repository). The feature files are placed *inside* `createThreadPulse()` and share its state. A GitHub action checks on every pull request that the generated files are up to date and runs the HACS validation. Browser tests (demo mode, headless Chrome) are in [`tests/`](tests/README.md). Releases are prepared with `tools/release.py` and created by the GitHub action *Release* when a tag is pushed. More in the [wiki](https://github.com/riticulus/ha-thread-pulse/wiki/Development).
+`python3 build.py` assembles the files (in a fixed order, no bundler) into `dist/thread-pulse.html` and `dist/ha-thread-pulse.js` – do not edit those by hand. `dist/thread-pulse-vis-network.js` is the graph library (unmodified, the only copy in the repository). The feature files are placed *inside* `createThreadPulse()` and share its state. A GitHub action checks on every pull request that the generated files are up to date and runs the HACS validation. Browser tests (demo mode, headless Chrome) are in [`tests/`](tests/README.md). Releases are prepared with `tools/release.py` and created by the GitHub action *Release* when a tag is pushed. The user guide is written in [`docs/wiki/`](docs/wiki) and published to the wiki with every release – edit it there, not in the wiki. More in the [wiki](https://github.com/riticulus/ha-thread-pulse/wiki/Development).
 
 ## Related projects
 
@@ -178,7 +178,7 @@ Thread Pulse focuses on the live view of messages. For a detailed, static analys
 - **Found a bug?** Open a [bug report](https://github.com/riticulus/ha-thread-pulse/issues/new?template=bug_report.yml) – the form asks for the details that are needed (versions, border router, number of devices, browser).
 - **Have an idea?** Open a [feature request](https://github.com/riticulus/ha-thread-pulse/issues/new?template=feature_request.yml).
 - **Better wording in your language?** Open a [translation correction](https://github.com/riticulus/ha-thread-pulse/issues/new?template=translation.yml) or a pull request against `src/i18n/`.
-- **Pull requests** are welcome; the template lists what to check. How the code is organised: [Development](https://github.com/riticulus/ha-thread-pulse/wiki/Development).
+- **Pull requests** are welcome; the template lists what to check. Corrections to the user guide go to [`docs/wiki/`](docs/wiki) – the wiki itself is generated. How the code is organised: [Development](https://github.com/riticulus/ha-thread-pulse/wiki/Development).
 
 Labels: `bug` (something does not work), `New Feature` (new functionality), `enhancement` (restructuring and maintenance), `documentation`, `translation`.
 

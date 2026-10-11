@@ -9,7 +9,8 @@
 Typical release:
   1. branch release/X.Y.Z, `prepare X.Y.Z`, pull request, merge
   2. tag the merge commit: git tag -a vX.Y.Z -m "Thread Pulse X.Y.Z" && git push origin vX.Y.Z
-     → the GitHub action "Release" checks everything and creates the GitHub release (never with attachments)
+     → the GitHub action "Release" checks everything, creates the GitHub release (never with attachments)
+       and publishes the user guide (docs/wiki/) to the wiki
   3. branch chore/post-X.Y.Z, `dev`, pull request, merge
 """
 import datetime, re, subprocess, sys

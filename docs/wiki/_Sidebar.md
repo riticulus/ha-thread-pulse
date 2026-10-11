@@ -1,0 +1,30 @@
+**[Thread Pulse](Home)**
+
+**Getting started**
+- [Installation](Installation)
+- [Configuration](Configuration)
+- [Reading the map](Reading-the-Map)
+
+**Features**
+- [Live data flow & traffic heat](Live-Data-Flow)
+- [Detail panel](Detail-Panel)
+- [Hints and warnings](Hints-and-Warnings)
+- [Response time](Response-Time)
+- [Change log](Change-Log)
+- [Room view](Room-View)
+- [Search](Search)
+- [The list](The-List)
+- [Ambient mode](Ambient-Mode)
+- [Demo mode](Demo-Mode)
+
+**Background**
+- [How it works](How-It-Works)
+- [Troubleshooting & FAQ](Troubleshooting-and-FAQ)
+- [Limitations](Limitations)
+- [Development](Development)
+
+**Links**
+- [Repository](https://github.com/riticulus/ha-thread-pulse)
+- [Releases](https://github.com/riticulus/ha-thread-pulse/releases)
+- [Changelog](https://github.com/riticulus/ha-thread-pulse/blob/main/CHANGELOG.md)
+- [Issues](https://github.com/riticulus/ha-thread-pulse/issues)

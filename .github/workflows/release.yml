@@ -3,6 +3,7 @@ name: Release
 # Pushing a tag vX.Y.Z creates the GitHub release – after checking that src/version.js and CHANGELOG.md match and
 # that the generated files are up to date. Started by hand ("Run workflow"), it is a dry run by default: it only
 # checks and shows the release notes. Releases never get attachments (HACS would download them instead of dist/).
+# After a real release the user guide in docs/wiki/ is published to the wiki (action "Wiki").
 
 on:
   push:
@@ -23,6 +24,9 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.v.outputs.tag }}
+      published: ${{ steps.publish.outputs.published }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -34,6 +38,7 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then v="${GITHUB_REF_NAME#v}"; else v="${{ inputs.version }}"; fi
           echo "version=$v" >> "$GITHUB_OUTPUT"
+          echo "tag=v$v" >> "$GITHUB_OUTPUT"
           echo "Release version: $v"
 
       - name: Check version, changelog and generated files
@@ -42,10 +47,14 @@ jobs:
       - name: Translations complete
         run: node tests/check-i18n.js
 
+      - name: User guide links and images
+        run: python3 tools/wiki.py check
+
       - name: Release notes
         run: python3 tools/release.py notes "${{ steps.v.outputs.version }}" | tee notes.md
 
       - name: Create GitHub release
+        id: publish
         if: github.event_name == 'push' || inputs.dry_run == false
         env:
           GH_TOKEN: ${{ github.token }}
@@ -53,3 +62,11 @@ jobs:
           gh release create "v${{ steps.v.outputs.version }}" --title "Thread Pulse ${{ steps.v.outputs.version }}" \
             --notes-file notes.md --verify-tag --latest
           echo "Assets (must be 0): $(gh release view "v${{ steps.v.outputs.version }}" --json assets --jq '.assets | length')"
+          echo "published=true" >> "$GITHUB_OUTPUT"
+
+  wiki:
+    needs: release
+    if: needs.release.outputs.published == 'true'
+    uses: ./.github/workflows/wiki.yml
+    with:
+      ref: ${{ needs.release.outputs.tag }}

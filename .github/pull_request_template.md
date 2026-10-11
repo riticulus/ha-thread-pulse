@@ -21,4 +21,4 @@ Closes #
 
 ## Documentation
 
-- [ ] README / wiki updated, or not needed
+- [ ] User guide in `docs/wiki/` (and README) updated, or not needed – never edit the wiki directly
