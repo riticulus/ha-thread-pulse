@@ -32,6 +32,7 @@
     return m;
   }
 
+  applyColorVars();
   theme();
 
   root.addEventListener("keydown", e => { if (e.key === "Escape" && e.target.id !== "search") closePanel(); });

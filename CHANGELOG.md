@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 ### Changed
+- Code tidy-ups without change in behaviour: the device panel uses the shared live rows, `deName()` renamed to `localName()`, icon data moved to `src/icons.js`, colours defined once in `COLORS` (the CSS gets them as variables) ([#51](https://github.com/riticulus/ha-thread-pulse/issues/51))
 - Settings remembered by the browser are handled in one place (`src/prefs.js`: keys, types, defaults). Same storage keys and formats as before – existing settings keep working; safe when storage is blocked ([#50](https://github.com/riticulus/ha-thread-pulse/issues/50))
 
 ## [1.4.0] – 2026-10-11

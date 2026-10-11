@@ -6,6 +6,7 @@
 The core is assembled from the files in src/ in the order of CORE below (no bundler, no dependencies):
   version.js                    top level
   i18n/<lang>.js                one file per language (TEXT_XX, optional NAMES_XX); build.py adds TEXT and LOCAL_NAMES
+  icons.js                      device icons (MDI path data), top level
   styles.css, markup.html       become the constants TP_CSS and TP_HTML
   core.js                       start of createThreadPulse() and the state shared by all parts
   helpers.js … ambient.js       parts placed inside createThreadPulse() (one file per topic)
@@ -54,6 +55,7 @@ core = "\n".join(
     + ["const TP_CSS = `"] + lines("styles.css") + ["`;"]
     + ["const TP_HTML = `"] + lines("markup.html") + ["`;"]
     + i18n_lines()
+    + lines("icons.js")
     + lines("core.js")
     + [l for p in PARTS for l in lines(p + ".js")]
     + lines("start.js")

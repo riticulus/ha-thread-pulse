@@ -31,7 +31,7 @@
     let v = "";
     if (hass) for (const e of (w.mainEntities || []).slice(0, 10)) {
       const st = hass.states[e]; if (!st) continue;
-      const name = deName((st.attributes.friendly_name || e).replace(w.name, "").trim()) || T.state;
+      const name = localName((st.attributes.friendly_name || e).replace(w.name, "").trim()) || T.state;
       v += row(name, `${esc(fmtState(st))} <span style="color:var(--muted)">· ${T.ago(Math.max(0, Math.round((now - new Date(st.last_changed)) / 1000)))}</span>`);
     }
     else if (DEMO && w.demoValues) v = w.demoValues.map(([k, val, ago]) => row(k, `${esc(val)} <span style="color:var(--muted)">· ${T.ago(ago)}</span>`)).join("");

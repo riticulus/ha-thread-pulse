@@ -37,12 +37,12 @@
     for (const k in b.links) if (!(k in a.links)) { const [u, v] = k.split("|"); logChange(u, nameIn(b, u), T.chLinkNew(nameIn(b, v)), "link"); }
     for (const k in a.links) if (!(k in b.links) && b.nodes[k.split("|")[0]] && b.nodes[k.split("|")[1]]) { const [u, v] = k.split("|"); logChange(u, nameIn(b, u), T.chLinkGone(nameIn(b, v)), "link"); }
   }
-  const CH_COLOR = { new: "#43a047", online: "#43a047", gone: "#e53935", offline: "#e53935", parent: "#ab47bc", role: "#ab47bc", signal: "#fb8c00", link: "#fb8c00" };
+  const CH_COLOR = { new: COLORS.good, online: COLORS.good, gone: COLORS.weak, offline: COLORS.weak, parent: COLORS.change, role: COLORS.change, signal: COLORS.medium, link: COLORS.medium };
   function logChange(id, name, text, kind) {
     changes.unshift({ t: Date.now(), id, name, text, kind });
     changes = changes.slice(0, 100);
     if (!DEMO) prefs.set("changes", changes);
-    flashes.push({ id, t0: performance.now(), color: CH_COLOR[kind] || "#ab47bc" });
+    flashes.push({ id, t0: performance.now(), color: CH_COLOR[kind] || COLORS.change });
     if (!flashing) { flashing = true; requestAnimationFrame(flashTick); }
     renderChanges();
   }
