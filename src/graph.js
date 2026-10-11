@@ -2,6 +2,7 @@
 //# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
   // ---------- graph ----------
   let searchHits = [], searchActive = false;
+  let extraIds = new Set(), threadInfo = null;
   let hintsOf = {}, nodeById = {}, linksOf = {}, battOf = {}, brExt = null, devToNode = {}, entToNode = {}, nodeName = {}, onMap = new Set(), ridToId = {}, routeOf = {}, parentRid = {}, ownRid = {};
 
   function render(model, keep) {      // keep: positions of the previous map (refresh without layout jump)
@@ -30,6 +31,7 @@
       }
     }
     const extras = Object.keys(extra);
+    extraIds = new Set(extras); threadInfo = model.thread || null;
     if (!brExt && extras.length === 1) brExt = extras[0];         // no OTBR info: a single unknown router is most likely the border router
     for (const id of extras) {
       const isBr = id === brExt;
@@ -78,7 +80,7 @@
     network.on("beforeDrawing", ctx => { drawRooms(ctx); drawHeat(ctx); });
     if (roomOn) applyRooms(true, false);
     network.on("afterDrawing", ctx => { drawBadges(ctx); drawFlashes(ctx); drawPackets(ctx); });
-    network.on("click", p => { if (p.nodes.length && nodeById[p.nodes[0]]) openPanel(p.nodes[0]); else closePanel(); });
+    network.on("click", p => { if (p.nodes.length && (nodeById[p.nodes[0]] || extraIds.has(p.nodes[0]))) openPanel(p.nodes[0]); else closePanel(); });
     // double click / double tap (issue #23): on empty space center and fit the whole mesh, on a device zoom to it
     network.on("doubleClick", p => {
       if (p.nodes.length && !String(p.nodes[0]).startsWith("room:")) {
@@ -133,7 +135,7 @@
     const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
     if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
     renderChanges();
-    if (panelNode && nodeById[panelNode]) renderPanel(); else if (panelNode) closePanel();
+    if (panelNode && (nodeById[panelNode] || extraIds.has(panelNode))) renderPanel(); else if (panelNode) closePanel();
     lastSnap = snapshotOf(nodes, edges, byId);
     $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + " · " + T.tapHint + " · v" + VERSION;
   }
