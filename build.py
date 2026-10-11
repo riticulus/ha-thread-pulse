@@ -21,7 +21,7 @@ from pathlib import Path
 
 here = Path(__file__).parent
 src = here / "src"
-PARTS = ["helpers", "data", "graph", "live", "heat", "rooms", "panel", "hints", "search", "changes", "response", "demo", "ui", "ambient"]
+PARTS = ["helpers", "data", "graph", "live", "heat", "rooms", "panel", "hints", "search", "changes", "response", "sound", "demo", "ui", "ambient"]
 
 def lines(name):
     text = (src / name).read_text(encoding="utf-8")
