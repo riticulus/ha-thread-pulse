@@ -28,13 +28,17 @@
     let i = 0;
     return named.map(x => ({ id: x.id, label: x.label || T.anonDevice(++i) }));
   }
+  function anonRoomMap() {                  // area → "Room A, B …" in alphabetical order (image and text report)
+    const m = {};
+    Object.keys(roomsOf()).sort().forEach((a, i) => { m[a] = T.anonRoom(i < 26 ? String.fromCharCode(65 + i) : String(i + 1)); });
+    return m;
+  }
   function snapshotCanvas(anon) {
     const original = {};
     if (anon) {
       const labels = anonLabels(), nodes = network.body.data.nodes;
       for (const l of labels) original[l.id] = nodes.get(l.id).label;
-      anonRooms = {};
-      Object.keys(roomsOf()).sort().forEach((a, i) => { anonRooms[a] = T.anonRoom(i < 26 ? String.fromCharCode(65 + i) : String(i + 1)); });
+      anonRooms = anonRoomMap();
       nodes.update(labels);
     }
     try {

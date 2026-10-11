@@ -12,7 +12,8 @@
     for (const n of nodes) (by[n.hwAddr || n.id] = by[n.hwAddr || n.id] || []).push(n);
     for (const [addr, list] of Object.entries(by)) {
       if (list.length < 2) continue;
-      list.forEach((n, i) => { n.hwAddr = addr; n.dupWith = list.filter(x => x !== n).map(x => x.name); n.id = addr + "-" + (n.devId || i); });
+      list.forEach((n, i) => { n.hwAddr = addr; n.id = addr + "-" + (n.devId || i); });
+      list.forEach(n => { n.dupWith = list.filter(x => x !== n).map(x => x.id); });     // ids: the text report shows other names (#85)
     }
   }
   function render(model, keep) {      // keep: positions of the previous map (refresh without layout jump)
@@ -78,7 +79,7 @@
       } else {
         edges["p|" + n.id] = { a: n.id, b: pid, rssi: [rssi], parent: true };
       }
-      parents.push({ child: n.name, type: n.type, parentId: pid, get parent() { return nameOf(this.parentId); }, rssi, src });   // name resolved when shown (#71)
+      parents.push({ child: n.name, childId: n.id, type: n.type, parentId: pid, get parent() { return nameOf(this.parentId); }, rssi, src });   // name resolved when shown (#71)
     }
     wifiById = {};
     if (SHOW_WIFI) for (const w of model.wifi || []) {

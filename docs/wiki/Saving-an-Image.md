@@ -2,7 +2,9 @@
 
 *Available from version 1.5.0.*
 
-**📷 Image** in the toolbar saves the map as a PNG file, e.g. to document your network or to ask for help in a forum.
+**📤 Export** in the toolbar saves the map as a PNG file, e.g. to document your network or to ask for help in a forum. Up to version 1.5.2 the button is called **📷 Image**.
+
+The same menu also has a [text report](Text-Report) – a Markdown summary with models, firmware and signal values, anonymised the same way.
 
 | Choice | Result |
 |---|---|
