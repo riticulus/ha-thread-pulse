@@ -16,6 +16,7 @@ Thread Pulse notices when something changes in your Thread network and lists it 
 | **Signal to the parent** changes quality (good / medium / weak) | orange | at the next check |
 | **Role** changes, e.g. router → end device | purple | at the next check |
 | A usable **link between two routers** appears or is lost | orange | at the next check; only links of −80 dBm or better are watched, to avoid noise |
+| The **[mesh health](Mesh-Health) grade** changes, e.g. *Mesh health B → C* *(after version 1.5.2)* | green (better) / red (worse) | when two checks in a row agree |
 
 The affected device **flashes** three times on the map.
 

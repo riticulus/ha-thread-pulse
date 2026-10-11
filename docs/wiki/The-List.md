@@ -10,6 +10,10 @@
 
 The [change log](Change-Log): latest changes with time, device and what changed. *Clear list* empties it.
 
+### Mesh health
+
+*After version 1.5.2.* The [mesh health](Mesh-Health) grade (A–E) with its six factors, each with its value, the affected devices and an explanation.
+
 ### Hints for the network
 
 All [hints](Hints-and-Warnings) with the device name (a link to its [detail panel](Detail-Panel)) and the full text. *No weak spots found* if there are none.

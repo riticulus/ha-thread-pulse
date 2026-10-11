@@ -16,17 +16,24 @@ All source code is in `src/`, one file per topic. `build.py` assembles the files
 | `src/helpers.js` | `COLORS` (all colours in one place), signal quality, icon images, theme, connection to Home Assistant, language |
 | `src/data.js` | Loading the data from Home Assistant (registries, cached Matter diagnostics, border router) |
 | `src/graph.js` | Building and drawing the map, the list below it |
+| `src/routers.js` | Names of other border routers from Home Assistant's border router discovery |
 | `src/live.js` | Routing tables, path calculation, animated messages, ticker, subscription to Home Assistant events |
 | `src/heat.js` | Traffic heat |
 | `src/rooms.js` | Room view |
 | `src/panel.js` | Badges and detail panel |
+| `src/identify.js` | Identify button in the detail panel |
 | `src/hints.js` | Weak-spot hints |
+| `src/health.js` | Mesh health grade and its factors |
 | `src/search.js` | Search |
 | `src/changes.js` | Change log |
 | `src/response.js` | Response time |
 | `src/battery.js` | Battery forecast |
+| `src/firmware.js` | Firmware overview and update badge |
+| `src/fabrics.js` | Connected systems (Matter fabrics) |
 | `src/wifi.js` | Matter devices on Wi-Fi / Ethernet |
 | `src/sound.js` | Optional sound |
+| `src/export.js` | Saving the map as an image |
+| `src/report.js` | Text report for forums |
 | `src/demo.js` | Demo mode |
 | `src/ui.js` | List and legend, errors, loading, keyboard and click handling |
 | `src/ambient.js` | Ambient mode |

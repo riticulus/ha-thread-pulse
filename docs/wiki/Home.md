@@ -14,7 +14,7 @@
 | **Watch it live** | A dot travels along the route for every message to and from Home Assistant |
 | **Find the busy routes** | Links glow brighter the more traffic they carried in the last 10 minutes |
 | **Inspect a device** | Tap it for firmware, parent, neighbours, battery, stability counters, response time … – and the border router for the Thread network itself *(from version 1.4.0)* |
-| **Find weak spots** | Hints for weak parent signals, unstable connections and routers that lose power |
+| **Find weak spots** | Hints for weak parent signals, unstable connections and routers that lose power; a [mesh health](Mesh-Health) grade with its reasons *(after version 1.5.2)* |
 | **Notice changes** | A change log of new parents, devices dropping out and coming back |
 | **Think in rooms** | Arrange the devices by Home Assistant area |
 | **Hear it** | Optional quiet tick for every message *(from version 1.4.0)* |

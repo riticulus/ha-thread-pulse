@@ -19,6 +19,7 @@ The report opens in a window over the map. You see the full text **before** you 
 - **Devices:** one row per Thread device – name, area, model (manufacturer and product), firmware, role, and the connection:
   - routers: number of links to other routers and the best signal
   - other devices: the parent router (*talks through*) and the signal; *(own measurement, unreliable)* when only the device itself reported it
+- **Mesh health:** the [grade](Mesh-Health) in the overview, and every factor with its value and explanation
 - **Weak links between routers** (below −80 dBm), as in [the list](The-List)
 - **Warnings and hints** for each device, as in the [detail panel](Detail-Panel) – see [Hints and warnings](Hints-and-Warnings)
 

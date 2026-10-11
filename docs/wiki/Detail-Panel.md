@@ -90,6 +90,7 @@ Tap the **border router** to see the Thread network and the border router itself
 |---|---|
 | Live · Messages through it | Every animated message passes the border router: total, last minute, last hour, last message |
 | Thread network | Network name, channel, PAN ID, extended PAN ID, routers in the mesh (*n of max. 32* – Thread allows at most 32 routers), Thread devices, leader router |
+| Mesh health | The [mesh health](Mesh-Health) grade with its factors *(after version 1.5.2)* |
 | Border router | Type (*OpenThread Border Router (add-on)*); manufacturer, model, name and Thread version as announced on the network *(from version 1.5.0)*; Thread address, border agent ID, the Thread networks known to Home Assistant (the preferred one is marked) |
 | Thread | Neighbours and children (battery devices using the border router as parent) with signal strength |
 
