@@ -105,6 +105,7 @@ const TP_HTML = `
 `;
 // ---------- texts (one file per language in src/i18n/) ----------
 const TEXT_EN = {
+  brOther: x => `Border router …${x}`, brOtherTitle: "Border router of another system, found on the local network", brOtherSub: "Border router of another system (found on the local network)", brOtherNote: "Announced on the local network and found by Home Assistant's border router discovery. Matched to the map by its address.", brName: "Name", threadVersion: "Thread version", usedByHa: "Used by Home Assistant", usedByHaNo: "no – Home Assistant uses the border router shown in purple",
   parentHopNote: "The border router is not known (e.g. only Apple or Google border routers, no OpenThread Border Router add-on): messages are only animated from the device to its parent router – the way from here to Home Assistant is not known.",
   identifyBtn: "💡 Identify", identifyNote: "Sends a real command: the device blinks, beeps or flashes for a few seconds, if it supports it.", identifySleepy: "Battery devices react only when they wake up – this can take a while.", identifySending: "sending …", identifySent: "sent – watch the device", identifyFailed: "Failed",
   exportBtn: "📷 Image", exportTitle: "Save the map as an image", exportPlain: "Save image (with names)", exportAnon: "Save anonymised image (no names)",
@@ -180,6 +181,7 @@ const TEXT_EN = {
   hEdge: r => `Only weak links to other routers (best: ${r} dBm) – it sits at the edge of the mesh. Another router in between would strengthen it.`,
 };
 const TEXT_DE = {
+  brOther: x => `Border Router …${x}`, brOtherTitle: "Border Router eines anderen Systems, im lokalen Netz gefunden", brOtherSub: "Border Router eines anderen Systems (im lokalen Netz gefunden)", brOtherNote: "Im lokalen Netz angekündigt und von der Border-Router-Suche von Home Assistant gefunden. Über seine Adresse der Karte zugeordnet.", brName: "Name", threadVersion: "Thread-Version", usedByHa: "Von Home Assistant genutzt", usedByHaNo: "nein – Home Assistant nutzt den violett gezeigten Border Router",
   parentHopNote: "Der Border Router ist nicht bekannt (z. B. nur Apple- oder Google-Border-Router, kein OpenThread-Border-Router-Add-on): Nachrichten werden nur vom Gerät bis zu seinem Parent-Router animiert – der Weg von hier zu Home Assistant ist nicht bekannt.",
   identifyBtn: "💡 Identifizieren", identifyNote: "Sendet einen echten Befehl: Das Gerät blinkt, piept oder leuchtet einige Sekunden lang, wenn es das unterstützt.", identifySleepy: "Batteriegeräte reagieren erst, wenn sie aufwachen – das kann etwas dauern.", identifySending: "wird gesendet …", identifySent: "gesendet – achte auf das Gerät", identifyFailed: "Fehlgeschlagen",
   exportBtn: "📷 Bild", exportTitle: "Karte als Bild speichern", exportPlain: "Bild speichern (mit Namen)", exportAnon: "Anonymisiertes Bild speichern (ohne Namen)",
@@ -261,6 +263,7 @@ const NAMES_DE = [["Effective current", "Strom (effektiv)"], ["Effective voltage
   ["Occupancy", "Anwesenheit"], ["Door", "Kontakt"], ["Opening", "Kontakt"], ["Temperature", "Temperatur"], ["Humidity", "Luftfeuchte"],
   ["Identify", "Identifizieren"], ["Button", "Taste"], ["Light", "Licht"], ["Switch", "Schalter"], ["Motion", "Bewegung"]];
 const TEXT_ES = {
+  brOther: x => `Router de borde …${x}`, brOtherTitle: "Router de borde de otro sistema, encontrado en la red local", brOtherSub: "Router de borde de otro sistema (encontrado en la red local)", brOtherNote: "Anunciado en la red local y encontrado por la búsqueda de routers de borde de Home Assistant. Asignado al mapa por su dirección.", brName: "Nombre", threadVersion: "Versión de Thread", usedByHa: "Usado por Home Assistant", usedByHaNo: "no – Home Assistant usa el router de borde mostrado en violeta",
   parentHopNote: "No se conoce el router de borde (p. ej., solo routers de borde de Apple o Google, sin el complemento OpenThread Border Router): los mensajes solo se animan del dispositivo a su router padre; el camino desde aquí hasta Home Assistant no se conoce.",
   identifyBtn: "💡 Identificar", identifyNote: "Envía un comando real: el dispositivo parpadea, pita o se ilumina unos segundos, si lo admite.", identifySleepy: "Los dispositivos con batería solo reaccionan cuando se despiertan; puede tardar un poco.", identifySending: "enviando …", identifySent: "enviado – observa el dispositivo", identifyFailed: "Error",
   exportBtn: "📷 Imagen", exportTitle: "Guardar el mapa como imagen", exportPlain: "Guardar imagen (con nombres)", exportAnon: "Guardar imagen anonimizada (sin nombres)",
@@ -342,6 +345,7 @@ const NAMES_ES = [["Effective current", "Corriente (eficaz)"], ["Effective volta
   ["Occupancy", "Presencia"], ["Door", "Contacto"], ["Opening", "Contacto"], ["Temperature", "Temperatura"], ["Humidity", "Humedad"],
   ["Identify", "Identificar"], ["Button", "Botón"], ["Light", "Luz"], ["Switch", "Interruptor"], ["Motion", "Movimiento"]];
 const TEXT_FR = {
+  brOther: x => `Routeur de bordure …${x}`, brOtherTitle: "Routeur de bordure d'un autre système, trouvé sur le réseau local", brOtherSub: "Routeur de bordure d'un autre système (trouvé sur le réseau local)", brOtherNote: "Annoncé sur le réseau local et trouvé par la recherche de routeurs de bordure de Home Assistant. Associé à la carte par son adresse.", brName: "Nom", threadVersion: "Version Thread", usedByHa: "Utilisé par Home Assistant", usedByHaNo: "non – Home Assistant utilise le routeur de bordure affiché en violet",
   parentHopNote: "Le routeur de bordure n'est pas connu (p. ex. uniquement des routeurs de bordure Apple ou Google, pas de module OpenThread Border Router) : les messages ne sont animés que de l'appareil jusqu'à son routeur parent – le chemin vers Home Assistant n'est pas connu.",
   identifyBtn: "💡 Identifier", identifyNote: "Envoie une vraie commande : l'appareil clignote, bipe ou s'allume quelques secondes, s'il le prend en charge.", identifySleepy: "Les appareils sur batterie ne réagissent qu'à leur réveil – cela peut prendre un moment.", identifySending: "envoi …", identifySent: "envoyé – regardez l'appareil", identifyFailed: "Échec",
   exportBtn: "📷 Image", exportTitle: "Enregistrer la carte en image", exportPlain: "Enregistrer l'image (avec les noms)", exportAnon: "Enregistrer une image anonymisée (sans noms)",
@@ -423,6 +427,7 @@ const NAMES_FR = [["Effective current", "Courant (efficace)"], ["Effective volta
   ["Occupancy", "Présence"], ["Door", "Contact"], ["Opening", "Contact"], ["Temperature", "Température"], ["Humidity", "Humidité"],
   ["Identify", "Identifier"], ["Button", "Bouton"], ["Light", "Lumière"], ["Switch", "Interrupteur"], ["Motion", "Mouvement"]];
 const TEXT_IT = {
+  brOther: x => `Border router …${x}`, brOtherTitle: "Border router di un altro sistema, trovato nella rete locale", brOtherSub: "Border router di un altro sistema (trovato nella rete locale)", brOtherNote: "Annunciato nella rete locale e trovato dalla ricerca dei border router di Home Assistant. Associato alla mappa tramite il suo indirizzo.", brName: "Nome", threadVersion: "Versione Thread", usedByHa: "Usato da Home Assistant", usedByHaNo: "no – Home Assistant usa il border router mostrato in viola",
   parentHopNote: "Il border router non è noto (ad es. solo border router Apple o Google, nessun add-on OpenThread Border Router): i messaggi sono animati solo dal dispositivo al suo router padre – il percorso da qui a Home Assistant non è noto.",
   identifyBtn: "💡 Identifica", identifyNote: "Invia un comando reale: il dispositivo lampeggia, emette un suono o si illumina per alcuni secondi, se lo supporta.", identifySleepy: "I dispositivi a batteria reagiscono solo quando si risvegliano – può volerci un po'.", identifySending: "invio …", identifySent: "inviato – osserva il dispositivo", identifyFailed: "Non riuscito",
   exportBtn: "📷 Immagine", exportTitle: "Salva la mappa come immagine", exportPlain: "Salva immagine (con i nomi)", exportAnon: "Salva immagine anonimizzata (senza nomi)",
@@ -504,6 +509,7 @@ const NAMES_IT = [["Effective current", "Corrente (efficace)"], ["Effective volt
   ["Occupancy", "Presenza"], ["Door", "Contatto"], ["Opening", "Contatto"], ["Temperature", "Temperatura"], ["Humidity", "Umidità"],
   ["Identify", "Identifica"], ["Button", "Pulsante"], ["Light", "Luce"], ["Switch", "Interruttore"], ["Motion", "Movimento"]];
 const TEXT_NL = {
+  brOther: x => `Border router …${x}`, brOtherTitle: "Border router van een ander systeem, gevonden in het lokale netwerk", brOtherSub: "Border router van een ander systeem (gevonden in het lokale netwerk)", brOtherNote: "Aangekondigd in het lokale netwerk en gevonden door de border-router-zoekfunctie van Home Assistant. Via zijn adres aan de kaart gekoppeld.", brName: "Naam", threadVersion: "Thread-versie", usedByHa: "Gebruikt door Home Assistant", usedByHaNo: "nee – Home Assistant gebruikt de paars weergegeven border router",
   parentHopNote: "De border router is niet bekend (bijv. alleen Apple- of Google-border routers, geen OpenThread Border Router-add-on): berichten worden alleen van het apparaat naar zijn parent-router geanimeerd – de weg van hier naar Home Assistant is niet bekend.",
   identifyBtn: "💡 Identificeren", identifyNote: "Stuurt een echt commando: het apparaat knippert, piept of licht enkele seconden op, als het dat ondersteunt.", identifySleepy: "Apparaten op batterij reageren pas als ze wakker worden – dat kan even duren.", identifySending: "versturen …", identifySent: "verstuurd – let op het apparaat", identifyFailed: "Mislukt",
   exportBtn: "📷 Afbeelding", exportTitle: "Kaart opslaan als afbeelding", exportPlain: "Afbeelding opslaan (met namen)", exportAnon: "Geanonimiseerde afbeelding opslaan (zonder namen)",
@@ -861,9 +867,9 @@ function createThreadPulse(root, opts, host) {
     extraIds = new Set(extras);
     for (const id of extras) {
       const isBr = id === brExt;
-      visNodes.push({ id, label: isBr ? T.brLabel : T.foreignLabel(id), shape: "image",
-        image: iconImg(isBr ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 64), size: isBr ? 24 : 16,
-        title: isBr ? T.brTitle : T.foreignTitle });
+      visNodes.push({ id, label: extraLabel(id), shape: "image",
+        image: iconImg(isBr || brInfo[id] ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 64), size: isBr ? 24 : 16,
+        title: extraTitle(id) });
     }
     // child signal as measured by the parent router (sleepy devices report their own RSSI unreliably)
     const childRssi = {};
@@ -874,7 +880,7 @@ function createThreadPulse(root, opts, host) {
       const pid = hex16(best["0"]);
       let rssi = best["6"], src = "device";
       if (childRssi[pid + "|" + n.id] !== undefined) { rssi = childRssi[pid + "|" + n.id]; src = "router"; }
-      const pname = byId[pid] ? byId[pid].name : (pid === brExt ? T.brLabel : "…" + pid.slice(-4));
+      const pname = byId[pid] ? byId[pid].name : extraName(pid);
       if (n.type === "end_device") {                             // mains end devices: show all their links like routers
         for (const x of n.neigh) { const o = hex16(x["0"]); if (!byId[o]) continue;
           const key = [n.id, o].sort().join("|"); (edges[key] = edges[key] || { a: n.id, b: o, rssi: [] }).rssi.push(x["6"]); }
@@ -930,7 +936,7 @@ function createThreadPulse(root, opts, host) {
     network.on("blurNode", () => { $("net").style.cursor = ""; });
     nodeById = byId;
     linksOf = {};
-    const nm = id => (byId[id] || {}).name || (id === brExt ? T.brLabel : "…" + id.slice(-4));
+    const nm = id => (byId[id] || {}).name || extraName(id);
     for (const e of Object.values(edges)) {
       if (!ids.has(e.b)) continue;
       const r = avg(e);
@@ -949,7 +955,7 @@ function createThreadPulse(root, opts, host) {
     // table: parents + weak router links
     parents.sort((p, q) => p.rssi - q.rssi);
     const weak = Object.values(edges).filter(e => !e.parent && ids.has(e.b))
-      .map(e => ({ a: (byId[e.a] || {}).name || T.brLabel, b: (byId[e.b] || {}).name || (e.b === brExt ? T.brLabel : "…" + e.b.slice(-4)), r: avg(e) }))
+      .map(e => ({ a: (byId[e.a] || {}).name || extraName(e.a), b: (byId[e.b] || {}).name || extraName(e.b), r: avg(e) }))
       .filter(e => e.r < -80).sort((p, q) => p.r - q.r);
     const allHints = Object.entries(hintsOf).flatMap(([id, hs]) => hs.map(t => [id, t]));
     let h = `<div id="changes"></div><b>${T.hintsHead}</b>` + (allHints.length
@@ -977,6 +983,50 @@ function createThreadPulse(root, opts, host) {
     $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + " · " + T.tapHint + " · v" + VERSION;
   }
 
+  // ---------- border router names (issue #37) ----------
+  // Home Assistant finds border routers on the local network via mDNS (thread/discover_routers: Apple TV / HomePod,
+  // Google Nest, Amazon Echo, the OpenThread add-on …). They are matched to the unknown routers on the map by their
+  // extended address. Routers that are not border routers (or not announced on the network) stay "other Thread router".
+  let brInfo = {}, brUnsub = null;              // extended address → { vendor, model, name, version, network, extPanId }
+  const short = id => "…" + id.slice(-4);
+  function extraName(id) {                      // one line, for lists and the change log
+    if (id === brExt) return T.brLabel;
+    const d = brInfo[id];
+    return d ? `${d.model || d.vendor || T.brLabel} ${short(id)}` : short(id);
+  }
+  function extraLabel(id) {                     // label on the map
+    if (id === brExt) return T.brLabel;
+    const d = brInfo[id];
+    return d ? `${d.model || d.vendor || T.brLabel}\n${T.brOther(id.slice(-4))}` : T.foreignLabel(id);
+  }
+  function extraTitle(id) {
+    if (id === brExt) return T.brTitle;
+    const d = brInfo[id];
+    return d ? [d.vendor, d.model, d.name].filter(Boolean).join(" · ") + "\n" + T.brOtherTitle : T.foreignTitle;
+  }
+  function applyRouterNames() {                 // after new discovery data: update labels and icons on the map
+    if (!network) return;
+    const upd = [...extraIds].filter(id => id !== brExt).map(id => ({ id, label: extraLabel(id), title: extraTitle(id),
+      image: iconImg(brInfo[id] ? "access-point-network" : "router-wireless", COLORS.off, 64) }));
+    if (upd.length) network.body.data.nodes.update(upd);
+    if (panelNode && extraIds.has(panelNode)) renderPanel();
+  }
+  function routerFromDiscovery(d) {
+    return { vendor: d.vendor_name || "", model: d.model_name || "", name: d.instance_name || "", version: d.thread_version || "",
+             network: d.network_name || "", extPanId: (d.extended_pan_id || "").toLowerCase(), brand: d.brand || "" };
+  }
+  async function discoverRouters(hass) {        // runs in the background while the page is open
+    if (brUnsub || !hass || !hass.connection) return;
+    try {
+      brUnsub = await hass.connection.subscribeMessage(ev => {
+        const id = String(ev.key || (ev.data && ev.data.extended_address) || "").toLowerCase();
+        if (!id) return;
+        if (ev.type === "router_discovered" && ev.data) brInfo[id] = routerFromDiscovery(ev.data);
+        else if (ev.type === "router_removed") delete brInfo[id];
+        applyRouterNames();
+      }, { type: "thread/discover_routers" });
+    } catch (e) { brUnsub = null; }              // no Thread integration: names stay unknown
+  }
   // ---------- live data flow ----------
   // Shown: every message a Matter device sends to Home Assistant (state report) and every command HA sends to a device.
   // Path: device -> its parent router -> (next hops from the routers' route tables) -> border router. Thread picks the
@@ -1328,10 +1378,16 @@ function createThreadPulse(root, opts, host) {
       row(T.msgsHour, `${inWin(c.up, 3600000)} ${T.toHa} · ${inWin(c.down, 3600000)} ${T.fromHa}`) +
       row(T.lastMsg, `${T.ago(Math.round((now - c.last.t) / 1000))} (${c.last.down ? T.fromHa : T.toHa})`);
   }
+  function discRows(d, withNetwork = true) {   // what the border router announces on the network (issue #37)
+    if (!d) return "";
+    return row(T.manufacturer, esc(d.vendor)) + row(T.model, esc(d.model)) + row(T.brName, esc(d.name)) +
+           row(T.threadVersion, esc(d.version)) + (withNetwork ? row(T.networkName, esc(d.network)) : "");
+  }
   function renderRouterPanel(id) {
     const isBr = id === brExt, nodes = Object.values(nodeById);
-    let h = `<div class="hd"><img src="${iconImg(isBr ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 80)}" alt=""><div>` +
-            `<div class="t">${esc(isBr ? T.brLabel : T.foreignLabel(id).replace("\n", " "))}</div><div class="s">${esc(isBr ? T.brSub : T.foreignSub)}</div></div>` +
+    const disc = brInfo[id];
+    let h = `<div class="hd"><img src="${iconImg(isBr || disc ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 80)}" alt=""><div>` +
+            `<div class="t">${esc(extraLabel(id).replace("\n", " "))}</div><div class="s">${esc(isBr ? T.brSub : brInfo[id] ? T.brOtherSub : T.foreignSub)}</div></div>` +
             `<button class="x" title="×" data-act="close">×</button></div>`;
     if (isBr || counts[id]) h += `<h4>${T.secLive} · ${T.msgsThrough}</h4><dl>` + liveRows(id) + `</dl>` + (isBr ? "" : `<div class="note">${T.parentHopNote}</div>`);
     if (isBr) {
@@ -1347,7 +1403,7 @@ function createThreadPulse(root, opts, host) {
       const leaders = nodes.map(n => (n.info || {}).leader).filter(x => x !== undefined && x !== null);
       const leaderRid = leaders.sort((a, b) => leaders.filter(x => x === b).length - leaders.filter(x => x === a).length)[0];
       const leaderId = leaderRid !== undefined ? ridToId[leaderRid] : null;
-      const leaderName = !leaderId ? "" : nodeById[leaderId] ? nodeById[leaderId].name : leaderId === brExt ? T.brLabel : "…" + leaderId.slice(-4);
+      const leaderName = !leaderId ? "" : nodeById[leaderId] ? nodeById[leaderId].name : extraName(leaderId);
       const routers = Object.keys(ridToId).length || nodes.filter(n => n.type === "routing_end_device").length + extraIds.size;
       h += `<h4>${T.secNetwork}</h4><dl>` +
         row(T.networkName, esc((ds && ds.name) || net.name || "")) +
@@ -1358,13 +1414,15 @@ function createThreadPulse(root, opts, host) {
         row(T.devicesInMesh, String(nodes.length + extraIds.size)) +
         row(T.leader, esc(leaderName)) + `</dl>`;
       const o = threadInfo && threadInfo.otbr && threadInfo.otbr.extAddr && threadInfo.otbr.extAddr.toLowerCase() === id ? threadInfo.otbr : null;
-      h += `<h4>${T.secBorderRouter}</h4><dl>` + row(T.brKind, o ? esc(T.brOtbr) : "") +
+      h += `<h4>${T.secBorderRouter}</h4><dl>` + row(T.brKind, o ? esc(T.brOtbr) : "") + discRows(disc, false) +
         row(T.address, `<span style="font-family:monospace">${esc(id)}</span>`) +
         row(T.borderAgent, o && o.borderAgentId ? `<span style="font-family:monospace">${esc(o.borderAgentId)}</span>` : "");
       const dsl = threadInfo && threadInfo.datasets || [];
       if (dsl.length) h += row(T.datasets, dsl.map(d => `${esc(d.name)} · ${esc(T.channel)} ${esc(String(d.channel))}${d.preferred ? ` · <b>${T.preferred}</b>` : ""}`).join("<br>"));
       h += `</dl>`;
     }
+    if (!isBr && disc) h += `<h4>${T.secBorderRouter}</h4><dl>` + discRows(disc) +
+      (brExt ? row(T.usedByHa, esc(T.usedByHaNo)) : "") + `</dl><div class="note">${T.brOtherNote}</div>`;
     const links = (linksOf[id] || []).slice().sort((p, q) => q.rssi - p.rssi);
     const nb = links.filter(l => l.kind === "neighbour"), kids = links.filter(l => l.kind === "child");
     h += `<h4>${T.secThread}</h4><dl>`;
@@ -1547,7 +1605,7 @@ function createThreadPulse(root, opts, host) {
     for (const n of nodes) if (availNow[n.id] === undefined) availNow[n.id] = n.available;
     return snap;
   }
-  const nameIn = (snap, id) => (snap.nodes[id] || {}).name || (id === brExt ? T.brLabel : "…" + id.slice(-4));
+  const nameIn = (snap, id) => (snap.nodes[id] || {}).name || extraName(id);
   function diffSnaps(a, b) {
     if (!a || !b) return;
     for (const id in b.nodes) if (!a.nodes[id]) logChange(id, b.nodes[id].name, T.chNew, "new");
@@ -1813,7 +1871,8 @@ function createThreadPulse(root, opts, host) {
     for (const id of nodes.getIds()) {
       const n = nodeById[id] || wifiById[id];
       if (n) named.push({ id, name: n.name });
-      else if (extraIds.has(id) && id !== brExt) named.push({ id, label: T.foreignLabel(id).split("\n")[0] });
+      else if (extraIds.has(id) && id !== brExt)     // model name only – the name of a border router can be personal
+        named.push({ id, label: brInfo[id] ? brInfo[id].model || brInfo[id].vendor || T.brLabel : T.foreignLabel(id).split("\n")[0] });
     }
     // numbered by position (top left to bottom right), not by name – the order must not hint at the real names
     const pos = network.getPositions(), row = id => Math.round(((pos[id] || {}).y || 0) / 40);
@@ -1923,6 +1982,7 @@ function createThreadPulse(root, opts, host) {
         info: { vendor: "Demo Inc.", product: "Smart TV", sw: "7.2", hw: "2", reboots: 41, bootReason: 1 } },
     ];
     return { nodes: [...routers, ...ends, ...sleepy], wifi, brExt: br.id, demo: { routers, sleepy, dec, rid },
+             routers: { [br.id]: { vendor: "Home Assistant", model: "OpenThread Border Router", name: "Home Assistant OpenThread Border Router #BEEF", version: "1.4.0", network: "demo-thread" } },
              thread: { otbr: { extAddr: br.id, borderAgentId: "00000000000000000000000000demo00", channel: 15, extPanId: "dead00beef00cafe" },
                        datasets: [{ name: "demo-thread", channel: 15, panId: "1234", extPanId: "dead00beef00cafe", preferred: true, source: "otbr" }] } };
   }
@@ -1971,7 +2031,10 @@ function createThreadPulse(root, opts, host) {
     const wifi = [{ id: "wifi:demo-air", kind: "wifi", name: de ? "Luftqualität" : "Air quality monitor", icon: "air-filter", available: true, area: de ? "Büro" : "Office",
       entities: [], mainEntities: [], demoValues: [["CO₂", "612 ppm", 180]], demoIdentify: true,
       info: { vendor: "Demo Inc.", product: "Air quality monitor", sw: "1.0.4", hw: "1.0", reboots: 3, bootReason: 1, rssi: -58, channel: 11, wifiVersion: 3 } }];
+    const ar = (model, name) => ({ vendor: "Apple Inc.", model, name, version: "1.3.0", network: "MyHome", brand: "apple" });
     return { nodes: sleepy, wifi, brExt: null, demo: { routers: [], sleepy, dec, rid: {}, apple },
+             routers: { [apple[0]]: ar("HomePod mini", de ? "Wohnzimmer" : "Living room"), [apple[1]]: ar("Apple TV 4K", de ? "Schlafzimmer" : "Bedroom"),
+                        [apple[2]]: ar("HomePod mini", de ? "Küche" : "Kitchen") },
              thread: { otbr: null, datasets: [{ name: "MyHome", channel: 25, panId: "1001", extPanId: "86d1a0b0c0d0e0f0", preferred: true, source: "iOS-app" }] } };
   }
   function demoTraffic(model) {
@@ -2020,12 +2083,13 @@ function createThreadPulse(root, opts, host) {
   async function load() {
     $("status").textContent = T.loading;
     const prev = lastSnap;
-    if (DEMO) { const m = demoState || (demoState = demoModel()); render(m); diffSnaps(prev, lastSnap); loadBatteryForecasts(null); return m; }
+    if (DEMO) { const m = demoState || (demoState = demoModel()); brInfo = m.routers || {}; render(m); diffSnaps(prev, lastSnap); loadBatteryForecasts(null); return m; }
     const m = await loadHa();
     render(m);
     diffSnaps(prev, lastSnap);
     loadBatteryForecasts(m.hass);          // runs in the background, panel and badges update when it arrives
     await subscribeLive(m.hass);
+    discoverRouters(m.hass);              // names of other border routers arrive in the background
     return m;
   }
 
@@ -2099,6 +2163,7 @@ function createThreadPulse(root, opts, host) {
     destroy() {
       destroyed = true; timers.forEach(clearInterval);
       if (unsub) { try { unsub(); } catch (e) {} unsub = null; }
+      if (brUnsub) { try { brUnsub(); } catch (e) {} brUnsub = null; }
       if (network) { network.destroy(); network = null; }
     },
     theme,

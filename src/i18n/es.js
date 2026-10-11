@@ -1,6 +1,7 @@
 //# Spanish texts. Defines TEXT_ES and NAMES_ES (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_ES = {
+  brOther: x => `Router de borde …${x}`, brOtherTitle: "Router de borde de otro sistema, encontrado en la red local", brOtherSub: "Router de borde de otro sistema (encontrado en la red local)", brOtherNote: "Anunciado en la red local y encontrado por la búsqueda de routers de borde de Home Assistant. Asignado al mapa por su dirección.", brName: "Nombre", threadVersion: "Versión de Thread", usedByHa: "Usado por Home Assistant", usedByHaNo: "no – Home Assistant usa el router de borde mostrado en violeta",
   parentHopNote: "No se conoce el router de borde (p. ej., solo routers de borde de Apple o Google, sin el complemento OpenThread Border Router): los mensajes solo se animan del dispositivo a su router padre; el camino desde aquí hasta Home Assistant no se conoce.",
   identifyBtn: "💡 Identificar", identifyNote: "Envía un comando real: el dispositivo parpadea, pita o se ilumina unos segundos, si lo admite.", identifySleepy: "Los dispositivos con batería solo reaccionan cuando se despiertan; puede tardar un poco.", identifySending: "enviando …", identifySent: "enviado – observa el dispositivo", identifyFailed: "Error",
   exportBtn: "📷 Imagen", exportTitle: "Guardar el mapa como imagen", exportPlain: "Guardar imagen (con nombres)", exportAnon: "Guardar imagen anonimizada (sin nombres)",

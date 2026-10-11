@@ -80,10 +80,12 @@ Tap the **border router** to see the Thread network and the border router itself
 |---|---|
 | Live · Messages through it | Every animated message passes the border router: total, last minute, last hour, last message |
 | Thread network | Network name, channel, PAN ID, extended PAN ID, routers in the mesh (*n of max. 32* – Thread allows at most 32 routers), Thread devices, leader router |
-| Border router | Type (*OpenThread Border Router (add-on)*), Thread address, border agent ID, the Thread networks known to Home Assistant (the preferred one is marked) |
+| Border router | Type (*OpenThread Border Router (add-on)*); manufacturer, model, name and Thread version as announced on the network *(after version 1.4.0)*; Thread address, border agent ID, the Thread networks known to Home Assistant (the preferred one is marked) |
 | Thread | Neighbours and children (battery devices using the border router as parent) with signal strength |
 
 The values come from the OpenThread Border Router integration; without it, Thread Pulse uses what the Matter devices report. The **network key is never shown**.
+
+**Border routers of other systems** *(after version 1.4.0)*: Home Assistant looks for border routers on your local network (Apple TV, HomePod, Google Nest, Amazon Echo …). When one of them is also on the map, it is shown with its model, e.g. *HomePod mini · Border router …7114*, and a border router icon in grey. Its panel shows manufacturer, model, name (as set in its own app), Thread version and network, and – if Home Assistant uses another border router – that Home Assistant does not use it for its messages. Border routers on the network that are not part of the mesh are not shown; routers that are not border routers stay *other Thread router*.
 
 **Other Thread routers** (grey, not Matter devices of Home Assistant) show their neighbours and children and a note that Home Assistant has no further data about them. When the border router is unknown, the parent router of a device also counts the messages of its children and explains that only this first hop is animated *(after version 1.4.0)*.
 
