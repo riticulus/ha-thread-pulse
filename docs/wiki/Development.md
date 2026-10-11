@@ -95,6 +95,7 @@ A GitHub action runs on every pull request:
 - New entries go to `CHANGELOG.md` under *Unreleased*.
 - Documentation changes are part of the same pull request (see [User guide](#user-guide)).
 - Between releases the version is `<last release>+dev`.
+- `main` and the hotfix branches `release/<major>.<minor>.x` are **protected** (repository rule set): changes only through a pull request, the checks *Build output is up to date* and *HACS validation* must pass, no force push, no deletion. Administrators can merge a pull request without the checks in an emergency; direct pushes are refused for everyone.
 
 ## User guide
 
@@ -116,6 +117,17 @@ This wiki is generated from the folder [`docs/wiki`](https://github.com/riticulu
 3. **Back to development:** on a branch `chore/post-X.Y.Z` run `python3 tools/release.py dev` (`X.Y.Z+dev`), pull request, merge.
 
 Started by hand (*Actions → Release → Run workflow*), the action is a **dry run** by default: it checks and shows the release notes without creating anything.
+
+### Hotfix releases
+
+When `main` already contains unreleased features and a bug needs a quick release (e.g. 1.5.2):
+
+1. Branch `release/X.Y.x` from the last release tag (once per minor version; it stays for later hotfixes): `git checkout -b release/1.5.x v1.5.1^{commit}` and push it.
+2. Fix on a branch from `release/X.Y.x`, pull request **into `release/X.Y.x`**, merge.
+3. Branch `release/X.Y.Z` from `release/X.Y.x`, `python3 tools/release.py prepare X.Y.Z`, pull request into `release/X.Y.x`, merge, tag the merge commit `vX.Y.Z` – the action *Release* creates the release and publishes the wiki from that tag.
+4. Bring the fix into `main` with a pull request: cherry-pick the fix, add the `[X.Y.Z]` changelog section and its compare link, set the version to `X.Y.Z+dev`, rebuild.
+
+Do not open a pull request from `release/X.Y.x` into `main` – the changes are already there (step 4).
 
 ## Adding a language
 
