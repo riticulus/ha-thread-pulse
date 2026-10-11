@@ -83,6 +83,8 @@
     $("livebtn").textContent = liveOn ? T.pause : T.resume;
     $("heatbtn").textContent = heatOn ? T.heatOff : T.heatOn;
     $("soundbtn").textContent = soundOn ? T.soundOff : T.soundOn; $("volume").title = T.volume;
+    $("exportbtn").textContent = T.exportBtn; $("exportbtn").title = T.exportTitle;
+    root.querySelector("[data-act=export]").textContent = T.exportPlain; root.querySelector("[data-act=exportanon]").textContent = T.exportAnon;
     const lg = (cls, color, text) => `<span class="lg"><span class="${cls}" style="background:${color}"></span>${text}</span>`;
     $("legend").innerHTML =
       lg("dot", COLORS.br, T.lgBr) + lg("dot", COLORS.router, T.lgRouter) + lg("dot", COLORS.end, T.lgEnd) + lg("dot", COLORS.sleepy, T.lgSleepy) +

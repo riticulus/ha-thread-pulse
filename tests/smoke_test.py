@@ -12,11 +12,25 @@ PAGE = "dist/thread-pulse.html?demo&lang=en"
 G = "document.getElementById"
 PANEL_TITLE = "document.getElementById('panel').hidden ? null : document.querySelector('#panel .t').textContent"
 PANEL_SECTIONS = "[...document.querySelectorAll('#panel h4')].map(h => h.textContent)"
+# image export: keep downloads in the page instead of saving them, and record the text drawn on canvases
+CAPTURE = r"""
+window.__downloads = []; window.__texts = []; window.__rec = false;
+const P = CanvasRenderingContext2D.prototype, ft = P.fillText, di = P.drawImage;
+P.fillText = function (t, ...a) { if (window.__rec) window.__texts.push(String(t)); return ft.call(this, t, ...a); };
+P.drawImage = function (img, ...a) { if (window.__rec && img instanceof HTMLCanvasElement && img.isConnected) window.__texts.push('__COPY__'); return di.call(this, img, ...a); };
+const ck = HTMLAnchorElement.prototype.click;
+HTMLAnchorElement.prototype.click = function () { if (this.download) { window.__downloads.push({ name: this.download, href: this.href }); return; } return ck.call(this); };
+"""
+# text drawn for the exported picture (before the map canvas is copied)
+EXPORT = "(act => { document.getElementById('exportbtn').click(); window.__texts = []; window.__rec = true; document.querySelector(`[data-act=${act}]`).click(); window.__rec = false; const t = window.__texts; return t.slice(0, t.indexOf('__COPY__')); })"
+DEMO_NAMES = {"Air purifier", "Air quality monitor", "Bathroom window", "Bedroom climate", "Bedside button", "Blinds", "Floor lamp", "Front door",
+              "Hallway light", "Hallway motion", "Kitchen plug", "Leak sensor", "Office plug", "Speaker", "TV", "Thermostat"}
+DEMO_ROOMS = {"BATHROOM", "BEDROOM", "HALLWAY", "KITCHEN", "LIVING ROOM", "OFFICE"}
 CLOSE = "(() => { const x = document.querySelector('#panel [data-act=close]'); if (x) x.click(); const i = document.getElementById('search'); i.value = ''; i.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'})); return true; })()"
 
 
 async def main_page(r, quick):
-    async with Browser(fake_audio=True) as b:
+    async with Browser(fake_audio=True, init_script=CAPTURE) as b:
         await b.open(PAGE)
         status = await b.js(f"{G}('status').textContent")
         r.check("demo loads (status line)", status.startswith("DEMO") and "14 devices" in status, status)
@@ -48,6 +62,21 @@ async def main_page(r, quick):
         r.check("Wi-Fi device panel opens", await b.js(PANEL_TITLE) == "Air quality monitor")
         r.check("Wi-Fi panel has Wi-Fi section", "Wi-Fi" in await b.js(PANEL_SECTIONS))
         await b.js(CLOSE)
+
+        # image export (anonymised: no device or room names drawn)
+        await b.js(f"{G}('exportbtn').click()")
+        r.check("image button opens its menu", await b.js(f"!{G}('exportmenu').hidden"))
+        plain = await b.js(EXPORT + "('export')")
+        anon = await b.js(EXPORT + "('exportanon')")
+        await asyncio.sleep(1)
+        names = await b.js("window.__downloads.map(d => d.name)")
+        r.check("image is saved as PNG with the date", len(names) == 2 and all(n.startswith("thread-pulse-20") and n.endswith(".png") for n in names) and names[1].endswith("-anonymised.png"), str(names))
+        shown = [t for t in plain if t in DEMO_NAMES]           # only the labels in view are drawn – the map may be zoomed in
+        r.check("image with names shows device names", len(shown) >= 2, str(shown))
+        leaked = [t for t in anon if t in DEMO_NAMES or t in DEMO_ROOMS]
+        r.check("anonymised image shows no device or room names", not leaked and sum(t.startswith("Device ") for t in anon) == len(shown), str(leaked or anon[:6]))
+        r.check("map shows the real names again after the export", set(shown) <= set(await b.js("(() => { window.__texts = []; window.__rec = true; document.getElementById('heatbtn').click(); document.getElementById('heatbtn').click(); window.__rec = false; return window.__texts; })()")))
+        r.check("menu closes after saving", await b.js(f"{G}('exportmenu').hidden"))
 
         # toolbar toggles
         for btn, on, off in (("roombtn", "⌂ Rooms off", "⌂ Rooms"), ("heatbtn", "≋ Traffic", "≋ Traffic off"), ("livebtn", "▶ Resume live", "⏸ Pause live"),

@@ -8,6 +8,11 @@
   #legend.hidden .lg { display: none; }
   #status { color: var(--muted); font-size: 12px; }
   #searchbox { display: inline-flex; align-items: center; gap: 6px; }
+  #exportbox { position: relative; display: inline-flex; }
+  #exportmenu { position: absolute; top: calc(100% + 4px); left: 0; z-index: 10; display: flex; flex-direction: column; gap: 4px; padding: 6px;
+                background: var(--bg); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 24px rgba(0,0,0,.25); }
+  #exportmenu[hidden] { display: none; }
+  #exportmenu button { text-align: left; width: max-content; max-width: min(320px, calc(100vw - 40px)); }
   #volume { width: 90px; accent-color: var(--c-hint, #1e88e5); }
   #volume[hidden] { display: none; }
   #search { width: 200px; max-width: 60vw; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 8px; font: inherit; }

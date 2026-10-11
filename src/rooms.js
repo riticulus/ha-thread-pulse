@@ -87,7 +87,7 @@
       o.beginPath(); o.moveTo(h[0].x, h[0].y); for (const q of h.slice(1)) o.lineTo(q.x, q.y); o.closePath(); o.fill(); o.stroke();
       ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 0.13; ctx.drawImage(roomCanvas, 0, 0); ctx.restore();
       const top = pts.reduce((a, q) => q.y < a.y ? q : a, pts[0]);
-      labels.push({ text: area.toUpperCase(), x: pts.reduce((a, q) => a + q.x, 0) / pts.length, y: top.y - PAD - 8, color });
+      labels.push({ text: roomLabel(area).toUpperCase(), x: pts.reduce((a, q) => a + q.x, 0) / pts.length, y: top.y - PAD - 8, color });
     });
     ctx.save(); ctx.font = "600 12px -apple-system, Segoe UI, Roboto, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "bottom";
     for (const l of labels) { ctx.fillStyle = l.color; ctx.globalAlpha = 0.9; ctx.fillText(l.text, l.x, l.y); }

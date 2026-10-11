@@ -16,6 +16,11 @@ const TP_CSS = `
   #legend.hidden .lg { display: none; }
   #status { color: var(--muted); font-size: 12px; }
   #searchbox { display: inline-flex; align-items: center; gap: 6px; }
+  #exportbox { position: relative; display: inline-flex; }
+  #exportmenu { position: absolute; top: calc(100% + 4px); left: 0; z-index: 10; display: flex; flex-direction: column; gap: 4px; padding: 6px;
+                background: var(--bg); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 24px rgba(0,0,0,.25); }
+  #exportmenu[hidden] { display: none; }
+  #exportmenu button { text-align: left; width: max-content; max-width: min(320px, calc(100vw - 40px)); }
   #volume { width: 90px; accent-color: var(--c-hint, #1e88e5); }
   #volume[hidden] { display: none; }
   #search { width: 200px; max-width: 60vw; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 8px; font: inherit; }
@@ -73,6 +78,7 @@ const TP_HTML = `
     <button id="roombtn"></button>
     <button id="soundbtn"></button>
     <input id="volume" type="range" min="0" max="1" step="0.05" hidden>
+    <span id="exportbox"><button id="exportbtn" aria-haspopup="true" aria-expanded="false"></button><span id="exportmenu" hidden><button data-act="export"></button><button data-act="exportanon"></button></span></span>
     <button id="legbtn"></button>
     <span id="searchbox"><input id="search" type="search" autocomplete="off" spellcheck="false"><span id="hits"></span></span>
     <span id="legend"></span>
@@ -84,6 +90,8 @@ const TP_HTML = `
 `;
 // ---------- texts (one file per language in src/i18n/) ----------
 const TEXT_EN = {
+  exportBtn: "📷 Image", exportTitle: "Save the map as an image", exportPlain: "Save image (with names)", exportAnon: "Save anonymised image (no names)",
+  anonDevice: i => `Device ${i}`, anonRoom: c => `Room ${c}`, anonNote: "anonymised", exportFailed: "The image could not be saved", exportDevices: n => `${n} devices`,
   reload: "↻ Reload", showList: "☰ Show list", hideList: "☰ Hide list", pause: "⏸ Pause live", resume: "▶ Resume live",
   changesHead: "Changes in the network", changesNone: "No changes detected yet.", changesClear: "Clear list",
   changesNote: "Checked every 5 minutes and kept in this browser. Reachability is reported live; parent, role and link changes only show up once the devices report them.",
@@ -155,6 +163,8 @@ const TEXT_EN = {
   hEdge: r => `Only weak links to other routers (best: ${r} dBm) – it sits at the edge of the mesh. Another router in between would strengthen it.`,
 };
 const TEXT_DE = {
+  exportBtn: "📷 Bild", exportTitle: "Karte als Bild speichern", exportPlain: "Bild speichern (mit Namen)", exportAnon: "Anonymisiertes Bild speichern (ohne Namen)",
+  anonDevice: i => `Gerät ${i}`, anonRoom: c => `Raum ${c}`, anonNote: "anonymisiert", exportFailed: "Das Bild konnte nicht gespeichert werden", exportDevices: n => `${n} Geräte`,
   reload: "↻ Neu laden", showList: "☰ Liste anzeigen", hideList: "☰ Liste ausblenden", pause: "⏸ Live pausieren", resume: "▶ Live starten",
   changesHead: "Änderungen im Netz", changesNone: "Noch keine Änderungen festgestellt.", changesClear: "Liste leeren",
   changesNote: "Wird alle 5 Minuten geprüft und in diesem Browser gespeichert. Erreichbarkeit wird live gemeldet; Parent-, Rollen- und Verbindungsänderungen erscheinen erst, wenn die Geräte sie melden.",
@@ -232,6 +242,8 @@ const NAMES_DE = [["Effective current", "Strom (effektiv)"], ["Effective voltage
   ["Occupancy", "Anwesenheit"], ["Door", "Kontakt"], ["Opening", "Kontakt"], ["Temperature", "Temperatur"], ["Humidity", "Luftfeuchte"],
   ["Identify", "Identifizieren"], ["Button", "Taste"], ["Light", "Licht"], ["Switch", "Schalter"], ["Motion", "Bewegung"]];
 const TEXT_ES = {
+  exportBtn: "📷 Imagen", exportTitle: "Guardar el mapa como imagen", exportPlain: "Guardar imagen (con nombres)", exportAnon: "Guardar imagen anonimizada (sin nombres)",
+  anonDevice: i => `Dispositivo ${i}`, anonRoom: c => `Habitación ${c}`, anonNote: "anonimizada", exportFailed: "No se pudo guardar la imagen", exportDevices: n => `${n} dispositivos`,
   reload: "↻ Recargar", showList: "☰ Mostrar lista", hideList: "☰ Ocultar lista", pause: "⏸ Pausar directo", resume: "▶ Reanudar directo",
   changesHead: "Cambios en la red", changesNone: "Todavía no se han detectado cambios.", changesClear: "Vaciar lista",
   changesNote: "Se comprueba cada 5 minutos y se guarda en este navegador. La accesibilidad se informa en directo; los cambios de padre, rol y enlaces solo aparecen cuando los dispositivos los informan.",
@@ -309,6 +321,8 @@ const NAMES_ES = [["Effective current", "Corriente (eficaz)"], ["Effective volta
   ["Occupancy", "Presencia"], ["Door", "Contacto"], ["Opening", "Contacto"], ["Temperature", "Temperatura"], ["Humidity", "Humedad"],
   ["Identify", "Identificar"], ["Button", "Botón"], ["Light", "Luz"], ["Switch", "Interruptor"], ["Motion", "Movimiento"]];
 const TEXT_FR = {
+  exportBtn: "📷 Image", exportTitle: "Enregistrer la carte en image", exportPlain: "Enregistrer l'image (avec les noms)", exportAnon: "Enregistrer une image anonymisée (sans noms)",
+  anonDevice: i => `Appareil ${i}`, anonRoom: c => `Pièce ${c}`, anonNote: "anonymisée", exportFailed: "L'image n'a pas pu être enregistrée", exportDevices: n => `${n} appareils`,
   reload: "↻ Recharger", showList: "☰ Afficher la liste", hideList: "☰ Masquer la liste", pause: "⏸ Mettre en pause", resume: "▶ Reprendre le direct",
   changesHead: "Changements dans le réseau", changesNone: "Aucun changement détecté pour l'instant.", changesClear: "Vider la liste",
   changesNote: "Vérifié toutes les 5 minutes et conservé dans ce navigateur. L'accessibilité est signalée en direct ; les changements de parent, de rôle et de liaison n'apparaissent qu'une fois signalés par les appareils.",
@@ -386,6 +400,8 @@ const NAMES_FR = [["Effective current", "Courant (efficace)"], ["Effective volta
   ["Occupancy", "Présence"], ["Door", "Contact"], ["Opening", "Contact"], ["Temperature", "Température"], ["Humidity", "Humidité"],
   ["Identify", "Identifier"], ["Button", "Bouton"], ["Light", "Lumière"], ["Switch", "Interrupteur"], ["Motion", "Mouvement"]];
 const TEXT_IT = {
+  exportBtn: "📷 Immagine", exportTitle: "Salva la mappa come immagine", exportPlain: "Salva immagine (con i nomi)", exportAnon: "Salva immagine anonimizzata (senza nomi)",
+  anonDevice: i => `Dispositivo ${i}`, anonRoom: c => `Stanza ${c}`, anonNote: "anonimizzata", exportFailed: "Non è stato possibile salvare l'immagine", exportDevices: n => `${n} dispositivi`,
   reload: "↻ Ricarica", showList: "☰ Mostra elenco", hideList: "☰ Nascondi elenco", pause: "⏸ Metti in pausa", resume: "▶ Riprendi diretta",
   changesHead: "Modifiche nella rete", changesNone: "Nessuna modifica rilevata finora.", changesClear: "Svuota elenco",
   changesNote: "Controllato ogni 5 minuti e salvato in questo browser. La raggiungibilità viene segnalata in diretta; le modifiche di parent, ruolo e collegamenti compaiono solo quando i dispositivi le segnalano.",
@@ -463,6 +479,8 @@ const NAMES_IT = [["Effective current", "Corrente (efficace)"], ["Effective volt
   ["Occupancy", "Presenza"], ["Door", "Contatto"], ["Opening", "Contatto"], ["Temperature", "Temperatura"], ["Humidity", "Umidità"],
   ["Identify", "Identifica"], ["Button", "Pulsante"], ["Light", "Luce"], ["Switch", "Interruttore"], ["Motion", "Movimento"]];
 const TEXT_NL = {
+  exportBtn: "📷 Afbeelding", exportTitle: "Kaart opslaan als afbeelding", exportPlain: "Afbeelding opslaan (met namen)", exportAnon: "Geanonimiseerde afbeelding opslaan (zonder namen)",
+  anonDevice: i => `Apparaat ${i}`, anonRoom: c => `Ruimte ${c}`, anonNote: "geanonimiseerd", exportFailed: "De afbeelding kon niet worden opgeslagen", exportDevices: n => `${n} apparaten`,
   reload: "↻ Herladen", showList: "☰ Lijst tonen", hideList: "☰ Lijst verbergen", pause: "⏸ Live pauzeren", resume: "▶ Live hervatten",
   changesHead: "Wijzigingen in het netwerk", changesNone: "Nog geen wijzigingen gevonden.", changesClear: "Lijst wissen",
   changesNote: "Wordt elke 5 minuten gecontroleerd en in deze browser bewaard. Bereikbaarheid wordt live gemeld; wijzigingen van parent, rol en verbindingen verschijnen pas als de apparaten ze melden.",
@@ -694,6 +712,8 @@ function createThreadPulse(root, opts, host) {
     $("livebtn").textContent = liveOn ? T.pause : T.resume;
     $("heatbtn").textContent = heatOn ? T.heatOff : T.heatOn;
     $("soundbtn").textContent = soundOn ? T.soundOff : T.soundOn; $("volume").title = T.volume;
+    $("exportbtn").textContent = T.exportBtn; $("exportbtn").title = T.exportTitle;
+    root.querySelector("[data-act=export]").textContent = T.exportPlain; root.querySelector("[data-act=exportanon]").textContent = T.exportAnon;
     const lg = (cls, color, text) => `<span class="lg"><span class="${cls}" style="background:${color}"></span>${text}</span>`;
     $("legend").innerHTML =
       lg("dot", COLORS.br, T.lgBr) + lg("dot", COLORS.router, T.lgRouter) + lg("dot", COLORS.end, T.lgEnd) + lg("dot", COLORS.sleepy, T.lgSleepy) +
@@ -1182,7 +1202,7 @@ function createThreadPulse(root, opts, host) {
       o.beginPath(); o.moveTo(h[0].x, h[0].y); for (const q of h.slice(1)) o.lineTo(q.x, q.y); o.closePath(); o.fill(); o.stroke();
       ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 0.13; ctx.drawImage(roomCanvas, 0, 0); ctx.restore();
       const top = pts.reduce((a, q) => q.y < a.y ? q : a, pts[0]);
-      labels.push({ text: area.toUpperCase(), x: pts.reduce((a, q) => a + q.x, 0) / pts.length, y: top.y - PAD - 8, color });
+      labels.push({ text: roomLabel(area).toUpperCase(), x: pts.reduce((a, q) => a + q.x, 0) / pts.length, y: top.y - PAD - 8, color });
     });
     ctx.save(); ctx.font = "600 12px -apple-system, Segoe UI, Roboto, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "bottom";
     for (const l of labels) { ctx.fillStyle = l.color; ctx.globalAlpha = 0.9; ctx.fillText(l.text, l.x, l.y); }
@@ -1689,6 +1709,81 @@ function createThreadPulse(root, opts, host) {
     if (save) prefs.set("sound", on);
   }
   root.addEventListener("pointerdown", () => { if (soundOn) ensureAudio(); }, true);   // unlock audio after a reload
+  // ---------- image export (issue #40) ----------
+  // The map canvas is copied as it is shown (zoom, links, colours, badges, room areas, traffic, messages in flight) onto
+  // the page background, with a caption line. Anonymised: device names become "Device 1, 2 …", rooms "Room A, B …",
+  // the address suffix of other Thread routers is removed; the labels are switched only for the moment of the copy.
+  let anonRooms = null;                     // area → "Room A" while an anonymised image is drawn (used by drawRooms)
+  const roomLabel = area => anonRooms ? anonRooms[area] : area;
+  function setExportMenu(show) {
+    const m = $("exportmenu");
+    m.hidden = !show; m.style.left = "0px";
+    $("exportbtn").setAttribute("aria-expanded", String(show));
+    if (!show) return;
+    const r = m.getBoundingClientRect(), w = $("wrap").getBoundingClientRect();   // keep the menu inside the card on phones
+    if (r.right > w.right - 8) m.style.left = Math.max(w.left + 8 - r.left, w.right - 8 - r.right) + "px";
+  }
+  function anonLabels() {
+    const nodes = network.body.data.nodes, named = [];
+    for (const id of nodes.getIds()) {
+      const n = nodeById[id] || wifiById[id];
+      if (n) named.push({ id, name: n.name });
+      else if (extraIds.has(id) && id !== brExt) named.push({ id, label: T.foreignLabel(id).split("\n")[0] });
+    }
+    // numbered by position (top left to bottom right), not by name – the order must not hint at the real names
+    const pos = network.getPositions(), row = id => Math.round(((pos[id] || {}).y || 0) / 40);
+    named.sort((a, b) => row(a.id) - row(b.id) || ((pos[a.id] || {}).x || 0) - ((pos[b.id] || {}).x || 0));
+    let i = 0;
+    return named.map(x => ({ id: x.id, label: x.label || T.anonDevice(++i) }));
+  }
+  function snapshotCanvas(anon) {
+    const original = {};
+    if (anon) {
+      const labels = anonLabels(), nodes = network.body.data.nodes;
+      for (const l of labels) original[l.id] = nodes.get(l.id).label;
+      anonRooms = {};
+      Object.keys(roomsOf()).sort().forEach((a, i) => { anonRooms[a] = T.anonRoom(i < 26 ? String.fromCharCode(65 + i) : String(i + 1)); });
+      nodes.update(labels);
+    }
+    try {
+      network.redraw();                    // synchronous: the canvas now holds the (anonymised) picture
+      const src = $("net").querySelector("canvas"), ratio = src.width / src.clientWidth || 1;
+      const foot = Math.round(26 * ratio), out = document.createElement("canvas");
+      out.width = src.width; out.height = src.height + foot;
+      const ctx = out.getContext("2d"), cs = getComputedStyle(host.styleTarget);
+      ctx.fillStyle = cs.getPropertyValue("--bg").trim() || "#ffffff"; ctx.fillRect(0, 0, out.width, out.height);
+      ctx.drawImage(src, 0, 0);
+      ctx.fillStyle = cs.getPropertyValue("--muted").trim() || "#6b7684";
+      ctx.font = `${Math.round(12 * ratio)}px -apple-system, Segoe UI, Roboto, sans-serif`; ctx.textBaseline = "middle";
+      const when = new Date().toLocaleString(lang, { dateStyle: "medium", timeStyle: "short" });
+      ctx.fillText(`Thread Pulse ${VERSION} · ${when} · ${T.exportDevices(Object.keys(nodeById).length)}` + (anon ? " · " + T.anonNote : ""),
+                   Math.round(10 * ratio), src.height + foot / 2);
+      return out;
+    } finally {
+      if (anon) { anonRooms = null; network.body.data.nodes.update(Object.entries(original).map(([id, label]) => ({ id, label }))); network.redraw(); }
+    }
+  }
+  function exportImage(anon) {
+    setExportMenu(false);
+    if (!network) return;
+    let canvas;
+    try { canvas = snapshotCanvas(anon); } catch (e) { $("status").textContent = T.exportFailed; return; }
+    const d = new Date(), pad = x => String(x).padStart(2, "0");
+    const name = `thread-pulse-${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}${anon ? "-anonymised" : ""}.png`;
+    canvas.toBlob(async blob => {
+      if (!blob) { $("status").textContent = T.exportFailed; return; }
+      // phones and tablets (and the Home Assistant app) cannot always download files – offer the share sheet there
+      const file = typeof File === "function" ? new File([blob], name, { type: "image/png" }) : null;
+      if (file && matchMedia("(pointer: coarse)").matches && navigator.canShare && navigator.canShare({ files: [file] })) {
+        try { await navigator.share({ files: [file] }); return; } catch (e) { if (e && e.name === "AbortError") return; }
+      }
+      const url = URL.createObjectURL(blob), a = document.createElement("a");
+      a.href = url; a.download = name; a.style.display = "none";
+      (root.body || root).appendChild(a);          // document or the shadow root of the card
+      a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+    }, "image/png");
+  }
   // ---------- demo (invented devices, works without Home Assistant) ----------
   function demoModel() {
     const de = lang === "de";
@@ -1819,13 +1914,15 @@ function createThreadPulse(root, opts, host) {
   applyColorVars();
   theme();
 
-  root.addEventListener("keydown", e => { if (e.key === "Escape" && e.target.id !== "search") closePanel(); });
+  root.addEventListener("keydown", e => { if (e.key === "Escape") setExportMenu(false); if (e.key === "Escape" && e.target.id !== "search") closePanel(); });
+  root.addEventListener("pointerdown", e => { if (!e.target.closest || !e.target.closest("#exportbox")) setExportMenu(false); });
 
   root.addEventListener("click", e => {
     const t = e.target.closest && e.target.closest("[data-open],[data-act],[data-device]"); if (!t) return;
     e.preventDefault();
     if (t.dataset.open) openPanel(t.dataset.open);
     else if (t.dataset.act === "close") closePanel();
+    else if (t.dataset.act === "export" || t.dataset.act === "exportanon") exportImage(t.dataset.act === "exportanon");
     else if (t.dataset.act === "clearchanges") { changes = []; prefs.remove("changes"); renderChanges(); }
     else if (t.dataset.device) openDevice(t.dataset.device);
   });
@@ -1871,6 +1968,7 @@ function createThreadPulse(root, opts, host) {
     prefs.set("heat", heatOn);
     if (network) network.redraw();
   };
+  $("exportbtn").onclick = () => setExportMenu($("exportmenu").hidden);
   $("legbtn").onclick = () => setLegend($("legend").classList.contains("hidden"));
   $("livebtn").onclick = () => {
     liveOn = !liveOn; $("livebtn").textContent = liveOn ? T.pause : T.resume;

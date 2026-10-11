@@ -35,13 +35,15 @@
   applyColorVars();
   theme();
 
-  root.addEventListener("keydown", e => { if (e.key === "Escape" && e.target.id !== "search") closePanel(); });
+  root.addEventListener("keydown", e => { if (e.key === "Escape") setExportMenu(false); if (e.key === "Escape" && e.target.id !== "search") closePanel(); });
+  root.addEventListener("pointerdown", e => { if (!e.target.closest || !e.target.closest("#exportbox")) setExportMenu(false); });
 
   root.addEventListener("click", e => {
     const t = e.target.closest && e.target.closest("[data-open],[data-act],[data-device]"); if (!t) return;
     e.preventDefault();
     if (t.dataset.open) openPanel(t.dataset.open);
     else if (t.dataset.act === "close") closePanel();
+    else if (t.dataset.act === "export" || t.dataset.act === "exportanon") exportImage(t.dataset.act === "exportanon");
     else if (t.dataset.act === "clearchanges") { changes = []; prefs.remove("changes"); renderChanges(); }
     else if (t.dataset.device) openDevice(t.dataset.device);
   });

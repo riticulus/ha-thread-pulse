@@ -23,6 +23,7 @@
     prefs.set("heat", heatOn);
     if (network) network.redraw();
   };
+  $("exportbtn").onclick = () => setExportMenu($("exportmenu").hidden);
   $("legbtn").onclick = () => setLegend($("legend").classList.contains("hidden"));
   $("livebtn").onclick = () => {
     liveOn = !liveOn; $("livebtn").textContent = liveOn ? T.pause : T.resume;

@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+- Save the map as an image: button **📷 Image** in the toolbar, *with names* or *anonymised* (devices *Device 1, 2 …* numbered by position on the map, rooms *Room A, B …*, no address suffixes). The PNG shows the map as it is on screen (zoom, links, badges, room areas, traffic, messages) on the page background, with a line for version, date and number of devices; file name `thread-pulse-<date>.png` / `…-anonymised.png`. On phones and tablets the share sheet opens where available ([#40](https://github.com/riticulus/ha-thread-pulse/issues/40))
+
 ### Changed
 - The user guide now lives in the repository (`docs/wiki/`) and is published to the wiki after every release by the GitHub action *Release* (by hand: action *Wiki*), so documentation changes are reviewed in the same pull request as the code and the wiki always describes the latest release. `tools/wiki.py` checks every page link and image (also in CI) and publishes the pages; the wiki shows a note that it is generated ([#54](https://github.com/riticulus/ha-thread-pulse/issues/54))
 - Release automation: `tools/release.py` prepares a release (`prepare X.Y.Z`: version, changelog section, links, build), switches back to the development version (`dev`), checks a release (`check`) and writes the release notes (`notes`); the GitHub action *Release* creates the GitHub release when a tag `vX.Y.Z` is pushed – only after checking version, changelog and generated files, and never with attachments. Started by hand it is a dry run ([#53](https://github.com/riticulus/ha-thread-pulse/issues/53))

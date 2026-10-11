@@ -1,6 +1,8 @@
 //# Dutch texts. Defines TEXT_NL and NAMES_NL (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_NL = {
+  exportBtn: "📷 Afbeelding", exportTitle: "Kaart opslaan als afbeelding", exportPlain: "Afbeelding opslaan (met namen)", exportAnon: "Geanonimiseerde afbeelding opslaan (zonder namen)",
+  anonDevice: i => `Apparaat ${i}`, anonRoom: c => `Ruimte ${c}`, anonNote: "geanonimiseerd", exportFailed: "De afbeelding kon niet worden opgeslagen", exportDevices: n => `${n} apparaten`,
   reload: "↻ Herladen", showList: "☰ Lijst tonen", hideList: "☰ Lijst verbergen", pause: "⏸ Live pauzeren", resume: "▶ Live hervatten",
   changesHead: "Wijzigingen in het netwerk", changesNone: "Nog geen wijzigingen gevonden.", changesClear: "Lijst wissen",
   changesNote: "Wordt elke 5 minuten gecontroleerd en in deze browser bewaard. Bereikbaarheid wordt live gemeld; wijzigingen van parent, rol en verbindingen verschijnen pas als de apparaten ze melden.",

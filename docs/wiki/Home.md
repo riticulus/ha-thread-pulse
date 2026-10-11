@@ -18,6 +18,7 @@
 | **Notice changes** | A change log of new parents, devices dropping out and coming back |
 | **Think in rooms** | Arrange the devices by Home Assistant area |
 | **Hear it** | Optional quiet tick for every message *(from version 1.4.0)* |
+| **Share it** | Save the map as an image, optionally anonymised – for documentation or a forum post *(after version 1.4.0)* |
 | **Hang it on the wall** | Ambient mode: only the pulsing mesh, dark, for wall tablets *(from version 1.4.0)* |
 
 ## Where to start
