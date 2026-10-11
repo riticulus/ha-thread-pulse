@@ -61,6 +61,8 @@ const TEXT_DE = {
   bfNoData: days => `noch zu wenig Daten (${days} Tag${days === 1 ? "" : "e"} – mindestens 14 nötig)`,
   bfNote: "Schätzung aus der Langzeitstatistik von Home Assistant. Viele Batterien bleiben lange fast voll und fallen dann schnell ab.",
   hBattSoon: d => `Die Batterie ist voraussichtlich in ca. ${d} Tag${d === 1 ? "" : "en"} leer (Schätzung) – Ersatz bereithalten.`,
+  lgWifi: "Matter über WLAN", wifiSub: "Matter über WLAN – nicht Teil des Thread-Netzes", ethSub: "Matter über Ethernet – nicht Teil des Thread-Netzes",
+  secWifi: "WLAN", wifiStd: "Standard", wifiNote: "WLAN-Werte: letzter Stand, den das Gerät gemeldet hat – kann veraltet sein.",
   secHints: "Hinweise", hintsHead: "Hinweise zum Netz", listHints: n => ` · ${n} Hinweis${n === 1 ? "" : "e"}`,
   hintsNote: "Hinweise sind Faustregeln aus den Daten, die die Geräte melden – Vorschläge, keine Messungen.",
   noHints: "Keine Schwachstellen gefunden.",

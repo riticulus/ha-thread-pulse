@@ -61,6 +61,8 @@ const TEXT_NL = {
   bfNoData: days => `nog te weinig gegevens (${days} dag${days === 1 ? "" : "en"} – minstens 14 nodig)`,
   bfNote: "Schatting op basis van de langetermijnstatistieken van Home Assistant. Veel batterijen blijven lang bijna vol en lopen dan snel leeg.",
   hBattSoon: d => `De batterij is waarschijnlijk over ongeveer ${d} dag${d === 1 ? "" : "en"} leeg (schatting) – houd een reserve klaar.`,
+  lgWifi: "Matter via wifi", wifiSub: "Matter via wifi – geen deel van het Thread-netwerk", ethSub: "Matter via ethernet – geen deel van het Thread-netwerk",
+  secWifi: "Wifi", wifiStd: "Standaard", wifiNote: "Wifi-waarden zoals laatst gemeld door het apparaat, kunnen verouderd zijn.",
   secHints: "Tips", hintsHead: "Tips voor het netwerk", listHints: n => ` · ${n} tip${n === 1 ? "" : "s"}`,
   hintsNote: "Tips zijn vuistregels op basis van de gegevens die de apparaten melden – suggesties, geen metingen.",
   noHints: "Geen zwakke plekken gevonden.",

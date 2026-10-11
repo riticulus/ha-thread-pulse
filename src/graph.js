@@ -2,7 +2,7 @@
 //# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
   // ---------- graph ----------
   let searchHits = [], searchActive = false;
-  let extraIds = new Set(), threadInfo = null;
+  let extraIds = new Set(), threadInfo = null, wifiById = {};
   let hintsOf = {}, nodeById = {}, linksOf = {}, battOf = {}, brExt = null, devToNode = {}, entToNode = {}, nodeName = {}, onMap = new Set(), ridToId = {}, routeOf = {}, parentRid = {}, ownRid = {};
 
   function render(model, keep) {      // keep: positions of the previous map (refresh without layout jump)
@@ -57,6 +57,13 @@
       }
       parents.push({ child: n.name, type: n.type, parent: pname, rssi, src });
     }
+    wifiById = {};
+    if (SHOW_WIFI) for (const w of model.wifi || []) {
+      wifiById[w.id] = w;
+      visNodes.push({ id: w.id, label: w.name, shape: "image", image: iconImg(w.icon, w.available ? COLORS.wifi : COLORS.off, 64), size: 14, physics: false,
+                      shapeProperties: { useBorderWithImage: false }, x: 0, y: 0, ...(keep && keep[w.id] ? { x: keep[w.id].x, y: keep[w.id].y } : {}),
+                      title: `${w.name}\n${w.kind === "ethernet" ? T.ethSub : T.wifiSub}${w.available ? "" : T.unreachable}` });
+    }
     const ids = new Set(visNodes.map(v => v.id));
     const avg = e => Math.round(e.rssi.reduce((s, v) => s + v, 0) / e.rssi.length);
     const seenEdge = new Set();
@@ -72,15 +79,16 @@
                    interaction: { hover: true, tooltipDelay: 120 } };
     if (network) network.destroy();
     network = new VIS.Network($("net"), data, opts);
-    if (keep) { const view = keep.__view; if (view) network.moveTo({ position: view.position, scale: view.scale, animation: false }); }
+    if (keep) { placeWifi(); const view = keep.__view; if (view) network.moveTo({ position: view.position, scale: view.scale, animation: false }); }
     else {
+      network.once("stabilizationIterationsDone", placeWifi);       // before the fit below
       network.once("stabilizationIterationsDone", () => network.fit({ animation: false }));
       network.once("stabilized", () => network.fit({ animation: { duration: 300 } }));
     }
-    network.on("beforeDrawing", ctx => { drawRooms(ctx); drawHeat(ctx); });
+    network.on("beforeDrawing", ctx => { drawRooms(ctx); drawHeat(ctx); drawWifiLabel(ctx); });
     if (roomOn) applyRooms(true, false);
     network.on("afterDrawing", ctx => { drawBadges(ctx); drawFlashes(ctx); drawPackets(ctx); });
-    network.on("click", p => { if (p.nodes.length && (nodeById[p.nodes[0]] || extraIds.has(p.nodes[0]))) openPanel(p.nodes[0]); else closePanel(); });
+    network.on("click", p => { if (p.nodes.length && (nodeById[p.nodes[0]] || extraIds.has(p.nodes[0]) || wifiById[p.nodes[0]])) openPanel(p.nodes[0]); else closePanel(); });
     // double click / double tap (issue #23): on empty space center and fit the whole mesh, on a device zoom to it
     network.on("doubleClick", p => {
       if (p.nodes.length && !String(p.nodes[0]).startsWith("room:")) {
@@ -109,6 +117,8 @@
     devToNode = Object.fromEntries(nodes.filter(n => n.devId).map(n => [n.devId, n.id]));
     entToNode = {}; for (const n of nodes) for (const e of n.entities || []) entToNode[e] = n.id;
     nodeName = Object.fromEntries(nodes.map(n => [n.id, n.name]));
+    for (const w of Object.values(wifiById)) { devToNode[w.devId] = w.id; for (const e of w.entities) entToNode[e] = w.id; nodeName[w.id] = w.name; }
+    { const lw = $("lgwifi"); if (lw) lw.hidden = !Object.keys(wifiById).length; }
     // table: parents + weak router links
     parents.sort((p, q) => p.rssi - q.rssi);
     const weak = Object.values(edges).filter(e => !e.parent && ids.has(e.b))
@@ -135,7 +145,7 @@
     const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
     if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
     renderChanges();
-    if (panelNode && (nodeById[panelNode] || extraIds.has(panelNode))) renderPanel(); else if (panelNode) closePanel();
+    if (panelNode && (nodeById[panelNode] || extraIds.has(panelNode) || wifiById[panelNode])) renderPanel(); else if (panelNode) closePanel();
     lastSnap = snapshotOf(nodes, edges, byId);
     $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + " · " + T.tapHint + " · v" + VERSION;
   }

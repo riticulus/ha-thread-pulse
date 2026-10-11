@@ -119,6 +119,7 @@
     $("panel").innerHTML = h;
   }
   function renderPanel() {
+    if (wifiById[panelNode]) return renderWifiPanel(panelNode);
     if (!nodeById[panelNode] && extraIds.has(panelNode)) return renderRouterPanel(panelNode);
     const n = nodeById[panelNode]; if (!n) return closePanel();
     const i = n.info || {}, hass = DEMO ? null : freshHass();

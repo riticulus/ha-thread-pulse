@@ -1,7 +1,7 @@
 //# Colours, signal quality, icons, theme, connection to Home Assistant, language switching.
 //# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
   // ---------- helpers ----------
-  const COLORS = { heat: "#ffb300", br: "#7b1fa2", router: "#1e88e5", end: "#90caf9", sleepy: "#43a047", off: "#9e9e9e", up: "#00bcd4", down: "#e91e63" };
+  const COLORS = { wifi: "#78909c", heat: "#ffb300", br: "#7b1fa2", router: "#1e88e5", end: "#90caf9", sleepy: "#43a047", off: "#9e9e9e", up: "#00bcd4", down: "#e91e63" };
   const QUAL = rssi => rssi >= -65 ? ["#43a047", "g", T.good] : rssi >= -80 ? ["#fb8c00", "o", T.medium] : ["#e53935", "r", T.weak];
   const hex16 = s => BigInt(s).toString(16).padStart(16, "0");
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -108,7 +108,7 @@
     const lg = (cls, color, text) => `<span class="lg"><span class="${cls}" style="background:${color}"></span>${text}</span>`;
     $("legend").innerHTML =
       lg("dot", COLORS.br, T.lgBr) + lg("dot", COLORS.router, T.lgRouter) + lg("dot", COLORS.end, T.lgEnd) + lg("dot", COLORS.sleepy, T.lgSleepy) +
-      lg("ln", "#43a047", T.good) + lg("ln", "#fb8c00", T.medium) + lg("ln", "#e53935", T.weak) + lg("dot", COLORS.up, T.lgUp) + lg("dot", COLORS.down, T.lgDown) + lg("ln heatln", COLORS.heat, T.lgHeat);
+      lg("ln", "#43a047", T.good) + lg("ln", "#fb8c00", T.medium) + lg("ln", "#e53935", T.weak) + lg("dot", COLORS.up, T.lgUp) + lg("dot", COLORS.down, T.lgDown) + lg("ln heatln", COLORS.heat, T.lgHeat) + `<span class="lg" id="lgwifi" hidden><span class="dot" style="background:${COLORS.wifi}"></span>${T.lgWifi}</span>`;
     setList(!$("info").classList.contains("hidden"), false);
     setLegend(!$("legend").classList.contains("hidden"), false);
   }

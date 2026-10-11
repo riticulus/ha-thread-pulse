@@ -10,6 +10,7 @@ function createThreadPulse(root, opts, host) {
   const every = (fn, ms) => timers.push(setInterval(fn, ms));
   let destroyed = false;
   const DEMO = !!opts.demo;
+  const SHOW_WIFI = opts.showWifi !== false;
   const AMBIENT = !!opts.ambient, AMBIENT_MOTION = AMBIENT && opts.ambientMotion !== false;
   let lang = (opts.lang || navigator.language || "en").slice(0, 2);
   let T = TEXT[lang] || TEXT.en;

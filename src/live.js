@@ -17,7 +17,7 @@
     }
   }
   function pathToBr(nodeId) {
-    if (!brExt) return null;
+    if (!brExt || isWifiId(nodeId)) return null;      // Matter over Wi-Fi: counted, but no Thread path
     const br = Object.keys(ridToId).find(r => ridToId[r] === brExt);
     const ids = [nodeId];
     let r = ownRid[nodeId] ?? parentRid[nodeId];
