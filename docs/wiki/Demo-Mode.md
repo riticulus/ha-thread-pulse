@@ -20,4 +20,8 @@ Add `&lang=de` (page) or `language: de` (card) for German.
 - Messages every 0.6–2.4 seconds and commands from "Home Assistant" with simulated confirmations; the demo blinds respond slowly on purpose
 - An invented change in the network every 40 seconds (new parent, device dropping out or coming back)
 
+### Apple-only network
+
+`?demo=apple` (standalone page only) shows a network without OpenThread add-on and without Matter routers: four battery devices whose parents are three Apple border routers, shown as *other Thread router …7114* etc. Messages are animated from the device to its parent only – what you would see in such a network *(after version 1.4.0)*.
+
 Nothing in demo mode touches your Home Assistant; the demo change log is not stored.

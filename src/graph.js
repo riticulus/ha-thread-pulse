@@ -2,7 +2,7 @@
 //# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
   // ---------- graph ----------
   let searchHits = [], searchActive = false;
-  let extraIds = new Set(), threadInfo = null, wifiById = {};
+  let extraIds = new Set(), threadInfo = null, wifiById = {}, parentOf = {};
   let hintsOf = {}, nodeById = {}, linksOf = {}, battOf = {}, brExt = null, devToNode = {}, entToNode = {}, nodeName = {}, onMap = new Set(), ridToId = {}, routeOf = {}, parentRid = {}, ownRid = {};
 
   function render(model, keep) {      // keep: positions of the previous map (refresh without layout jump)
@@ -30,9 +30,21 @@
         (edges[key] = edges[key] || { a: n.id, b: other, rssi: [] }).rssi.push(x["6"]);
       }
     }
-    const extras = Object.keys(extra);
-    extraIds = new Set(extras); threadInfo = model.thread || null;
+    let extras = Object.keys(extra);
+    threadInfo = model.thread || null;
     if (!brExt && extras.length === 1) brExt = extras[0];         // no OTBR info: a single unknown router is most likely the border router
+    // the parent of a device that is not a Matter device of HA (e.g. an Apple TV / HomePod) is not in any neighbour table of
+    // a Matter router when the mesh has no Matter routers: add it from the device's own neighbour table (issue #71)
+    parentOf = {};
+    const bestOf = n => [...n.neigh].sort((p, q) => q["6"] - p["6"])[0];
+    for (const n of nodes.filter(n => !isRouter(n))) {
+      const best = bestOf(n); if (!best) continue;
+      const pid = hex16(best["0"]);
+      parentOf[n.id] = pid;
+      if (!byId[pid]) extra[pid] = true;
+    }
+    extras = Object.keys(extra);
+    extraIds = new Set(extras);
     for (const id of extras) {
       const isBr = id === brExt;
       visNodes.push({ id, label: isBr ? T.brLabel : T.foreignLabel(id), shape: "image",
@@ -43,7 +55,7 @@
     const childRssi = {};
     for (const n of nodes.filter(isRouter)) for (const x of n.neigh) if (x["13"]) childRssi[n.id + "|" + hex16(x["0"])] = x["6"];
     for (const n of nodes.filter(n => !isRouter(n))) {
-      const best = [...n.neigh].sort((p, q) => q["6"] - p["6"])[0];
+      const best = bestOf(n);
       if (!best) continue;
       const pid = hex16(best["0"]);
       let rssi = best["6"], src = "device";
@@ -52,6 +64,7 @@
       if (n.type === "end_device") {                             // mains end devices: show all their links like routers
         for (const x of n.neigh) { const o = hex16(x["0"]); if (!byId[o]) continue;
           const key = [n.id, o].sort().join("|"); (edges[key] = edges[key] || { a: n.id, b: o, rssi: [] }).rssi.push(x["6"]); }
+        if (!byId[pid]) edges["p|" + n.id] = { a: n.id, b: pid, rssi: [rssi], parent: true };     // parent outside HA (issue #71)
       } else {
         edges["p|" + n.id] = { a: n.id, b: pid, rssi: [rssi], parent: true };
       }

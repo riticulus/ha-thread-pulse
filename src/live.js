@@ -17,7 +17,13 @@
     }
   }
   function pathToBr(nodeId) {
-    if (!brExt || isWifiId(nodeId)) return null;      // Matter over Wi-Fi: counted, but no Thread path
+    if (isWifiId(nodeId)) return null;                 // Matter over Wi-Fi: counted, but no Thread path
+    if (!brExt) {
+      // border router unknown (no OpenThread add-on, several or no unknown routers – e.g. Apple border routers only):
+      // only the first hop is known, from the device to its parent (issue #71)
+      const p = parentOf[nodeId];
+      return p && onMap.has(p) ? [nodeId, p] : null;
+    }
     const br = Object.keys(ridToId).find(r => ridToId[r] === brExt);
     const ids = [nodeId];
     let r = ownRid[nodeId] ?? parentRid[nodeId];
@@ -47,13 +53,14 @@
     if (path) {
       if (down) path = path.slice().reverse();
       recordTraffic(path);
-      if (brExt && path.includes(brExt)) {             // every animated message passes the border router
-        const b = counts[brExt] = counts[brExt] || { up: [], down: [], last: null };
+      const via = brExt && path.includes(brExt) ? brExt : extraIds.has(path[down ? 0 : path.length - 1]) ? path[down ? 0 : path.length - 1] : null;
+      if (via) {                                       // every animated message passes the border router (or, if unknown, the parent router)
+        const b = counts[via] = counts[via] || { up: [], down: [], last: null };
         (down ? b.down : b.up).push(Date.now()); b.last = { t: Date.now(), down };
         b.up = b.up.filter(t => t > cut); b.down = b.down.filter(t => t > cut); b.total = (b.total || 0) + 1;
       }
     }
-    if (panelNode === nodeId || (panelNode && panelNode === brExt)) renderPanel();
+    if (panelNode === nodeId || (panelNode && extraIds.has(panelNode))) renderPanel();
     if (!liveOn || !network || !path) return;
     playTick(down);
     packets.push({ path, t0: now, color: down ? COLORS.down : COLORS.up, origin: down ? path[path.length - 1] : nodeId });

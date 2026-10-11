@@ -14,7 +14,7 @@ Please read this before relying on what the map shows.
 - **Matter devices on Wi-Fi / Ethernet** are shown as a separate group *(from version 1.4.0)*; their reachability is not part of the change log yet.
 - **Matter devices only.** Thread devices paired via HomeKit or other ecosystems appear at most as *other Thread router*; their traffic is not shown.
 - **Administrator rights** are required.
-- **Border router:** without the OpenThread Border Router add-on the border router can often not be identified, and messages are not animated. With several border routers (e.g. Home Assistant plus an Apple TV), messages may leave the mesh through another border router than the one shown.
+- **Border router:** without the OpenThread Border Router add-on the border router can often not be identified. Then messages are animated only over the first hop, from the device to its parent router; the way from there to Home Assistant is unknown *(in versions up to 1.4.0 nothing was animated)*. With several border routers (e.g. Home Assistant plus an Apple TV), messages may leave the mesh through another border router than the one shown.
 - **Not an official API.** Thread Pulse relies on Home Assistant's Matter diagnostics format. A future Home Assistant or Matter server update may break it.
 
 ## Features

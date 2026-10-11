@@ -1,6 +1,7 @@
 //# English texts. Defines TEXT_EN; build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_EN = {
+  parentHopNote: "The border router is not known (e.g. only Apple or Google border routers, no OpenThread Border Router add-on): messages are only animated from the device to its parent router – the way from here to Home Assistant is not known.",
   identifyBtn: "💡 Identify", identifyNote: "Sends a real command: the device blinks, beeps or flashes for a few seconds, if it supports it.", identifySleepy: "Battery devices react only when they wake up – this can take a while.", identifySending: "sending …", identifySent: "sent – watch the device", identifyFailed: "Failed",
   exportBtn: "📷 Image", exportTitle: "Save the map as an image", exportPlain: "Save image (with names)", exportAnon: "Save anonymised image (no names)",
   anonDevice: i => `Device ${i}`, anonRoom: c => `Room ${c}`, anonNote: "anonymised", exportFailed: "The image could not be saved", exportDevices: n => `${n} devices`,
@@ -52,7 +53,7 @@ const TEXT_EN = {
   warnBattery: p => `Battery low (${p} %)`,
   stale: "Thread data as last reported by the device, may be outdated.",
   brSub: "Connects the Thread network to Home Assistant", foreignSub: "Thread router that is not a Matter device of Home Assistant",
-  foreignNote: "Home Assistant has no further data about this device – only what the neighbouring routers report.",
+  foreignNote: "Home Assistant has no further data about this device – only what the devices around it report (neighbouring routers, children).",
   secNetwork: "Thread network", networkName: "Network name", channel: "Channel", panId: "PAN ID", extPanId: "Extended PAN ID",
   routersInMesh: "Routers in the mesh", ofMax: n => `${n} of max. 32`, devicesInMesh: "Thread devices", leader: "Leader",
   secBorderRouter: "Border router", brKind: "Type", brOtbr: "OpenThread Border Router (add-on)", borderAgent: "Border agent ID",

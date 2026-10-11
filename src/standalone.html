@@ -22,7 +22,7 @@
   document.head.appendChild(style);
   document.body.insertAdjacentHTML("afterbegin", TP_HTML);
   const haRoot = () => parent.document.querySelector("home-assistant");
-  createThreadPulse(document, { demo: params.has("demo"), lang: params.get("lang"), ambient: params.has("ambient"), showWifi: !params.has("nowifi"), ambientMotion: !params.has("still") }, {
+  createThreadPulse(document, { demo: params.has("demo") && (params.get("demo") || true), lang: params.get("lang"), ambient: params.has("ambient"), showWifi: !params.has("nowifi"), ambientMotion: !params.has("still") }, {
     embedded: window.parent !== window,
     hass: () => haRoot().hass,
     themeSource: () => parent.document.documentElement,

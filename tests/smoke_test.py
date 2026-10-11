@@ -134,6 +134,12 @@ async def other_pages(r):
         r.check("?nowifi hides the Wi-Fi group", await b.js(f"{G}('lgwifi').hidden"))
         r.check("French texts", (await b.js(f"{G}('reload').textContent")) == "↻ Recharger")
         r.errors("nowifi / French", b.errors)
+    async with Browser() as b:                # Apple border routers only, battery devices only (issue #71)
+        await b.open("dist/thread-pulse.html?demo=apple&lang=en", wait=14)
+        r.check("Apple-only demo loads", "4 devices" in await b.js(f"{G}('status').textContent"))
+        ticker = await b.js(f"{G}('live').textContent")
+        r.check("without known border router messages are animated to the parent router", "→ HA" in ticker, ticker[:80])
+        r.errors("Apple-only demo", b.errors)
     async with Browser() as b:
         await b.open("dist/thread-pulse.html?lang=en", wait=3)
         err = await b.js("document.getElementById('err') ? document.getElementById('err').textContent : ''")

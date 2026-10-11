@@ -85,7 +85,7 @@ Tap the **border router** to see the Thread network and the border router itself
 
 The values come from the OpenThread Border Router integration; without it, Thread Pulse uses what the Matter devices report. The **network key is never shown**.
 
-**Other Thread routers** (grey, not Matter devices of Home Assistant) show their neighbours and a note that Home Assistant has no further data about them.
+**Other Thread routers** (grey, not Matter devices of Home Assistant) show their neighbours and children and a note that Home Assistant has no further data about them. When the border router is unknown, the parent router of a device also counts the messages of its children and explains that only this first hop is animated *(after version 1.4.0)*.
 
 ## Matter devices on Wi-Fi / Ethernet
 

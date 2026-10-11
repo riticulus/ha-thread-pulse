@@ -1,6 +1,7 @@
 //# French texts. Defines TEXT_FR and NAMES_FR (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_FR = {
+  parentHopNote: "Le routeur de bordure n'est pas connu (p. ex. uniquement des routeurs de bordure Apple ou Google, pas de module OpenThread Border Router) : les messages ne sont animés que de l'appareil jusqu'à son routeur parent – le chemin vers Home Assistant n'est pas connu.",
   identifyBtn: "💡 Identifier", identifyNote: "Envoie une vraie commande : l'appareil clignote, bipe ou s'allume quelques secondes, s'il le prend en charge.", identifySleepy: "Les appareils sur batterie ne réagissent qu'à leur réveil – cela peut prendre un moment.", identifySending: "envoi …", identifySent: "envoyé – regardez l'appareil", identifyFailed: "Échec",
   exportBtn: "📷 Image", exportTitle: "Enregistrer la carte en image", exportPlain: "Enregistrer l'image (avec les noms)", exportAnon: "Enregistrer une image anonymisée (sans noms)",
   anonDevice: i => `Appareil ${i}`, anonRoom: c => `Pièce ${c}`, anonNote: "anonymisée", exportFailed: "L'image n'a pas pu être enregistrée", exportDevices: n => `${n} appareils`,
@@ -52,7 +53,7 @@ const TEXT_FR = {
   warnBattery: p => `Pile faible (${p} %)`,
   stale: "Données Thread telles que signalées en dernier par l'appareil, peuvent être obsolètes.",
   brSub: "Relie le réseau Thread à Home Assistant", foreignSub: "Routeur Thread qui n'est pas un appareil Matter de Home Assistant",
-  foreignNote: "Home Assistant n'a pas d'autres données sur cet appareil – seulement ce que signalent les routeurs voisins.",
+  foreignNote: "Home Assistant n'a pas d'autres données sur cet appareil – seulement ce que signalent les appareils proches (routeurs voisins, enfants).",
   secNetwork: "Réseau Thread", networkName: "Nom du réseau", channel: "Canal", panId: "PAN ID", extPanId: "PAN ID étendu",
   routersInMesh: "Routeurs dans le réseau", ofMax: n => `${n} sur 32 max.`, devicesInMesh: "Appareils Thread", leader: "Leader",
   secBorderRouter: "Routeur de bordure", brKind: "Type", brOtbr: "OpenThread Border Router (module)", borderAgent: "ID de l'agent de bordure",

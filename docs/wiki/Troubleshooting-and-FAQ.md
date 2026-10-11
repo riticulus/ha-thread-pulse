@@ -40,7 +40,7 @@ You installed the *main* branch (a development state) through HACS. HACS then of
 ## The map loads, but no dots move
 
 - **Live is paused** – click **▶ Resume live**.
-- **The border router could not be identified** – this happens without the OpenThread Border Router add-on, e.g. if only an Apple, Google or Amazon border router is used. The map still works, but paths cannot be calculated. If exactly one unknown Thread router is found, Thread Pulse assumes it is the border router.
+- **The border router could not be identified** – this happens without the OpenThread Border Router add-on, e.g. if only an Apple, Google or Amazon border router is used. If exactly one unknown Thread router is found in the neighbour tables, Thread Pulse assumes it is the border router. Otherwise messages are animated only from the device to its parent router (the parent appears as *other Thread router*, also when the mesh has no Matter router at all). In versions up to 1.4.0 nothing moved in this case.
 - **Nothing happens in the network** – at night there may be few messages. Plugs with power metering usually report every few seconds.
 
 ## A device is grey
