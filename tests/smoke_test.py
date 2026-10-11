@@ -137,7 +137,9 @@ async def other_pages(r):
     async with Browser(init_script=CAPTURE) as b:     # Apple border routers only, battery devices only (issues #71, #37)
         await b.open("dist/thread-pulse.html?demo=apple&lang=en", wait=14)
         labels = await b.js("(() => { window.__texts = []; window.__rec = true; document.getElementById('heatbtn').click(); document.getElementById('heatbtn').click(); window.__rec = false; return window.__texts; })()")
-        r.check("border routers found on the network are named on the map", "HomePod mini" in labels and "Border router …7114" in labels, str([t for t in labels if "router" in t.lower() or "Home" in t][:4]))
+        r.check("border routers are named on the map (instance name, not the generic Apple model)", "HomePod Living Room" in labels and "Border router …7114" in labels and "BorderRouter" not in labels,
+                str([t for t in labels if "router" in t.lower() or "Home" in t][:4]))
+        r.check("names that arrive after the map is drawn also reach the list", "HomePod Living Room …7114" in await b.js(f"{G}('info').textContent"))
         r.check("Apple-only demo loads", "4 devices" in await b.js(f"{G}('status').textContent"))
         ticker = await b.js(f"{G}('live').textContent")
         r.check("without known border router messages are animated to the parent router", "→ HA" in ticker, ticker[:80])

@@ -6,27 +6,38 @@
   // extended address. Routers that are not border routers (or not announced on the network) stay "other Thread router".
   let brInfo = {}, brUnsub = null;              // extended address → { vendor, model, name, version, network, extPanId }
   const short = id => "…" + id.slice(-4);
+  // Apple border routers all announce the model "BorderRouter" – the useful name is the instance name (e.g. "HomePod Salon")
+  const GENERIC_MODEL = /^border\s*router$/i;
+  const cut = (t, n = 28) => t.length > n ? t.slice(0, n - 1) + "…" : t;
+  const usefulModel = d => d.model && !GENERIC_MODEL.test(d.model) ? d.model : "";
+  const brTitleOf = d => cut(d.name || usefulModel(d) || d.vendor || T.brLabel);
+  const nameOf = id => (nodeById[id] || wifiById[id] || {}).name || extraName(id);
   function extraName(id) {                      // one line, for lists and the change log
     if (id === brExt) return T.brLabel;
     const d = brInfo[id];
-    return d ? `${d.model || d.vendor || T.brLabel} ${short(id)}` : short(id);
+    return d ? `${brTitleOf(d)} ${short(id)}` : short(id);
   }
   function extraLabel(id) {                     // label on the map
     if (id === brExt) return T.brLabel;
     const d = brInfo[id];
-    return d ? `${d.model || d.vendor || T.brLabel}\n${T.brOther(id.slice(-4))}` : T.foreignLabel(id);
+    return d ? `${brTitleOf(d)}\n${T.brOther(id.slice(-4))}` : T.foreignLabel(id);
   }
   function extraTitle(id) {
     if (id === brExt) return T.brTitle;
     const d = brInfo[id];
     return d ? [d.vendor, d.model, d.name].filter(Boolean).join(" · ") + "\n" + T.brOtherTitle : T.foreignTitle;
   }
-  function applyRouterNames() {                 // after new discovery data: update labels and icons on the map
-    if (!network) return;
+  let namesTimer = null;
+  function applyRouterNames() {                 // discovery events arrive one by one – update once they have settled
+    clearTimeout(namesTimer); namesTimer = setTimeout(applyRouterNamesNow, 300);
+  }
+  function applyRouterNamesNow() {              // labels and icons on the map, list and hints, open panel (#71)
+    if (!network || destroyed) return;
     const upd = [...extraIds].filter(id => id !== brExt).map(id => ({ id, label: extraLabel(id), title: extraTitle(id),
       image: iconImg(brInfo[id] ? "access-point-network" : "router-wireless", COLORS.off, 64) }));
     if (upd.length) network.body.data.nodes.update(upd);
-    if (panelNode && extraIds.has(panelNode)) renderPanel();
+    renderList(); renderChanges();
+    if (panelNode) renderPanel();
   }
   function routerFromDiscovery(d) {
     return { vendor: d.vendor_name || "", model: d.model_name || "", name: d.instance_name || "", version: d.thread_version || "",

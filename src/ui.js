@@ -23,7 +23,11 @@
   async function load() {
     $("status").textContent = T.loading;
     const prev = lastSnap;
-    if (DEMO) { const m = demoState || (demoState = demoModel()); brInfo = m.routers || {}; render(m); diffSnaps(prev, lastSnap); loadBatteryForecasts(null); return m; }
+    if (DEMO) {
+      const m = demoState || (demoState = demoModel()); render(m); diffSnaps(prev, lastSnap); loadBatteryForecasts(null);
+      setTimeout(() => { brInfo = m.routers || {}; applyRouterNames(); }, 2500);     // like the real discovery: names arrive later
+      return m;
+    }
     const m = await loadHa();
     render(m);
     diffSnaps(prev, lastSnap);
