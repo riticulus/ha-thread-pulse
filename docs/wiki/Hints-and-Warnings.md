@@ -65,6 +65,14 @@ The thresholds come from a real network of about 20 devices, where healthy devic
 
 **Possible causes:** weak signal, many hops, a busy or restarting router, or the device itself.
 
+### Same hardware address as another device
+
+*From version 1.5.2.*
+
+Some devices report the same hardware address as another device – for example several Aqara P2 motion sensors. It is a firmware quirk: the devices work normally, because inside the Thread network they use different addresses. Thread Pulse identifies devices on the map by this address, so it keeps them apart by adding their Home Assistant device ID and shows this hint. Links that other devices report for them cannot be matched, so their connections on the map may be incomplete; the link to their parent (from their own data) is shown.
+
+Up to version 1.5.1 such devices stopped the whole map with the error *Cannot add item: item with id … already exists*.
+
 ## Known limitation
 
 The hints *unstable connection* and *router probably loses power* are based on counters that do not go back down:
