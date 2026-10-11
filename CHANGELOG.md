@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.5.0] – 2026-10-11
+
 ### Added
 - Border routers of other systems (Apple TV, HomePod, Google Nest, Amazon Echo …) are named on the map, e.g. *HomePod mini · Border router …7114*, using Home Assistant's border router discovery (`thread/discover_routers`, matched by extended address, in the background while the page is open); their panel shows manufacturer, model, name, Thread version and network and whether Home Assistant uses them. The panel of Home Assistant's border router also shows manufacturer, model, name and Thread version. The anonymised image shows only the model ([#37](https://github.com/riticulus/ha-thread-pulse/issues/37))
 - Networks without a known border router (no OpenThread Border Router add-on, e.g. Apple or Google border routers only, possibly no Matter router at all): the parent router of every device is taken from the device's own neighbour table and shown as *other Thread router …xxxx*, and messages are animated over this first hop (device ↔ parent); its panel counts the messages and explains that the way from there to Home Assistant is unknown. Parents that are not Matter devices now always appear on the map. New demo `?demo=apple`. Thanks to @oxmo75 for the analysis and the patch ([#71](https://github.com/riticulus/ha-thread-pulse/issues/71))
@@ -90,7 +92,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Demo mode (`?demo`) that works without Home Assistant
 - Readable (unminified) vis-network build
 
-[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.0.0...v1.2.0

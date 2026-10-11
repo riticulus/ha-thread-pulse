@@ -14,7 +14,7 @@
 | **≋ Traffic / Traffic off** | Switch the [traffic heat](Live-Data-Flow#traffic-heat) on or off |
 | **⌂ Rooms / Rooms off** | Switch the [room view](Room-View) on or off |
 | **🔇 Sound / 🔊 Sound off** | Switch the [sound](Live-Data-Flow#sound) on or off; while it is on, a volume slider appears next to it *(from version 1.4.0)* |
-| **📷 Image** | [Save the map as a PNG image](Saving-an-Image), with names or anonymised *(after version 1.4.0)* |
+| **📷 Image** | [Save the map as a PNG image](Saving-an-Image), with names or anonymised *(from version 1.5.0)* |
 | **ⓘ Legend** | Show or hide the colour legend |
 | **🔍 Find device or room** | [Search](Search) |
 | Status line | Time of the last update, number of devices, version |
@@ -34,7 +34,7 @@ The **colour** shows the role in the Thread network:
 | Grey | **Not reachable** | Home Assistant currently reports the device as unavailable |
 | Grey-blue, in a column on the right *(from version 1.4.0)* | **Matter on Wi-Fi / Ethernet** | A Matter device that is not on Thread. Not part of the mesh, so it has no links; its messages are counted but not animated |
 | Grey with router icon | **Other Thread router** | A Thread router that is not a Matter device of Home Assistant, e.g. an Apple TV, a HomePod or a Google Nest device |
-| Grey with antenna icon, model name | **Border router of another system** | A border router found on your local network, e.g. *HomePod mini · Border router …7114* *(after version 1.4.0)* |
+| Grey with antenna icon, model name | **Border router of another system** | A border router found on your local network, e.g. *HomePod mini · Border router …7114* *(from version 1.5.0)* |
 
 Hover a device (desktop) to see its name and role; tap or click it to open the [detail panel](Detail-Panel). From version 1.4.0 this also works for the border router and other Thread routers.
 
