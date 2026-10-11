@@ -35,7 +35,7 @@ Two devices report the same hardware address (e.g. two Aqara P2 motion sensors).
 
 - **HACS:** reload the browser after the update.
 - **Manual card / standalone page:** browsers cache files. Raise the version parameter (`?v=2`, `?v=3` …) in the resource or iframe URL.
-- The status line shows the version that is actually running.
+- The **⋯** menu (up to version 1.5.2: the status line) shows the version that is actually running.
 
 ## HACS offers an "update" to an older version
 
@@ -54,7 +54,7 @@ Home Assistant reports it as unavailable. Check the device in Home Assistant; ba
 ## A device is missing on the map
 
 - Only **Matter** devices that use **Thread** are shown. Thread devices paired with HomeKit or another ecosystem only appear as *other Thread router* – and only if they route.
-- Click **↻ Reload** – newly added devices appear after the next load.
+- Click **↻ Reload** in the **⋯** menu or tap the status line – newly added devices appear after the next load.
 
 ## The values look old
 
@@ -78,4 +78,4 @@ Yes. The card and the page adapt to narrow screens; the detail panel slides up f
 
 ## Something else is wrong
 
-Open an [issue](https://github.com/riticulus/ha-thread-pulse/issues) with your Home Assistant version, the Thread Pulse version (status line), the type of border router and the number of Thread devices. A screenshot of the browser console (F12 → Console) helps.
+Open an [issue](https://github.com/riticulus/ha-thread-pulse/issues) with your Home Assistant version, the Thread Pulse version (**⋯** menu), the type of border router and the number of Thread devices. A screenshot of the browser console (F12 → Console) helps.

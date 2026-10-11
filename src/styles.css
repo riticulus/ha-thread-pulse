@@ -2,22 +2,48 @@
   @media (prefers-color-scheme: dark) { :root, :host { --bg: #111418; --fg: #e3e7ec; --muted: #9aa4b1; --card: #1c2128; --line: #2e3540; } }
   #wrap { display: flex; flex-direction: column; height: 100%; background: var(--bg); color: var(--fg);
           font: 14px/1.4 -apple-system, "Segoe UI", Roboto, sans-serif; }
-  #bar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--line); }
-  #bar button { border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 10px; cursor: pointer; font: inherit; }
-  #legend { display: contents; }
-  #legend.hidden .lg { display: none; }
-  #status { color: var(--muted); font-size: 12px; }
+  #wrap { container-type: inline-size; container-name: tp; }
+  /* toolbar (issue #107): one row – search, the view toggles, the list, ⋯ menu for the rest, status */
+  #bar { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+  #bar button, #legbtn { border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 10px; cursor: pointer; font: inherit; }
+  .tb { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .tb .badge { background: var(--c-hint, #1e88e5); color: white; border-radius: 9px; padding: 0 6px; font-size: 11px; font-weight: 600; line-height: 16px; }
+  #morebtn { font-weight: 700; letter-spacing: 1px; }
+  #bar .tb[aria-pressed=true] { background: color-mix(in srgb, var(--c-hint, #1e88e5) 16%, var(--card)); border-color: color-mix(in srgb, var(--c-hint, #1e88e5) 55%, var(--line)); }
+  #status { color: var(--muted); font-size: 12px; cursor: pointer; margin-left: 4px; }
+  #status:hover { color: var(--fg); }
   #searchbox { display: inline-flex; align-items: center; gap: 6px; }
-  #exportbox { position: relative; display: inline-flex; }
-  #exportmenu { position: absolute; top: calc(100% + 4px); left: 0; z-index: 10; display: flex; flex-direction: column; gap: 4px; padding: 6px;
-                background: var(--bg); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 24px rgba(0,0,0,.25); }
-  #exportmenu[hidden] { display: none; }
-  #exportmenu button { text-align: left; width: max-content; max-width: min(320px, calc(100vw - 40px)); }
+  #morebox { position: relative; display: inline-flex; }
+  #moremenu { position: absolute; top: calc(100% + 4px); left: 0; z-index: 10; display: flex; flex-direction: column; gap: 4px; padding: 6px;
+              background: var(--bg); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 24px rgba(0,0,0,.25); }
+  #moremenu[hidden] { display: none; }
+  #bar #moremenu button { text-align: left; width: max-content; max-width: min(320px, calc(100vw - 40px)); border-color: transparent; background: none; padding: 5px 8px; }
+  #bar #moremenu button:hover, #bar #moremenu button:focus-visible { background: var(--card); border-color: var(--line); }
+  #moremenu .mrow { display: flex; align-items: center; gap: 8px; }
+  #moremenu .msep { border-top: 1px solid var(--line); margin: 2px 0; }
+  #moremenu .mhead, #moremenu .mver { color: var(--muted); font-size: 11px; padding: 0 4px; }
+  #moremenu .mhead { text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }
   #volume { width: 90px; accent-color: var(--c-hint, #1e88e5); }
   #volume[hidden] { display: none; }
-  #search { width: 200px; max-width: 60vw; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 8px; font: inherit; }
+  #search { width: 200px; max-width: 60vw; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 8px; font: inherit; box-sizing: border-box; }
   #search:focus { outline: 2px solid var(--c-hint, #1e88e5); outline-offset: -1px; }
   #hits { color: var(--muted); font-size: 12px; }
+  /* legend (issue #107): a ? button on the map opens it as an overlay */
+  #legbtn { position: absolute; top: 8px; left: 8px; z-index: 4; width: 30px; height: 30px; padding: 0; border-radius: 50%; font-weight: 700;
+            background: color-mix(in srgb, var(--bg) 85%, transparent); }
+  #legend { position: absolute; top: 8px; left: 46px; z-index: 4; max-width: min(440px, calc(100% - 62px)); display: flex; flex-wrap: wrap; gap: 4px 12px;
+            background: color-mix(in srgb, var(--bg) 92%, transparent); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,.18); }
+  #legend.hidden { display: none; }
+  /* narrow cards and phones: icons only (the label is the tooltip), the search is an icon until it is used */
+  @container tp (max-width: 640px) {
+    #bar > .tb .lb { display: none; }
+    #bar { gap: 6px; }
+    #searchbox:not(:focus-within) #search:placeholder-shown { width: 38px; padding-right: 0; cursor: pointer; }
+    #searchbox:focus-within #search, #search:not(:placeholder-shown) { width: 100%; max-width: none; }
+    #searchbox:focus-within, #searchbox:has(#search:not(:placeholder-shown)) { flex-basis: 100%; }
+    #status { flex-basis: 100%; margin-left: 0; }
+  }
   .lg { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
   .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
   .ln { width: 18px; height: 3px; display: inline-block; border-radius: 2px; }
@@ -34,7 +60,7 @@
   #info.hidden { display: none; }
   /* ambient mode (issue #11): only the pulsing mesh, dark, for wall tablets */
   #wrap.ambient { background: #05070a !important; }
-  #wrap.ambient #bar, #wrap.ambient #live, #wrap.ambient #info:not(.errshown) { display: none !important; }
+  #wrap.ambient #bar, #wrap.ambient #live, #wrap.ambient #legbtn, #wrap.ambient #legend, #wrap.ambient #info:not(.errshown) { display: none !important; }
   #wrap.ambient #info.errshown { display: block !important; }
   table { border-collapse: collapse; width: 100%; }
   td, th { text-align: left; padding: 3px 6px; border-bottom: 1px solid var(--line); }

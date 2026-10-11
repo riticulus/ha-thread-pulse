@@ -6,13 +6,14 @@
   // the address suffix of other Thread routers is removed; the labels are switched only for the moment of the copy.
   let anonRooms = null;                     // area → "Room A" while an anonymised image is drawn (used by drawRooms)
   const roomLabel = area => anonRooms ? anonRooms[area] : area;
-  function setExportMenu(show) {
-    const m = $("exportmenu");
+  function setMoreMenu(show) {                  // ⋯ menu of the toolbar (issue #107): reload, sound, export, version
+    const m = $("moremenu");
     m.hidden = !show; m.style.left = "0px";
-    $("exportbtn").setAttribute("aria-expanded", String(show));
+    $("morebtn").setAttribute("aria-expanded", String(show));
     if (!show) return;
     const r = m.getBoundingClientRect(), w = $("wrap").getBoundingClientRect();   // keep the menu inside the card on phones
     if (r.right > w.right - 8) m.style.left = Math.max(w.left + 8 - r.left, w.right - 8 - r.right) + "px";
+    const first = m.querySelector("button"); if (first) first.focus({ preventScroll: true });
   }
   function anonLabels() {
     const nodes = network.body.data.nodes, named = [];
@@ -60,7 +61,7 @@
     }
   }
   function exportImage(anon) {
-    setExportMenu(false);
+    setMoreMenu(false);
     if (!network) return;
     let canvas;
     try { canvas = snapshotCanvas(anon); } catch (e) { $("status").textContent = T.exportFailed; return; }

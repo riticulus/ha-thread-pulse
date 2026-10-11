@@ -22,7 +22,7 @@ const ck = HTMLAnchorElement.prototype.click;
 HTMLAnchorElement.prototype.click = function () { if (this.download) { window.__downloads.push({ name: this.download, href: this.href }); return; } return ck.call(this); };
 """
 # text drawn for the exported picture (before the map canvas is copied)
-EXPORT = "(act => { document.getElementById('exportbtn').click(); window.__texts = []; window.__rec = true; document.querySelector(`[data-act=${act}]`).click(); window.__rec = false; const t = window.__texts; return t.slice(0, t.indexOf('__COPY__')); })"
+EXPORT = "(act => { document.getElementById('morebtn').click(); window.__texts = []; window.__rec = true; document.querySelector(`[data-act=${act}]`).click(); window.__rec = false; const t = window.__texts; return t.slice(0, t.indexOf('__COPY__')); })"
 DEMO_NAMES = {"Air purifier", "Air quality monitor", "Bathroom window", "Bedroom climate", "Bedside button", "Blinds", "Floor lamp", "Front door",
               "Hallway light", "Hallway motion", "Kitchen plug", "Leak sensor", "Office plug", "Speaker", "TV", "Thermostat"}
 DEMO_ROOMS = {"BATHROOM", "BEDROOM", "HALLWAY", "KITCHEN", "LIVING ROOM", "OFFICE"}
@@ -42,7 +42,12 @@ async def main_page(r, quick):
         r.check("list opens", await b.js(f"!{G}('info').classList.contains('hidden')"))
         hints = await b.js("document.querySelectorAll('#info table')[0] ? document.querySelectorAll('#info table')[0].rows.length : 0")
         r.check("hints listed", hints >= 2, f"{hints} hint rows")
-        r.check("list button shows hint count", "hint" in await b.js(f"{G}('toggle').textContent"))
+        r.check("list button shows hint count", "hint" in await b.js(f"{G}('toggle').getAttribute('aria-label')") and await b.js(f"!!{G}('toggle').querySelector('.badge')"))
+        r.check("status line is short (version in the menu)", "1.5" not in status and "v1." not in status, status)
+        await b.js(f"{G}('legbtn').click()")
+        r.check("? on the map opens the legend", await b.js(f"!{G}('legend').classList.contains('hidden') && {G}('legbtn').getAttribute('aria-expanded') === 'true'"))
+        await b.js(f"{G}('legbtn').click()")
+        r.check("? closes the legend again", await b.js(f"{G}('legend').classList.contains('hidden')"))
         health = await b.js("(document.querySelector('#info .health') || {}).innerText || ''")
         r.check("mesh health in the list: grade and six factors", bool(re.search(r"Mesh health: [A-E]", health)) and health.count("●") == 6 and "rule of thumb" in health, health[:80])
 
@@ -95,8 +100,12 @@ async def main_page(r, quick):
         r.check("firmware section in the list", "Same model, different firmware" in fw and "skipped" in fw and "installing 2.1.0" in fw)
 
         # image export (anonymised: no device or room names drawn)
-        await b.js(f"{G}('exportbtn').click()")
-        r.check("image button opens its menu", await b.js(f"!{G}('exportmenu').hidden"))
+        # toolbar menu (issue #107): reload, sound, export, version
+        await b.js(f"{G}('morebtn').click()")
+        menu = await b.js(f"{G}('moremenu').innerText")
+        r.check("⋯ opens the menu with reload, sound, export and version", await b.js(f"!{G}('moremenu').hidden") and all(t in menu for t in ("Reload", "Sound", "Save image", "Text report", "Thread Pulse 1.")), menu.replace("\n", " | ")[:160])
+        await b.js("document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}))")
+        r.check("Escape closes the menu", await b.js(f"{G}('moremenu').hidden"))
         plain = await b.js(EXPORT + "('export')")
         anon = await b.js(EXPORT + "('exportanon')")
         await asyncio.sleep(1)
@@ -107,10 +116,10 @@ async def main_page(r, quick):
         leaked = [t for t in anon if t in DEMO_NAMES or t in DEMO_ROOMS]
         r.check("anonymised image shows no device or room names", not leaked and any(t.startswith("Device ") for t in anon), str(leaked or anon[:6]))
         r.check("map shows the real names again after the export", set(shown) <= set(await b.js("(() => { window.__texts = []; window.__rec = true; document.getElementById('heatbtn').click(); document.getElementById('heatbtn').click(); window.__rec = false; return window.__texts; })()")))
-        r.check("menu closes after saving", await b.js(f"{G}('exportmenu').hidden"))
+        r.check("menu closes after saving", await b.js(f"{G}('moremenu').hidden"))
 
         # text report (anonymised by default; never addresses or network identifiers)
-        await b.js(f"{G}('exportbtn').click(); document.querySelector('[data-act=report]').click()")
+        await b.js(f"{G}('morebtn').click(); document.querySelector('[data-act=report]').click()")
         anon = await b.js(f"{G}('reporttext').value")
         r.check("text report opens anonymised", not await b.js(f"{G}('report').hidden") and anon.startswith("### Thread network") and "anonymised" in anon.split("\n")[1])
         rows = [l.split(" | ") for l in anon.splitlines() if re.match(r"\| Device \d+ \|", l)]
@@ -132,7 +141,7 @@ async def main_page(r, quick):
         for btn, on, off in (("roombtn", "⌂ Rooms off", "⌂ Rooms"), ("heatbtn", "≋ Traffic", "≋ Traffic off"), ("livebtn", "▶ Resume live", "⏸ Pause live"),
                              ("soundbtn", "🔊 Sound off", "🔇 Sound")):
             await b.js(f"{G}('{btn}').click()"); await asyncio.sleep(2.2 if btn == "roombtn" else 0.2)
-            first = await b.js(f"{G}('{btn}').textContent")
+            first = await b.js(f"{G}('{btn}').getAttribute('aria-label') || {G}('{btn}').textContent")
             if btn == "soundbtn":
                 await asyncio.sleep(15)        # let some messages arrive with sound on
                 ticks = await b.js("window.__ticks.length")
@@ -142,8 +151,9 @@ async def main_page(r, quick):
                 gaps = await b.js("window.__ticks.slice(1).map((t, i) => t.t - window.__ticks[i].t)")
                 r.check("sound rate limit (≥ 150 ms apart)", all(g >= 149 for g in gaps), str(min(gaps) if gaps else None))
             await b.js(f"{G}('{btn}').click()"); await asyncio.sleep(2.2 if btn == "roombtn" else 0.2)
-            second = await b.js(f"{G}('{btn}').textContent")
+            second = await b.js(f"{G}('{btn}').getAttribute('aria-label') || {G}('{btn}').textContent")
             r.check(f"toolbar button {btn} toggles", (first, second) == (on, off), f"{first!r} / {second!r}")
+        r.check("active features are marked as pressed", await b.js(f"{G}('heatbtn').getAttribute('aria-pressed') === 'true' && {G}('roombtn').getAttribute('aria-pressed') === 'false'"))
         await b.js(f"{G}('livebtn').click(); window.__p = window.__ticks.length; {G}('soundbtn').click()")
         await asyncio.sleep(6)
         r.check("no sound while live is paused", await b.js("window.__ticks.length === window.__p"))
@@ -174,7 +184,7 @@ async def other_pages(r):
                 str([t for t in labels if "router" in t.lower() or "Home" in t][:4]))
         r.check("names that arrive after the map is drawn also reach the list", "HomePod Living Room …7114" in await b.js(f"{G}('info').textContent"))
         r.check("Apple-only demo loads", "4 devices" in await b.js(f"{G}('status').textContent"))
-        await b.js(f"{G}('exportbtn').click(); document.querySelector('[data-act=report]').click()")
+        await b.js(f"{G}('morebtn').click(); document.querySelector('[data-act=report]').click()")
         rep = await b.js(f"{G}('reporttext').value")
         r.check("anonymised report hides the names of other border routers", "HomePod" not in rep and "AppleTV" not in rep and "Border router 1" in rep, rep[:200])
         h = await b.js("(document.querySelector('#info .health') || {}).innerText || ''")
@@ -188,6 +198,15 @@ async def other_pages(r):
         await b.js(search_js("Leak sensor")); await asyncio.sleep(1.5)
         r.check("same hardware address: hint in the panel", "same hardware address as Bedroom climate" in await b.js(f"{G}('panel').textContent"))
         r.errors("same hardware address", b.errors)
+    async with Browser(width=390, height=760) as b:     # phone: toolbar in one row of icons (issue #107)
+        await b.open("dist/thread-pulse.html?demo&lang=en", wait=5)
+        bar = await b.js("document.getElementById('bar').getBoundingClientRect().height")
+        lbl = await b.js("getComputedStyle(document.querySelector('#livebtn .lb')).display")
+        r.check("phone: toolbar buttons show icons only, toolbar ≤ 2 rows", lbl == "none" and bar < 80, f"{bar:.0f} px, label {lbl}")
+        r.check("phone: search collapsed to an icon", await b.js("document.getElementById('search').getBoundingClientRect().width < 50"))
+        await b.js("document.getElementById('search').focus()")
+        r.check("phone: search widens when used", await b.js("document.getElementById('search').getBoundingClientRect().width > 300"))
+        r.errors("phone width", b.errors)
     async with Browser() as b:
         await b.open("dist/thread-pulse.html?lang=en", wait=3)
         err = await b.js("document.getElementById('err') ? document.getElementById('err').textContent : ''")

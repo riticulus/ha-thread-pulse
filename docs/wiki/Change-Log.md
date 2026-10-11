@@ -23,7 +23,7 @@ The affected device **flashes** three times on the map.
 ## When it is checked
 
 - **Every 5 minutes** while a Thread Pulse page is open. The data is loaded again and compared with the previous state. The map keeps its positions and zoom; only devices whose data changed move.
-- When you click **↻ Reload**.
+- When you click **↻ Reload** (in the **⋯** menu after version 1.5.2) or tap the status line.
 - Reachability changes are logged **immediately**.
 
 ## The list

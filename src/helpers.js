@@ -7,6 +7,14 @@
   const QUAL = rssi => rssi >= -65 ? [COLORS.good, "g", T.good] : rssi >= -80 ? [COLORS.medium, "o", T.medium] : [COLORS.weak, "r", T.weak];
   function applyColorVars() { for (const k of ["good", "medium", "weak", "warn", "hint"]) host.styleTarget.style.setProperty("--c-" + k, COLORS[k]); }
   const hex16 = s => BigInt(s).toString(16).padStart(16, "0");
+  // toolbar button (issue #107): icon and label apart – narrow cards show only the icon, the label is the tooltip;
+  // pressed: the feature is on (the icon alone does not show the state); badge: a number shown next to it
+  function setBtn(el, text, pressed = null, badge = 0, extra = "") {
+    const i = text.indexOf(" "), ic = i > 0 ? text.slice(0, i) : "", lb = i > 0 ? text.slice(i + 1) : text;
+    el.innerHTML = (ic ? `<span class="ic">${esc(ic)}</span>` : "") + `<span class="lb">${esc(lb)}</span>` + (badge ? `<span class="badge">${badge}</span>` : "");
+    el.title = lb + extra; el.setAttribute("aria-label", text + extra);
+    if (pressed !== null) el.setAttribute("aria-pressed", String(pressed));
+  }
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   function iconImg(icon, bg, size) {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 32 32" width="${size}" height="${size}">` +
@@ -78,12 +86,14 @@
     lang = (opts.lang || l || "en").slice(0, 2); T = TEXT[lang] || TEXT.en;
     host.styleTarget.lang = lang;
     $("reload").textContent = T.reload;
-    $("roombtn").textContent = roomOn ? T.roomsOff : T.roomsOn;
-  $("search").placeholder = T.searchPh;
-    $("livebtn").textContent = liveOn ? T.pause : T.resume;
-    $("heatbtn").textContent = heatOn ? T.heatOff : T.heatOn;
+    setBtn($("roombtn"), roomOn ? T.roomsOff : T.roomsOn, roomOn);
+    $("search").placeholder = T.searchPh;
+    setBtn($("livebtn"), liveOn ? T.pause : T.resume, liveOn);
+    setBtn($("heatbtn"), heatOn ? T.heatOff : T.heatOn, heatOn);
     $("soundbtn").textContent = soundOn ? T.soundOff : T.soundOn; $("volume").title = T.volume;
-    $("exportbtn").textContent = T.exportBtn; $("exportbtn").title = T.exportTitle;
+    $("morebtn").title = T.moreBtn; $("morebtn").setAttribute("aria-label", T.moreBtn);
+    $("exporthead").textContent = T.exportHead; $("version").textContent = "Thread Pulse " + VERSION;
+    $("status").title = T.statusReload;
     root.querySelector("[data-act=export]").textContent = T.exportPlain; root.querySelector("[data-act=exportanon]").textContent = T.exportAnon;
     root.querySelector("[data-act=report]").textContent = T.reportMenu;
     const lg = (cls, color, text) => `<span class="lg"><span class="${cls}" style="background:${color}"></span>${text}</span>`;
