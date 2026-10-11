@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Double-click / double-tap: on empty space the whole mesh is centered and fitted to the map area, on a device the map zooms to it (centered in the part not covered by the detail panel); the browser's page zoom no longer triggers inside the map ([#23](https://github.com/riticulus/ha-thread-pulse/issues/23))
 
 ### Changed
+- Translations split into one file per language in `src/i18n/`; `build.py` collects all language files automatically; new check `tests/check-i18n.js` (also run in CI) makes sure every language has the same keys as English. No change in behaviour – all texts and translations are identical in content ([#49](https://github.com/riticulus/ha-thread-pulse/issues/49))
 - Source split into one file per topic in `src/` (`version.js`, `i18n.js`, `styles.css`, `markup.html`, `core.js`, one file per feature, `ui.js`, `start.js`); `build.py` assembles them in a fixed order. No change in behaviour – the generated files contain exactly the same lines as before ([#33](https://github.com/riticulus/ha-thread-pulse/issues/33))
 
 ## [1.3.0] – 2026-10-10

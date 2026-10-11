@@ -4,7 +4,8 @@
   python3 build.py
 
 The core is assembled from the files in src/ in the order of CORE below (no bundler, no dependencies):
-  version.js, i18n.js           top level
+  version.js                    top level
+  i18n/<lang>.js                one file per language (TEXT_XX, optional NAMES_XX); build.py adds TEXT and LOCAL_NAMES
   styles.css, markup.html       become the constants TP_CSS and TP_HTML
   core.js                       start of createThreadPulse() and the state shared by all parts
   helpers.js … ambient.js       parts placed inside createThreadPulse() (one file per topic)
@@ -23,6 +24,24 @@ here = Path(__file__).parent
 src = here / "src"
 PARTS = ["helpers", "data", "graph", "live", "heat", "rooms", "panel", "hints", "search", "changes", "response", "sound", "demo", "ui", "ambient"]
 
+def languages():
+    """Language files in src/i18n/: English first, then alphabetical. Each defines TEXT_XX and optionally NAMES_XX."""
+    codes = sorted(p.stem for p in (src / "i18n").glob("*.js"))
+    assert "en" in codes, "src/i18n/en.js is required"
+    return ["en"] + [c for c in codes if c != "en"]
+
+def i18n_lines():
+    out = ["// ---------- texts (one file per language in src/i18n/) ----------"]
+    with_names = []
+    for code in languages():
+        part = lines(f"i18n/{code}.js")
+        assert any(l.startswith(f"const TEXT_{code.upper()} = {{") for l in part), f"i18n/{code}.js must define TEXT_{code.upper()}"
+        if any(l.startswith(f"const NAMES_{code.upper()} = ") for l in part): with_names.append(code)
+        out += part
+    out.append("const TEXT = { " + ", ".join(f"{c}: TEXT_{c.upper()}" for c in languages()) + " };")
+    out.append("const LOCAL_NAMES = { " + ", ".join(f"{c}: NAMES_{c.upper()}" for c in with_names) + " };")
+    return out
+
 def lines(name):
     text = (src / name).read_text(encoding="utf-8")
     assert text.endswith("\n"), f"{name} must end with a newline"
@@ -34,7 +53,7 @@ core = "\n".join(
     lines("version.js")
     + ["const TP_CSS = `"] + lines("styles.css") + ["`;"]
     + ["const TP_HTML = `"] + lines("markup.html") + ["`;"]
-    + lines("i18n.js")
+    + i18n_lines()
     + lines("core.js")
     + [l for p in PARTS for l in lines(p + ".js")]
     + lines("start.js")

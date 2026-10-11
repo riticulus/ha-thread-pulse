@@ -27,6 +27,8 @@ jobs:
         run: python3 build.py
       - name: Generated files must match src/ (run `python3 build.py` and commit)
         run: git diff --exit-code -- thread-pulse.html dist/
+      - name: Translations complete
+        run: node tests/check-i18n.js
       - name: Syntax check
         run: |
           node --input-type=module --check < dist/ha-thread-pulse.js
