@@ -154,6 +154,7 @@ The code lives in `src/`, one file per topic:
 | File | Content |
 |---|---|
 | `src/version.js` | Version number |
+| `src/icons.js` | Device icons (Material Design Icons path data) |
 | `src/i18n/<lang>.js` | Texts, one file per language (`en`, `de`, `fr`, `it`, `es`, `nl`) |
 | `src/styles.css`, `src/markup.html` | Styles and HTML skeleton |
 | `src/core.js` | Start of `createThreadPulse()` and the state shared by all parts |

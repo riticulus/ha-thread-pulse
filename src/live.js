@@ -95,7 +95,7 @@
     $("live").innerHTML = `<div><b>Live</b> · ${T.perMin(perMin)}</div>` +
       recent.slice(0, 3).map(r => `<div><span style="color:${r.down ? COLORS.down : COLORS.up}">●</span> ${r.t.toLocaleTimeString(lang)} ${r.html}</div>`).join("");
   }
-  function deName(t) {           // translate common English entity names into the dashboard language (name kept from German-only times)
+  function localName(t) {        // translate common English entity names into the dashboard language (LOCAL_NAMES)
     const list = LOCAL_NAMES[lang]; if (!list) return t;
     for (const [en, tr] of list) if (t.toLowerCase().startsWith(en.toLowerCase())) return tr + t.slice(en.length);
     return t;
@@ -116,7 +116,7 @@
       }
       if (!n || !d.new_state || !d.old_state || d.new_state.state === "unavailable" || d.old_state.state === "unavailable") return;
       if (d.new_state.state === d.old_state.state && JSON.stringify(d.new_state.attributes) === JSON.stringify(d.old_state.attributes)) return;
-      const what = deName((d.new_state.attributes.friendly_name || d.entity_id).replace(nodeName[n], "").trim()) || T.state;
+      const what = localName((d.new_state.attributes.friendly_name || d.entity_id).replace(nodeName[n], "").trim()) || T.state;
       let resp = "";
       const p = pendingCmd[d.entity_id];
       if (p) {

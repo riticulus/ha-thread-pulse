@@ -37,16 +37,16 @@
       if (searchActive && !searchHits.includes(n.id)) ctx.globalAlpha = 0.18;
       if (battOf[n.id] !== undefined) {
         const b = battOf[n.id];
-        pill(ctx, p.x + r * 0.55, p.y + r * 0.75, b + "%", b < 20 ? "#e53935" : b < 40 ? "#fb8c00" : "#607d8b");
+        pill(ctx, p.x + r * 0.55, p.y + r * 0.75, b + "%", b < 20 ? COLORS.weak : b < 40 ? COLORS.medium : COLORS.battOk);
       }
       if (!warningsOf(n).length && ((hintsOf[n.id] || []).length || slowHint(n) || batteryHint(n))) {
         const x = p.x + r * 0.75, y = p.y - r * 0.85;
-        ctx.fillStyle = "#1e88e5"; ctx.strokeStyle = "white"; ctx.lineWidth = 1.5;
+        ctx.fillStyle = COLORS.hint; ctx.strokeStyle = "white"; ctx.lineWidth = 1.5;
         ctx.beginPath(); ctx.arc(x, y, 7, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
         ctx.fillStyle = "white"; ctx.font = "bold 10px serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("i", x, y + 0.5);
       }
       if (warningsOf(n).length) {
-        ctx.fillStyle = "#fb8c00"; ctx.strokeStyle = "white"; ctx.lineWidth = 1.5;
+        ctx.fillStyle = COLORS.warn; ctx.strokeStyle = "white"; ctx.lineWidth = 1.5;
         const x = p.x + r * 0.75, y = p.y - r * 0.95;
         ctx.beginPath(); ctx.moveTo(x, y - 8); ctx.lineTo(x + 8, y + 6); ctx.lineTo(x - 8, y + 6); ctx.closePath(); ctx.fill(); ctx.stroke();
         ctx.fillStyle = "white"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("!", x, y + 1.5);
@@ -132,15 +132,8 @@
     const hs = (hintsOf[n.id] || []).concat(slowHint(n) || [], batteryHint(n) || []);
     if (hs.length) h += `<h4>${T.secHints}</h4>` + hs.map(t => `<div class="hint">💡 ${esc(t)}</div>`).join("") + `<div class="note">${T.hintsNote}</div>`;
     // live
-    const c = counts[n.id], now = Date.now();
-    h += `<h4>${T.secLive}</h4><dl>`;
-    if (c) {
-      const inWin = (arr, ms) => arr.filter(t => now - t < ms).length;
-      h += row(T.msgsTotal, `${c.total}`) +
-           row(T.msgsMin, `${inWin(c.up, 60000)} ${T.toHa} · ${inWin(c.down, 60000)} ${T.fromHa}`) +
-           row(T.msgsHour, `${inWin(c.up, 3600000)} ${T.toHa} · ${inWin(c.down, 3600000)} ${T.fromHa}`) +
-           row(T.lastMsg, `${T.ago(Math.round((now - c.last.t) / 1000))} (${c.last.down ? T.fromHa : T.toHa})`);
-    } else h += row(T.msgsTotal, T.none);
+    const now = Date.now();
+    h += `<h4>${T.secLive}</h4><dl>` + liveRows(n.id);
     const rs = respSummary(n.id);
     if (rs) h += row(T.respTime, T.respVal(rs.last, rs.med, rs.n));
     else if (controllable(n) || n.demoValues) h += row(T.respTime, `<span style="color:var(--muted)">${T.respNone}</span>`);
@@ -154,7 +147,7 @@
       let v = "";
       for (const id of n.mainEntities.slice(0, 10)) {
         const st = hass.states[id]; if (!st) continue;
-        const name = deName((st.attributes.friendly_name || id).replace(n.name, "").trim()) || T.state;
+        const name = localName((st.attributes.friendly_name || id).replace(n.name, "").trim()) || T.state;
         v += row(name, `${esc(fmtState(st))} <span style="color:var(--muted)">· ${T.ago(Math.max(0, Math.round((now - new Date(st.last_changed)) / 1000)))}</span>`);
       }
       if (v) h += `<h4>${T.secValues}</h4><dl>${v}</dl>`;
