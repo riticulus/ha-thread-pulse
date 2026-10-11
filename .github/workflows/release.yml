@@ -1,0 +1,55 @@
+name: Release
+
+# Pushing a tag vX.Y.Z creates the GitHub release – after checking that src/version.js and CHANGELOG.md match and
+# that the generated files are up to date. Started by hand ("Run workflow"), it is a dry run by default: it only
+# checks and shows the release notes. Releases never get attachments (HACS would download them instead of dist/).
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version without v, e.g. 1.5.0"
+        required: true
+      dry_run:
+        description: "Only check and show the release notes"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Version
+        id: v
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then v="${GITHUB_REF_NAME#v}"; else v="${{ inputs.version }}"; fi
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          echo "Release version: $v"
+
+      - name: Check version, changelog and generated files
+        run: python3 tools/release.py check "${{ steps.v.outputs.version }}"
+
+      - name: Translations complete
+        run: node tests/check-i18n.js
+
+      - name: Release notes
+        run: python3 tools/release.py notes "${{ steps.v.outputs.version }}" | tee notes.md
+
+      - name: Create GitHub release
+        if: github.event_name == 'push' || inputs.dry_run == false
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${{ steps.v.outputs.version }}" --title "Thread Pulse ${{ steps.v.outputs.version }}" \
+            --notes-file notes.md --verify-tag --latest
+          echo "Assets (must be 0): $(gh release view "v${{ steps.v.outputs.version }}" --json assets --jq '.assets | length')"
