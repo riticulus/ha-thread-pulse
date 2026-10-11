@@ -20,7 +20,7 @@
     for (const n of nodes) if (availNow[n.id] === undefined) availNow[n.id] = n.available;
     return snap;
   }
-  const nameIn = (snap, id) => (snap.nodes[id] || {}).name || (id === brExt ? T.brLabel : "…" + id.slice(-4));
+  const nameIn = (snap, id) => (snap.nodes[id] || {}).name || extraName(id);
   function diffSnaps(a, b) {
     if (!a || !b) return;
     for (const id in b.nodes) if (!a.nodes[id]) logChange(id, b.nodes[id].name, T.chNew, "new");

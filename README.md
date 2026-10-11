@@ -23,6 +23,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - Live animation of messages to and from Home Assistant, with a ticker
 - **Tap a device for details:** manufacturer, model, firmware, area, Thread role, parent and neighbours with signal strength, battery level and type, current values with “last changed”, stability counters (restarts, drop-offs, attach attempts, parent changes) and a button to open the device in Home Assistant
 - **Identify:** a button in the detail panel makes the device blink or beep for a few seconds (devices with the Matter Identify function)
+- **Names of other border routers:** Apple TV, HomePod, Google Nest … in the mesh are shown with their model, found by Home Assistant's border router discovery
 - **Border router panel:** tap the border router for the Thread network (name, channel, PAN ID, routers, leader) and the border router itself
 - **Battery forecast:** estimate when a battery will be empty, from Home Assistant's long-term statistics
 - **Matter on Wi-Fi / Ethernet:** shown as a separate group next to the mesh, with their own detail panel (Wi-Fi signal, channel)

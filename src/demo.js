@@ -54,6 +54,7 @@
         info: { vendor: "Demo Inc.", product: "Smart TV", sw: "7.2", hw: "2", reboots: 41, bootReason: 1 } },
     ];
     return { nodes: [...routers, ...ends, ...sleepy], wifi, brExt: br.id, demo: { routers, sleepy, dec, rid },
+             routers: { [br.id]: { vendor: "Home Assistant", model: "OpenThread Border Router", name: "Home Assistant OpenThread Border Router #BEEF", version: "1.4.0", network: "demo-thread" } },
              thread: { otbr: { extAddr: br.id, borderAgentId: "00000000000000000000000000demo00", channel: 15, extPanId: "dead00beef00cafe" },
                        datasets: [{ name: "demo-thread", channel: 15, panId: "1234", extPanId: "dead00beef00cafe", preferred: true, source: "otbr" }] } };
   }
@@ -102,7 +103,10 @@
     const wifi = [{ id: "wifi:demo-air", kind: "wifi", name: de ? "Luftqualität" : "Air quality monitor", icon: "air-filter", available: true, area: de ? "Büro" : "Office",
       entities: [], mainEntities: [], demoValues: [["CO₂", "612 ppm", 180]], demoIdentify: true,
       info: { vendor: "Demo Inc.", product: "Air quality monitor", sw: "1.0.4", hw: "1.0", reboots: 3, bootReason: 1, rssi: -58, channel: 11, wifiVersion: 3 } }];
+    const ar = (model, name) => ({ vendor: "Apple Inc.", model, name, version: "1.3.0", network: "MyHome", brand: "apple" });
     return { nodes: sleepy, wifi, brExt: null, demo: { routers: [], sleepy, dec, rid: {}, apple },
+             routers: { [apple[0]]: ar("HomePod mini", de ? "Wohnzimmer" : "Living room"), [apple[1]]: ar("Apple TV 4K", de ? "Schlafzimmer" : "Bedroom"),
+                        [apple[2]]: ar("HomePod mini", de ? "Küche" : "Kitchen") },
              thread: { otbr: null, datasets: [{ name: "MyHome", channel: 25, panId: "1001", extPanId: "86d1a0b0c0d0e0f0", preferred: true, source: "iOS-app" }] } };
   }
   function demoTraffic(model) {

@@ -1,6 +1,7 @@
 //# English texts. Defines TEXT_EN; build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_EN = {
+  brOther: x => `Border router …${x}`, brOtherTitle: "Border router of another system, found on the local network", brOtherSub: "Border router of another system (found on the local network)", brOtherNote: "Announced on the local network and found by Home Assistant's border router discovery. Matched to the map by its address.", brName: "Name", threadVersion: "Thread version", usedByHa: "Used by Home Assistant", usedByHaNo: "no – Home Assistant uses the border router shown in purple",
   parentHopNote: "The border router is not known (e.g. only Apple or Google border routers, no OpenThread Border Router add-on): messages are only animated from the device to its parent router – the way from here to Home Assistant is not known.",
   identifyBtn: "💡 Identify", identifyNote: "Sends a real command: the device blinks, beeps or flashes for a few seconds, if it supports it.", identifySleepy: "Battery devices react only when they wake up – this can take a while.", identifySending: "sending …", identifySent: "sent – watch the device", identifyFailed: "Failed",
   exportBtn: "📷 Image", exportTitle: "Save the map as an image", exportPlain: "Save image (with names)", exportAnon: "Save anonymised image (no names)",

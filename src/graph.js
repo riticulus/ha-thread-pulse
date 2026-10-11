@@ -47,9 +47,9 @@
     extraIds = new Set(extras);
     for (const id of extras) {
       const isBr = id === brExt;
-      visNodes.push({ id, label: isBr ? T.brLabel : T.foreignLabel(id), shape: "image",
-        image: iconImg(isBr ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 64), size: isBr ? 24 : 16,
-        title: isBr ? T.brTitle : T.foreignTitle });
+      visNodes.push({ id, label: extraLabel(id), shape: "image",
+        image: iconImg(isBr || brInfo[id] ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 64), size: isBr ? 24 : 16,
+        title: extraTitle(id) });
     }
     // child signal as measured by the parent router (sleepy devices report their own RSSI unreliably)
     const childRssi = {};
@@ -60,7 +60,7 @@
       const pid = hex16(best["0"]);
       let rssi = best["6"], src = "device";
       if (childRssi[pid + "|" + n.id] !== undefined) { rssi = childRssi[pid + "|" + n.id]; src = "router"; }
-      const pname = byId[pid] ? byId[pid].name : (pid === brExt ? T.brLabel : "…" + pid.slice(-4));
+      const pname = byId[pid] ? byId[pid].name : extraName(pid);
       if (n.type === "end_device") {                             // mains end devices: show all their links like routers
         for (const x of n.neigh) { const o = hex16(x["0"]); if (!byId[o]) continue;
           const key = [n.id, o].sort().join("|"); (edges[key] = edges[key] || { a: n.id, b: o, rssi: [] }).rssi.push(x["6"]); }
@@ -116,7 +116,7 @@
     network.on("blurNode", () => { $("net").style.cursor = ""; });
     nodeById = byId;
     linksOf = {};
-    const nm = id => (byId[id] || {}).name || (id === brExt ? T.brLabel : "…" + id.slice(-4));
+    const nm = id => (byId[id] || {}).name || extraName(id);
     for (const e of Object.values(edges)) {
       if (!ids.has(e.b)) continue;
       const r = avg(e);
@@ -135,7 +135,7 @@
     // table: parents + weak router links
     parents.sort((p, q) => p.rssi - q.rssi);
     const weak = Object.values(edges).filter(e => !e.parent && ids.has(e.b))
-      .map(e => ({ a: (byId[e.a] || {}).name || T.brLabel, b: (byId[e.b] || {}).name || (e.b === brExt ? T.brLabel : "…" + e.b.slice(-4)), r: avg(e) }))
+      .map(e => ({ a: (byId[e.a] || {}).name || extraName(e.a), b: (byId[e.b] || {}).name || extraName(e.b), r: avg(e) }))
       .filter(e => e.r < -80).sort((p, q) => p.r - q.r);
     const allHints = Object.entries(hintsOf).flatMap(([id, hs]) => hs.map(t => [id, t]));
     let h = `<div id="changes"></div><b>${T.hintsHead}</b>` + (allHints.length

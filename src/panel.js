@@ -72,10 +72,16 @@
       row(T.msgsHour, `${inWin(c.up, 3600000)} ${T.toHa} · ${inWin(c.down, 3600000)} ${T.fromHa}`) +
       row(T.lastMsg, `${T.ago(Math.round((now - c.last.t) / 1000))} (${c.last.down ? T.fromHa : T.toHa})`);
   }
+  function discRows(d, withNetwork = true) {   // what the border router announces on the network (issue #37)
+    if (!d) return "";
+    return row(T.manufacturer, esc(d.vendor)) + row(T.model, esc(d.model)) + row(T.brName, esc(d.name)) +
+           row(T.threadVersion, esc(d.version)) + (withNetwork ? row(T.networkName, esc(d.network)) : "");
+  }
   function renderRouterPanel(id) {
     const isBr = id === brExt, nodes = Object.values(nodeById);
-    let h = `<div class="hd"><img src="${iconImg(isBr ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 80)}" alt=""><div>` +
-            `<div class="t">${esc(isBr ? T.brLabel : T.foreignLabel(id).replace("\n", " "))}</div><div class="s">${esc(isBr ? T.brSub : T.foreignSub)}</div></div>` +
+    const disc = brInfo[id];
+    let h = `<div class="hd"><img src="${iconImg(isBr || disc ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 80)}" alt=""><div>` +
+            `<div class="t">${esc(extraLabel(id).replace("\n", " "))}</div><div class="s">${esc(isBr ? T.brSub : brInfo[id] ? T.brOtherSub : T.foreignSub)}</div></div>` +
             `<button class="x" title="×" data-act="close">×</button></div>`;
     if (isBr || counts[id]) h += `<h4>${T.secLive} · ${T.msgsThrough}</h4><dl>` + liveRows(id) + `</dl>` + (isBr ? "" : `<div class="note">${T.parentHopNote}</div>`);
     if (isBr) {
@@ -91,7 +97,7 @@
       const leaders = nodes.map(n => (n.info || {}).leader).filter(x => x !== undefined && x !== null);
       const leaderRid = leaders.sort((a, b) => leaders.filter(x => x === b).length - leaders.filter(x => x === a).length)[0];
       const leaderId = leaderRid !== undefined ? ridToId[leaderRid] : null;
-      const leaderName = !leaderId ? "" : nodeById[leaderId] ? nodeById[leaderId].name : leaderId === brExt ? T.brLabel : "…" + leaderId.slice(-4);
+      const leaderName = !leaderId ? "" : nodeById[leaderId] ? nodeById[leaderId].name : extraName(leaderId);
       const routers = Object.keys(ridToId).length || nodes.filter(n => n.type === "routing_end_device").length + extraIds.size;
       h += `<h4>${T.secNetwork}</h4><dl>` +
         row(T.networkName, esc((ds && ds.name) || net.name || "")) +
@@ -102,13 +108,15 @@
         row(T.devicesInMesh, String(nodes.length + extraIds.size)) +
         row(T.leader, esc(leaderName)) + `</dl>`;
       const o = threadInfo && threadInfo.otbr && threadInfo.otbr.extAddr && threadInfo.otbr.extAddr.toLowerCase() === id ? threadInfo.otbr : null;
-      h += `<h4>${T.secBorderRouter}</h4><dl>` + row(T.brKind, o ? esc(T.brOtbr) : "") +
+      h += `<h4>${T.secBorderRouter}</h4><dl>` + row(T.brKind, o ? esc(T.brOtbr) : "") + discRows(disc, false) +
         row(T.address, `<span style="font-family:monospace">${esc(id)}</span>`) +
         row(T.borderAgent, o && o.borderAgentId ? `<span style="font-family:monospace">${esc(o.borderAgentId)}</span>` : "");
       const dsl = threadInfo && threadInfo.datasets || [];
       if (dsl.length) h += row(T.datasets, dsl.map(d => `${esc(d.name)} · ${esc(T.channel)} ${esc(String(d.channel))}${d.preferred ? ` · <b>${T.preferred}</b>` : ""}`).join("<br>"));
       h += `</dl>`;
     }
+    if (!isBr && disc) h += `<h4>${T.secBorderRouter}</h4><dl>` + discRows(disc) +
+      (brExt ? row(T.usedByHa, esc(T.usedByHaNo)) : "") + `</dl><div class="note">${T.brOtherNote}</div>`;
     const links = (linksOf[id] || []).slice().sort((p, q) => q.rssi - p.rssi);
     const nb = links.filter(l => l.kind === "neighbour"), kids = links.filter(l => l.kind === "child");
     h += `<h4>${T.secThread}</h4><dl>`;

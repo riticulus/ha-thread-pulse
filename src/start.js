@@ -35,6 +35,7 @@
     destroy() {
       destroyed = true; timers.forEach(clearInterval);
       if (unsub) { try { unsub(); } catch (e) {} unsub = null; }
+      if (brUnsub) { try { brUnsub(); } catch (e) {} brUnsub = null; }
       if (network) { network.destroy(); network = null; }
     },
     theme,

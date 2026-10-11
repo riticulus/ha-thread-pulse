@@ -23,12 +23,13 @@
   async function load() {
     $("status").textContent = T.loading;
     const prev = lastSnap;
-    if (DEMO) { const m = demoState || (demoState = demoModel()); render(m); diffSnaps(prev, lastSnap); loadBatteryForecasts(null); return m; }
+    if (DEMO) { const m = demoState || (demoState = demoModel()); brInfo = m.routers || {}; render(m); diffSnaps(prev, lastSnap); loadBatteryForecasts(null); return m; }
     const m = await loadHa();
     render(m);
     diffSnaps(prev, lastSnap);
     loadBatteryForecasts(m.hass);          // runs in the background, panel and badges update when it arrives
     await subscribeLive(m.hass);
+    discoverRouters(m.hass);              // names of other border routers arrive in the background
     return m;
   }
 
