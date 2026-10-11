@@ -1,6 +1,8 @@
 //# Spanish texts. Defines TEXT_ES and NAMES_ES (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_ES = {
+  exportBtn: "📷 Imagen", exportTitle: "Guardar el mapa como imagen", exportPlain: "Guardar imagen (con nombres)", exportAnon: "Guardar imagen anonimizada (sin nombres)",
+  anonDevice: i => `Dispositivo ${i}`, anonRoom: c => `Habitación ${c}`, anonNote: "anonimizada", exportFailed: "No se pudo guardar la imagen", exportDevices: n => `${n} dispositivos`,
   reload: "↻ Recargar", showList: "☰ Mostrar lista", hideList: "☰ Ocultar lista", pause: "⏸ Pausar directo", resume: "▶ Reanudar directo",
   changesHead: "Cambios en la red", changesNone: "Todavía no se han detectado cambios.", changesClear: "Vaciar lista",
   changesNote: "Se comprueba cada 5 minutos y se guarda en este navegador. La accesibilidad se informa en directo; los cambios de padre, rol y enlaces solo aparecen cuando los dispositivos los informan.",

@@ -1,6 +1,8 @@
 //# German texts. Defines TEXT_DE and NAMES_DE (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_DE = {
+  exportBtn: "📷 Bild", exportTitle: "Karte als Bild speichern", exportPlain: "Bild speichern (mit Namen)", exportAnon: "Anonymisiertes Bild speichern (ohne Namen)",
+  anonDevice: i => `Gerät ${i}`, anonRoom: c => `Raum ${c}`, anonNote: "anonymisiert", exportFailed: "Das Bild konnte nicht gespeichert werden", exportDevices: n => `${n} Geräte`,
   reload: "↻ Neu laden", showList: "☰ Liste anzeigen", hideList: "☰ Liste ausblenden", pause: "⏸ Live pausieren", resume: "▶ Live starten",
   changesHead: "Änderungen im Netz", changesNone: "Noch keine Änderungen festgestellt.", changesClear: "Liste leeren",
   changesNote: "Wird alle 5 Minuten geprüft und in diesem Browser gespeichert. Erreichbarkeit wird live gemeldet; Parent-, Rollen- und Verbindungsänderungen erscheinen erst, wenn die Geräte sie melden.",

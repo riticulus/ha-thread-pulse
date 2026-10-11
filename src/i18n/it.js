@@ -1,6 +1,8 @@
 //# Italian texts. Defines TEXT_IT and NAMES_IT (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_IT = {
+  exportBtn: "📷 Immagine", exportTitle: "Salva la mappa come immagine", exportPlain: "Salva immagine (con i nomi)", exportAnon: "Salva immagine anonimizzata (senza nomi)",
+  anonDevice: i => `Dispositivo ${i}`, anonRoom: c => `Stanza ${c}`, anonNote: "anonimizzata", exportFailed: "Non è stato possibile salvare l'immagine", exportDevices: n => `${n} dispositivi`,
   reload: "↻ Ricarica", showList: "☰ Mostra elenco", hideList: "☰ Nascondi elenco", pause: "⏸ Metti in pausa", resume: "▶ Riprendi diretta",
   changesHead: "Modifiche nella rete", changesNone: "Nessuna modifica rilevata finora.", changesClear: "Svuota elenco",
   changesNote: "Controllato ogni 5 minuti e salvato in questo browser. La raggiungibilità viene segnalata in diretta; le modifiche di parent, ruolo e collegamenti compaiono solo quando i dispositivi le segnalano.",

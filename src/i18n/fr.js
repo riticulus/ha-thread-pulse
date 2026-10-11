@@ -1,6 +1,8 @@
 //# French texts. Defines TEXT_FR and NAMES_FR (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_FR = {
+  exportBtn: "📷 Image", exportTitle: "Enregistrer la carte en image", exportPlain: "Enregistrer l'image (avec les noms)", exportAnon: "Enregistrer une image anonymisée (sans noms)",
+  anonDevice: i => `Appareil ${i}`, anonRoom: c => `Pièce ${c}`, anonNote: "anonymisée", exportFailed: "L'image n'a pas pu être enregistrée", exportDevices: n => `${n} appareils`,
   reload: "↻ Recharger", showList: "☰ Afficher la liste", hideList: "☰ Masquer la liste", pause: "⏸ Mettre en pause", resume: "▶ Reprendre le direct",
   changesHead: "Changements dans le réseau", changesNone: "Aucun changement détecté pour l'instant.", changesClear: "Vider la liste",
   changesNote: "Vérifié toutes les 5 minutes et conservé dans ce navigateur. L'accessibilité est signalée en direct ; les changements de parent, de rôle et de liaison n'apparaissent qu'une fois signalés par les appareils.",

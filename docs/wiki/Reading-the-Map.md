@@ -14,6 +14,7 @@
 | **≋ Traffic / Traffic off** | Switch the [traffic heat](Live-Data-Flow#traffic-heat) on or off |
 | **⌂ Rooms / Rooms off** | Switch the [room view](Room-View) on or off |
 | **🔇 Sound / 🔊 Sound off** | Switch the [sound](Live-Data-Flow#sound) on or off; while it is on, a volume slider appears next to it *(from version 1.4.0)* |
+| **📷 Image** | [Save the map as a PNG image](Saving-an-Image), with names or anonymised *(after version 1.4.0)* |
 | **ⓘ Legend** | Show or hide the colour legend |
 | **🔍 Find device or room** | [Search](Search) |
 | Status line | Time of the last update, number of devices, version |
