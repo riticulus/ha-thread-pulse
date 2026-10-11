@@ -47,6 +47,14 @@ Tap a device on the map to open its details (shown here from the demo mode with 
 
 <img src="docs/detail-view.png" alt="Thread Pulse detail view of a device" width="372">
 
+## Offline notification (blueprint)
+
+The change log only sees changes while the card is open. For a notification when a Thread device stays unreachable – in the background, also at night – import the automation blueprint:
+
+[![Open your Home Assistant instance and show the blueprint import dialog with this blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Friticulus%2Fha-thread-pulse%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fthread-device-offline.yaml)
+
+Select one entity per device, a delay (default 5 minutes) and a notify action such as `notify.mobile_app_<your_phone>`; optionally a second message when the device is back. Details in the [wiki](https://github.com/riticulus/ha-thread-pulse/wiki/Offline-Notification).
+
 ## Requirements
 
 - Home Assistant with the **Matter** integration and Matter devices on **Thread**

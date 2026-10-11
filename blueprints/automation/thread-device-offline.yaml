@@ -61,7 +61,7 @@ blueprint:
         text: {}
     message_offline:
       name: Message (unreachable)
-      default: "{{ device }}{{ ' (' ~ area ~ ')' if area else '' }} has not been reachable for {{ minutes }} minutes."
+      default: "{{ device }}{{ ' (' ~ area ~ ')' if area and area | lower not in device | lower else '' }} has not been reachable for {{ minutes }} minutes."
       selector:
         text:
           multiline: true
@@ -73,7 +73,7 @@ blueprint:
     message_back:
       name: Message (back)
       description: "Also available: {{ duration }} – how long the device was unreachable."
-      default: "{{ device }}{{ ' (' ~ area ~ ')' if area else '' }} is reachable again after {{ duration }}."
+      default: "{{ device }}{{ ' (' ~ area ~ ')' if area and area | lower not in device | lower else '' }} is reachable again after {{ duration }}."
       selector:
         text:
           multiline: true
@@ -108,10 +108,10 @@ variables:
     {{ (trigger.to_state.last_changed - trigger.from_state.last_changed).total_seconds() | int
        if trigger.id == 'back' else 0 }}
   duration: >-
-    {% set s = offline_seconds | int %}
-    {% if s >= 86400 %}{{ s // 86400 }} d {{ (s % 86400) // 3600 }} h
-    {% elif s >= 3600 %}{{ s // 3600 }} h {{ (s % 3600) // 60 }} min
-    {% else %}{{ s // 60 }} min{% endif %}
+    {%- set s = offline_seconds | int -%}
+    {%- if s >= 86400 -%}{{ s // 86400 }} d {{ (s % 86400) // 3600 }} h
+    {%- elif s >= 3600 -%}{{ s // 3600 }} h {{ (s % 3600) // 60 }} min
+    {%- else -%}{{ s // 60 }} min{%- endif -%}
   notification_id: "thread_pulse_offline_{{ trigger.entity_id | replace('.', '_') }}"
 
 conditions:
