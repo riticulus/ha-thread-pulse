@@ -157,6 +157,7 @@ The code lives in `src/`, one file per topic:
 | `src/i18n/<lang>.js` | Texts, one file per language (`en`, `de`, `fr`, `it`, `es`, `nl`) |
 | `src/styles.css`, `src/markup.html` | Styles and HTML skeleton |
 | `src/core.js` | Start of `createThreadPulse()` and the state shared by all parts |
+| `src/prefs.js` | Settings remembered by the browser (keys, types, defaults) |
 | `src/helpers.js`, `data.js`, `graph.js` | Helpers and Home Assistant connection, loading the data, drawing the map |
 | `src/live.js`, `heat.js`, `rooms.js`, `panel.js`, `hints.js`, `search.js`, `changes.js`, `response.js`, `sound.js`, `demo.js`, `ambient.js` | One file per feature |
 | `src/ui.js`, `src/start.js` | List, legend, errors, event handling; start-up |

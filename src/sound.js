@@ -33,6 +33,6 @@
     $("soundbtn").textContent = on ? T.soundOff : T.soundOn;
     $("volume").hidden = !on;
     if (on) ensureAudio();
-    if (save) try { localStorage.setItem("threadPulseSound", on ? "1" : "0"); } catch (e) {}
+    if (save) prefs.set("sound", on);
   }
   root.addEventListener("pointerdown", () => { if (soundOn) ensureAudio(); }, true);   // unlock audio after a reload
