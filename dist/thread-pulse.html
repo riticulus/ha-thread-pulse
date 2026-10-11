@@ -105,6 +105,7 @@ const TP_HTML = `
 `;
 // ---------- texts (one file per language in src/i18n/) ----------
 const TEXT_EN = {
+  secFabrics: "Connected systems", fabricCount: "Number", fabricList: "Systems", fabricThis: "this Home Assistant", fabricLoading: "loading …", fabricError: "could not be loaded", fabricNote: "Systems (Matter fabrics) that can control this device. Apple Keychain is the connection an iPhone keeps after adding a Matter device. Connections can be removed on the device page in Home Assistant.", fabricVendor: id => `Vendor ${id}`,
   fwHead: "Firmware", fwMixed: "Same model, different firmware:", fwNote: "Updates are installed in Home Assistant (device page). Skipped updates are not marked on the map.", fwUpdate: "Update", fwAvailable: v => `${v} available`, fwSkipped: v => `${v} available – skipped`, fwInstalling: (v, p) => `installing ${v}${p !== null ? ` · ${p} %` : " …"}`, fwCurrent: "up to date",
   hDupAddr: names => `Reports the same hardware address as ${names} – a firmware quirk of some devices. The device works, but its links on the map may be incomplete.`,
   brOther: x => `Border router …${x}`, brOtherTitle: "Border router of another system, found on the local network", brOtherSub: "Border router of another system (found on the local network)", brOtherNote: "Announced on the local network and found by Home Assistant's border router discovery. Matched to the map by its address.", brName: "Name", threadVersion: "Thread version", usedByHa: "Used by Home Assistant", usedByHaNo: "no – Home Assistant uses the border router shown in purple",
@@ -183,6 +184,7 @@ const TEXT_EN = {
   hEdge: r => `Only weak links to other routers (best: ${r} dBm) – it sits at the edge of the mesh. Another router in between would strengthen it.`,
 };
 const TEXT_DE = {
+  secFabrics: "Verbundene Systeme", fabricCount: "Anzahl", fabricList: "Systeme", fabricThis: "dieses Home Assistant", fabricLoading: "wird geladen …", fabricError: "konnte nicht geladen werden", fabricNote: "Systeme (Matter-Fabrics), die dieses Gerät steuern können. Apple Keychain ist die Verbindung, die ein iPhone behält, nachdem es ein Matter-Gerät hinzugefügt hat. Verbindungen lassen sich auf der Geräteseite in Home Assistant entfernen.", fabricVendor: id => `Hersteller ${id}`,
   fwHead: "Firmware", fwMixed: "Gleiches Modell, unterschiedliche Firmware:", fwNote: "Updates werden in Home Assistant installiert (Geräteseite). Übersprungene Updates werden auf der Karte nicht markiert.", fwUpdate: "Update", fwAvailable: v => `${v} verfügbar`, fwSkipped: v => `${v} verfügbar – übersprungen`, fwInstalling: (v, p) => `${v} wird installiert${p !== null ? ` · ${p} %` : " …"}`, fwCurrent: "aktuell",
   hDupAddr: names => `Meldet dieselbe Hardware-Adresse wie ${names} – eine Firmware-Eigenheit mancher Geräte. Das Gerät funktioniert, aber seine Verbindungen auf der Karte können unvollständig sein.`,
   brOther: x => `Border Router …${x}`, brOtherTitle: "Border Router eines anderen Systems, im lokalen Netz gefunden", brOtherSub: "Border Router eines anderen Systems (im lokalen Netz gefunden)", brOtherNote: "Im lokalen Netz angekündigt und von der Border-Router-Suche von Home Assistant gefunden. Über seine Adresse der Karte zugeordnet.", brName: "Name", threadVersion: "Thread-Version", usedByHa: "Von Home Assistant genutzt", usedByHaNo: "nein – Home Assistant nutzt den violett gezeigten Border Router",
@@ -267,6 +269,7 @@ const NAMES_DE = [["Effective current", "Strom (effektiv)"], ["Effective voltage
   ["Occupancy", "Anwesenheit"], ["Door", "Kontakt"], ["Opening", "Kontakt"], ["Temperature", "Temperatur"], ["Humidity", "Luftfeuchte"],
   ["Identify", "Identifizieren"], ["Button", "Taste"], ["Light", "Licht"], ["Switch", "Schalter"], ["Motion", "Bewegung"]];
 const TEXT_ES = {
+  secFabrics: "Sistemas conectados", fabricCount: "Número", fabricList: "Sistemas", fabricThis: "este Home Assistant", fabricLoading: "cargando …", fabricError: "no se pudo cargar", fabricNote: "Sistemas (fabrics de Matter) que pueden controlar este dispositivo. Apple Keychain es la conexión que conserva un iPhone después de añadir un dispositivo Matter. Las conexiones se pueden eliminar en la página del dispositivo en Home Assistant.", fabricVendor: id => `Fabricante ${id}`,
   fwHead: "Firmware", fwMixed: "Mismo modelo, firmware distinto:", fwNote: "Las actualizaciones se instalan en Home Assistant (página del dispositivo). Las actualizaciones omitidas no se marcan en el mapa.", fwUpdate: "Actualización", fwAvailable: v => `${v} disponible`, fwSkipped: v => `${v} disponible – omitida`, fwInstalling: (v, p) => `instalando ${v}${p !== null ? ` · ${p} %` : " …"}`, fwCurrent: "actualizado",
   hDupAddr: names => `Indica la misma dirección de hardware que ${names}: una peculiaridad del firmware de algunos dispositivos. El dispositivo funciona, pero sus enlaces en el mapa pueden estar incompletos.`,
   brOther: x => `Router de borde …${x}`, brOtherTitle: "Router de borde de otro sistema, encontrado en la red local", brOtherSub: "Router de borde de otro sistema (encontrado en la red local)", brOtherNote: "Anunciado en la red local y encontrado por la búsqueda de routers de borde de Home Assistant. Asignado al mapa por su dirección.", brName: "Nombre", threadVersion: "Versión de Thread", usedByHa: "Usado por Home Assistant", usedByHaNo: "no – Home Assistant usa el router de borde mostrado en violeta",
@@ -351,6 +354,7 @@ const NAMES_ES = [["Effective current", "Corriente (eficaz)"], ["Effective volta
   ["Occupancy", "Presencia"], ["Door", "Contacto"], ["Opening", "Contacto"], ["Temperature", "Temperatura"], ["Humidity", "Humedad"],
   ["Identify", "Identificar"], ["Button", "Botón"], ["Light", "Luz"], ["Switch", "Interruptor"], ["Motion", "Movimiento"]];
 const TEXT_FR = {
+  secFabrics: "Systèmes connectés", fabricCount: "Nombre", fabricList: "Systèmes", fabricThis: "ce Home Assistant", fabricLoading: "chargement …", fabricError: "n'a pas pu être chargé", fabricNote: "Systèmes (fabrics Matter) qui peuvent contrôler cet appareil. Apple Keychain est la connexion qu'un iPhone conserve après avoir ajouté un appareil Matter. Les connexions peuvent être supprimées sur la page de l'appareil dans Home Assistant.", fabricVendor: id => `Fabricant ${id}`,
   fwHead: "Firmware", fwMixed: "Même modèle, firmware différent :", fwNote: "Les mises à jour s'installent dans Home Assistant (page de l'appareil). Les mises à jour ignorées ne sont pas signalées sur la carte.", fwUpdate: "Mise à jour", fwAvailable: v => `${v} disponible`, fwSkipped: v => `${v} disponible – ignorée`, fwInstalling: (v, p) => `installation de ${v}${p !== null ? ` · ${p} %` : " …"}`, fwCurrent: "à jour",
   hDupAddr: names => `Indique la même adresse matérielle que ${names} – une particularité du firmware de certains appareils. L'appareil fonctionne, mais ses liaisons sur la carte peuvent être incomplètes.`,
   brOther: x => `Routeur de bordure …${x}`, brOtherTitle: "Routeur de bordure d'un autre système, trouvé sur le réseau local", brOtherSub: "Routeur de bordure d'un autre système (trouvé sur le réseau local)", brOtherNote: "Annoncé sur le réseau local et trouvé par la recherche de routeurs de bordure de Home Assistant. Associé à la carte par son adresse.", brName: "Nom", threadVersion: "Version Thread", usedByHa: "Utilisé par Home Assistant", usedByHaNo: "non – Home Assistant utilise le routeur de bordure affiché en violet",
@@ -435,6 +439,7 @@ const NAMES_FR = [["Effective current", "Courant (efficace)"], ["Effective volta
   ["Occupancy", "Présence"], ["Door", "Contact"], ["Opening", "Contact"], ["Temperature", "Température"], ["Humidity", "Humidité"],
   ["Identify", "Identifier"], ["Button", "Bouton"], ["Light", "Lumière"], ["Switch", "Interrupteur"], ["Motion", "Mouvement"]];
 const TEXT_IT = {
+  secFabrics: "Sistemi collegati", fabricCount: "Numero", fabricList: "Sistemi", fabricThis: "questo Home Assistant", fabricLoading: "caricamento …", fabricError: "impossibile caricare", fabricNote: "Sistemi (fabric Matter) che possono controllare questo dispositivo. Apple Keychain è il collegamento che un iPhone mantiene dopo aver aggiunto un dispositivo Matter. I collegamenti si possono rimuovere nella pagina del dispositivo in Home Assistant.", fabricVendor: id => `Produttore ${id}`,
   fwHead: "Firmware", fwMixed: "Stesso modello, firmware diverso:", fwNote: "Gli aggiornamenti si installano in Home Assistant (pagina del dispositivo). Gli aggiornamenti saltati non sono segnalati sulla mappa.", fwUpdate: "Aggiornamento", fwAvailable: v => `${v} disponibile`, fwSkipped: v => `${v} disponibile – saltato`, fwInstalling: (v, p) => `installazione di ${v}${p !== null ? ` · ${p} %` : " …"}`, fwCurrent: "aggiornato",
   hDupAddr: names => `Riporta lo stesso indirizzo hardware di ${names} – una particolarità del firmware di alcuni dispositivi. Il dispositivo funziona, ma i suoi collegamenti sulla mappa possono essere incompleti.`,
   brOther: x => `Border router …${x}`, brOtherTitle: "Border router di un altro sistema, trovato nella rete locale", brOtherSub: "Border router di un altro sistema (trovato nella rete locale)", brOtherNote: "Annunciato nella rete locale e trovato dalla ricerca dei border router di Home Assistant. Associato alla mappa tramite il suo indirizzo.", brName: "Nome", threadVersion: "Versione Thread", usedByHa: "Usato da Home Assistant", usedByHaNo: "no – Home Assistant usa il border router mostrato in viola",
@@ -519,6 +524,7 @@ const NAMES_IT = [["Effective current", "Corrente (efficace)"], ["Effective volt
   ["Occupancy", "Presenza"], ["Door", "Contatto"], ["Opening", "Contatto"], ["Temperature", "Temperatura"], ["Humidity", "Umidità"],
   ["Identify", "Identifica"], ["Button", "Pulsante"], ["Light", "Luce"], ["Switch", "Interruttore"], ["Motion", "Movimento"]];
 const TEXT_NL = {
+  secFabrics: "Verbonden systemen", fabricCount: "Aantal", fabricList: "Systemen", fabricThis: "deze Home Assistant", fabricLoading: "laden …", fabricError: "kon niet worden geladen", fabricNote: "Systemen (Matter-fabrics) die dit apparaat kunnen bedienen. Apple Keychain is de verbinding die een iPhone houdt nadat het een Matter-apparaat heeft toegevoegd. Verbindingen kun je op de apparaatpagina in Home Assistant verwijderen.", fabricVendor: id => `Fabrikant ${id}`,
   fwHead: "Firmware", fwMixed: "Zelfde model, andere firmware:", fwNote: "Updates worden in Home Assistant geïnstalleerd (apparaatpagina). Overgeslagen updates worden niet op de kaart gemarkeerd.", fwUpdate: "Update", fwAvailable: v => `${v} beschikbaar`, fwSkipped: v => `${v} beschikbaar – overgeslagen`, fwInstalling: (v, p) => `${v} wordt geïnstalleerd${p !== null ? ` · ${p} %` : " …"}`, fwCurrent: "actueel",
   hDupAddr: names => `Meldt hetzelfde hardwareadres als ${names} – een firmware-eigenaardigheid van sommige apparaten. Het apparaat werkt, maar de verbindingen op de kaart kunnen onvolledig zijn.`,
   brOther: x => `Border router …${x}`, brOtherTitle: "Border router van een ander systeem, gevonden in het lokale netwerk", brOtherSub: "Border router van een ander systeem (gevonden in het lokale netwerk)", brOtherNote: "Aangekondigd in het lokale netwerk en gevonden door de border-router-zoekfunctie van Home Assistant. Via zijn adres aan de kaart gekoppeld.", brName: "Naam", threadVersion: "Thread-versie", usedByHa: "Gebruikt door Home Assistant", usedByHaNo: "nee – Home Assistant gebruikt de paars weergegeven border router",
@@ -803,7 +809,7 @@ function createThreadPulse(root, opts, host) {
           wifi.push({ id: "wifi:" + d.id, kind, name: d.name_by_user || d.name, icon: iconFor(wents), available: node.available, devId: d.id,
                       entities: entsByDev[d.id] || [], mainEntities: mainEnts[d.id] || [], area: areaName[d.area_id] || "",
                       info: { vendor: a["0/40/1"] || d.manufacturer, product: a["0/40/3"] || d.model, sw: a["0/40/10"] || d.sw_version, hw: a["0/40/8"] || d.hw_version,
-                              reboots: a["0/51/1"], bootReason: a["0/51/4"], rssi: a["0/54/4"], channel: a["0/54/3"], wifiVersion: a["0/54/2"] } });
+                              reboots: a["0/51/1"], bootReason: a["0/51/4"], fabrics: a["0/62/3"], rssi: a["0/54/4"], channel: a["0/54/3"], wifiVersion: a["0/54/2"] } });
           return;
         }
         const mac = [...atob(iface["4"])].map(c => c.charCodeAt(0).toString(16).padStart(2, "0")).join("");
@@ -814,7 +820,7 @@ function createThreadPulse(root, opts, host) {
                      neigh: a["0/53/7"] || [], routes: a["0/53/8"] || [], role, devId: d.id, entities: entsByDev[d.id] || [],
                      mainEntities: mainEnts[d.id] || [], area: areaName[d.area_id] || "",
                      info: { vendor: a["0/40/1"] || d.manufacturer, product: a["0/40/3"] || d.model, sw: a["0/40/10"] || d.sw_version, hw: a["0/40/8"] || d.hw_version,
-                             reboots: a["0/51/1"], bootReason: a["0/51/4"], detached: a["0/53/14"], attach: a["0/53/18"], parentChanges: a["0/53/21"], leader: a["0/53/13"],
+                             reboots: a["0/51/1"], bootReason: a["0/51/4"], fabrics: a["0/62/3"], detached: a["0/53/14"], attach: a["0/53/18"], parentChanges: a["0/53/21"], leader: a["0/53/13"],
                              net: { name: a["0/53/2"], channel: a["0/53/0"], panId: a["0/53/3"], extPanId: a["0/53/4"] },
                              batType: Object.entries(a).filter(([k]) => /^\d+\/47\/19$/.test(k)).map(([, v]) => v).find(Boolean) || "" } });
       } catch (e) { if (e.fatal) throw e; console.warn("Thread Pulse:", d.name, e); }
@@ -1533,6 +1539,7 @@ function createThreadPulse(root, opts, host) {
     // device
     h += `<h4>${T.secDevice}</h4><dl>` + row(T.manufacturer, esc(i.vendor || "")) + row(T.model, esc(i.product || "")) +
          row(T.firmware, esc(i.sw || "")) + row(T.fwUpdate, updateText(updateOf(n, hass))) + row(T.hardware, esc(i.hw || "")) + row(T.area, esc(n.area || "")) + `</dl>`;
+    h += fabricsHtml(n);
     h += identifyHtml(n, hass);
     if (n.devId && !DEMO) h += `<button class="btn" data-device="${esc(n.devId)}">${T.openDevice} ↗</button>`;
     $("panel").innerHTML = h;
@@ -1923,6 +1930,35 @@ function createThreadPulse(root, opts, host) {
         `${esc(sw)} (${names.length <= 3 ? names.map(esc).join(", ") : names.length})`).join(" · ") + `</td></tr>`).join("") + `</table>`;
     return h + `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${T.fwNote}</div>`;
   }
+  // ---------- connected systems (issue #79) ----------
+  // A Matter device can be controlled by several systems at once (fabrics): Home Assistant, Apple, Google, Amazon …
+  // The cached diagnostics only list Home Assistant's own fabric (the list is filtered per fabric), but they contain the
+  // number of fabrics (0/62/3). The full list comes from matter/node_diagnostics, which may query the device – so it is
+  // loaded only when the device's panel is opened, once per device and page.
+  const fabricsOf = {};                         // device id on the map → { state: "loading" | "ok" | "error", list, own }
+  function loadFabrics(dev) {
+    if (fabricsOf[dev.id]) return;
+    if (DEMO) { fabricsOf[dev.id] = { state: "ok", list: dev.demoFabrics || [], own: 2 }; return; }
+    const hass = freshHass();
+    if (!hass || !dev.devId) return;
+    fabricsOf[dev.id] = { state: "loading" };
+    hass.callWS({ type: "matter/node_diagnostics", device_id: dev.devId })
+      .then(r => { fabricsOf[dev.id] = { state: "ok", list: r.active_fabrics || [], own: r.active_fabric_index }; })
+      .catch(() => { fabricsOf[dev.id] = { state: "error" }; })
+      .finally(() => { if (panelNode === dev.id) renderPanel(); });
+  }
+  function fabricsHtml(dev) {                   // section in the detail panel
+    const count = (dev.info || {}).fabrics;
+    if (count === undefined || count === null) return "";
+    loadFabrics(dev);
+    const f = fabricsOf[dev.id] || {};
+    const name = x => (x.vendor_name || T.fabricVendor(x.vendor_id)) + (x.fabric_label ? ` (${x.fabric_label})` : "");
+    const list = f.state === "ok" && f.list.length
+      ? f.list.map(x => esc(name(x)) + (x.fabric_index === f.own ? ` <span style="color:var(--muted)">· ${T.fabricThis}</span>` : "")).join("<br>")
+      : f.state === "loading" ? `<span style="color:var(--muted)">${T.fabricLoading}</span>`
+      : f.state === "error" ? `<span style="color:var(--muted)">${T.fabricError}</span>` : "";
+    return `<h4>${T.secFabrics}</h4><dl>` + row(T.fabricCount, String(count)) + row(T.fabricList, list) + `</dl><div class="note">${T.fabricNote}</div>`;
+  }
   // ---------- Matter devices on Wi-Fi / Ethernet (issue #43) ----------
   // They do not take part in the Thread mesh: shown as a separate group in a column to the right of the mesh,
   // without links and without path animation (their messages are only counted). Hidden with show_wifi: false / ?nowifi.
@@ -1969,6 +2005,7 @@ function createThreadPulse(root, opts, host) {
       h += `<h4>${T.secStability}</h4><dl>` + row(T.reboots, i.reboots) + row(T.bootReason, i.bootReason !== undefined && i.bootReason !== null ? esc(T.bootReasons[i.bootReason] || i.bootReason) : "") + `</dl>`;
     h += `<h4>${T.secDevice}</h4><dl>` + row(T.manufacturer, esc(i.vendor || "")) + row(T.model, esc(i.product || "")) +
          row(T.firmware, esc(i.sw || "")) + row(T.fwUpdate, updateText(updateOf(w, hass))) + row(T.hardware, esc(i.hw || "")) + row(T.area, esc(w.area || "")) + `</dl>`;
+    h += fabricsHtml(w);
     h += identifyHtml(w, hass);
     if (w.devId && !DEMO) h += `<button class="btn" data-device="${esc(w.devId)}">${T.openDevice} ↗</button>`;
     $("panel").innerHTML = h;
@@ -2126,6 +2163,10 @@ function createThreadPulse(root, opts, host) {
         : n.icon === "thermometer" ? [[localName("Temperature"), "21.4 °C", 2 * m], [localName("Humidity"), "48 %", 5 * m]]
         : n.icon === "lightbulb" ? [[localName("Light"), T.states.on, 40 * m]] : [[T.state, T.states.off, 90 * m]]; });
     for (const n of all2) n.demoIdentify = true;
+    // connected systems (issue #79): most devices were added with an iPhone, one is also in Google Home
+    const fab = (vendor_name, vendor_id, fabric_index, fabric_label = null) => ({ vendor_name, vendor_id, fabric_index, fabric_label });
+    for (const n of all2) { n.demoFabrics = [fab("Apple Keychain", 4996, 1), fab("Home Assistant (Open Home Foundation)", 4939, 2, "Home")]; n.info.fabrics = 2; }
+    routers[0].demoFabrics.push(fab("Google LLC", 24582, 3)); routers[0].info.fabrics = 3;
     // firmware (issue #81): same models with different versions, one update available, one skipped, one installing
     for (const n of all2) {
       if (n.icon === "power-plug") n.info.product = "Smart Plug"; else if (n.icon === "lightbulb") n.info.product = "Smart Bulb";

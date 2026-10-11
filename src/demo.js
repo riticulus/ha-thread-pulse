@@ -41,6 +41,10 @@
         : n.icon === "thermometer" ? [[localName("Temperature"), "21.4 °C", 2 * m], [localName("Humidity"), "48 %", 5 * m]]
         : n.icon === "lightbulb" ? [[localName("Light"), T.states.on, 40 * m]] : [[T.state, T.states.off, 90 * m]]; });
     for (const n of all2) n.demoIdentify = true;
+    // connected systems (issue #79): most devices were added with an iPhone, one is also in Google Home
+    const fab = (vendor_name, vendor_id, fabric_index, fabric_label = null) => ({ vendor_name, vendor_id, fabric_index, fabric_label });
+    for (const n of all2) { n.demoFabrics = [fab("Apple Keychain", 4996, 1), fab("Home Assistant (Open Home Foundation)", 4939, 2, "Home")]; n.info.fabrics = 2; }
+    routers[0].demoFabrics.push(fab("Google LLC", 24582, 3)); routers[0].info.fabrics = 3;
     // firmware (issue #81): same models with different versions, one update available, one skipped, one installing
     for (const n of all2) {
       if (n.icon === "power-plug") n.info.product = "Smart Plug"; else if (n.icon === "lightbulb") n.info.product = "Smart Bulb";

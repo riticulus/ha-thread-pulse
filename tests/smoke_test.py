@@ -80,6 +80,11 @@ async def main_page(r, quick):
         r.check("no identify button on an unreachable device", await b.js(PANEL_TITLE) == "Bedside button" and await b.js("!document.querySelector('#panel [data-identify]')"))
         await b.js(CLOSE)
 
+        # connected systems (demo: Floor lamp is also in Google Home)
+        await b.js(search_js("Floor lamp")); await asyncio.sleep(1.2)
+        fab = await b.js(f"{G}('panel').textContent")
+        r.check("connected systems in the panel", "Connected systems" in fab and "Google LLC" in fab and "this Home Assistant" in fab)
+        await b.js(CLOSE); await asyncio.sleep(0.3)
         # firmware (demo: Kitchen plug has an update, Office plug skipped it, Bedroom climate installs one)
         await b.js(search_js("Kitchen plug")); await asyncio.sleep(1.2)
         r.check("firmware update shown in the panel", "1.4.0 available" in await b.js(f"{G}('panel').textContent"))
