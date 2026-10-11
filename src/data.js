@@ -36,7 +36,7 @@
           wifi.push({ id: "wifi:" + d.id, kind, name: d.name_by_user || d.name, icon: iconFor(wents), available: node.available, devId: d.id,
                       entities: entsByDev[d.id] || [], mainEntities: mainEnts[d.id] || [], area: areaName[d.area_id] || "",
                       info: { vendor: a["0/40/1"] || d.manufacturer, product: a["0/40/3"] || d.model, sw: a["0/40/10"] || d.sw_version, hw: a["0/40/8"] || d.hw_version,
-                              reboots: a["0/51/1"], bootReason: a["0/51/4"], rssi: a["0/54/4"], channel: a["0/54/3"], wifiVersion: a["0/54/2"] } });
+                              reboots: a["0/51/1"], bootReason: a["0/51/4"], fabrics: a["0/62/3"], rssi: a["0/54/4"], channel: a["0/54/3"], wifiVersion: a["0/54/2"] } });
           return;
         }
         const mac = [...atob(iface["4"])].map(c => c.charCodeAt(0).toString(16).padStart(2, "0")).join("");
@@ -47,7 +47,7 @@
                      neigh: a["0/53/7"] || [], routes: a["0/53/8"] || [], role, devId: d.id, entities: entsByDev[d.id] || [],
                      mainEntities: mainEnts[d.id] || [], area: areaName[d.area_id] || "",
                      info: { vendor: a["0/40/1"] || d.manufacturer, product: a["0/40/3"] || d.model, sw: a["0/40/10"] || d.sw_version, hw: a["0/40/8"] || d.hw_version,
-                             reboots: a["0/51/1"], bootReason: a["0/51/4"], detached: a["0/53/14"], attach: a["0/53/18"], parentChanges: a["0/53/21"], leader: a["0/53/13"],
+                             reboots: a["0/51/1"], bootReason: a["0/51/4"], fabrics: a["0/62/3"], detached: a["0/53/14"], attach: a["0/53/18"], parentChanges: a["0/53/21"], leader: a["0/53/13"],
                              net: { name: a["0/53/2"], channel: a["0/53/0"], panId: a["0/53/3"], extPanId: a["0/53/4"] },
                              batType: Object.entries(a).filter(([k]) => /^\d+\/47\/19$/.test(k)).map(([, v]) => v).find(Boolean) || "" } });
       } catch (e) { if (e.fatal) throw e; console.warn("Thread Pulse:", d.name, e); }

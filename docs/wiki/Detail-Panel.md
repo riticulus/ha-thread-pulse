@@ -72,6 +72,14 @@ Manufacturer, model, firmware version, hardware version and area.
 
 **Update** *(after version 1.5.2)*: the firmware update state that Home Assistant knows for the device – *up to date*, *1.4.0 available*, *1.4.0 available – skipped* (skipped in Home Assistant) or *installing 1.4.0 · 40 %*. Updates are installed in Home Assistant, not in Thread Pulse.
 
+## Connected systems
+
+*After version 1.5.2.* A Matter device can be controlled by several systems at the same time (Matter *fabrics*): Home Assistant, Apple Home, Google Home, Amazon Alexa … This section shows how many systems the device is connected to and which ones, e.g. *Apple Keychain* and *Home Assistant (Open Home Foundation) · this Home Assistant*.
+
+- *Apple Keychain* is the connection an iPhone keeps after it was used to add a Matter device – also if the device was then shared with Home Assistant only.
+- The number is known right away; the list of systems is loaded when the panel is opened (Home Assistant may ask the device, which takes a moment – battery devices can take longer).
+- Connections are removed on the device page in Home Assistant, not in Thread Pulse.
+
 ## Border router and other Thread routers
 
 *Available from version 1.4.0.*
