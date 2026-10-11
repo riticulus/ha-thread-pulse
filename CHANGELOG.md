@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.4.0] – 2026-10-11
+
 ### Added
 - Matter devices on Wi-Fi or Ethernet: shown as their own group in a column to the right of the mesh (heading, legend entry, grey-blue), without links and without path animation (their messages are counted); detail panel with live counter, current values, Wi-Fi signal, channel and standard, restarts and device data; found by the search; stay in their column in the room view; hide them with the card option `show_wifi: false` or `?nowifi` ([#43](https://github.com/riticulus/ha-thread-pulse/issues/43))
 - Battery forecast in the detail panel, e.g. *empty in about 10 months · based on 46 days, −3.7 % per month*: linear trend of the daily battery level from Home Assistant's long-term statistics (up to 120 days, only since the last battery change); needs at least 14 days and a measurable drop; hint and **i** badge when the battery will probably be empty within 30 days. It is an estimate – many batteries stay almost full for a long time and then drop quickly ([#39](https://github.com/riticulus/ha-thread-pulse/issues/39))
@@ -17,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 - Issue forms for bug reports, feature requests and translation corrections, a pull-request template, a *Contributing* section in the README and a clear label scheme (`bug`, `New Feature`, `enhancement`, `documentation`, `translation`) ([#52](https://github.com/riticulus/ha-thread-pulse/issues/52))
 - Translations split into one file per language in `src/i18n/`; `build.py` collects all language files automatically; new check `tests/check-i18n.js` (also run in CI) makes sure every language has the same keys as English. No change in behaviour – all texts and translations are identical in content ([#49](https://github.com/riticulus/ha-thread-pulse/issues/49))
-- Source split into one file per topic in `src/` (`version.js`, `i18n.js`, `styles.css`, `markup.html`, `core.js`, one file per feature, `ui.js`, `start.js`); `build.py` assembles them in a fixed order. No change in behaviour – the generated files contain exactly the same lines as before ([#33](https://github.com/riticulus/ha-thread-pulse/issues/33))
+- Source split into one file per topic in `src/` (`version.js`, `styles.css`, `markup.html`, `core.js`, one file per feature, `ui.js`, `start.js`); `build.py` assembles them in a fixed order. No change in behaviour – the generated files contain exactly the same lines as before ([#33](https://github.com/riticulus/ha-thread-pulse/issues/33))
 
 ## [1.3.0] – 2026-10-10
 
@@ -70,7 +72,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Demo mode (`?demo`) that works without Home Assistant
 - Readable (unminified) vis-network build
 
-[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.0.0...v1.2.0
 [1.0.0]: https://github.com/riticulus/ha-thread-pulse/compare/v0.1.0...v1.0.0
