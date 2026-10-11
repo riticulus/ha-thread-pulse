@@ -69,6 +69,10 @@ const TP_CSS = `
   #report { position: absolute; inset: 8px; z-index: 6; display: flex; flex-direction: column; gap: 8px; max-width: 760px; margin: 0 auto;
             background: var(--bg); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.25); padding: 12px 14px; font-size: 13px; }
   #report[hidden] { display: none; }
+  /* mesh health (issue #84) */
+  .grade { display: inline-block; min-width: 1.6em; text-align: center; color: white; border-radius: 6px; padding: 0 5px; font-weight: 700; }
+  .health table { margin-top: 4px; }
+  #panel .health td { font-size: 12px; }
   #report .hd { display: flex; align-items: center; font-size: 15px; }
   #report .x { margin-left: auto; border: 0; background: none; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; padding: 0 2px; }
   #report .chk { display: flex; align-items: center; gap: 6px; cursor: pointer; }
@@ -116,6 +120,34 @@ const TP_HTML = `
 `;
 // ---------- texts (one file per language in src/i18n/) ----------
 const TEXT_EN = {
+  healthPartial: (k, n) => `only ${k} of ${n} factors judged`, htRedundancyNoData: "Not judged – none of the routers reports its links to Home Assistant (e.g. only Apple or Google border routers).",
+  healthHead: "Mesh health",
+  healthGrade: "Grade",
+  meshName: "Mesh",
+  rHealthNote: "rule of thumb, reasons below",
+  healthNote: "A rule of thumb from the data on the map, not a measurement: each point marked orange counts 1, red counts 2 (A = 0 … E = 6 or more). Battery devices only report their parent, so redundancy can only be judged for routers. The neighbour tables can be a few minutes old.",
+  chGrade: (a, b) => `Mesh health ${a} → ${b}`,
+  hfTitle: { routers: "Routers", redundancy: "Redundancy", weak: "Weak signal", depth: "Hops", children: "Devices per router", stability: "Stability" },
+  hlLevel: { ok: "✓ ok", warn: "⚠ check", bad: "✗ problem", na: "– unknown" },
+  hvRouters: n => `${n} router${n === 1 ? "" : "s"}`,
+  hvOf: (a, b) => `${a} of ${b}`,
+  hvHops: n => `max. ${n} hop${n === 1 ? "" : "s"}`,
+  hvMax: n => `max. ${n}`,
+  htRoutersOne: "Only the border router forwards messages – if it fails, the whole network is down. Mains-powered Thread devices (plugs, bulbs) become routers.",
+  htRoutersTwo: "Only two routers – one more mains-powered Thread device (plug or bulb) would give the mesh a second path.",
+  htRoutersOk: "Enough routers for alternative paths.",
+  htRedundancyNa: "Not judged – needs at least three routers.",
+  htRedundancyOk: "Every router has at least two good links to other routers.",
+  htRedundancyBad: names => `Fewer than two good links to other routers: ${names}. If that one router fails, they and their devices lose the connection.`,
+  htWeakOk: "No device has a weak signal to its parent.",
+  htWeakBad: names => `Weak signal (below −80 dBm) to the parent: ${names}.`,
+  htDepthNa: "Unknown – the border router is not known (e.g. only Apple or Google border routers).",
+  htDepthOk: "Every device reaches the border router in at most 3 hops.",
+  htDepthBad: names => `4 or more hops to the border router: ${names}. Every hop adds delay and a point of failure.`,
+  htChildrenOk: "The devices are spread over the routers.",
+  htChildrenBad: (name, n, total) => `${name} carries ${n} of ${total} devices – if it fails, all of them have to find a new parent at once.`,
+  htStabilityOk: "No device is unstable or unreachable.",
+  htStabilityBad: names => `Unstable, unreachable or often without power: ${names}.`,
   reportMenu: "📝 Text report for forums …", reportHead: "Text report", reportAnon: "Anonymised (Device 1, Room A …)", reportCopy: "Copy", reportCopied: "Copied", reportCopyManual: "Copying is not allowed here – the text is selected, copy it with Ctrl+C / ⌘C or the context menu.", reportClose: "Close", reportNote: "Markdown for forum posts and GitHub issues. Contains no network key, network name, PAN IDs or device addresses. Please read it before you share it.", rTitle: "Thread network", rAnonNote: "anonymised", rThreadDevices: "Thread devices (Matter)", rUnreachable: "Not reachable", rBorderRouters: "Border routers", rOtbr: "OpenThread Border Router add-on", rOtherRouters: "Other Thread routers (not in Home Assistant)", rWifi: "Matter over Wi-Fi / Ethernet", rDevicesHead: "Devices", rRole: "Role", rConnection: "Connection", rWarnHead: "Warnings and hints",
   rDevices: (n, r, e, s) => `${n} (${r} routers, ${e} mains end devices, ${s} battery devices)`, rRouterLinks: (n, best) => n ? `${n} router link${n === 1 ? "" : "s"}, best ${best} dBm` : "no router links",
   secFabrics: "Connected systems", fabricCount: "Number", fabricList: "Systems", fabricThis: "this Home Assistant", fabricLoading: "loading …", fabricError: "could not be loaded", fabricNote: "Systems (Matter fabrics) that can control this device. Apple Keychain is the connection an iPhone keeps after adding a Matter device. Connections can be removed on the device page in Home Assistant.", fabricVendor: id => `Vendor ${id}`,
@@ -197,6 +229,34 @@ const TEXT_EN = {
   hEdge: r => `Only weak links to other routers (best: ${r} dBm) – it sits at the edge of the mesh. Another router in between would strengthen it.`,
 };
 const TEXT_DE = {
+  healthPartial: (k, n) => `nur ${k} von ${n} Faktoren beurteilt`, htRedundancyNoData: "Nicht beurteilt – keiner der Router meldet seine Verbindungen an Home Assistant (z. B. nur Apple- oder Google-Border-Router).",
+  healthHead: "Zustand des Netzes",
+  healthGrade: "Note",
+  meshName: "Netz",
+  rHealthNote: "Faustregel, Gründe unten",
+  healthNote: "Eine Faustregel aus den Daten der Karte, keine Messung: jeder orange Punkt zählt 1, jeder rote 2 (A = 0 … E = 6 oder mehr). Batteriegeräte melden nur ihren Parent, deshalb lässt sich die Redundanz nur für Router beurteilen. Die Nachbartabellen können einige Minuten alt sein.",
+  chGrade: (a, b) => `Zustand des Netzes ${a} → ${b}`,
+  hfTitle: { routers: "Router", redundancy: "Redundanz", weak: "Schwaches Signal", depth: "Hops", children: "Geräte pro Router", stability: "Stabilität" },
+  hlLevel: { ok: "✓ ok", warn: "⚠ prüfen", bad: "✗ Problem", na: "– unbekannt" },
+  hvRouters: n => `${n} Router`,
+  hvOf: (a, b) => `${a} von ${b}`,
+  hvHops: n => `max. ${n} Hop${n === 1 ? "" : "s"}`,
+  hvMax: n => `max. ${n}`,
+  htRoutersOne: "Nur der Border Router leitet Nachrichten weiter – fällt er aus, ist das ganze Netz weg. Thread-Geräte mit Netzstrom (Steckdosen, Lampen) werden zu Routern.",
+  htRoutersTwo: "Nur zwei Router – ein weiteres Thread-Gerät mit Netzstrom (Steckdose oder Lampe) gäbe dem Netz einen zweiten Weg.",
+  htRoutersOk: "Genug Router für Ausweichwege.",
+  htRedundancyNa: "Nicht beurteilt – braucht mindestens drei Router.",
+  htRedundancyOk: "Jeder Router hat mindestens zwei gute Verbindungen zu anderen Routern.",
+  htRedundancyBad: names => `Weniger als zwei gute Verbindungen zu anderen Routern: ${names}. Fällt dieser eine Router aus, verlieren sie und ihre Geräte die Verbindung.`,
+  htWeakOk: "Kein Gerät hat ein schwaches Signal zu seinem Parent.",
+  htWeakBad: names => `Schwaches Signal (unter −80 dBm) zum Parent: ${names}.`,
+  htDepthNa: "Unbekannt – der Border Router ist nicht bekannt (z. B. nur Apple- oder Google-Border-Router).",
+  htDepthOk: "Jedes Gerät erreicht den Border Router in höchstens 3 Hops.",
+  htDepthBad: names => `4 oder mehr Hops bis zum Border Router: ${names}. Jeder Hop bringt Verzögerung und eine mögliche Ausfallstelle.`,
+  htChildrenOk: "Die Geräte sind auf die Router verteilt.",
+  htChildrenBad: (name, n, total) => `${name} trägt ${n} von ${total} Geräten – fällt er aus, müssen alle gleichzeitig einen neuen Parent suchen.`,
+  htStabilityOk: "Kein Gerät ist instabil oder nicht erreichbar.",
+  htStabilityBad: names => `Instabil, nicht erreichbar oder oft ohne Strom: ${names}.`,
   reportMenu: "📝 Textbericht für Foren …", reportHead: "Textbericht", reportAnon: "Anonymisiert (Gerät 1, Raum A …)", reportCopy: "Kopieren", reportCopied: "Kopiert", reportCopyManual: "Kopieren ist hier nicht erlaubt – der Text ist markiert, kopiere ihn mit Strg+C / ⌘C oder über das Kontextmenü.", reportClose: "Schliessen", reportNote: "Markdown für Forenbeiträge und GitHub-Issues. Enthält keinen Netzwerkschlüssel, Netzwerknamen, keine PAN-IDs und keine Geräteadressen. Bitte vor dem Teilen durchlesen.", rTitle: "Thread-Netz", rAnonNote: "anonymisiert", rThreadDevices: "Thread-Geräte (Matter)", rUnreachable: "Nicht erreichbar", rBorderRouters: "Border Router", rOtbr: "OpenThread-Border-Router-Add-on", rOtherRouters: "Andere Thread-Router (nicht in Home Assistant)", rWifi: "Matter über WLAN / Ethernet", rDevicesHead: "Geräte", rRole: "Rolle", rConnection: "Verbindung", rWarnHead: "Warnungen und Hinweise",
   rDevices: (n, r, e, s) => `${n} (${r} Router, ${e} Endgeräte mit Netzstrom, ${s} Batteriegeräte)`, rRouterLinks: (n, best) => n ? `${n} Router-Verbindung${n === 1 ? "" : "en"}, beste ${best} dBm` : "keine Router-Verbindungen",
   secFabrics: "Verbundene Systeme", fabricCount: "Anzahl", fabricList: "Systeme", fabricThis: "dieses Home Assistant", fabricLoading: "wird geladen …", fabricError: "konnte nicht geladen werden", fabricNote: "Systeme (Matter-Fabrics), die dieses Gerät steuern können. Apple Keychain ist die Verbindung, die ein iPhone behält, nachdem es ein Matter-Gerät hinzugefügt hat. Verbindungen lassen sich auf der Geräteseite in Home Assistant entfernen.", fabricVendor: id => `Hersteller ${id}`,
@@ -284,6 +344,34 @@ const NAMES_DE = [["Effective current", "Strom (effektiv)"], ["Effective voltage
   ["Occupancy", "Anwesenheit"], ["Door", "Kontakt"], ["Opening", "Kontakt"], ["Temperature", "Temperatur"], ["Humidity", "Luftfeuchte"],
   ["Identify", "Identifizieren"], ["Button", "Taste"], ["Light", "Licht"], ["Switch", "Schalter"], ["Motion", "Bewegung"]];
 const TEXT_ES = {
+  healthPartial: (k, n) => `solo ${k} de ${n} factores valorados`, htRedundancyNoData: "No valorado – ninguno de los routers informa de sus enlaces a Home Assistant (p. ej. solo border routers de Apple o Google).",
+  healthHead: "Estado de la malla",
+  healthGrade: "Nota",
+  meshName: "Malla",
+  rHealthNote: "regla general, motivos abajo",
+  healthNote: "Una regla general a partir de los datos del mapa, no una medición: cada punto naranja cuenta 1, cada rojo 2 (A = 0 … E = 6 o más). Los dispositivos con batería solo informan de su parent, así que la redundancia solo se puede valorar para los routers. Las tablas de vecinos pueden tener unos minutos.",
+  chGrade: (a, b) => `Estado de la malla ${a} → ${b}`,
+  hfTitle: { routers: "Routers", redundancy: "Redundancia", weak: "Señal débil", depth: "Saltos", children: "Dispositivos por router", stability: "Estabilidad" },
+  hlLevel: { ok: "✓ ok", warn: "⚠ revisar", bad: "✗ problema", na: "– desconocido" },
+  hvRouters: n => `${n} router${n === 1 ? "" : "s"}`,
+  hvOf: (a, b) => `${a} de ${b}`,
+  hvHops: n => `máx. ${n} salto${n === 1 ? "" : "s"}`,
+  hvMax: n => `máx. ${n}`,
+  htRoutersOne: "Solo el border router reenvía mensajes – si falla, toda la red cae. Los dispositivos Thread con corriente (enchufes, bombillas) se convierten en routers.",
+  htRoutersTwo: "Solo dos routers – otro dispositivo Thread con corriente (enchufe o bombilla) daría a la malla un segundo camino.",
+  htRoutersOk: "Suficientes routers para caminos alternativos.",
+  htRedundancyNa: "No valorado – se necesitan al menos tres routers.",
+  htRedundancyOk: "Cada router tiene al menos dos buenos enlaces con otros routers.",
+  htRedundancyBad: names => `Menos de dos buenos enlaces con otros routers: ${names}. Si ese único router falla, ellos y sus dispositivos pierden la conexión.`,
+  htWeakOk: "Ningún dispositivo tiene una señal débil hacia su parent.",
+  htWeakBad: names => `Señal débil (por debajo de −80 dBm) hacia el parent: ${names}.`,
+  htDepthNa: "Desconocido – no se conoce el border router (p. ej. solo border routers de Apple o Google).",
+  htDepthOk: "Cada dispositivo llega al border router en 3 saltos como máximo.",
+  htDepthBad: names => `4 o más saltos hasta el border router: ${names}. Cada salto añade retardo y un punto de fallo.`,
+  htChildrenOk: "Los dispositivos están repartidos entre los routers.",
+  htChildrenBad: (name, n, total) => `${name} lleva ${n} de ${total} dispositivos – si falla, todos tienen que buscar un nuevo parent a la vez.`,
+  htStabilityOk: "Ningún dispositivo inestable o inaccesible.",
+  htStabilityBad: names => `Inestables, inaccesibles o a menudo sin corriente: ${names}.`,
   reportMenu: "📝 Informe de texto para foros …", reportHead: "Informe de texto", reportAnon: "Anonimizado (Dispositivo 1, Habitación A …)", reportCopy: "Copiar", reportCopied: "Copiado", reportCopyManual: "Aquí no se permite copiar – el texto está seleccionado, cópialo con Ctrl+C / ⌘C o con el menú contextual.", reportClose: "Cerrar", reportNote: "Markdown para foros e issues de GitHub. No contiene la clave de red, el nombre de la red, PAN ID ni direcciones de dispositivos. Léelo antes de compartirlo.", rTitle: "Red Thread", rAnonNote: "anonimizado", rThreadDevices: "Dispositivos Thread (Matter)", rUnreachable: "No accesibles", rBorderRouters: "Border routers", rOtbr: "Complemento OpenThread Border Router", rOtherRouters: "Otros routers Thread (fuera de Home Assistant)", rWifi: "Matter por Wi-Fi / Ethernet", rDevicesHead: "Dispositivos", rRole: "Función", rConnection: "Conexión", rWarnHead: "Avisos y consejos",
   rDevices: (n, r, e, s) => `${n} (${r} routers, ${e} dispositivos con corriente, ${s} dispositivos con batería)`, rRouterLinks: (n, best) => n ? `${n} enlace${n === 1 ? "" : "s"} con routers, mejor ${best} dBm` : "sin enlaces con routers",
   secFabrics: "Sistemas conectados", fabricCount: "Número", fabricList: "Sistemas", fabricThis: "este Home Assistant", fabricLoading: "cargando …", fabricError: "no se pudo cargar", fabricNote: "Sistemas (fabrics de Matter) que pueden controlar este dispositivo. Apple Keychain es la conexión que conserva un iPhone después de añadir un dispositivo Matter. Las conexiones se pueden eliminar en la página del dispositivo en Home Assistant.", fabricVendor: id => `Fabricante ${id}`,
@@ -371,6 +459,34 @@ const NAMES_ES = [["Effective current", "Corriente (eficaz)"], ["Effective volta
   ["Occupancy", "Presencia"], ["Door", "Contacto"], ["Opening", "Contacto"], ["Temperature", "Temperatura"], ["Humidity", "Humedad"],
   ["Identify", "Identificar"], ["Button", "Botón"], ["Light", "Luz"], ["Switch", "Interruptor"], ["Motion", "Movimiento"]];
 const TEXT_FR = {
+  healthPartial: (k, n) => `seulement ${k} facteurs sur ${n} évalués`, htRedundancyNoData: "Non évalué – aucun des routeurs ne signale ses liaisons à Home Assistant (p. ex. uniquement des border routers Apple ou Google).",
+  healthHead: "État du maillage",
+  healthGrade: "Note",
+  meshName: "Maillage",
+  rHealthNote: "règle empirique, raisons ci-dessous",
+  healthNote: "Une règle empirique tirée des données de la carte, pas une mesure : chaque point orange compte 1, chaque rouge 2 (A = 0 … E = 6 ou plus). Les appareils sur pile ne signalent que leur parent, la redondance ne peut donc être évaluée que pour les routeurs. Les tables de voisins peuvent dater de quelques minutes.",
+  chGrade: (a, b) => `État du maillage ${a} → ${b}`,
+  hfTitle: { routers: "Routeurs", redundancy: "Redondance", weak: "Signal faible", depth: "Sauts", children: "Appareils par routeur", stability: "Stabilité" },
+  hlLevel: { ok: "✓ ok", warn: "⚠ à vérifier", bad: "✗ problème", na: "– inconnu" },
+  hvRouters: n => `${n} routeur${n === 1 ? "" : "s"}`,
+  hvOf: (a, b) => `${a} sur ${b}`,
+  hvHops: n => `max. ${n} saut${n === 1 ? "" : "s"}`,
+  hvMax: n => `max. ${n}`,
+  htRoutersOne: "Seul le border router transmet les messages – s'il tombe en panne, tout le réseau est coupé. Les appareils Thread sur secteur (prises, ampoules) deviennent des routeurs.",
+  htRoutersTwo: "Seulement deux routeurs – un appareil Thread de plus sur secteur (prise ou ampoule) donnerait un second chemin au maillage.",
+  htRoutersOk: "Assez de routeurs pour des chemins alternatifs.",
+  htRedundancyNa: "Non évalué – il faut au moins trois routeurs.",
+  htRedundancyOk: "Chaque routeur a au moins deux bonnes liaisons vers d'autres routeurs.",
+  htRedundancyBad: names => `Moins de deux bonnes liaisons vers d'autres routeurs : ${names}. Si ce routeur tombe en panne, eux et leurs appareils perdent la connexion.`,
+  htWeakOk: "Aucun appareil n'a un signal faible vers son parent.",
+  htWeakBad: names => `Signal faible (sous −80 dBm) vers le parent : ${names}.`,
+  htDepthNa: "Inconnu – le border router n'est pas connu (p. ex. uniquement des border routers Apple ou Google).",
+  htDepthOk: "Chaque appareil atteint le border router en 3 sauts au plus.",
+  htDepthBad: names => `4 sauts ou plus jusqu'au border router : ${names}. Chaque saut ajoute du délai et un point de défaillance.`,
+  htChildrenOk: "Les appareils sont répartis sur les routeurs.",
+  htChildrenBad: (name, n, total) => `${name} porte ${n} des ${total} appareils – s'il tombe en panne, tous doivent trouver un nouveau parent en même temps.`,
+  htStabilityOk: "Aucun appareil instable ou injoignable.",
+  htStabilityBad: names => `Instable, injoignable ou souvent sans courant : ${names}.`,
   reportMenu: "📝 Rapport texte pour forums …", reportHead: "Rapport texte", reportAnon: "Anonymisé (Appareil 1, Pièce A …)", reportCopy: "Copier", reportCopied: "Copié", reportCopyManual: "La copie n'est pas autorisée ici – le texte est sélectionné, copiez-le avec Ctrl+C / ⌘C ou le menu contextuel.", reportClose: "Fermer", reportNote: "Markdown pour les forums et les issues GitHub. Ne contient ni clé réseau, ni nom de réseau, ni PAN ID, ni adresses d'appareils. Relisez-le avant de le partager.", rTitle: "Réseau Thread", rAnonNote: "anonymisé", rThreadDevices: "Appareils Thread (Matter)", rUnreachable: "Injoignables", rBorderRouters: "Border routers", rOtbr: "Module OpenThread Border Router", rOtherRouters: "Autres routeurs Thread (hors Home Assistant)", rWifi: "Matter via Wi-Fi / Ethernet", rDevicesHead: "Appareils", rRole: "Rôle", rConnection: "Connexion", rWarnHead: "Avertissements et conseils",
   rDevices: (n, r, e, s) => `${n} (${r} routeurs, ${e} appareils sur secteur, ${s} appareils sur pile)`, rRouterLinks: (n, best) => n ? `${n} liaison${n === 1 ? "" : "s"} vers des routeurs, meilleure ${best} dBm` : "aucune liaison vers des routeurs",
   secFabrics: "Systèmes connectés", fabricCount: "Nombre", fabricList: "Systèmes", fabricThis: "ce Home Assistant", fabricLoading: "chargement …", fabricError: "n'a pas pu être chargé", fabricNote: "Systèmes (fabrics Matter) qui peuvent contrôler cet appareil. Apple Keychain est la connexion qu'un iPhone conserve après avoir ajouté un appareil Matter. Les connexions peuvent être supprimées sur la page de l'appareil dans Home Assistant.", fabricVendor: id => `Fabricant ${id}`,
@@ -458,6 +574,34 @@ const NAMES_FR = [["Effective current", "Courant (efficace)"], ["Effective volta
   ["Occupancy", "Présence"], ["Door", "Contact"], ["Opening", "Contact"], ["Temperature", "Température"], ["Humidity", "Humidité"],
   ["Identify", "Identifier"], ["Button", "Bouton"], ["Light", "Lumière"], ["Switch", "Interrupteur"], ["Motion", "Mouvement"]];
 const TEXT_IT = {
+  healthPartial: (k, n) => `valutati solo ${k} fattori su ${n}`, htRedundancyNoData: "Non valutato – nessuno dei router comunica i suoi collegamenti a Home Assistant (ad es. solo border router Apple o Google).",
+  healthHead: "Stato della rete mesh",
+  healthGrade: "Voto",
+  meshName: "Rete mesh",
+  rHealthNote: "regola empirica, motivi sotto",
+  healthNote: "Una regola empirica dai dati della mappa, non una misura: ogni punto arancione conta 1, ogni rosso 2 (A = 0 … E = 6 o più). I dispositivi a batteria indicano solo il loro parent, quindi la ridondanza si valuta solo per i router. Le tabelle dei vicini possono avere qualche minuto.",
+  chGrade: (a, b) => `Stato della rete mesh ${a} → ${b}`,
+  hfTitle: { routers: "Router", redundancy: "Ridondanza", weak: "Segnale debole", depth: "Salti", children: "Dispositivi per router", stability: "Stabilità" },
+  hlLevel: { ok: "✓ ok", warn: "⚠ da verificare", bad: "✗ problema", na: "– sconosciuto" },
+  hvRouters: n => `${n} router`,
+  hvOf: (a, b) => `${a} su ${b}`,
+  hvHops: n => `max. ${n} salt${n === 1 ? "o" : "i"}`,
+  hvMax: n => `max. ${n}`,
+  htRoutersOne: "Solo il border router inoltra i messaggi – se si guasta, tutta la rete è ferma. I dispositivi Thread alimentati da rete (prese, lampadine) diventano router.",
+  htRoutersTwo: "Solo due router – un altro dispositivo Thread alimentato da rete (presa o lampadina) darebbe alla rete un secondo percorso.",
+  htRoutersOk: "Router sufficienti per percorsi alternativi.",
+  htRedundancyNa: "Non valutato – servono almeno tre router.",
+  htRedundancyOk: "Ogni router ha almeno due buoni collegamenti con altri router.",
+  htRedundancyBad: names => `Meno di due buoni collegamenti con altri router: ${names}. Se quell'unico router si guasta, loro e i loro dispositivi perdono la connessione.`,
+  htWeakOk: "Nessun dispositivo ha un segnale debole verso il parent.",
+  htWeakBad: names => `Segnale debole (sotto −80 dBm) verso il parent: ${names}.`,
+  htDepthNa: "Sconosciuto – il border router non è noto (ad es. solo border router Apple o Google).",
+  htDepthOk: "Ogni dispositivo raggiunge il border router in al massimo 3 salti.",
+  htDepthBad: names => `4 o più salti fino al border router: ${names}. Ogni salto aggiunge ritardo e un punto di guasto.`,
+  htChildrenOk: "I dispositivi sono distribuiti sui router.",
+  htChildrenBad: (name, n, total) => `${name} porta ${n} di ${total} dispositivi – se si guasta, tutti devono trovare un nuovo parent contemporaneamente.`,
+  htStabilityOk: "Nessun dispositivo instabile o non raggiungibile.",
+  htStabilityBad: names => `Instabili, non raggiungibili o spesso senza corrente: ${names}.`,
   reportMenu: "📝 Rapporto testuale per forum …", reportHead: "Rapporto testuale", reportAnon: "Anonimizzato (Dispositivo 1, Stanza A …)", reportCopy: "Copia", reportCopied: "Copiato", reportCopyManual: "Qui la copia non è consentita – il testo è selezionato, copialo con Ctrl+C / ⌘C o con il menu contestuale.", reportClose: "Chiudi", reportNote: "Markdown per forum e issue di GitHub. Non contiene chiave di rete, nome della rete, PAN ID o indirizzi dei dispositivi. Leggilo prima di condividerlo.", rTitle: "Rete Thread", rAnonNote: "anonimizzato", rThreadDevices: "Dispositivi Thread (Matter)", rUnreachable: "Non raggiungibili", rBorderRouters: "Border router", rOtbr: "Add-on OpenThread Border Router", rOtherRouters: "Altri router Thread (non in Home Assistant)", rWifi: "Matter via Wi-Fi / Ethernet", rDevicesHead: "Dispositivi", rRole: "Ruolo", rConnection: "Connessione", rWarnHead: "Avvisi e suggerimenti",
   rDevices: (n, r, e, s) => `${n} (${r} router, ${e} dispositivi a rete elettrica, ${s} dispositivi a batteria)`, rRouterLinks: (n, best) => n ? `${n} collegament${n === 1 ? "o" : "i"} con router, migliore ${best} dBm` : "nessun collegamento con router",
   secFabrics: "Sistemi collegati", fabricCount: "Numero", fabricList: "Sistemi", fabricThis: "questo Home Assistant", fabricLoading: "caricamento …", fabricError: "impossibile caricare", fabricNote: "Sistemi (fabric Matter) che possono controllare questo dispositivo. Apple Keychain è il collegamento che un iPhone mantiene dopo aver aggiunto un dispositivo Matter. I collegamenti si possono rimuovere nella pagina del dispositivo in Home Assistant.", fabricVendor: id => `Produttore ${id}`,
@@ -545,6 +689,34 @@ const NAMES_IT = [["Effective current", "Corrente (efficace)"], ["Effective volt
   ["Occupancy", "Presenza"], ["Door", "Contatto"], ["Opening", "Contatto"], ["Temperature", "Temperatura"], ["Humidity", "Umidità"],
   ["Identify", "Identifica"], ["Button", "Pulsante"], ["Light", "Luce"], ["Switch", "Interruttore"], ["Motion", "Movimento"]];
 const TEXT_NL = {
+  healthPartial: (k, n) => `slechts ${k} van ${n} factoren beoordeeld`, htRedundancyNoData: "Niet beoordeeld – geen van de routers meldt zijn verbindingen aan Home Assistant (bijv. alleen border routers van Apple of Google).",
+  healthHead: "Staat van het mesh",
+  healthGrade: "Cijfer",
+  meshName: "Mesh",
+  rHealthNote: "vuistregel, redenen hieronder",
+  healthNote: "Een vuistregel uit de gegevens van de kaart, geen meting: elk oranje punt telt 1, elk rood 2 (A = 0 … E = 6 of meer). Apparaten op batterij melden alleen hun parent, dus redundantie kan alleen voor routers beoordeeld worden. De buurtabellen kunnen enkele minuten oud zijn.",
+  chGrade: (a, b) => `Staat van het mesh ${a} → ${b}`,
+  hfTitle: { routers: "Routers", redundancy: "Redundantie", weak: "Zwak signaal", depth: "Hops", children: "Apparaten per router", stability: "Stabiliteit" },
+  hlLevel: { ok: "✓ ok", warn: "⚠ controleren", bad: "✗ probleem", na: "– onbekend" },
+  hvRouters: n => `${n} router${n === 1 ? "" : "s"}`,
+  hvOf: (a, b) => `${a} van ${b}`,
+  hvHops: n => `max. ${n} hop${n === 1 ? "" : "s"}`,
+  hvMax: n => `max. ${n}`,
+  htRoutersOne: "Alleen de border router stuurt berichten door – valt hij uit, dan ligt het hele netwerk plat. Thread-apparaten op netstroom (stekkers, lampen) worden routers.",
+  htRoutersTwo: "Maar twee routers – nog een Thread-apparaat op netstroom (stekker of lamp) geeft het mesh een tweede pad.",
+  htRoutersOk: "Genoeg routers voor alternatieve paden.",
+  htRedundancyNa: "Niet beoordeeld – vereist minstens drie routers.",
+  htRedundancyOk: "Elke router heeft minstens twee goede verbindingen met andere routers.",
+  htRedundancyBad: names => `Minder dan twee goede verbindingen met andere routers: ${names}. Valt die ene router uit, dan verliezen zij en hun apparaten de verbinding.`,
+  htWeakOk: "Geen apparaat heeft een zwak signaal naar zijn parent.",
+  htWeakBad: names => `Zwak signaal (onder −80 dBm) naar de parent: ${names}.`,
+  htDepthNa: "Onbekend – de border router is niet bekend (bijv. alleen border routers van Apple of Google).",
+  htDepthOk: "Elk apparaat bereikt de border router in hoogstens 3 hops.",
+  htDepthBad: names => `4 of meer hops tot de border router: ${names}. Elke hop voegt vertraging en een storingspunt toe.`,
+  htChildrenOk: "De apparaten zijn over de routers verdeeld.",
+  htChildrenBad: (name, n, total) => `${name} draagt ${n} van ${total} apparaten – valt hij uit, dan moeten ze allemaal tegelijk een nieuwe parent zoeken.`,
+  htStabilityOk: "Geen apparaat is instabiel of onbereikbaar.",
+  htStabilityBad: names => `Instabiel, onbereikbaar of vaak zonder stroom: ${names}.`,
   reportMenu: "📝 Tekstrapport voor forums …", reportHead: "Tekstrapport", reportAnon: "Geanonimiseerd (Apparaat 1, Ruimte A …)", reportCopy: "Kopiëren", reportCopied: "Gekopieerd", reportCopyManual: "Kopiëren is hier niet toegestaan – de tekst is geselecteerd, kopieer hem met Ctrl+C / ⌘C of via het contextmenu.", reportClose: "Sluiten", reportNote: "Markdown voor forumberichten en GitHub-issues. Bevat geen netwerksleutel, netwerknaam, PAN-ID's of apparaatadressen. Lees het door voordat je het deelt.", rTitle: "Thread-netwerk", rAnonNote: "geanonimiseerd", rThreadDevices: "Thread-apparaten (Matter)", rUnreachable: "Niet bereikbaar", rBorderRouters: "Border routers", rOtbr: "OpenThread Border Router-add-on", rOtherRouters: "Andere Thread-routers (niet in Home Assistant)", rWifi: "Matter via wifi / ethernet", rDevicesHead: "Apparaten", rRole: "Rol", rConnection: "Verbinding", rWarnHead: "Waarschuwingen en tips",
   rDevices: (n, r, e, s) => `${n} (${r} routers, ${e} apparaten op netstroom, ${s} apparaten op batterij)`, rRouterLinks: (n, best) => n ? `${n} routerverbinding${n === 1 ? "" : "en"}, beste ${best} dBm` : "geen routerverbindingen",
   secFabrics: "Verbonden systemen", fabricCount: "Aantal", fabricList: "Systemen", fabricThis: "deze Home Assistant", fabricLoading: "laden …", fabricError: "kon niet worden geladen", fabricNote: "Systemen (Matter-fabrics) die dit apparaat kunnen bedienen. Apple Keychain is de verbinding die een iPhone houdt nadat het een Matter-apparaat heeft toegevoegd. Verbindingen kun je op de apparaatpagina in Home Assistant verwijderen.", fabricVendor: id => `Fabrikant ${id}`,
@@ -1017,6 +1189,7 @@ function createThreadPulse(root, opts, host) {
     renderChanges();
     if (panelNode && (nodeById[panelNode] || extraIds.has(panelNode) || wifiById[panelNode])) renderPanel(); else if (panelNode) closePanel();
     lastSnap = snapshotOf(nodes, edges, byId);
+    lastSnap.grade = (computeHealth() || {}).grade;    // grade changes go to the change log (issue #84)
     $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + " · " + T.tapHint + " · v" + VERSION;
   }
 
@@ -1026,7 +1199,7 @@ function createThreadPulse(root, opts, host) {
     const { parents, weak, count } = listData;
     hintsOf = computeHints(parents);
     const allHints = Object.entries(hintsOf).flatMap(([id, hs]) => hs.map(t => [id, t]));
-    let h = `<div id="changes"></div><b>${T.hintsHead}</b>` + (allHints.length
+    let h = `<div id="changes"></div>` + healthHtml() + `<b>${T.hintsHead}</b>` + (allHints.length
       ? `<table>${allHints.map(([id, t]) => `<tr><td style="white-space:nowrap;vertical-align:top"><a href="#" data-open="${id}">${esc(nodeById[id].name)}</a></td><td>${esc(t)}</td></tr>`).join("")}</table>`
       : `<div>${T.noHints}</div>`) + `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${T.hintsNote}</div>`;
     hintCount = allHints.length; setList(!$("info").classList.contains("hidden"), false);
@@ -1478,7 +1651,7 @@ function createThreadPulse(root, opts, host) {
       const leaderRid = leaders.sort((a, b) => leaders.filter(x => x === b).length - leaders.filter(x => x === a).length)[0];
       const leaderId = leaderRid !== undefined ? ridToId[leaderRid] : null;
       const leaderName = !leaderId ? "" : nodeById[leaderId] ? nodeById[leaderId].name : extraName(leaderId);
-      const routers = Object.keys(ridToId).length || nodes.filter(n => n.type === "routing_end_device").length + extraIds.size;
+      const routers = routerCount();
       h += `<h4>${T.secNetwork}</h4><dl>` +
         row(T.networkName, esc((ds && ds.name) || net.name || "")) +
         row(T.channel, esc(String((threadInfo && threadInfo.otbr && threadInfo.otbr.channel) || (ds && ds.channel) || net.channel || ""))) +
@@ -1486,7 +1659,7 @@ function createThreadPulse(root, opts, host) {
         row(T.extPanId, extPanId ? `<span style="font-family:monospace">${esc(extPanId)}</span>` : "") +
         row(T.routersInMesh, T.ofMax(routers)) +
         row(T.devicesInMesh, String(nodes.length + extraIds.size)) +
-        row(T.leader, esc(leaderName)) + `</dl>`;
+        row(T.leader, esc(leaderName)) + `</dl>` + healthHtml(true);
       const o = threadInfo && threadInfo.otbr && threadInfo.otbr.extAddr && threadInfo.otbr.extAddr.toLowerCase() === id ? threadInfo.otbr : null;
       h += `<h4>${T.secBorderRouter}</h4><dl>` + row(T.brKind, o ? esc(T.brOtbr) : "") + discRows(disc, false) +
         row(T.address, `<span style="font-family:monospace">${esc(id)}</span>`) +
@@ -1635,6 +1808,88 @@ function createThreadPulse(root, opts, host) {
     }
     return out;
   }
+  // ---------- mesh health (issue #84) ----------
+  // A rule of thumb, not a measurement: six factors from the same data as the map, each "ok", "check" or "problem".
+  // check = 1 point, problem = 2; 0 → A, 1 → B, 2–3 → C, 4–5 → D, 6+ → E. The factors are always shown next to the
+  // grade – a single letter hides too much. Battery devices only report their parent, so redundancy can only be
+  // judged for routers. Thresholds: weak = below −80 dBm (as the link colours); unstable as for the warnings.
+  const HEALTH_POINTS = { ok: 0, warn: 1, bad: 2, na: 0 };
+  const HEALTH_COLOR = { ok: "#2e7d32", warn: "#ef6c00", bad: "#c62828", na: "var(--muted)" };
+  // routers in the mesh: from the routing tables (also routers Home Assistant has no device for), else what the map shows
+  const routerCount = () => Object.keys(ridToId).length || Object.values(nodeById).filter(n => n.type === "routing_end_device").length + extraIds.size;
+  const gradeOf = p => p === 0 ? "A" : p === 1 ? "B" : p <= 3 ? "C" : p <= 5 ? "D" : "E";
+  function computeHealth(nm = nameOf) {
+    if (!listData) return null;
+    const nodes = Object.values(nodeById), routers = nodes.filter(n => n.type === "routing_end_device");
+    const isRouterId = id => (nodeById[id] && nodeById[id].type === "routing_end_device") || extraIds.has(id);
+    const list = ids => ids.map(nm).join(", ");
+    const factors = [];
+    const add = (key, level, value, text) => factors.push({ key, level, value, text });
+
+    // 1. routers: every mains-powered Thread device can route; with only the border router everything depends on it
+    const nR = routerCount();
+    add("routers", nR <= 1 ? "bad" : nR === 2 ? "warn" : "ok", T.hvRouters(nR), nR <= 1 ? T.htRoutersOne : nR === 2 ? T.htRoutersTwo : T.htRoutersOk);
+
+    // 2. redundancy: routers with fewer than two good links to other routers lose their part of the mesh with one router
+    if (!routers.length) add("redundancy", "na", "–", T.htRedundancyNoData);       // e.g. only Apple border routers: their links are not reported
+    else if (nR < 3) add("redundancy", "na", "–", T.htRedundancyNa);
+    else {
+      const single = routers.filter(r => (linksOf[r.id] || []).filter(l => l.kind === "neighbour" && isRouterId(l.id) && l.rssi >= -80).length < 2).map(r => r.id);
+      add("redundancy", !single.length ? "ok" : single.length === 1 || single.length / routers.length <= 0.25 ? "warn" : "bad",
+          T.hvOf(routers.length - single.length, routers.length), single.length ? T.htRedundancyBad(list(single)) : T.htRedundancyOk);
+    }
+
+    // 3. weak parent signal
+    const kids = listData.parents.filter(p => nodeById[p.childId]);
+    const weak = kids.filter(p => p.rssi < -80).map(p => p.childId);
+    add("weak", !weak.length ? "ok" : weak.length <= 2 || weak.length / Math.max(kids.length, 1) <= 0.15 ? "warn" : "bad",
+        T.hvOf(weak.length, kids.length), weak.length ? T.htWeakBad(list(weak)) : T.htWeakOk);
+
+    // 4. hops to the border router (only when the border router is known)
+    if (!brExt) add("depth", "na", "–", T.htDepthNa);
+    else {
+      const hops = nodes.map(n => { const p = pathToBr(n.id); return p ? { id: n.id, h: p.length - 1 } : null; }).filter(Boolean);
+      const max = Math.max(0, ...hops.map(x => x.h)), deep = hops.filter(x => x.h >= 4).map(x => x.id);
+      add("depth", max <= 3 ? "ok" : max === 4 ? "warn" : "bad", T.hvHops(max), deep.length ? T.htDepthBad(list(deep)) : T.htDepthOk);
+    }
+
+    // 5. children per router: many devices on one router = many devices affected when it fails
+    const per = {};
+    for (const p of kids) per[p.parentId] = (per[p.parentId] || 0) + 1;
+    const [topId, top] = Object.entries(per).sort((a, b) => b[1] - a[1])[0] || [null, 0];
+    const crowded = top > 20 ? "bad" : top > 10 || (kids.length >= 6 && top / kids.length > 0.6 && nR >= 3) ? "warn" : "ok";
+    add("children", crowded, T.hvMax(top), topId && crowded !== "ok" ? T.htChildrenBad(nm(topId), top, kids.length) : T.htChildrenOk);
+
+    // 6. stability: unstable connection, not reachable, router that loses power regularly
+    const shaky = nodes.filter(n => { const i = n.info || {};
+      return !n.available || i.attach >= 5 || i.detached >= 3 || (n.type === "routing_end_device" && i.reboots >= 50); }).map(n => n.id);
+    add("stability", !shaky.length ? "ok" : shaky.length <= 2 ? "warn" : "bad", T.hvOf(shaky.length, nodes.length),
+        shaky.length ? T.htStabilityBad(list(shaky)) : T.htStabilityOk);
+
+    const points = factors.reduce((s, f) => s + HEALTH_POINTS[f.level], 0);
+    return { grade: gradeOf(points), points, factors, known: factors.filter(f => f.level !== "na").length };
+  }
+  const gradeColor = g => g <= "B" ? HEALTH_COLOR.ok : g === "C" ? HEALTH_COLOR.warn : HEALTH_COLOR.bad;
+  function healthHtml(inPanel = false) {        // section in the list and in the border router panel
+    const h = computeHealth(); if (!h) return "";
+    // with unknown factors the grade is incomplete – say so next to it, an "A" must not look better than the data
+    const grade = `<span class="grade" style="background:${gradeColor(h.grade)}">${h.grade}</span>` +
+      (h.known < h.factors.length ? ` <span style="color:var(--muted);font-weight:400;font-size:12px">${T.healthPartial(h.known, h.factors.length)}</span>` : "");
+    return `<div class="health">` + (inPanel ? `<h4>${T.healthHead}</h4><div>${T.healthGrade} ${grade}</div>` : `<b>${T.healthHead}: ${grade}</b>`) +
+      `<table>${h.factors.map(f => `<tr><td style="vertical-align:top;white-space:nowrap"><span style="color:${HEALTH_COLOR[f.level]}">●</span> ${T.hfTitle[f.key]}</td>` +
+        `<td>${f.level === "na" ? "" : `<b style="color:${HEALTH_COLOR[f.level]}">${esc(f.value)}</b> · `}${esc(f.text)}</td></tr>`).join("")}</table>` +
+      `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${T.healthNote}</div></div>`;
+  }
+  // grade changes in the change log – only when the new grade was seen on two refreshes in a row (no flapping)
+  let gradeLogged, gradePending = null;
+  function trackGrade(g) {
+    if (!g) return;
+    if (gradeLogged === undefined) { gradeLogged = g; return; }
+    if (g === gradeLogged) { gradePending = null; return; }
+    if (gradePending !== g) { gradePending = g; return; }
+    logChange("mesh", T.meshName, T.chGrade(gradeLogged, g), g < gradeLogged ? "gradeUp" : "gradeDown");
+    gradeLogged = g; gradePending = null;
+  }
   // ---------- search (issue #9) ----------
   // Matches device name and area (case and accents ignored). Matches stay bright and are selected, the rest fades out,
   // the map zooms to the matches. Enter opens the first match, Esc clears the search.
@@ -1742,6 +1997,7 @@ function createThreadPulse(root, opts, host) {
   }
   const nameIn = (snap, id) => (snap.nodes[id] || {}).name || extraName(id);
   function diffSnaps(a, b) {
+    if (b) trackGrade(b.grade);
     if (!a || !b) return;
     for (const id in b.nodes) if (!a.nodes[id]) logChange(id, b.nodes[id].name, T.chNew, "new");
     for (const id in a.nodes) if (!b.nodes[id]) logChange(id, a.nodes[id].name, T.chGone, "gone");
@@ -1757,7 +2013,7 @@ function createThreadPulse(root, opts, host) {
     for (const k in b.links) if (!(k in a.links)) { const [u, v] = k.split("|"); logChange(u, nameIn(b, u), T.chLinkNew(nameIn(b, v)), "link"); }
     for (const k in a.links) if (!(k in b.links) && b.nodes[k.split("|")[0]] && b.nodes[k.split("|")[1]]) { const [u, v] = k.split("|"); logChange(u, nameIn(b, u), T.chLinkGone(nameIn(b, v)), "link"); }
   }
-  const CH_COLOR = { new: COLORS.good, online: COLORS.good, gone: COLORS.weak, offline: COLORS.weak, parent: COLORS.change, role: COLORS.change, signal: COLORS.medium, link: COLORS.medium };
+  const CH_COLOR = { new: COLORS.good, online: COLORS.good, gone: COLORS.weak, offline: COLORS.weak, parent: COLORS.change, role: COLORS.change, signal: COLORS.medium, link: COLORS.medium, gradeUp: COLORS.good, gradeDown: COLORS.weak };
   function logChange(id, name, text, kind) {
     changes = mergeChanges([{ t: Date.now(), id, name, text, kind }], changes);
     saveChanges();
@@ -2200,6 +2456,8 @@ function createThreadPulse(root, opts, host) {
     if (ch) row(T.channel, String(ch));
     const wifi = Object.keys(wifiById).length;
     if (wifi) row(T.rWifi, String(wifi));
+    const health = computeHealth(nm);
+    if (health) row(T.healthHead, health.grade + (health.known < health.factors.length ? " (" + T.healthPartial(health.known, health.factors.length) + ")" : ""));
 
     // devices: routers first, then by name (numeric: "Device 2" before "Device 10")
     const order = { routing_end_device: 0, end_device: 1, sleepy_end_device: 2 };
@@ -2217,6 +2475,10 @@ function createThreadPulse(root, opts, host) {
       L.push(`| ${[nm(n.id), area, [i.vendor, i.product].filter(Boolean).join(" ") || "–", i.sw || "–", role, conn].map(md).join(" | ")} |`);
     }
 
+    if (health) {
+      L.push("", `**${T.healthHead}: ${health.grade}** (${T.rHealthNote}${health.known < health.factors.length ? "; " + T.healthPartial(health.known, health.factors.length) : ""})`, "");
+      for (const f of health.factors) L.push(`- ${T.hlLevel[f.level]} · ${T.hfTitle[f.key]}: ${f.level === "na" ? "" : md(f.value) + " – "}${md(f.text)}`);
+    }
     if (listData.weak.length) {
       L.push("", `**${T.weakHead}** ${T.weakSub}`, "");
       for (const w of listData.weak) L.push(`- ${md(nm(w.a))} ↔ ${md(nm(w.b))}: ${w.r} dBm`);

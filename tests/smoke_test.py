@@ -43,6 +43,8 @@ async def main_page(r, quick):
         hints = await b.js("document.querySelectorAll('#info table')[0] ? document.querySelectorAll('#info table')[0].rows.length : 0")
         r.check("hints listed", hints >= 2, f"{hints} hint rows")
         r.check("list button shows hint count", "hint" in await b.js(f"{G}('toggle').textContent"))
+        health = await b.js("(document.querySelector('#info .health') || {}).innerText || ''")
+        r.check("mesh health in the list: grade and six factors", bool(re.search(r"Mesh health: [A-E]", health)) and health.count("●") == 6 and "rule of thumb" in health, health[:80])
 
         # search + panel
         await b.js(search_js("plug", enter=False)); await asyncio.sleep(0.6)
@@ -117,6 +119,7 @@ async def main_page(r, quick):
         r.check("anonymised report has a row per device and no device or room names", len(rows) == 14 and not leaked, str(leaked or len(rows)))
         r.check("report contains no addresses or network identifiers", not re.search(r"[0-9a-f]{12}|dead00beef|MyHome|PAN", anon, re.I))
         r.check("report lists hints and weak links", "Restarted 140 times" in anon and "Weak links between routers" in anon)
+        r.check("report contains the mesh health with its factors", bool(re.search(r"\*\*Mesh health: [A-E]\*\*", anon)) and "· Stability:" in anon)
         await b.js(f"{G}('reportanon').click()")
         named = await b.js(f"{G}('reporttext').value")
         r.check("report with names", "| Floor lamp |" in named and "anonymised" not in named.split("\n")[1] and not re.search(r"[0-9a-f]{12}", named))
@@ -174,6 +177,8 @@ async def other_pages(r):
         await b.js(f"{G}('exportbtn').click(); document.querySelector('[data-act=report]').click()")
         rep = await b.js(f"{G}('reporttext').value")
         r.check("anonymised report hides the names of other border routers", "HomePod" not in rep and "AppleTV" not in rep and "Border router 1" in rep, rep[:200])
+        h = await b.js("(document.querySelector('#info .health') || {}).innerText || ''")
+        r.check("mesh health says when factors are unknown (Apple-only)", "only 4 of 6 factors judged" in h and "Not judged" in h, h[:120])
         ticker = await b.js(f"{G}('live').textContent")
         r.check("without known border router messages are animated to the parent router", "→ HA" in ticker, ticker[:80])
         r.errors("Apple-only demo", b.errors)

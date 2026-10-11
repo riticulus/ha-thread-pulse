@@ -99,7 +99,7 @@
       const leaderRid = leaders.sort((a, b) => leaders.filter(x => x === b).length - leaders.filter(x => x === a).length)[0];
       const leaderId = leaderRid !== undefined ? ridToId[leaderRid] : null;
       const leaderName = !leaderId ? "" : nodeById[leaderId] ? nodeById[leaderId].name : extraName(leaderId);
-      const routers = Object.keys(ridToId).length || nodes.filter(n => n.type === "routing_end_device").length + extraIds.size;
+      const routers = routerCount();
       h += `<h4>${T.secNetwork}</h4><dl>` +
         row(T.networkName, esc((ds && ds.name) || net.name || "")) +
         row(T.channel, esc(String((threadInfo && threadInfo.otbr && threadInfo.otbr.channel) || (ds && ds.channel) || net.channel || ""))) +
@@ -107,7 +107,7 @@
         row(T.extPanId, extPanId ? `<span style="font-family:monospace">${esc(extPanId)}</span>` : "") +
         row(T.routersInMesh, T.ofMax(routers)) +
         row(T.devicesInMesh, String(nodes.length + extraIds.size)) +
-        row(T.leader, esc(leaderName)) + `</dl>`;
+        row(T.leader, esc(leaderName)) + `</dl>` + healthHtml(true);
       const o = threadInfo && threadInfo.otbr && threadInfo.otbr.extAddr && threadInfo.otbr.extAddr.toLowerCase() === id ? threadInfo.otbr : null;
       h += `<h4>${T.secBorderRouter}</h4><dl>` + row(T.brKind, o ? esc(T.brOtbr) : "") + discRows(disc, false) +
         row(T.address, `<span style="font-family:monospace">${esc(id)}</span>`) +

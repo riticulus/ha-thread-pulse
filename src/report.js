@@ -48,6 +48,8 @@
     if (ch) row(T.channel, String(ch));
     const wifi = Object.keys(wifiById).length;
     if (wifi) row(T.rWifi, String(wifi));
+    const health = computeHealth(nm);
+    if (health) row(T.healthHead, health.grade + (health.known < health.factors.length ? " (" + T.healthPartial(health.known, health.factors.length) + ")" : ""));
 
     // devices: routers first, then by name (numeric: "Device 2" before "Device 10")
     const order = { routing_end_device: 0, end_device: 1, sleepy_end_device: 2 };
@@ -65,6 +67,10 @@
       L.push(`| ${[nm(n.id), area, [i.vendor, i.product].filter(Boolean).join(" ") || "–", i.sw || "–", role, conn].map(md).join(" | ")} |`);
     }
 
+    if (health) {
+      L.push("", `**${T.healthHead}: ${health.grade}** (${T.rHealthNote}${health.known < health.factors.length ? "; " + T.healthPartial(health.known, health.factors.length) : ""})`, "");
+      for (const f of health.factors) L.push(`- ${T.hlLevel[f.level]} · ${T.hfTitle[f.key]}: ${f.level === "na" ? "" : md(f.value) + " – "}${md(f.text)}`);
+    }
     if (listData.weak.length) {
       L.push("", `**${T.weakHead}** ${T.weakSub}`, "");
       for (const w of listData.weak) L.push(`- ${md(nm(w.a))} ↔ ${md(nm(w.b))}: ${w.r} dBm`);

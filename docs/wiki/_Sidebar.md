@@ -9,6 +9,7 @@
 - [Live data flow & traffic heat](Live-Data-Flow)
 - [Detail panel](Detail-Panel)
 - [Hints and warnings](Hints-and-Warnings)
+- [Mesh health](Mesh-Health)
 - [Response time](Response-Time)
 - [Change log](Change-Log)
 - [Offline notification](Offline-Notification)

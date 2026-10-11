@@ -80,6 +80,7 @@
   }
   const nameIn = (snap, id) => (snap.nodes[id] || {}).name || extraName(id);
   function diffSnaps(a, b) {
+    if (b) trackGrade(b.grade);
     if (!a || !b) return;
     for (const id in b.nodes) if (!a.nodes[id]) logChange(id, b.nodes[id].name, T.chNew, "new");
     for (const id in a.nodes) if (!b.nodes[id]) logChange(id, a.nodes[id].name, T.chGone, "gone");
@@ -95,7 +96,7 @@
     for (const k in b.links) if (!(k in a.links)) { const [u, v] = k.split("|"); logChange(u, nameIn(b, u), T.chLinkNew(nameIn(b, v)), "link"); }
     for (const k in a.links) if (!(k in b.links) && b.nodes[k.split("|")[0]] && b.nodes[k.split("|")[1]]) { const [u, v] = k.split("|"); logChange(u, nameIn(b, u), T.chLinkGone(nameIn(b, v)), "link"); }
   }
-  const CH_COLOR = { new: COLORS.good, online: COLORS.good, gone: COLORS.weak, offline: COLORS.weak, parent: COLORS.change, role: COLORS.change, signal: COLORS.medium, link: COLORS.medium };
+  const CH_COLOR = { new: COLORS.good, online: COLORS.good, gone: COLORS.weak, offline: COLORS.weak, parent: COLORS.change, role: COLORS.change, signal: COLORS.medium, link: COLORS.medium, gradeUp: COLORS.good, gradeDown: COLORS.weak };
   function logChange(id, name, text, kind) {
     changes = mergeChanges([{ t: Date.now(), id, name, text, kind }], changes);
     saveChanges();

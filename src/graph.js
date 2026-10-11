@@ -155,6 +155,7 @@
     renderChanges();
     if (panelNode && (nodeById[panelNode] || extraIds.has(panelNode) || wifiById[panelNode])) renderPanel(); else if (panelNode) closePanel();
     lastSnap = snapshotOf(nodes, edges, byId);
+    lastSnap.grade = (computeHealth() || {}).grade;    // grade changes go to the change log (issue #84)
     $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + " · " + T.tapHint + " · v" + VERSION;
   }
 
@@ -164,7 +165,7 @@
     const { parents, weak, count } = listData;
     hintsOf = computeHints(parents);
     const allHints = Object.entries(hintsOf).flatMap(([id, hs]) => hs.map(t => [id, t]));
-    let h = `<div id="changes"></div><b>${T.hintsHead}</b>` + (allHints.length
+    let h = `<div id="changes"></div>` + healthHtml() + `<b>${T.hintsHead}</b>` + (allHints.length
       ? `<table>${allHints.map(([id, t]) => `<tr><td style="white-space:nowrap;vertical-align:top"><a href="#" data-open="${id}">${esc(nodeById[id].name)}</a></td><td>${esc(t)}</td></tr>`).join("")}</table>`
       : `<div>${T.noHints}</div>`) + `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${T.hintsNote}</div>`;
     hintCount = allHints.length; setList(!$("info").classList.contains("hidden"), false);
