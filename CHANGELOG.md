@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+- Maintenance after enabling CodeQL code scanning: the *Validate* workflow runs with a read-only token, line breaks in router names are replaced completely in the panel title. The two warnings in the unmodified graph library (vis-network) are dismissed with a documented reason ([#94](https://github.com/riticulus/ha-thread-pulse/issues/94))
+
 ## [1.5.1] – 2026-10-11
 
 ### Fixed
