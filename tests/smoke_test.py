@@ -5,7 +5,7 @@
 
 Builds nothing – run `python3 build.py` first. Exit code 1 if a check fails or a JavaScript error occurs.
 """
-import asyncio, json, sys
+import asyncio, re, json, sys
 from browser import Browser, Results, search_js
 
 PAGE = "dist/thread-pulse.html?demo&lang=en"
@@ -107,6 +107,24 @@ async def main_page(r, quick):
         r.check("map shows the real names again after the export", set(shown) <= set(await b.js("(() => { window.__texts = []; window.__rec = true; document.getElementById('heatbtn').click(); document.getElementById('heatbtn').click(); window.__rec = false; return window.__texts; })()")))
         r.check("menu closes after saving", await b.js(f"{G}('exportmenu').hidden"))
 
+        # text report (anonymised by default; never addresses or network identifiers)
+        await b.js(f"{G}('exportbtn').click(); document.querySelector('[data-act=report]').click()")
+        anon = await b.js(f"{G}('reporttext').value")
+        r.check("text report opens anonymised", not await b.js(f"{G}('report').hidden") and anon.startswith("### Thread network") and "anonymised" in anon.split("\n")[1])
+        rows = [l.split(" | ") for l in anon.splitlines() if re.match(r"\| Device \d+ \|", l)]
+        shown = [c.strip("| ") for row in rows for c in row[:2]] + re.findall(r"talks through (.+?) ·", anon) + re.findall(r"\*\*(.+?)\*\*:", anon)
+        leaked = [t for t in shown if t in DEMO_NAMES or t.upper() in DEMO_ROOMS]
+        r.check("anonymised report has a row per device and no device or room names", len(rows) == 14 and not leaked, str(leaked or len(rows)))
+        r.check("report contains no addresses or network identifiers", not re.search(r"[0-9a-f]{12}|dead00beef|MyHome|PAN", anon, re.I))
+        r.check("report lists hints and weak links", "Restarted 140 times" in anon and "Weak links between routers" in anon)
+        await b.js(f"{G}('reportanon').click()")
+        named = await b.js(f"{G}('reporttext').value")
+        r.check("report with names", "| Floor lamp |" in named and "anonymised" not in named.split("\n")[1] and not re.search(r"[0-9a-f]{12}", named))
+        await b.js("document.querySelector('[data-act=reportcopy]').click()"); await asyncio.sleep(0.3)
+        r.check("copy gives feedback", bool(await b.js(f"{G}('reportmsg').textContent")))
+        await b.js("document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}))")
+        r.check("Escape closes the report", await b.js(f"{G}('report').hidden"))
+
         # toolbar toggles
         for btn, on, off in (("roombtn", "⌂ Rooms off", "⌂ Rooms"), ("heatbtn", "≋ Traffic", "≋ Traffic off"), ("livebtn", "▶ Resume live", "⏸ Pause live"),
                              ("soundbtn", "🔊 Sound off", "🔇 Sound")):
@@ -153,6 +171,9 @@ async def other_pages(r):
                 str([t for t in labels if "router" in t.lower() or "Home" in t][:4]))
         r.check("names that arrive after the map is drawn also reach the list", "HomePod Living Room …7114" in await b.js(f"{G}('info').textContent"))
         r.check("Apple-only demo loads", "4 devices" in await b.js(f"{G}('status').textContent"))
+        await b.js(f"{G}('exportbtn').click(); document.querySelector('[data-act=report]').click()")
+        rep = await b.js(f"{G}('reporttext').value")
+        r.check("anonymised report hides the names of other border routers", "HomePod" not in rep and "AppleTV" not in rep and "Border router 1" in rep, rep[:200])
         ticker = await b.js(f"{G}('live').textContent")
         r.check("without known border router messages are animated to the parent router", "→ HA" in ticker, ticker[:80])
         r.errors("Apple-only demo", b.errors)

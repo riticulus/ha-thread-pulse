@@ -15,6 +15,7 @@
 - [Room view](Room-View)
 - [Search](Search)
 - [Saving an image](Saving-an-Image)
+- [Text report](Text-Report)
 - [The list](The-List)
 - [Ambient mode](Ambient-Mode)
 - [Demo mode](Demo-Mode)

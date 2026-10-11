@@ -38,6 +38,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - **Optional sound:** a quiet tick for every message, high for messages to Home Assistant, low for commands
 - **Ambient mode** for wall tablets: only the pulsing mesh, dark, with a slow automatic zoom
 - **Save as image:** the map as a PNG – with names, or anonymised (*Device 1, 2 …*, *Room A, B …*) for a forum post
+- **Text report:** a Markdown summary for forums and issues – devices, models, firmware, roles, signal, weak links and hints; anonymised by default, never addresses or network identifiers
 - **Search:** find a device by name or area; matches are highlighted and zoomed to, Enter opens the details
 - **Response time:** how long a device takes to confirm a command from Home Assistant – measured while the page is open
 - **Live counter per device:** messages to and from Home Assistant since the page was opened (last minute, last hour, last message)
@@ -154,7 +155,7 @@ The graph library (`thread-pulse-vis-network.js`, ~1.6 MB) is only loaded when a
 
 ## Privacy
 
-Everything runs in your browser. The page uses the session of the logged-in Home Assistant user to read data from your own Home Assistant and sends nothing anywhere else. No external scripts or fonts are loaded. A saved image stays on your device until you share it – use the anonymised version for public posts.
+Everything runs in your browser. The page uses the session of the logged-in Home Assistant user to read data from your own Home Assistant and sends nothing anywhere else. No external scripts or fonts are loaded. A saved image or text report stays on your device until you share it – use the anonymised version for public posts.
 
 ## Translations
 

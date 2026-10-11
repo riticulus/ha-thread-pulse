@@ -41,7 +41,7 @@
   applyColorVars();
   theme();
 
-  root.addEventListener("keydown", e => { if (e.key === "Escape") setExportMenu(false); if (e.key === "Escape" && e.target.id !== "search") closePanel(); });
+  root.addEventListener("keydown", e => { if (e.key === "Escape" && !$("report").hidden) return closeReport(); if (e.key === "Escape") setExportMenu(false); if (e.key === "Escape" && e.target.id !== "search") closePanel(); });
   root.addEventListener("pointerdown", e => { if (!e.target.closest || !e.target.closest("#exportbox")) setExportMenu(false); });
 
   root.addEventListener("click", e => {
@@ -50,6 +50,9 @@
     if (t.dataset.open) openPanel(t.dataset.open);
     else if (t.dataset.act === "close") closePanel();
     else if (t.dataset.act === "export" || t.dataset.act === "exportanon") exportImage(t.dataset.act === "exportanon");
+    else if (t.dataset.act === "report") showReport();
+    else if (t.dataset.act === "reportclose") closeReport();
+    else if (t.dataset.act === "reportcopy") copyReport();
     else if (t.dataset.act === "clearchanges") clearChanges();
     else if (t.dataset.device) openDevice(t.dataset.device);
     else if (t.dataset.identify) pressIdentify(t.dataset.identify);

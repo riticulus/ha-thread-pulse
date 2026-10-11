@@ -7,7 +7,7 @@ Home Assistant.
 | Test | What it checks | Needs |
 |---|---|---|
 | `check-i18n.js` | Every language has the same keys as English, text functions work | Node |
-| `smoke_test.py` | Clicks through every feature in demo mode and fails on any JavaScript error: list, hints, search, detail panels (device, Wi-Fi), battery forecast, identify button, toolbar buttons, image export (with names and anonymised), sound (with a fake audio engine: tones and rate limit), pause, change log, ambient mode, `?nowifi`, Apple-only network (`?demo=apple`), two devices with the same hardware address (`?demo=dupaddr`), French texts, error message without Home Assistant | Python, Chrome |
+| `smoke_test.py` | Clicks through every feature in demo mode and fails on any JavaScript error: list, hints, search, detail panels (device, Wi-Fi), battery forecast, identify button, toolbar buttons, image export (with names and anonymised), text report (anonymised without names or addresses, with names, copy, Esc), sound (with a fake audio engine: tones and rate limit), pause, change log, ambient mode, `?nowifi`, Apple-only network (`?demo=apple`), two devices with the same hardware address (`?demo=dupaddr`), French texts, error message without Home Assistant | Python, Chrome |
 | `visual_test.py` | Pixel checks: mesh centered after normal load, after switching the room view off and after a double-click on empty space; double-click on a router | Python, Chrome, Pillow |
 
 ## Run

@@ -47,7 +47,10 @@
     routers[0].demoFabrics.push(fab("Google LLC", 24582, 3)); routers[0].info.fabrics = 3;
     // firmware (issue #81): same models with different versions, one update available, one skipped, one installing
     for (const n of all2) {
-      if (n.icon === "power-plug") n.info.product = "Smart Plug"; else if (n.icon === "lightbulb") n.info.product = "Smart Bulb";
+      // product names like real ones – never the device name (the anonymised text report shows the model, issue #85)
+      n.info.product = { "power-plug": "Smart Plug", lightbulb: "Smart Bulb", blinds: "Roller Blind", speaker: "Smart Speaker", "air-filter": "Air Purifier",
+        thermostat: "Thermostat", thermometer: "Climate Sensor", door: "Contact Sensor", "window-closed-variant": "Contact Sensor",
+        "motion-sensor": "Motion Sensor", "water-alert": "Leak Sensor", "gesture-tap-button": "Smart Button" }[n.icon] || "Thread Device";
       n.demoUpdate = { installed: n.info.sw, latest: n.info.sw, available: false, skipped: false, progress: null };
     }
     routers[1].demoUpdate = { installed: routers[1].info.sw, latest: "1.4.0", available: true, skipped: false, progress: null };
