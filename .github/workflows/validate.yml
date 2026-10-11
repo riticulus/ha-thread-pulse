@@ -29,6 +29,8 @@ jobs:
         run: git diff --exit-code -- dist/
       - name: Translations complete
         run: node tests/check-i18n.js
+      - name: User guide (docs/wiki) links and images
+        run: python3 tools/wiki.py check
       - name: Syntax check
         run: |
           node --input-type=module --check < dist/ha-thread-pulse.js

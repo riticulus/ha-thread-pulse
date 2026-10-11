@@ -1,0 +1,1 @@
+Thread Pulse · [MIT License](https://github.com/riticulus/ha-thread-pulse/blob/main/LICENSE) · This guide describes {{VERSION}} · [Report a problem](https://github.com/riticulus/ha-thread-pulse/issues) · Generated from [`docs/wiki`](https://github.com/riticulus/ha-thread-pulse/tree/main/docs/wiki) in the repository – suggest changes there with a pull request

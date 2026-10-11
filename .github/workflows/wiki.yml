@@ -1,0 +1,57 @@
+name: Wiki
+
+# Publishes the user guide from docs/wiki/ to the GitHub wiki. Called by the action "Release" after every release
+# (with the release tag), or started by hand ("Run workflow"; empty = the latest release). The wiki must not be
+# edited directly – this action overwrites it.
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: true
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Tag or branch to publish, e.g. v1.5.0 or main (empty = latest release)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: What to publish
+        id: ref
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ref="${{ inputs.ref }}"
+          if [ -z "$ref" ]; then ref="$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName)"; fi
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "Publishing the wiki from: $ref"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.ref.outputs.ref }}
+
+      - name: Check links and images
+        run: python3 tools/wiki.py check
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git clone --quiet "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki
+          python3 tools/wiki.py publish wiki
+          cd wiki
+          git add -A
+          if git diff --cached --quiet; then echo "Wiki is already up to date"; exit 0; fi
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit --quiet -m "Update from ${{ steps.ref.outputs.ref }} (docs/wiki)"
+          git config http.postBuffer 157286400
+          git push --quiet origin HEAD
+          git show --stat --oneline HEAD | head -30
