@@ -36,6 +36,7 @@ const TP_CSS = `
   .lg { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
   .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
   .ln { width: 18px; height: 3px; display: inline-block; border-radius: 2px; }
+  .lg[hidden] { display: none; }
   .heatln { height: 7px; opacity: .6; filter: blur(.6px); }
   #stage { flex: 1; min-height: 300px; position: relative; container-type: size; }
   #net { position: absolute; inset: 0; touch-action: none; }   /* no browser page zoom on double tap inside the map */
@@ -154,6 +155,8 @@ const TEXT_EN = {
   bfNoData: days => `not enough data yet (${days} day${days === 1 ? "" : "s"} – at least 14 needed)`,
   bfNote: "Estimate from Home Assistant's long-term statistics. Many batteries stay almost full for a long time and then drop quickly.",
   hBattSoon: d => `The battery will probably be empty in about ${d} day${d === 1 ? "" : "s"} (estimate) – keep a replacement ready.`,
+  lgWifi: "Matter on Wi-Fi", wifiSub: "Matter over Wi-Fi – not part of the Thread mesh", ethSub: "Matter over Ethernet – not part of the Thread mesh",
+  secWifi: "Wi-Fi", wifiStd: "Standard", wifiNote: "Wi-Fi values as last reported by the device, may be outdated.",
   secHints: "Hints", hintsHead: "Hints for the network", listHints: n => ` · ${n} hint${n === 1 ? "" : "s"}`,
   hintsNote: "Hints are rules of thumb based on the data the devices report – suggestions, not measurements.",
   noHints: "No weak spots found.",
@@ -223,6 +226,8 @@ const TEXT_DE = {
   bfNoData: days => `noch zu wenig Daten (${days} Tag${days === 1 ? "" : "e"} – mindestens 14 nötig)`,
   bfNote: "Schätzung aus der Langzeitstatistik von Home Assistant. Viele Batterien bleiben lange fast voll und fallen dann schnell ab.",
   hBattSoon: d => `Die Batterie ist voraussichtlich in ca. ${d} Tag${d === 1 ? "" : "en"} leer (Schätzung) – Ersatz bereithalten.`,
+  lgWifi: "Matter über WLAN", wifiSub: "Matter über WLAN – nicht Teil des Thread-Netzes", ethSub: "Matter über Ethernet – nicht Teil des Thread-Netzes",
+  secWifi: "WLAN", wifiStd: "Standard", wifiNote: "WLAN-Werte: letzter Stand, den das Gerät gemeldet hat – kann veraltet sein.",
   secHints: "Hinweise", hintsHead: "Hinweise zum Netz", listHints: n => ` · ${n} Hinweis${n === 1 ? "" : "e"}`,
   hintsNote: "Hinweise sind Faustregeln aus den Daten, die die Geräte melden – Vorschläge, keine Messungen.",
   noHints: "Keine Schwachstellen gefunden.",
@@ -298,6 +303,8 @@ const TEXT_ES = {
   bfNoData: days => `aún no hay datos suficientes (${days} día${days === 1 ? "" : "s"} – se necesitan al menos 14)`,
   bfNote: "Estimación a partir de las estadísticas a largo plazo de Home Assistant. Muchas baterías se mantienen casi llenas mucho tiempo y luego bajan rápidamente.",
   hBattSoon: d => `La batería probablemente se agotará en unos ${d} día${d === 1 ? "" : "s"} (estimación) – ten una de repuesto a mano.`,
+  lgWifi: "Matter por Wi-Fi", wifiSub: "Matter por Wi-Fi – no forma parte de la red Thread", ethSub: "Matter por Ethernet – no forma parte de la red Thread",
+  secWifi: "Wi-Fi", wifiStd: "Estándar", wifiNote: "Valores Wi-Fi tal como los informó por última vez el dispositivo; pueden estar desactualizados.",
   secHints: "Consejos", hintsHead: "Consejos para la red", listHints: n => ` · ${n} consejo${n === 1 ? "" : "s"}`,
   hintsNote: "Los consejos son reglas prácticas basadas en los datos que informan los dispositivos – sugerencias, no mediciones.",
   noHints: "No se encontraron puntos débiles.",
@@ -373,6 +380,8 @@ const TEXT_FR = {
   bfNoData: days => `pas encore assez de données (${days} jour${days === 1 ? "" : "s"} – au moins 14 nécessaires)`,
   bfNote: "Estimation à partir des statistiques à long terme de Home Assistant. Beaucoup de piles restent presque pleines longtemps, puis baissent rapidement.",
   hBattSoon: d => `La pile sera probablement vide dans environ ${d} jour${d === 1 ? "" : "s"} (estimation) – prévoyez une pile de rechange.`,
+  lgWifi: "Matter en Wi-Fi", wifiSub: "Matter en Wi-Fi – ne fait pas partie du réseau Thread", ethSub: "Matter en Ethernet – ne fait pas partie du réseau Thread",
+  secWifi: "Wi-Fi", wifiStd: "Norme", wifiNote: "Valeurs Wi-Fi telles que signalées en dernier par l'appareil, peuvent être obsolètes.",
   secHints: "Conseils", hintsHead: "Conseils pour le réseau", listHints: n => ` · ${n} conseil${n === 1 ? "" : "s"}`,
   hintsNote: "Les conseils sont des règles empiriques basées sur les données signalées par les appareils – des suggestions, pas des mesures.",
   noHints: "Aucun point faible trouvé.",
@@ -448,6 +457,8 @@ const TEXT_IT = {
   bfNoData: days => `dati ancora insufficienti (${days} giorn${days === 1 ? "o" : "i"} – ne servono almeno 14)`,
   bfNote: "Stima dalle statistiche a lungo termine di Home Assistant. Molte batterie restano quasi piene a lungo e poi calano rapidamente.",
   hBattSoon: d => `La batteria sarà probabilmente scarica tra circa ${d} giorn${d === 1 ? "o" : "i"} (stima) – tieni pronta una batteria di ricambio.`,
+  lgWifi: "Matter su Wi-Fi", wifiSub: "Matter su Wi-Fi – non fa parte della rete Thread", ethSub: "Matter su Ethernet – non fa parte della rete Thread",
+  secWifi: "Wi-Fi", wifiStd: "Standard", wifiNote: "Valori Wi-Fi come segnalati per ultimi dal dispositivo, potrebbero non essere aggiornati.",
   secHints: "Suggerimenti", hintsHead: "Suggerimenti per la rete", listHints: n => ` · ${n} suggeriment${n === 1 ? "o" : "i"}`,
   hintsNote: "I suggerimenti sono regole empiriche basate sui dati segnalati dai dispositivi – proposte, non misurazioni.",
   noHints: "Nessun punto debole trovato.",
@@ -523,6 +534,8 @@ const TEXT_NL = {
   bfNoData: days => `nog te weinig gegevens (${days} dag${days === 1 ? "" : "en"} – minstens 14 nodig)`,
   bfNote: "Schatting op basis van de langetermijnstatistieken van Home Assistant. Veel batterijen blijven lang bijna vol en lopen dan snel leeg.",
   hBattSoon: d => `De batterij is waarschijnlijk over ongeveer ${d} dag${d === 1 ? "" : "en"} leeg (schatting) – houd een reserve klaar.`,
+  lgWifi: "Matter via wifi", wifiSub: "Matter via wifi – geen deel van het Thread-netwerk", ethSub: "Matter via ethernet – geen deel van het Thread-netwerk",
+  secWifi: "Wifi", wifiStd: "Standaard", wifiNote: "Wifi-waarden zoals laatst gemeld door het apparaat, kunnen verouderd zijn.",
   secHints: "Tips", hintsHead: "Tips voor het netwerk", listHints: n => ` · ${n} tip${n === 1 ? "" : "s"}`,
   hintsNote: "Tips zijn vuistregels op basis van de gegevens die de apparaten melden – suggesties, geen metingen.",
   noHints: "Geen zwakke plekken gevonden.",
@@ -549,12 +562,13 @@ function createThreadPulse(root, opts, host) {
   const every = (fn, ms) => timers.push(setInterval(fn, ms));
   let destroyed = false;
   const DEMO = !!opts.demo;
+  const SHOW_WIFI = opts.showWifi !== false;
   const AMBIENT = !!opts.ambient, AMBIENT_MOTION = AMBIENT && opts.ambientMotion !== false;
   let lang = (opts.lang || navigator.language || "en").slice(0, 2);
   let T = TEXT[lang] || TEXT.en;
 
   // ---------- helpers ----------
-  const COLORS = { heat: "#ffb300", br: "#7b1fa2", router: "#1e88e5", end: "#90caf9", sleepy: "#43a047", off: "#9e9e9e", up: "#00bcd4", down: "#e91e63" };
+  const COLORS = { wifi: "#78909c", heat: "#ffb300", br: "#7b1fa2", router: "#1e88e5", end: "#90caf9", sleepy: "#43a047", off: "#9e9e9e", up: "#00bcd4", down: "#e91e63" };
   const QUAL = rssi => rssi >= -65 ? ["#43a047", "g", T.good] : rssi >= -80 ? ["#fb8c00", "o", T.medium] : ["#e53935", "r", T.weak];
   const hex16 = s => BigInt(s).toString(16).padStart(16, "0");
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -661,7 +675,7 @@ function createThreadPulse(root, opts, host) {
     const lg = (cls, color, text) => `<span class="lg"><span class="${cls}" style="background:${color}"></span>${text}</span>`;
     $("legend").innerHTML =
       lg("dot", COLORS.br, T.lgBr) + lg("dot", COLORS.router, T.lgRouter) + lg("dot", COLORS.end, T.lgEnd) + lg("dot", COLORS.sleepy, T.lgSleepy) +
-      lg("ln", "#43a047", T.good) + lg("ln", "#fb8c00", T.medium) + lg("ln", "#e53935", T.weak) + lg("dot", COLORS.up, T.lgUp) + lg("dot", COLORS.down, T.lgDown) + lg("ln heatln", COLORS.heat, T.lgHeat);
+      lg("ln", "#43a047", T.good) + lg("ln", "#fb8c00", T.medium) + lg("ln", "#e53935", T.weak) + lg("dot", COLORS.up, T.lgUp) + lg("dot", COLORS.down, T.lgDown) + lg("ln heatln", COLORS.heat, T.lgHeat) + `<span class="lg" id="lgwifi" hidden><span class="dot" style="background:${COLORS.wifi}"></span>${T.lgWifi}</span>`;
     setList(!$("info").classList.contains("hidden"), false);
     setLegend(!$("legend").classList.contains("hidden"), false);
   }
@@ -688,13 +702,23 @@ function createThreadPulse(root, opts, host) {
       if (!e.entity_category && !e.hidden_by && !e.disabled_by) (mainEnts[e.device_id] = mainEnts[e.device_id] || []).push(e.entity_id);
     }
     const st = $("status");
-    const nodes = [];
+    const nodes = [], wifi = [];
     let done = 0;
     await Promise.all(devs.map(async d => {
       try {
         const node = await diag(hass, entry, d.id), a = node.attributes;
         const iface = (a["0/51/0"] || []).find(x => x["7"] === 4);          // interface type 4 = Thread
-        if (!iface || a["0/53/1"] === undefined) return;
+        if (!iface || a["0/53/1"] === undefined) {
+          // Matter over Wi-Fi (type 1) or Ethernet (type 2): separate group, no Thread data (issue #43)
+          const ifs = a["0/51/0"] || [], kind = ifs.some(x => x["7"] === 1) ? "wifi" : ifs.some(x => x["7"] === 2) ? "ethernet" : null;
+          if (!kind) return;
+          const wents = (entsByDev[d.id] || []).map(id => ({ domain: id.split(".")[0], dc: ((hass.states[id] || {}).attributes || {}).device_class }));
+          wifi.push({ id: "wifi:" + d.id, kind, name: d.name_by_user || d.name, icon: iconFor(wents), available: node.available, devId: d.id,
+                      entities: entsByDev[d.id] || [], mainEntities: mainEnts[d.id] || [], area: areaName[d.area_id] || "",
+                      info: { vendor: a["0/40/1"] || d.manufacturer, product: a["0/40/3"] || d.model, sw: a["0/40/10"] || d.sw_version, hw: a["0/40/8"] || d.hw_version,
+                              reboots: a["0/51/1"], bootReason: a["0/51/4"], rssi: a["0/54/4"], channel: a["0/54/3"], wifiVersion: a["0/54/2"] } });
+          return;
+        }
         const mac = [...atob(iface["4"])].map(c => c.charCodeAt(0).toString(16).padStart(2, "0")).join("");
         const role = a["0/53/1"];                                            // 2 sleepy, 3 end device, 4 REED, 5 router, 6 leader
         const type = role >= 5 ? "routing_end_device" : role >= 3 ? "end_device" : "sleepy_end_device";
@@ -718,12 +742,12 @@ function createThreadPulse(root, opts, host) {
       otbr: otbr && { extAddr: otbr.extended_address, borderAgentId: otbr.border_agent_id, channel: otbr.channel, extPanId: otbr.extended_pan_id },
       datasets: datasets.map(d => ({ name: d.network_name, channel: d.channel, panId: d.pan_id, extPanId: d.extended_pan_id, preferred: d.preferred, source: d.source })),
     };
-    return { nodes, brExt, hass, thread };
+    return { nodes, wifi, brExt, hass, thread };
   }
 
   // ---------- graph ----------
   let searchHits = [], searchActive = false;
-  let extraIds = new Set(), threadInfo = null;
+  let extraIds = new Set(), threadInfo = null, wifiById = {};
   let hintsOf = {}, nodeById = {}, linksOf = {}, battOf = {}, brExt = null, devToNode = {}, entToNode = {}, nodeName = {}, onMap = new Set(), ridToId = {}, routeOf = {}, parentRid = {}, ownRid = {};
 
   function render(model, keep) {      // keep: positions of the previous map (refresh without layout jump)
@@ -778,6 +802,13 @@ function createThreadPulse(root, opts, host) {
       }
       parents.push({ child: n.name, type: n.type, parent: pname, rssi, src });
     }
+    wifiById = {};
+    if (SHOW_WIFI) for (const w of model.wifi || []) {
+      wifiById[w.id] = w;
+      visNodes.push({ id: w.id, label: w.name, shape: "image", image: iconImg(w.icon, w.available ? COLORS.wifi : COLORS.off, 64), size: 14, physics: false,
+                      shapeProperties: { useBorderWithImage: false }, x: 0, y: 0, ...(keep && keep[w.id] ? { x: keep[w.id].x, y: keep[w.id].y } : {}),
+                      title: `${w.name}\n${w.kind === "ethernet" ? T.ethSub : T.wifiSub}${w.available ? "" : T.unreachable}` });
+    }
     const ids = new Set(visNodes.map(v => v.id));
     const avg = e => Math.round(e.rssi.reduce((s, v) => s + v, 0) / e.rssi.length);
     const seenEdge = new Set();
@@ -793,15 +824,16 @@ function createThreadPulse(root, opts, host) {
                    interaction: { hover: true, tooltipDelay: 120 } };
     if (network) network.destroy();
     network = new VIS.Network($("net"), data, opts);
-    if (keep) { const view = keep.__view; if (view) network.moveTo({ position: view.position, scale: view.scale, animation: false }); }
+    if (keep) { placeWifi(); const view = keep.__view; if (view) network.moveTo({ position: view.position, scale: view.scale, animation: false }); }
     else {
+      network.once("stabilizationIterationsDone", placeWifi);       // before the fit below
       network.once("stabilizationIterationsDone", () => network.fit({ animation: false }));
       network.once("stabilized", () => network.fit({ animation: { duration: 300 } }));
     }
-    network.on("beforeDrawing", ctx => { drawRooms(ctx); drawHeat(ctx); });
+    network.on("beforeDrawing", ctx => { drawRooms(ctx); drawHeat(ctx); drawWifiLabel(ctx); });
     if (roomOn) applyRooms(true, false);
     network.on("afterDrawing", ctx => { drawBadges(ctx); drawFlashes(ctx); drawPackets(ctx); });
-    network.on("click", p => { if (p.nodes.length && (nodeById[p.nodes[0]] || extraIds.has(p.nodes[0]))) openPanel(p.nodes[0]); else closePanel(); });
+    network.on("click", p => { if (p.nodes.length && (nodeById[p.nodes[0]] || extraIds.has(p.nodes[0]) || wifiById[p.nodes[0]])) openPanel(p.nodes[0]); else closePanel(); });
     // double click / double tap (issue #23): on empty space center and fit the whole mesh, on a device zoom to it
     network.on("doubleClick", p => {
       if (p.nodes.length && !String(p.nodes[0]).startsWith("room:")) {
@@ -830,6 +862,8 @@ function createThreadPulse(root, opts, host) {
     devToNode = Object.fromEntries(nodes.filter(n => n.devId).map(n => [n.devId, n.id]));
     entToNode = {}; for (const n of nodes) for (const e of n.entities || []) entToNode[e] = n.id;
     nodeName = Object.fromEntries(nodes.map(n => [n.id, n.name]));
+    for (const w of Object.values(wifiById)) { devToNode[w.devId] = w.id; for (const e of w.entities) entToNode[e] = w.id; nodeName[w.id] = w.name; }
+    { const lw = $("lgwifi"); if (lw) lw.hidden = !Object.keys(wifiById).length; }
     // table: parents + weak router links
     parents.sort((p, q) => p.rssi - q.rssi);
     const weak = Object.values(edges).filter(e => !e.parent && ids.has(e.b))
@@ -856,7 +890,7 @@ function createThreadPulse(root, opts, host) {
     const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
     if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
     renderChanges();
-    if (panelNode && (nodeById[panelNode] || extraIds.has(panelNode))) renderPanel(); else if (panelNode) closePanel();
+    if (panelNode && (nodeById[panelNode] || extraIds.has(panelNode) || wifiById[panelNode])) renderPanel(); else if (panelNode) closePanel();
     lastSnap = snapshotOf(nodes, edges, byId);
     $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + " · " + T.tapHint + " · v" + VERSION;
   }
@@ -878,7 +912,7 @@ function createThreadPulse(root, opts, host) {
     }
   }
   function pathToBr(nodeId) {
-    if (!brExt) return null;
+    if (!brExt || isWifiId(nodeId)) return null;      // Matter over Wi-Fi: counted, but no Thread path
     const br = Object.keys(ridToId).find(r => ridToId[r] === brExt);
     const ids = [nodeId];
     let r = ownRid[nodeId] ?? parentRid[nodeId];
@@ -1063,14 +1097,14 @@ function createThreadPulse(root, opts, host) {
       const done = () => { if (!network || destroyed) return; network.setOptions({ physics: { enabled: true } }); network.fit({ animation: { duration: 400 } }); };
       if (saved) { tweenTo(Object.fromEntries(ids.filter(id => saved[id]).map(id => [id, saved[id]])), animate ? 600 : 0, done); return; }
       network.setOptions({ physics: { enabled: true } });
-      network.once("stabilizationIterationsDone", () => network.fit({ animation: { duration: 400 } }));
+      network.once("stabilizationIterationsDone", () => { placeWifi(); network.fit({ animation: { duration: 400 } }); });
       network.stabilize(600);
       return;
     }
     if (animate && !preRoomPos) preRoomPos = network.getPositions();
     const rooms = roomsOf(), names = Object.keys(rooms).sort();
     const grouped = new Set(names.flatMap(a => rooms[a]));
-    const rest = network.body.data.nodes.getIds().filter(id => !grouped.has(id));
+    const rest = network.body.data.nodes.getIds().filter(id => !grouped.has(id) && !isWifiId(id));
     const isR = id => nodeById[id] && nodeById[id].type === "routing_end_device";
     const groups = names.map(a => rooms[a].slice().sort((a2, b2) => isR(b2) - isR(a2)));   // routers first in the ring
     if (rest.length) groups.unshift(rest);   // first (top left): the bottom left is covered by the live ticker
@@ -1084,7 +1118,7 @@ function createThreadPulse(root, opts, host) {
       g.forEach((id, j) => { const a = 2 * Math.PI * j / g.length - Math.PI / 2; target[id] = { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) }; });
     });
     network.setOptions({ physics: { enabled: false } });
-    tweenTo(target, animate ? 600 : 0, () => network.fit({ animation: animate ? { duration: 400 } : false }));
+    tweenTo(target, animate ? 600 : 0, () => { placeWifi(); network.fit({ animation: animate ? { duration: 400 } : false }); });
   }
   function tweenTo(target, D, done) {          // move nodes smoothly to target positions (physics must be off)
     network.setOptions({ physics: { enabled: false } });
@@ -1251,6 +1285,7 @@ function createThreadPulse(root, opts, host) {
     $("panel").innerHTML = h;
   }
   function renderPanel() {
+    if (wifiById[panelNode]) return renderWifiPanel(panelNode);
     if (!nodeById[panelNode] && extraIds.has(panelNode)) return renderRouterPanel(panelNode);
     const n = nodeById[panelNode]; if (!n) return closePanel();
     const i = n.info || {}, hass = DEMO ? null : freshHass();
@@ -1355,7 +1390,7 @@ function createThreadPulse(root, opts, host) {
     const q = norm($("search").value.trim());
     const fg = getComputedStyle(host.styleTarget).getPropertyValue("--fg").trim() || "#1f2733";
     searchActive = !!q;
-    searchHits = q ? Object.values(nodeById).filter(n => norm(n.name).includes(q) || norm(n.area).includes(q)).map(n => n.id) : [];
+    searchHits = q ? Object.values(nodeById).concat(Object.values(wifiById)).filter(n => norm(n.name).includes(q) || norm(n.area).includes(q)).map(n => n.id) : [];
     const hit = new Set(searchHits), upd = [];
     network.body.data.nodes.forEach(v => {
       const on = !q || hit.has(v.id);
@@ -1554,6 +1589,55 @@ function createThreadPulse(root, opts, host) {
     const f = battForecast[n.id];
     return f && f.state === "ok" && f.days <= BF_SOON ? T.hBattSoon(f.days) : null;
   }
+  // ---------- Matter devices on Wi-Fi / Ethernet (issue #43) ----------
+  // They do not take part in the Thread mesh: shown as a separate group in a column to the right of the mesh,
+  // without links and without path animation (their messages are only counted). Hidden with show_wifi: false / ?nowifi.
+  const WIFI_STD = ["802.11a", "802.11b", "802.11g", "802.11n", "802.11ac", "802.11ax", "802.11ah"];
+  const isWifiId = id => String(id).startsWith("wifi:");
+  function placeWifi() {                            // column to the right of the mesh, sorted by name
+    const ids = Object.keys(wifiById); if (!ids.length || !network) return;
+    const pos = network.getPositions(), mesh = Object.keys(pos).filter(id => !isWifiId(id) && !String(id).startsWith("room:"));
+    if (!mesh.length) return;
+    const xs = mesh.map(id => pos[id].x), ys = mesh.map(id => pos[id].y);
+    const x = Math.max(...xs) + 170, step = 75, y0 = (Math.min(...ys) + Math.max(...ys)) / 2 - (ids.length - 1) * step / 2;
+    ids.sort((a, b) => wifiById[a].name.localeCompare(wifiById[b].name)).forEach((id, i) => network.moveNode(id, x, y0 + i * step));
+  }
+  function drawWifiLabel(ctx) {
+    const ids = Object.keys(wifiById); if (!ids.length || !network) return;
+    const pos = network.getPositions(), top = ids.map(id => pos[id]).filter(Boolean).reduce((a, p) => (!a || p.y < a.y ? p : a), null);
+    if (!top) return;
+    ctx.save(); ctx.font = "600 12px -apple-system, Segoe UI, Roboto, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+    ctx.fillStyle = COLORS.wifi; ctx.fillText(T.lgWifi.toUpperCase(), top.x, top.y - 30); ctx.restore();
+  }
+  const wifiQual = r => r >= -60 ? ["g", T.good] : r >= -70 ? ["o", T.medium] : ["r", T.weak];   // Wi-Fi uses other limits than Thread
+  function renderWifiPanel(id) {
+    const w = wifiById[id], i = w.info || {}, hass = DEMO ? null : freshHass(), now = Date.now();
+    let h = `<div class="hd"><img src="${iconImg(w.icon, w.available ? COLORS.wifi : COLORS.off, 80)}" alt=""><div><div class="t">${esc(w.name)}</div>` +
+            `<div class="s">${esc(w.kind === "ethernet" ? T.ethSub : T.wifiSub)}${w.area ? " · " + esc(w.area) : ""}${w.available ? "" : esc(T.unreachable)}</div></div>` +
+            `<button class="x" title="×" data-act="close">×</button></div>`;
+    const rs = respSummary(id);
+    h += `<h4>${T.secLive}</h4><dl>` + liveRows(id) + (rs ? row(T.respTime, T.respVal(rs.last, rs.med, rs.n)) : "") + `</dl>`;
+    let v = "";
+    if (hass) for (const e of (w.mainEntities || []).slice(0, 10)) {
+      const st = hass.states[e]; if (!st) continue;
+      const name = deName((st.attributes.friendly_name || e).replace(w.name, "").trim()) || T.state;
+      v += row(name, `${esc(fmtState(st))} <span style="color:var(--muted)">· ${T.ago(Math.max(0, Math.round((now - new Date(st.last_changed)) / 1000)))}</span>`);
+    }
+    else if (DEMO && w.demoValues) v = w.demoValues.map(([k, val, ago]) => row(k, `${esc(val)} <span style="color:var(--muted)">· ${T.ago(ago)}</span>`)).join("");
+    if (v) h += `<h4>${T.secValues}</h4><dl>${v}</dl>`;
+    if (w.kind === "wifi" && (i.rssi !== undefined || i.channel !== undefined)) {
+      const q = typeof i.rssi === "number" ? wifiQual(i.rssi) : null;
+      h += `<h4>${T.secWifi}</h4><dl>` + row(T.thSignal, q ? `<span class="${q[0]}">${i.rssi} dBm · ${q[1]}</span>` : "") +
+           row(T.channel, i.channel !== undefined && i.channel !== null ? esc(String(i.channel)) : "") + row(T.wifiStd, esc(WIFI_STD[i.wifiVersion] || "")) +
+           `</dl><div class="note">${T.wifiNote}</div>`;
+    }
+    if (i.reboots !== undefined && i.reboots !== null)
+      h += `<h4>${T.secStability}</h4><dl>` + row(T.reboots, i.reboots) + row(T.bootReason, i.bootReason !== undefined && i.bootReason !== null ? esc(T.bootReasons[i.bootReason] || i.bootReason) : "") + `</dl>`;
+    h += `<h4>${T.secDevice}</h4><dl>` + row(T.manufacturer, esc(i.vendor || "")) + row(T.model, esc(i.product || "")) +
+         row(T.firmware, esc(i.sw || "")) + row(T.hardware, esc(i.hw || "")) + row(T.area, esc(w.area || "")) + `</dl>`;
+    if (w.devId && !DEMO) h += `<button class="btn" data-device="${esc(w.devId)}">${T.openDevice} ↗</button>`;
+    $("panel").innerHTML = h;
+  }
   // ---------- sound (issue #12) ----------
   // A short, quiet tick for every animated message: high for messages to Home Assistant, low for commands.
   // Generated with Web Audio (no files). Off by default; browsers only allow sound after the page was clicked/tapped.
@@ -1633,7 +1717,15 @@ function createThreadPulse(root, opts, host) {
     sleepy[2].neigh[0]["6"] = -86;   // weak parent link (as seen by the device and by its parent router)
     for (const r of routers) for (const x of r.neigh) if (x["0"] === dec(sleepy[2].id)) x["6"] = -86;
     for (const n of all2) { n.info.leader = rid[routers[2].id]; n.info.net = { name: "demo-thread", channel: 15, panId: 4660, extPanId: "dead00beef00cafe" }; }
-    return { nodes: [...routers, ...ends, ...sleepy], brExt: br.id, demo: { routers, sleepy, dec, rid },
+    const wifi = [
+      { id: "wifi:demo-air", kind: "wifi", name: de ? "Luftqualität" : "Air quality monitor", icon: "air-filter", available: true, area: de ? "Büro" : "Office",
+        entities: [], mainEntities: [], demoValues: [["CO₂", "612 ppm", 3 * 60], ["PM2.5", "4 µg/m³", 3 * 60]],
+        info: { vendor: "Demo Inc.", product: "Air quality monitor", sw: "1.0.4", hw: "1.0", reboots: 3, bootReason: 1, rssi: -52, channel: 6, wifiVersion: 3 } },
+      { id: "wifi:demo-tv", kind: "ethernet", name: de ? "Fernseher" : "TV", icon: "speaker", available: true, area: de ? "Wohnzimmer" : "Living room",
+        entities: [], mainEntities: [], demoValues: [[T.state, T.states.on, 40 * 60]],
+        info: { vendor: "Demo Inc.", product: "Smart TV", sw: "7.2", hw: "2", reboots: 41, bootReason: 1 } },
+    ];
+    return { nodes: [...routers, ...ends, ...sleepy], wifi, brExt: br.id, demo: { routers, sleepy, dec, rid },
              thread: { otbr: { extAddr: br.id, borderAgentId: "00000000000000000000000000demo00", channel: 15, extPanId: "dead00beef00cafe" },
                        datasets: [{ name: "demo-thread", channel: 15, panId: "1234", extPanId: "dead00beef00cafe", preferred: true, source: "otbr" }] } };
   }
@@ -1789,7 +1881,7 @@ function createThreadPulse(root, opts, host) {
   document.head.appendChild(style);
   document.body.insertAdjacentHTML("afterbegin", TP_HTML);
   const haRoot = () => parent.document.querySelector("home-assistant");
-  createThreadPulse(document, { demo: params.has("demo"), lang: params.get("lang"), ambient: params.has("ambient"), ambientMotion: !params.has("still") }, {
+  createThreadPulse(document, { demo: params.has("demo"), lang: params.get("lang"), ambient: params.has("ambient"), showWifi: !params.has("nowifi"), ambientMotion: !params.has("still") }, {
     embedded: window.parent !== window,
     hass: () => haRoot().hass,
     themeSource: () => parent.document.documentElement,

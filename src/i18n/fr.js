@@ -61,6 +61,8 @@ const TEXT_FR = {
   bfNoData: days => `pas encore assez de données (${days} jour${days === 1 ? "" : "s"} – au moins 14 nécessaires)`,
   bfNote: "Estimation à partir des statistiques à long terme de Home Assistant. Beaucoup de piles restent presque pleines longtemps, puis baissent rapidement.",
   hBattSoon: d => `La pile sera probablement vide dans environ ${d} jour${d === 1 ? "" : "s"} (estimation) – prévoyez une pile de rechange.`,
+  lgWifi: "Matter en Wi-Fi", wifiSub: "Matter en Wi-Fi – ne fait pas partie du réseau Thread", ethSub: "Matter en Ethernet – ne fait pas partie du réseau Thread",
+  secWifi: "Wi-Fi", wifiStd: "Norme", wifiNote: "Valeurs Wi-Fi telles que signalées en dernier par l'appareil, peuvent être obsolètes.",
   secHints: "Conseils", hintsHead: "Conseils pour le réseau", listHints: n => ` · ${n} conseil${n === 1 ? "" : "s"}`,
   hintsNote: "Les conseils sont des règles empiriques basées sur les données signalées par les appareils – des suggestions, pas des mesures.",
   noHints: "Aucun point faible trouvé.",

@@ -24,14 +24,14 @@
       const done = () => { if (!network || destroyed) return; network.setOptions({ physics: { enabled: true } }); network.fit({ animation: { duration: 400 } }); };
       if (saved) { tweenTo(Object.fromEntries(ids.filter(id => saved[id]).map(id => [id, saved[id]])), animate ? 600 : 0, done); return; }
       network.setOptions({ physics: { enabled: true } });
-      network.once("stabilizationIterationsDone", () => network.fit({ animation: { duration: 400 } }));
+      network.once("stabilizationIterationsDone", () => { placeWifi(); network.fit({ animation: { duration: 400 } }); });
       network.stabilize(600);
       return;
     }
     if (animate && !preRoomPos) preRoomPos = network.getPositions();
     const rooms = roomsOf(), names = Object.keys(rooms).sort();
     const grouped = new Set(names.flatMap(a => rooms[a]));
-    const rest = network.body.data.nodes.getIds().filter(id => !grouped.has(id));
+    const rest = network.body.data.nodes.getIds().filter(id => !grouped.has(id) && !isWifiId(id));
     const isR = id => nodeById[id] && nodeById[id].type === "routing_end_device";
     const groups = names.map(a => rooms[a].slice().sort((a2, b2) => isR(b2) - isR(a2)));   // routers first in the ring
     if (rest.length) groups.unshift(rest);   // first (top left): the bottom left is covered by the live ticker
@@ -45,7 +45,7 @@
       g.forEach((id, j) => { const a = 2 * Math.PI * j / g.length - Math.PI / 2; target[id] = { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) }; });
     });
     network.setOptions({ physics: { enabled: false } });
-    tweenTo(target, animate ? 600 : 0, () => network.fit({ animation: animate ? { duration: 400 } : false }));
+    tweenTo(target, animate ? 600 : 0, () => { placeWifi(); network.fit({ animation: animate ? { duration: 400 } : false }); });
   }
   function tweenTo(target, D, done) {          // move nodes smoothly to target positions (physics must be off)
     network.setOptions({ physics: { enabled: false } });

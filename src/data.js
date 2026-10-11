@@ -22,13 +22,23 @@
       if (!e.entity_category && !e.hidden_by && !e.disabled_by) (mainEnts[e.device_id] = mainEnts[e.device_id] || []).push(e.entity_id);
     }
     const st = $("status");
-    const nodes = [];
+    const nodes = [], wifi = [];
     let done = 0;
     await Promise.all(devs.map(async d => {
       try {
         const node = await diag(hass, entry, d.id), a = node.attributes;
         const iface = (a["0/51/0"] || []).find(x => x["7"] === 4);          // interface type 4 = Thread
-        if (!iface || a["0/53/1"] === undefined) return;
+        if (!iface || a["0/53/1"] === undefined) {
+          // Matter over Wi-Fi (type 1) or Ethernet (type 2): separate group, no Thread data (issue #43)
+          const ifs = a["0/51/0"] || [], kind = ifs.some(x => x["7"] === 1) ? "wifi" : ifs.some(x => x["7"] === 2) ? "ethernet" : null;
+          if (!kind) return;
+          const wents = (entsByDev[d.id] || []).map(id => ({ domain: id.split(".")[0], dc: ((hass.states[id] || {}).attributes || {}).device_class }));
+          wifi.push({ id: "wifi:" + d.id, kind, name: d.name_by_user || d.name, icon: iconFor(wents), available: node.available, devId: d.id,
+                      entities: entsByDev[d.id] || [], mainEntities: mainEnts[d.id] || [], area: areaName[d.area_id] || "",
+                      info: { vendor: a["0/40/1"] || d.manufacturer, product: a["0/40/3"] || d.model, sw: a["0/40/10"] || d.sw_version, hw: a["0/40/8"] || d.hw_version,
+                              reboots: a["0/51/1"], bootReason: a["0/51/4"], rssi: a["0/54/4"], channel: a["0/54/3"], wifiVersion: a["0/54/2"] } });
+          return;
+        }
         const mac = [...atob(iface["4"])].map(c => c.charCodeAt(0).toString(16).padStart(2, "0")).join("");
         const role = a["0/53/1"];                                            // 2 sleepy, 3 end device, 4 REED, 5 router, 6 leader
         const type = role >= 5 ? "routing_end_device" : role >= 3 ? "end_device" : "sleepy_end_device";
@@ -52,6 +62,6 @@
       otbr: otbr && { extAddr: otbr.extended_address, borderAgentId: otbr.border_agent_id, channel: otbr.channel, extPanId: otbr.extended_pan_id },
       datasets: datasets.map(d => ({ name: d.network_name, channel: d.channel, panId: d.pan_id, extPanId: d.extended_pan_id, preferred: d.preferred, source: d.source })),
     };
-    return { nodes, brExt, hass, thread };
+    return { nodes, wifi, brExt, hass, thread };
   }
 

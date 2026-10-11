@@ -9,7 +9,7 @@
     const q = norm($("search").value.trim());
     const fg = getComputedStyle(host.styleTarget).getPropertyValue("--fg").trim() || "#1f2733";
     searchActive = !!q;
-    searchHits = q ? Object.values(nodeById).filter(n => norm(n.name).includes(q) || norm(n.area).includes(q)).map(n => n.id) : [];
+    searchHits = q ? Object.values(nodeById).concat(Object.values(wifiById)).filter(n => norm(n.name).includes(q) || norm(n.area).includes(q)).map(n => n.id) : [];
     const hit = new Set(searchHits), upd = [];
     network.body.data.nodes.forEach(v => {
       const on = !q || hit.has(v.id);

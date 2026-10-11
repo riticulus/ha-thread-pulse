@@ -24,6 +24,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - **Tap a device for details:** manufacturer, model, firmware, area, Thread role, parent and neighbours with signal strength, battery level and type, current values with “last changed”, stability counters (restarts, drop-offs, attach attempts, parent changes) and a button to open the device in Home Assistant
 - **Border router panel:** tap the border router for the Thread network (name, channel, PAN ID, routers, leader) and the border router itself
 - **Battery forecast:** estimate when a battery will be empty, from Home Assistant's long-term statistics
+- **Matter on Wi-Fi / Ethernet:** shown as a separate group next to the mesh, with their own detail panel (Wi-Fi signal, channel)
 - **Badges on the map:** battery level on battery devices, ⚠ on devices that look unstable or have a low battery
 - **Traffic heat:** links glow the more messages travelled over them in the last 10 minutes, so the busy routes of the mesh stand out (estimate based on the computed paths); routers show how many messages they forwarded for others
 - **Weak-spot hints:** rules of thumb for weak parent signals, unstable connections, routers that probably lose power regularly and routers at the edge of the mesh – suggestions, not measurements
@@ -69,6 +70,7 @@ HACS shows updates like for any other card. HACS installs from the latest *relea
 |---|---|---|
 | `height` | fills the available space (at least 450 px) | Any CSS height, e.g. `600px`, or `calc(100vh - 120px)` for a full-screen panel view |
 | `language` | Home Assistant language | `en`, `de`, `fr`, `it`, `es` or `nl` |
+| `show_wifi` | `true` | Show Matter devices on Wi-Fi / Ethernet as a separate group |
 | `ambient` | `false` | Ambient mode for wall tablets: only the mesh, dark, slow automatic zoom |
 | `ambient_motion` | `true` | In ambient mode: slow automatic zoom on (`true`) or off (`false`) |
 | `demo` | `false` | Show invented devices instead of your network |
