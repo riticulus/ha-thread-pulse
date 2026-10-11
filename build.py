@@ -22,7 +22,7 @@ from pathlib import Path
 
 here = Path(__file__).parent
 src = here / "src"
-PARTS = ["helpers", "data", "graph", "live", "heat", "rooms", "panel", "hints", "search", "changes", "response", "sound", "demo", "ui", "ambient"]
+PARTS = ["helpers", "data", "graph", "live", "heat", "rooms", "panel", "hints", "search", "changes", "response", "battery", "sound", "demo", "ui", "ambient"]
 
 def languages():
     """Language files in src/i18n/: English first, then alphabetical. Each defines TEXT_XX and optionally NAMES_XX."""
