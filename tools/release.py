@@ -12,6 +12,8 @@ Typical release:
      → the GitHub action "Release" checks everything, creates the GitHub release (never with attachments)
        and publishes the user guide (docs/wiki/) to the wiki
   3. branch chore/post-X.Y.Z, `dev`, pull request, merge
+Hotfix releases from release/X.Y.x while main has unreleased features: see the wiki page Development → Hotfix releases.
+main and release/*.x are protected: pull request and green checks required, no direct or force pushes.
 """
 import datetime, re, subprocess, sys
 from pathlib import Path
