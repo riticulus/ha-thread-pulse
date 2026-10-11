@@ -29,6 +29,7 @@
       s.neigh = [{ "0": dec(p.id), "6": rs }]; s.routes = [{ "0": dec(p.id), "2": rid[p.id], "3": 0, "4": 0, "9": true }];
       p.neigh.push({ "0": dec(s.id), "6": rs, "11": false, "13": true }); });
     sleepy[3].available = false;
+    if (opts.demo === "dupaddr") sleepy[5].id = sleepy[4].id;     // two devices reporting the same address (issue #98, for tests)
     const all2 = [...routers, ...ends, ...sleepy];
     all2.forEach((n, k) => { n.area = de ? ["Wohnzimmer", "Küche", "Flur", "Büro", "Schlafzimmer", "Bad"][k % 6] : ["Living room", "Kitchen", "Hallway", "Office", "Bedroom", "Bathroom"][k % 6];
       n.info = { vendor: "Demo Inc.", product: n.name, sw: "1." + (k % 4) + ".2", hw: "2.0", reboots: 2 + k % 5, bootReason: 1, detached: 1, attach: 1, parentChanges: 0,

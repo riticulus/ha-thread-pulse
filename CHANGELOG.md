@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Fixed
+- Two devices that report the same hardware address (e.g. two Aqara P2 motion sensors – a firmware quirk) no longer stop the whole map with *Cannot add item: item with id … already exists*. They get unique ids on the map (address plus Home Assistant device ID) and a hint; their link to the parent is shown, links reported by other devices may be missing. A duplicate id can no longer empty the map in general ([#98](https://github.com/riticulus/ha-thread-pulse/issues/98))
+
 ## [1.5.1] – 2026-10-11
 
 ### Fixed

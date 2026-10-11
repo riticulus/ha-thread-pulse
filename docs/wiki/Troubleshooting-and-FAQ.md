@@ -22,6 +22,10 @@ The standalone page was opened outside a Home Assistant dashboard (e.g. directly
 
 The card file was found, but the graph library next to it was not. With a manual installation, both files (`ha-thread-pulse.js` and `thread-pulse-vis-network.js`) must be in the same folder. With HACS, download Thread Pulse again.
 
+### "Cannot add item: item with id … already exists"
+
+Two devices report the same hardware address (e.g. two Aqara P2 motion sensors). Up to version 1.5.1 this stopped the whole map – update to 1.5.2 or later. The affected devices then show a [hint](Hints-and-Warnings#same-hardware-address-as-another-device).
+
 ## The card does not appear
 
 - **"Custom element doesn't exist: thread-pulse-card"** – the browser still has the old list of resources. Reload the page; in the Companion app, close and reopen it or use *Settings → Companion app → Debugging → Reset frontend cache*.

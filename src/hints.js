@@ -22,6 +22,7 @@
         if (rl.length) { const best = Math.max(...rl.map(l => l.rssi)); if (best < -80) add(n.id, T.hEdge(best)); }
       }
       if (i.attach >= 5 || i.detached >= 3) add(n.id, T.hUnstable);
+      if (n.dupWith) add(n.id, T.hDupAddr(n.dupWith.join(", ")));
     }
     return out;
   }

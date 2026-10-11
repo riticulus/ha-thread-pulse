@@ -5,8 +5,19 @@
   let extraIds = new Set(), threadInfo = null, wifiById = {}, parentOf = {}, listData = null;
   let hintsOf = {}, nodeById = {}, linksOf = {}, battOf = {}, brExt = null, devToNode = {}, entToNode = {}, nodeName = {}, onMap = new Set(), ridToId = {}, routeOf = {}, parentRid = {}, ownRid = {};
 
+  // Some devices report the same hardware address (e.g. two Aqara P2 motion sensors, issue #98). The map needs unique
+  // ids: such devices get "<address>-<device id>" and a hint; the reported address is kept for the panel.
+  function uniqueIds(nodes) {
+    const by = {};
+    for (const n of nodes) (by[n.hwAddr || n.id] = by[n.hwAddr || n.id] || []).push(n);
+    for (const [addr, list] of Object.entries(by)) {
+      if (list.length < 2) continue;
+      list.forEach((n, i) => { n.hwAddr = addr; n.dupWith = list.filter(x => x !== n).map(x => x.name); n.id = addr + "-" + (n.devId || i); });
+    }
+  }
   function render(model, keep) {      // keep: positions of the previous map (refresh without layout jump)
     const { nodes } = model;
+    uniqueIds(nodes);
     brExt = model.brExt;
     const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
     const isRouter = n => n.type === "routing_end_device";
@@ -85,7 +96,10 @@
                dashes: !!e.parent, title: `${r} dBm`, length: e.parent ? 90 : 180 };
     });
     const fg = getComputedStyle(host.styleTarget).getPropertyValue("--fg").trim() || "#1f2733";
-    const data = { nodes: new VIS.DataSet(visNodes), edges: new VIS.DataSet(visEdges) };
+    // last line of defence: one duplicate id must never leave the whole map empty (issue #98)
+    const seenIds = new Set();
+    const uniqueNodes = visNodes.filter(v => { if (seenIds.has(v.id)) { console.warn("Thread Pulse: duplicate id skipped", v.id); return false; } seenIds.add(v.id); return true; });
+    const data = { nodes: new VIS.DataSet(uniqueNodes), edges: new VIS.DataSet(visEdges) };
     const opts = { nodes: { font: { color: fg, size: 13 } }, edges: { smooth: false },
                    physics: { solver: "forceAtlas2Based", forceAtlas2Based: { gravitationalConstant: -60, springLength: 140 }, stabilization: keep ? false : { iterations: 300 } },
                    interaction: { hover: true, tooltipDelay: 120 } };
