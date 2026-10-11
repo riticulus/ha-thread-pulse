@@ -144,6 +144,12 @@ async def other_pages(r):
         ticker = await b.js(f"{G}('live').textContent")
         r.check("without known border router messages are animated to the parent router", "→ HA" in ticker, ticker[:80])
         r.errors("Apple-only demo", b.errors)
+    async with Browser() as b:                # two devices reporting the same hardware address (issue #98)
+        await b.open("dist/thread-pulse.html?demo=dupaddr&lang=en", wait=10)
+        r.check("same hardware address on two devices: map is drawn", "14 devices" in await b.js(f"{G}('status').textContent") and await b.js("!document.getElementById('err')"))
+        await b.js(search_js("Leak sensor")); await asyncio.sleep(1.5)
+        r.check("same hardware address: hint in the panel", "same hardware address as Bedroom climate" in await b.js(f"{G}('panel').textContent"))
+        r.errors("same hardware address", b.errors)
     async with Browser() as b:
         await b.open("dist/thread-pulse.html?lang=en", wait=3)
         err = await b.js("document.getElementById('err') ? document.getElementById('err').textContent : ''")

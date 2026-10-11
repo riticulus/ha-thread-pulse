@@ -11,6 +11,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 - Maintenance after enabling CodeQL code scanning: the *Validate* workflow runs with a read-only token, line breaks in router names are replaced completely in the panel title. The two warnings in the unmodified graph library (vis-network) are dismissed with a documented reason ([#94](https://github.com/riticulus/ha-thread-pulse/issues/94))
 
+## [1.5.2] – 2026-10-11
+
+### Fixed
+- Two devices that report the same hardware address (e.g. two Aqara P2 motion sensors – a firmware quirk) no longer stop the whole map with *Cannot add item: item with id … already exists*. They get unique ids on the map (address plus Home Assistant device ID) and a hint; their link to the parent is shown, links reported by other devices may be missing. A duplicate id can no longer empty the map in general ([#98](https://github.com/riticulus/ha-thread-pulse/issues/98))
+
 ## [1.5.1] – 2026-10-11
 
 ### Fixed
@@ -106,7 +111,8 @@ Thanks to @oxmo75 for testing 1.5.0 on a real Apple-only network and for the ana
 - Demo mode (`?demo`) that works without Home Assistant
 - Readable (unminified) vis-network build
 
-[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.5.1...HEAD
+[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.5.2...HEAD
+[1.5.2]: https://github.com/riticulus/ha-thread-pulse/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/riticulus/ha-thread-pulse/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.3.0...v1.4.0
