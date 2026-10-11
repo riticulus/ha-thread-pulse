@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 ### Changed
+- Browser tests in the repository (`tests/`): `smoke_test.py` clicks through every feature in demo mode and fails on any JavaScript error, `visual_test.py` checks centering and double-click with pixel analysis, `browser.py` is a small helper for headless Chrome (no Selenium / Playwright); how to run them in `tests/README.md` ([#48](https://github.com/riticulus/ha-thread-pulse/issues/48))
 - The standalone page is now generated into `dist/thread-pulse.html`, next to the graph library; the duplicate copies at the top level of the repository are removed. **Manual installation of the standalone page:** take `thread-pulse.html` and `thread-pulse-vis-network.js` from the `dist` folder of *Source code (zip)*. Existing installations are not affected ([#47](https://github.com/riticulus/ha-thread-pulse/issues/47))
 - Code tidy-ups without change in behaviour: the device panel uses the shared live rows, `deName()` renamed to `localName()`, icon data moved to `src/icons.js`, colours defined once in `COLORS` (the CSS gets them as variables) ([#51](https://github.com/riticulus/ha-thread-pulse/issues/51))
 - Settings remembered by the browser are handled in one place (`src/prefs.js`: keys, types, defaults). Same storage keys and formats as before – existing settings keep working; safe when storage is blocked ([#50](https://github.com/riticulus/ha-thread-pulse/issues/50))
