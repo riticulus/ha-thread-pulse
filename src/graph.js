@@ -2,7 +2,7 @@
 //# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
   // ---------- graph ----------
   let searchHits = [], searchActive = false;
-  let extraIds = new Set(), threadInfo = null, wifiById = {}, parentOf = {};
+  let extraIds = new Set(), threadInfo = null, wifiById = {}, parentOf = {}, listData = null;
   let hintsOf = {}, nodeById = {}, linksOf = {}, battOf = {}, brExt = null, devToNode = {}, entToNode = {}, nodeName = {}, onMap = new Set(), ridToId = {}, routeOf = {}, parentRid = {}, ownRid = {};
 
   function render(model, keep) {      // keep: positions of the previous map (refresh without layout jump)
@@ -60,7 +60,6 @@
       const pid = hex16(best["0"]);
       let rssi = best["6"], src = "device";
       if (childRssi[pid + "|" + n.id] !== undefined) { rssi = childRssi[pid + "|" + n.id]; src = "router"; }
-      const pname = byId[pid] ? byId[pid].name : extraName(pid);
       if (n.type === "end_device") {                             // mains end devices: show all their links like routers
         for (const x of n.neigh) { const o = hex16(x["0"]); if (!byId[o]) continue;
           const key = [n.id, o].sort().join("|"); (edges[key] = edges[key] || { a: n.id, b: o, rssi: [] }).rssi.push(x["6"]); }
@@ -68,7 +67,7 @@
       } else {
         edges["p|" + n.id] = { a: n.id, b: pid, rssi: [rssi], parent: true };
       }
-      parents.push({ child: n.name, type: n.type, parent: pname, rssi, src });
+      parents.push({ child: n.name, type: n.type, parentId: pid, get parent() { return nameOf(this.parentId); }, rssi, src });   // name resolved when shown (#71)
     }
     wifiById = {};
     if (SHOW_WIFI) for (const w of model.wifi || []) {
@@ -116,15 +115,14 @@
     network.on("blurNode", () => { $("net").style.cursor = ""; });
     nodeById = byId;
     linksOf = {};
-    const nm = id => (byId[id] || {}).name || extraName(id);
+    // names are resolved when shown: border router names from the discovery arrive after the map is drawn (#71)
     for (const e of Object.values(edges)) {
       if (!ids.has(e.b)) continue;
       const r = avg(e);
-      (linksOf[e.a] = linksOf[e.a] || []).push({ id: e.b, name: nm(e.b), rssi: r, kind: e.parent ? "parent" : "neighbour" });
-      (linksOf[e.b] = linksOf[e.b] || []).push({ id: e.a, name: nm(e.a), rssi: r, kind: e.parent ? "child" : "neighbour" });
+      (linksOf[e.a] = linksOf[e.a] || []).push({ id: e.b, get name() { return nameOf(this.id); }, rssi: r, kind: e.parent ? "parent" : "neighbour" });
+      (linksOf[e.b] = linksOf[e.b] || []).push({ id: e.a, get name() { return nameOf(this.id); }, rssi: r, kind: e.parent ? "child" : "neighbour" });
     }
     refreshBattery(model.hass);
-    hintsOf = computeHints(parents);
     onMap = ids;
     buildRouting(nodes);
     devToNode = Object.fromEntries(nodes.filter(n => n.devId).map(n => [n.devId, n.id]));
@@ -132,11 +130,23 @@
     nodeName = Object.fromEntries(nodes.map(n => [n.id, n.name]));
     for (const w of Object.values(wifiById)) { devToNode[w.devId] = w.id; for (const e of w.entities) entToNode[e] = w.id; nodeName[w.id] = w.name; }
     { const lw = $("lgwifi"); if (lw) lw.hidden = !Object.keys(wifiById).length; }
-    // table: parents + weak router links
     parents.sort((p, q) => p.rssi - q.rssi);
-    const weak = Object.values(edges).filter(e => !e.parent && ids.has(e.b))
-      .map(e => ({ a: (byId[e.a] || {}).name || extraName(e.a), b: (byId[e.b] || {}).name || extraName(e.b), r: avg(e) }))
-      .filter(e => e.r < -80).sort((p, q) => p.r - q.r);
+    listData = { parents, count: nodes.length,
+                 weak: Object.values(edges).filter(e => !e.parent && ids.has(e.b)).map(e => ({ a: e.a, b: e.b, r: avg(e) })).filter(e => e.r < -80).sort((p, q) => p.r - q.r) };
+    renderList();
+    const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
+    if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
+    renderChanges();
+    if (panelNode && (nodeById[panelNode] || extraIds.has(panelNode) || wifiById[panelNode])) renderPanel(); else if (panelNode) closePanel();
+    lastSnap = snapshotOf(nodes, edges, byId);
+    $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + " · " + T.tapHint + " · v" + VERSION;
+  }
+
+  // hints and the list below the map – rebuilt when names of border routers arrive (#71)
+  function renderList() {
+    if (!listData) return;
+    const { parents, weak, count } = listData;
+    hintsOf = computeHints(parents);
     const allHints = Object.entries(hintsOf).flatMap(([id, hs]) => hs.map(t => [id, t]));
     let h = `<div id="changes"></div><b>${T.hintsHead}</b>` + (allHints.length
       ? `<table>${allHints.map(([id, t]) => `<tr><td style="white-space:nowrap;vertical-align:top"><a href="#" data-open="${id}">${esc(nodeById[id].name)}</a></td><td>${esc(t)}</td></tr>`).join("")}</table>`
@@ -150,16 +160,9 @@
     h += `</table>`;
     if (weak.length) {
       h += `<br><b>${T.weakHead}</b> ${T.weakSub}<table>`;
-      for (const w of weak) h += `<tr><td>${esc(w.a)} ↔ ${esc(w.b)}</td><td class="r">${w.r} dBm</td></tr>`;
+      for (const w of weak) h += `<tr><td>${esc(nameOf(w.a))} ↔ ${esc(nameOf(w.b))}</td><td class="r">${w.r} dBm</td></tr>`;
       h += `</table>`;
     }
-    h += `<br><span style="color:var(--muted);font-size:12px">${T.foot(nodes.length)}</span>`;
+    h += `<br><span style="color:var(--muted);font-size:12px">${T.foot(count)}</span>`;
     $("info").innerHTML = h;
-    const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
-    if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
-    renderChanges();
-    if (panelNode && (nodeById[panelNode] || extraIds.has(panelNode) || wifiById[panelNode])) renderPanel(); else if (panelNode) closePanel();
-    lastSnap = snapshotOf(nodes, edges, byId);
-    $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + " · " + T.tapHint + " · v" + VERSION;
   }
-

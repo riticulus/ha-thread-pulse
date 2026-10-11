@@ -103,10 +103,10 @@
     const wifi = [{ id: "wifi:demo-air", kind: "wifi", name: de ? "Luftqualität" : "Air quality monitor", icon: "air-filter", available: true, area: de ? "Büro" : "Office",
       entities: [], mainEntities: [], demoValues: [["CO₂", "612 ppm", 180]], demoIdentify: true,
       info: { vendor: "Demo Inc.", product: "Air quality monitor", sw: "1.0.4", hw: "1.0", reboots: 3, bootReason: 1, rssi: -58, channel: 11, wifiVersion: 3 } }];
-    const ar = (model, name) => ({ vendor: "Apple Inc.", model, name, version: "1.3.0", network: "MyHome", brand: "apple" });
+    const ar = name => ({ vendor: "Apple", model: "BorderRouter", name, version: "1.4.0", network: "MyHome", brand: "apple" });   // as Apple announces it
     return { nodes: sleepy, wifi, brExt: null, demo: { routers: [], sleepy, dec, rid: {}, apple },
-             routers: { [apple[0]]: ar("HomePod mini", de ? "Wohnzimmer" : "Living room"), [apple[1]]: ar("Apple TV 4K", de ? "Schlafzimmer" : "Bedroom"),
-                        [apple[2]]: ar("HomePod mini", de ? "Küche" : "Kitchen") },
+             routers: { [apple[0]]: ar(de ? "HomePod Wohnzimmer" : "HomePod Living Room"), [apple[1]]: ar(de ? "AppleTV Wohnzimmer" : "AppleTV Living Room"),
+                        [apple[2]]: ar(de ? "AppleTV Schlafzimmer" : "AppleTV Bedroom") },
              thread: { otbr: null, datasets: [{ name: "MyHome", channel: 25, panId: "1001", extPanId: "86d1a0b0c0d0e0f0", preferred: true, source: "iOS-app" }] } };
   }
   function demoTraffic(model) {

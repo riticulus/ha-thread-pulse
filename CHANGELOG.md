@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Fixed
+- Border routers of other systems are labelled with the name they announce (e.g. *HomePod Salon*) instead of the model: Apple announces the same model *BorderRouter* for all its border routers, so they could not be told apart. The model is only used when it is not generic; very long names are shortened; the anonymised image shows *Border router* ([#71](https://github.com/riticulus/ha-thread-pulse/issues/71))
+- Names of border routers that arrive after the map is drawn (the discovery answers a few seconds later) now also reach the list (*talks through*, weak links), the hints and the detail panels of their children – they showed *…7114* before ([#71](https://github.com/riticulus/ha-thread-pulse/issues/71))
+
+Thanks to @oxmo75 for testing 1.5.0 on a real Apple-only network and for the analysis.
+
 ## [1.5.0] – 2026-10-11
 
 ### Added

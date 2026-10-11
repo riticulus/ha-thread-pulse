@@ -822,7 +822,7 @@ function createThreadPulse(root, opts, host) {
 
   // ---------- graph ----------
   let searchHits = [], searchActive = false;
-  let extraIds = new Set(), threadInfo = null, wifiById = {}, parentOf = {};
+  let extraIds = new Set(), threadInfo = null, wifiById = {}, parentOf = {}, listData = null;
   let hintsOf = {}, nodeById = {}, linksOf = {}, battOf = {}, brExt = null, devToNode = {}, entToNode = {}, nodeName = {}, onMap = new Set(), ridToId = {}, routeOf = {}, parentRid = {}, ownRid = {};
 
   function render(model, keep) {      // keep: positions of the previous map (refresh without layout jump)
@@ -880,7 +880,6 @@ function createThreadPulse(root, opts, host) {
       const pid = hex16(best["0"]);
       let rssi = best["6"], src = "device";
       if (childRssi[pid + "|" + n.id] !== undefined) { rssi = childRssi[pid + "|" + n.id]; src = "router"; }
-      const pname = byId[pid] ? byId[pid].name : extraName(pid);
       if (n.type === "end_device") {                             // mains end devices: show all their links like routers
         for (const x of n.neigh) { const o = hex16(x["0"]); if (!byId[o]) continue;
           const key = [n.id, o].sort().join("|"); (edges[key] = edges[key] || { a: n.id, b: o, rssi: [] }).rssi.push(x["6"]); }
@@ -888,7 +887,7 @@ function createThreadPulse(root, opts, host) {
       } else {
         edges["p|" + n.id] = { a: n.id, b: pid, rssi: [rssi], parent: true };
       }
-      parents.push({ child: n.name, type: n.type, parent: pname, rssi, src });
+      parents.push({ child: n.name, type: n.type, parentId: pid, get parent() { return nameOf(this.parentId); }, rssi, src });   // name resolved when shown (#71)
     }
     wifiById = {};
     if (SHOW_WIFI) for (const w of model.wifi || []) {
@@ -936,15 +935,14 @@ function createThreadPulse(root, opts, host) {
     network.on("blurNode", () => { $("net").style.cursor = ""; });
     nodeById = byId;
     linksOf = {};
-    const nm = id => (byId[id] || {}).name || extraName(id);
+    // names are resolved when shown: border router names from the discovery arrive after the map is drawn (#71)
     for (const e of Object.values(edges)) {
       if (!ids.has(e.b)) continue;
       const r = avg(e);
-      (linksOf[e.a] = linksOf[e.a] || []).push({ id: e.b, name: nm(e.b), rssi: r, kind: e.parent ? "parent" : "neighbour" });
-      (linksOf[e.b] = linksOf[e.b] || []).push({ id: e.a, name: nm(e.a), rssi: r, kind: e.parent ? "child" : "neighbour" });
+      (linksOf[e.a] = linksOf[e.a] || []).push({ id: e.b, get name() { return nameOf(this.id); }, rssi: r, kind: e.parent ? "parent" : "neighbour" });
+      (linksOf[e.b] = linksOf[e.b] || []).push({ id: e.a, get name() { return nameOf(this.id); }, rssi: r, kind: e.parent ? "child" : "neighbour" });
     }
     refreshBattery(model.hass);
-    hintsOf = computeHints(parents);
     onMap = ids;
     buildRouting(nodes);
     devToNode = Object.fromEntries(nodes.filter(n => n.devId).map(n => [n.devId, n.id]));
@@ -952,11 +950,23 @@ function createThreadPulse(root, opts, host) {
     nodeName = Object.fromEntries(nodes.map(n => [n.id, n.name]));
     for (const w of Object.values(wifiById)) { devToNode[w.devId] = w.id; for (const e of w.entities) entToNode[e] = w.id; nodeName[w.id] = w.name; }
     { const lw = $("lgwifi"); if (lw) lw.hidden = !Object.keys(wifiById).length; }
-    // table: parents + weak router links
     parents.sort((p, q) => p.rssi - q.rssi);
-    const weak = Object.values(edges).filter(e => !e.parent && ids.has(e.b))
-      .map(e => ({ a: (byId[e.a] || {}).name || extraName(e.a), b: (byId[e.b] || {}).name || extraName(e.b), r: avg(e) }))
-      .filter(e => e.r < -80).sort((p, q) => p.r - q.r);
+    listData = { parents, count: nodes.length,
+                 weak: Object.values(edges).filter(e => !e.parent && ids.has(e.b)).map(e => ({ a: e.a, b: e.b, r: avg(e) })).filter(e => e.r < -80).sort((p, q) => p.r - q.r) };
+    renderList();
+    const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
+    if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
+    renderChanges();
+    if (panelNode && (nodeById[panelNode] || extraIds.has(panelNode) || wifiById[panelNode])) renderPanel(); else if (panelNode) closePanel();
+    lastSnap = snapshotOf(nodes, edges, byId);
+    $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + " · " + T.tapHint + " · v" + VERSION;
+  }
+
+  // hints and the list below the map – rebuilt when names of border routers arrive (#71)
+  function renderList() {
+    if (!listData) return;
+    const { parents, weak, count } = listData;
+    hintsOf = computeHints(parents);
     const allHints = Object.entries(hintsOf).flatMap(([id, hs]) => hs.map(t => [id, t]));
     let h = `<div id="changes"></div><b>${T.hintsHead}</b>` + (allHints.length
       ? `<table>${allHints.map(([id, t]) => `<tr><td style="white-space:nowrap;vertical-align:top"><a href="#" data-open="${id}">${esc(nodeById[id].name)}</a></td><td>${esc(t)}</td></tr>`).join("")}</table>`
@@ -970,46 +980,50 @@ function createThreadPulse(root, opts, host) {
     h += `</table>`;
     if (weak.length) {
       h += `<br><b>${T.weakHead}</b> ${T.weakSub}<table>`;
-      for (const w of weak) h += `<tr><td>${esc(w.a)} ↔ ${esc(w.b)}</td><td class="r">${w.r} dBm</td></tr>`;
+      for (const w of weak) h += `<tr><td>${esc(nameOf(w.a))} ↔ ${esc(nameOf(w.b))}</td><td class="r">${w.r} dBm</td></tr>`;
       h += `</table>`;
     }
-    h += `<br><span style="color:var(--muted);font-size:12px">${T.foot(nodes.length)}</span>`;
+    h += `<br><span style="color:var(--muted);font-size:12px">${T.foot(count)}</span>`;
     $("info").innerHTML = h;
-    const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
-    if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
-    renderChanges();
-    if (panelNode && (nodeById[panelNode] || extraIds.has(panelNode) || wifiById[panelNode])) renderPanel(); else if (panelNode) closePanel();
-    lastSnap = snapshotOf(nodes, edges, byId);
-    $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + " · " + T.tapHint + " · v" + VERSION;
   }
-
   // ---------- border router names (issue #37) ----------
   // Home Assistant finds border routers on the local network via mDNS (thread/discover_routers: Apple TV / HomePod,
   // Google Nest, Amazon Echo, the OpenThread add-on …). They are matched to the unknown routers on the map by their
   // extended address. Routers that are not border routers (or not announced on the network) stay "other Thread router".
   let brInfo = {}, brUnsub = null;              // extended address → { vendor, model, name, version, network, extPanId }
   const short = id => "…" + id.slice(-4);
+  // Apple border routers all announce the model "BorderRouter" – the useful name is the instance name (e.g. "HomePod Salon")
+  const GENERIC_MODEL = /^border\s*router$/i;
+  const cut = (t, n = 28) => t.length > n ? t.slice(0, n - 1) + "…" : t;
+  const usefulModel = d => d.model && !GENERIC_MODEL.test(d.model) ? d.model : "";
+  const brTitleOf = d => cut(d.name || usefulModel(d) || d.vendor || T.brLabel);
+  const nameOf = id => (nodeById[id] || wifiById[id] || {}).name || extraName(id);
   function extraName(id) {                      // one line, for lists and the change log
     if (id === brExt) return T.brLabel;
     const d = brInfo[id];
-    return d ? `${d.model || d.vendor || T.brLabel} ${short(id)}` : short(id);
+    return d ? `${brTitleOf(d)} ${short(id)}` : short(id);
   }
   function extraLabel(id) {                     // label on the map
     if (id === brExt) return T.brLabel;
     const d = brInfo[id];
-    return d ? `${d.model || d.vendor || T.brLabel}\n${T.brOther(id.slice(-4))}` : T.foreignLabel(id);
+    return d ? `${brTitleOf(d)}\n${T.brOther(id.slice(-4))}` : T.foreignLabel(id);
   }
   function extraTitle(id) {
     if (id === brExt) return T.brTitle;
     const d = brInfo[id];
     return d ? [d.vendor, d.model, d.name].filter(Boolean).join(" · ") + "\n" + T.brOtherTitle : T.foreignTitle;
   }
-  function applyRouterNames() {                 // after new discovery data: update labels and icons on the map
-    if (!network) return;
+  let namesTimer = null;
+  function applyRouterNames() {                 // discovery events arrive one by one – update once they have settled
+    clearTimeout(namesTimer); namesTimer = setTimeout(applyRouterNamesNow, 300);
+  }
+  function applyRouterNamesNow() {              // labels and icons on the map, list and hints, open panel (#71)
+    if (!network || destroyed) return;
     const upd = [...extraIds].filter(id => id !== brExt).map(id => ({ id, label: extraLabel(id), title: extraTitle(id),
       image: iconImg(brInfo[id] ? "access-point-network" : "router-wireless", COLORS.off, 64) }));
     if (upd.length) network.body.data.nodes.update(upd);
-    if (panelNode && extraIds.has(panelNode)) renderPanel();
+    renderList(); renderChanges();
+    if (panelNode) renderPanel();
   }
   function routerFromDiscovery(d) {
     return { vendor: d.vendor_name || "", model: d.model_name || "", name: d.instance_name || "", version: d.thread_version || "",
@@ -1872,7 +1886,7 @@ function createThreadPulse(root, opts, host) {
       const n = nodeById[id] || wifiById[id];
       if (n) named.push({ id, name: n.name });
       else if (extraIds.has(id) && id !== brExt)     // model name only – the name of a border router can be personal
-        named.push({ id, label: brInfo[id] ? brInfo[id].model || brInfo[id].vendor || T.brLabel : T.foreignLabel(id).split("\n")[0] });
+        named.push({ id, label: brInfo[id] ? usefulModel(brInfo[id]) || T.brLabel : T.foreignLabel(id).split("\n")[0] });
     }
     // numbered by position (top left to bottom right), not by name – the order must not hint at the real names
     const pos = network.getPositions(), row = id => Math.round(((pos[id] || {}).y || 0) / 40);
@@ -2031,10 +2045,10 @@ function createThreadPulse(root, opts, host) {
     const wifi = [{ id: "wifi:demo-air", kind: "wifi", name: de ? "Luftqualität" : "Air quality monitor", icon: "air-filter", available: true, area: de ? "Büro" : "Office",
       entities: [], mainEntities: [], demoValues: [["CO₂", "612 ppm", 180]], demoIdentify: true,
       info: { vendor: "Demo Inc.", product: "Air quality monitor", sw: "1.0.4", hw: "1.0", reboots: 3, bootReason: 1, rssi: -58, channel: 11, wifiVersion: 3 } }];
-    const ar = (model, name) => ({ vendor: "Apple Inc.", model, name, version: "1.3.0", network: "MyHome", brand: "apple" });
+    const ar = name => ({ vendor: "Apple", model: "BorderRouter", name, version: "1.4.0", network: "MyHome", brand: "apple" });   // as Apple announces it
     return { nodes: sleepy, wifi, brExt: null, demo: { routers: [], sleepy, dec, rid: {}, apple },
-             routers: { [apple[0]]: ar("HomePod mini", de ? "Wohnzimmer" : "Living room"), [apple[1]]: ar("Apple TV 4K", de ? "Schlafzimmer" : "Bedroom"),
-                        [apple[2]]: ar("HomePod mini", de ? "Küche" : "Kitchen") },
+             routers: { [apple[0]]: ar(de ? "HomePod Wohnzimmer" : "HomePod Living Room"), [apple[1]]: ar(de ? "AppleTV Wohnzimmer" : "AppleTV Living Room"),
+                        [apple[2]]: ar(de ? "AppleTV Schlafzimmer" : "AppleTV Bedroom") },
              thread: { otbr: null, datasets: [{ name: "MyHome", channel: 25, panId: "1001", extPanId: "86d1a0b0c0d0e0f0", preferred: true, source: "iOS-app" }] } };
   }
   function demoTraffic(model) {
@@ -2083,7 +2097,11 @@ function createThreadPulse(root, opts, host) {
   async function load() {
     $("status").textContent = T.loading;
     const prev = lastSnap;
-    if (DEMO) { const m = demoState || (demoState = demoModel()); brInfo = m.routers || {}; render(m); diffSnaps(prev, lastSnap); loadBatteryForecasts(null); return m; }
+    if (DEMO) {
+      const m = demoState || (demoState = demoModel()); render(m); diffSnaps(prev, lastSnap); loadBatteryForecasts(null);
+      setTimeout(() => { brInfo = m.routers || {}; applyRouterNames(); }, 2500);     // like the real discovery: names arrive later
+      return m;
+    }
     const m = await loadHa();
     render(m);
     diffSnaps(prev, lastSnap);

@@ -20,7 +20,7 @@
       const n = nodeById[id] || wifiById[id];
       if (n) named.push({ id, name: n.name });
       else if (extraIds.has(id) && id !== brExt)     // model name only – the name of a border router can be personal
-        named.push({ id, label: brInfo[id] ? brInfo[id].model || brInfo[id].vendor || T.brLabel : T.foreignLabel(id).split("\n")[0] });
+        named.push({ id, label: brInfo[id] ? usefulModel(brInfo[id]) || T.brLabel : T.foreignLabel(id).split("\n")[0] });
     }
     // numbered by position (top left to bottom right), not by name – the order must not hint at the real names
     const pos = network.getPositions(), row = id => Math.round(((pos[id] || {}).y || 0) / 40);
