@@ -1,11 +1,11 @@
 Thread Pulse includes the following third-party components:
 
-vis-network 9.1.9 (thread-pulse-vis-network.js, unminified standalone build, unmodified)
+vis-network 9.1.9 (dist/thread-pulse-vis-network.js, unminified standalone build, unmodified)
   https://github.com/visjs/vis-network
   Copyright (c) 2011-2017 Almende B.V., (c) 2017-2019 visjs contributors
   Dual licensed under the Apache License 2.0 and the MIT License; used here under the MIT License.
 
-Material Design Icons (icon paths embedded in thread-pulse.html)
+Material Design Icons (icon paths in src/icons.js, embedded in dist/thread-pulse.html and dist/ha-thread-pulse.js)
   https://pictogrammers.com/library/mdi/
   Copyright (c) Pictogrammers
   Licensed under the Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0

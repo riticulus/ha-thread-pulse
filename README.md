@@ -92,7 +92,7 @@ The graph library (`thread-pulse-vis-network.js`, ~1.6 MB) is only loaded when a
 
 ### C) Standalone page in an iframe
 
-1. Open the [latest release](https://github.com/riticulus/ha-thread-pulse/releases/latest), download **Source code (zip)** and unpack it. You need `thread-pulse.html` and `thread-pulse-vis-network.js` from the top folder.
+1. Open the [latest release](https://github.com/riticulus/ha-thread-pulse/releases/latest), download **Source code (zip)** and unpack it. You need `thread-pulse.html` and `thread-pulse-vis-network.js` from the `dist` folder (up to version 1.4.0 they were in the top folder).
 2. Copy both files into the `www` folder of your Home Assistant configuration (`/config/www/`, for example with the *File editor* or *Samba share* add-on). Create the folder if it does not exist – if you have to create it, restart Home Assistant once.
 3. Add a card to a dashboard. Easiest is a full-page view (*panel* view) with an iframe card:
 
@@ -113,7 +113,7 @@ The graph library (`thread-pulse-vis-network.js`, ~1.6 MB) is only loaded when a
 
 > **Note:** this README describes the current development state. Features listed under *Unreleased* in the [changelog](CHANGELOG.md) are not part of a release yet – the [latest release](https://github.com/riticulus/ha-thread-pulse/releases/latest) does not contain them.
 
-**Try it without Home Assistant:** open `thread-pulse.html?demo` in a browser (invented devices, simulated traffic). `&lang=de` switches to German.
+**Try it without Home Assistant:** open `dist/thread-pulse.html?demo` in a browser (invented devices, simulated traffic). `&lang=de` switches to German.
 
 ## How it works
 
@@ -164,7 +164,7 @@ The code lives in `src/`, one file per topic:
 | `src/ui.js`, `src/start.js` | List, legend, errors, event handling; start-up |
 | `src/standalone.html`, `src/card.js` | Shells for the standalone page and the dashboard card |
 
-`python3 build.py` assembles the files (in a fixed order, no bundler) into `thread-pulse.html`, `dist/ha-thread-pulse.js` and `dist/thread-pulse-vis-network.js` – do not edit those by hand. The feature files are placed *inside* `createThreadPulse()` and share its state. A GitHub action checks on every pull request that the generated files are up to date and runs the HACS validation. More in the [wiki](https://github.com/riticulus/ha-thread-pulse/wiki/Development).
+`python3 build.py` assembles the files (in a fixed order, no bundler) into `dist/thread-pulse.html` and `dist/ha-thread-pulse.js` – do not edit those by hand. `dist/thread-pulse-vis-network.js` is the graph library (unmodified, the only copy in the repository). The feature files are placed *inside* `createThreadPulse()` and share its state. A GitHub action checks on every pull request that the generated files are up to date and runs the HACS validation. More in the [wiki](https://github.com/riticulus/ha-thread-pulse/wiki/Development).
 
 ## Related projects
 
@@ -194,4 +194,4 @@ MIT – see [LICENSE](LICENSE). Third-party components: see [NOTICE](NOTICE).
 
 ### Kurz auf Deutsch
 
-Thread Pulse zeigt das Thread-Netz deiner Matter-Geräte als Karte und animiert live jede Meldung an Home Assistant (cyan) und jeden Befehl von Home Assistant (magenta) entlang des wahrscheinlichsten Funkwegs. Installation: beide Dateien nach `/config/www/` kopieren und eine Webseiten-Karte mit `/local/thread-pulse.html?v=1` anlegen (am besten in einer Panel-Ansicht). Die Sprache folgt der Home-Assistant-Einstellung. Einschränkungen siehe oben – insbesondere: angezeigt werden Nachrichten von und zu Home Assistant, keine Funkpakete, und der Weg ist berechnet, nicht gemessen.
+Thread Pulse zeigt das Thread-Netz deiner Matter-Geräte als Karte und animiert live jede Meldung an Home Assistant (cyan) und jeden Befehl von Home Assistant (magenta) entlang des wahrscheinlichsten Funkwegs. Installation am einfachsten über HACS (siehe oben); alternativ beide Dateien aus dem Ordner `dist` nach `/config/www/` kopieren und eine Webseiten-Karte mit `/local/thread-pulse.html?v=1` anlegen (am besten in einer Panel-Ansicht). Die Sprache folgt der Home-Assistant-Einstellung. Einschränkungen siehe oben – insbesondere: angezeigt werden Nachrichten von und zu Home Assistant, keine Funkpakete, und der Weg ist berechnet, nicht gemessen.
