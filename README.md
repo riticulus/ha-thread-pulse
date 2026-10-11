@@ -28,6 +28,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - **Change log:** checks the network every 5 minutes and lists what changed (new parent, device offline / back, role, links), the device flashes on the map
 - **Room view:** arrange the devices by Home Assistant area, with a coloured area per room – shows at a glance which links cross rooms
 - **Double-click** on empty space to center and fit the whole mesh, on a device to zoom to it
+- **Optional sound:** a quiet tick for every message, high for messages to Home Assistant, low for commands
 - **Ambient mode** for wall tablets: only the pulsing mesh, dark, with a slow automatic zoom
 - **Search:** find a device by name or area; matches are highlighted and zoomed to, Enter opens the details
 - **Response time:** how long a device takes to confirm a command from Home Assistant – measured while the page is open
@@ -149,7 +150,7 @@ The code lives in `src/`, one file per topic:
 | `src/styles.css`, `src/markup.html` | Styles and HTML skeleton |
 | `src/core.js` | Start of `createThreadPulse()` and the state shared by all parts |
 | `src/helpers.js`, `data.js`, `graph.js` | Helpers and Home Assistant connection, loading the data, drawing the map |
-| `src/live.js`, `heat.js`, `rooms.js`, `panel.js`, `hints.js`, `search.js`, `changes.js`, `response.js`, `demo.js`, `ambient.js` | One file per feature |
+| `src/live.js`, `heat.js`, `rooms.js`, `panel.js`, `hints.js`, `search.js`, `changes.js`, `response.js`, `sound.js`, `demo.js`, `ambient.js` | One file per feature |
 | `src/ui.js`, `src/start.js` | List, legend, errors, event handling; start-up |
 | `src/standalone.html`, `src/card.js` | Shells for the standalone page and the dashboard card |
 

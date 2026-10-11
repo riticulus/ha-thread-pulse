@@ -16,6 +16,8 @@ const TP_CSS = `
   #legend.hidden .lg { display: none; }
   #status { color: var(--muted); font-size: 12px; }
   #searchbox { display: inline-flex; align-items: center; gap: 6px; }
+  #volume { width: 90px; accent-color: #1e88e5; }
+  #volume[hidden] { display: none; }
   #search { width: 200px; max-width: 60vw; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 8px; font: inherit; }
   #search:focus { outline: 2px solid #1e88e5; outline-offset: -1px; }
   #hits { color: var(--muted); font-size: 12px; }
@@ -67,6 +69,8 @@ const TP_HTML = `
     <button id="livebtn"></button>
     <button id="heatbtn"></button>
     <button id="roombtn"></button>
+    <button id="soundbtn"></button>
+    <input id="volume" type="range" min="0" max="1" step="0.05" hidden>
     <button id="legbtn"></button>
     <span id="searchbox"><input id="search" type="search" autocomplete="off" spellcheck="false"><span id="hits"></span></span>
     <span id="legend"></span>
@@ -87,7 +91,7 @@ const TEXT = {
     chRole: (a, b) => `role: ${a} → ${b}`, chLinkNew: o => `new link to ${o}`, chLinkGone: o => `link to ${o} lost`,
     roomsOn: "⌂ Rooms", roomsOff: "⌂ Rooms off", noArea: "No area",
     searchPh: "🔍 Find device or room", hits: n => n === 0 ? "no match" : `${n} found`,
-    showLegend: "ⓘ Legend", hideLegend: "ⓘ Hide legend", heatOn: "≋ Traffic", heatOff: "≋ Traffic off", lgHeat: "Traffic (10 min)",
+    showLegend: "ⓘ Legend", hideLegend: "ⓘ Hide legend", soundOn: "🔇 Sound", soundOff: "🔊 Sound off", volume: "Volume", heatOn: "≋ Traffic", heatOff: "≋ Traffic off", lgHeat: "Traffic (10 min)",
     heatTitle: n => `${n} message${n === 1 ? "" : "s"} in the last 10 min`, forwarded: "Forwarded for others", respTime: "Response time", respVal: (last, med, n) => `${last} ms last · median ${med} ms (${n} measurement${n === 1 ? "" : "s"})`,
     respNone: "not measured yet – measured when Home Assistant switches the device while this page is open",
     respNote: "Time from the command in Home Assistant until the device confirmed it (Home Assistant time stamps).",
@@ -143,7 +147,7 @@ const TEXT = {
     chRole: (a, b) => `Rolle: ${a} → ${b}`, chLinkNew: o => `neue Verbindung zu ${o}`, chLinkGone: o => `Verbindung zu ${o} verloren`,
     roomsOn: "⌂ Räume", roomsOff: "⌂ Räume aus", noArea: "Ohne Bereich",
     searchPh: "🔍 Gerät oder Raum suchen", hits: n => n === 0 ? "kein Treffer" : `${n} gefunden`,
-    showLegend: "ⓘ Legende", hideLegend: "ⓘ Legende ausblenden", heatOn: "≋ Verkehr", heatOff: "≋ Verkehr aus", lgHeat: "Verkehr (10 min)",
+    showLegend: "ⓘ Legende", hideLegend: "ⓘ Legende ausblenden", soundOn: "🔇 Ton", soundOff: "🔊 Ton aus", volume: "Lautstärke", heatOn: "≋ Verkehr", heatOff: "≋ Verkehr aus", lgHeat: "Verkehr (10 min)",
     heatTitle: n => `${n} Nachricht${n === 1 ? "" : "en"} in den letzten 10 min`, forwarded: "Für andere weitergeleitet", respTime: "Antwortzeit", respVal: (last, med, n) => `${last} ms zuletzt · Median ${med} ms (${n} Messung${n === 1 ? "" : "en"})`,
     respNone: "noch nicht gemessen – wird gemessen, wenn Home Assistant das Gerät schaltet, während diese Seite offen ist",
     respNote: "Zeit vom Befehl in Home Assistant bis zur Bestätigung durch das Gerät (Zeitstempel von Home Assistant).",
@@ -315,6 +319,7 @@ function createThreadPulse(root, opts, host) {
   $("search").placeholder = T.searchPh;
     $("livebtn").textContent = liveOn ? T.pause : T.resume;
     $("heatbtn").textContent = heatOn ? T.heatOff : T.heatOn;
+    $("soundbtn").textContent = soundOn ? T.soundOff : T.soundOn; $("volume").title = T.volume;
     const lg = (cls, color, text) => `<span class="lg"><span class="${cls}" style="background:${color}"></span>${text}</span>`;
     $("legend").innerHTML =
       lg("dot", COLORS.br, T.lgBr) + lg("dot", COLORS.router, T.lgRouter) + lg("dot", COLORS.end, T.lgEnd) + lg("dot", COLORS.sleepy, T.lgSleepy) +
@@ -559,6 +564,7 @@ function createThreadPulse(root, opts, host) {
     }
     if (panelNode === nodeId) renderPanel();
     if (!liveOn || !network || !path) return;
+    playTick(down);
     packets.push({ path, t0: now, color: down ? COLORS.down : COLORS.up, origin: down ? path[path.length - 1] : nodeId });
     recent.unshift({ t: new Date(), html, down }); recent = recent.slice(0, 60);
     showTicker();
@@ -1074,6 +1080,42 @@ function createThreadPulse(root, opts, host) {
     return r && r.n >= SLOW_MIN && r.med >= SLOW_MS ? T.hSlow(r.med, r.n) : null;
   }
   const controllable = n => (n.mainEntities || []).some(e => ["light", "switch", "cover", "lock", "fan", "climate", "valve", "media_player"].includes(e.split(".")[0]));
+  // ---------- sound (issue #12) ----------
+  // A short, quiet tick for every animated message: high for messages to Home Assistant, low for commands.
+  // Generated with Web Audio (no files). Off by default; browsers only allow sound after the page was clicked/tapped.
+  // Rate-limited: at least 150 ms between ticks, at most 5 per second.
+  const SOUND_GAP_MS = 150, SOUND_MAX_PER_S = 5;
+  let soundOn = false, soundVolume = 0.4, audioCtx = null, lastTick = 0, tickTimes = [];
+  function ensureAudio() {
+    if (!audioCtx) { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; audioCtx = new AC(); }
+    if (audioCtx.state === "suspended") audioCtx.resume().catch(() => {});
+    return audioCtx;
+  }
+  function playTick(down) {
+    if (!soundOn || soundVolume <= 0) return;
+    const now = performance.now();
+    tickTimes = tickTimes.filter(t => now - t < 1000);
+    if (now - lastTick < SOUND_GAP_MS || tickTimes.length >= SOUND_MAX_PER_S) return;
+    const ctx = ensureAudio(); if (!ctx || ctx.state !== "running") return;
+    lastTick = now; tickTimes.push(now);
+    const t = ctx.currentTime, osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(down ? 440 : 880, t);
+    osc.frequency.exponentialRampToValueAtTime(down ? 330 : 1100, t + 0.05);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.12 * soundVolume, t + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(t); osc.stop(t + 0.07);
+  }
+  function setSound(on, save = true) {
+    soundOn = on;
+    $("soundbtn").textContent = on ? T.soundOff : T.soundOn;
+    $("volume").hidden = !on;
+    if (on) ensureAudio();
+    if (save) try { localStorage.setItem("threadPulseSound", on ? "1" : "0"); } catch (e) {}
+  }
+  root.addEventListener("pointerdown", () => { if (soundOn) ensureAudio(); }, true);   // unlock audio after a reload
   // ---------- demo (invented devices, works without Home Assistant) ----------
   function demoModel() {
     const de = lang === "de";
@@ -1221,6 +1263,9 @@ function createThreadPulse(root, opts, host) {
     wake(); document.addEventListener("visibilitychange", wake);
   }
   let startList = false, startLegend = (host.width ? host.width() : window.innerWidth) > 700;
+  try { const v = parseFloat(localStorage.getItem("threadPulseVolume")); if (!isNaN(v)) soundVolume = v; } catch (e) {}
+  $("volume").value = String(soundVolume);
+  try { if (localStorage.getItem("threadPulseSound") === "1") setSound(true, false); } catch (e) {}
   try { heatOn = localStorage.getItem("threadPulseHeat") !== "0"; roomOn = localStorage.getItem("threadPulseRooms") === "1"; } catch (e) {}
   try { startList = localStorage.getItem("threadPulseList") === "1"; const l = localStorage.getItem("threadPulseLegend"); if (l !== null) startLegend = l === "1"; } catch (e) {}
   $("info").classList.toggle("hidden", !startList);
@@ -1233,6 +1278,8 @@ function createThreadPulse(root, opts, host) {
     try { localStorage.setItem("threadPulseRooms", roomOn ? "1" : "0"); } catch (e) {}
     applyRooms(roomOn);
   };
+  $("soundbtn").onclick = () => setSound(!soundOn);
+  $("volume").oninput = () => { soundVolume = Number($("volume").value); try { localStorage.setItem("threadPulseVolume", String(soundVolume)); } catch (e) {} playTick(false); };
   $("heatbtn").onclick = () => {
     heatOn = !heatOn; $("heatbtn").textContent = heatOn ? T.heatOff : T.heatOn;
     try { localStorage.setItem("threadPulseHeat", heatOn ? "1" : "0"); } catch (e) {}

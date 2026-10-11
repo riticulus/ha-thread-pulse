@@ -50,6 +50,7 @@
     }
     if (panelNode === nodeId) renderPanel();
     if (!liveOn || !network || !path) return;
+    playTick(down);
     packets.push({ path, t0: now, color: down ? COLORS.down : COLORS.up, origin: down ? path[path.length - 1] : nodeId });
     recent.unshift({ t: new Date(), html, down }); recent = recent.slice(0, 60);
     showTicker();

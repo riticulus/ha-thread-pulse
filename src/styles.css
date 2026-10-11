@@ -8,6 +8,8 @@
   #legend.hidden .lg { display: none; }
   #status { color: var(--muted); font-size: 12px; }
   #searchbox { display: inline-flex; align-items: center; gap: 6px; }
+  #volume { width: 90px; accent-color: #1e88e5; }
+  #volume[hidden] { display: none; }
   #search { width: 200px; max-width: 60vw; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 8px; font: inherit; }
   #search:focus { outline: 2px solid #1e88e5; outline-offset: -1px; }
   #hits { color: var(--muted); font-size: 12px; }
