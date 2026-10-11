@@ -39,7 +39,7 @@
         const b = battOf[n.id];
         pill(ctx, p.x + r * 0.55, p.y + r * 0.75, b + "%", b < 20 ? "#e53935" : b < 40 ? "#fb8c00" : "#607d8b");
       }
-      if (!warningsOf(n).length && ((hintsOf[n.id] || []).length || slowHint(n))) {
+      if (!warningsOf(n).length && ((hintsOf[n.id] || []).length || slowHint(n) || batteryHint(n))) {
         const x = p.x + r * 0.75, y = p.y - r * 0.85;
         ctx.fillStyle = "#1e88e5"; ctx.strokeStyle = "white"; ctx.lineWidth = 1.5;
         ctx.beginPath(); ctx.arc(x, y, 7, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
@@ -128,7 +128,7 @@
             `<div class="s">${esc(T.roles[n.role] || T.types[n.type] || "")}${n.area ? " · " + esc(n.area) : ""}${n.available ? "" : esc(T.unreachable)}</div></div>` +
             `<button class="x" title="×" data-act="close">×</button></div>`;
     for (const w of warningsOf(n)) h += `<div class="warn">⚠ ${esc(w)}</div>`;
-    const hs = (hintsOf[n.id] || []).concat(slowHint(n) || []);
+    const hs = (hintsOf[n.id] || []).concat(slowHint(n) || [], batteryHint(n) || []);
     if (hs.length) h += `<h4>${T.secHints}</h4>` + hs.map(t => `<div class="hint">💡 ${esc(t)}</div>`).join("") + `<div class="note">${T.hintsNote}</div>`;
     // live
     const c = counts[n.id], now = Date.now();
@@ -163,7 +163,8 @@
     // battery
     if (battOf[n.id] !== undefined || i.batType) {
       const b = battOf[n.id];
-      h += `<h4>${T.secBattery}</h4><dl>` + row(T.level, b !== undefined ? `<span class="${b < 20 ? "r" : b < 40 ? "o" : "g"}">${b} %</span>` : "") + row(T.type, esc(i.batType)) + `</dl>`;
+      h += `<h4>${T.secBattery}</h4><dl>` + row(T.level, b !== undefined ? `<span class="${b < 20 ? "r" : b < 40 ? "o" : "g"}">${b} %</span>` : "") + row(T.type, esc(i.batType)) +
+           row(T.bfLabel, forecastText(battForecast[n.id])) + `</dl>` + (battForecast[n.id] && battForecast[n.id].state === "ok" ? `<div class="note">${T.bfNote}</div>` : "");
     }
     // thread
     const links = (linksOf[n.id] || []).slice().sort((p, q) => q.rssi - p.rssi);

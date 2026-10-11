@@ -147,6 +147,13 @@ const TEXT_EN = {
   routersInMesh: "Routers in the mesh", ofMax: n => `${n} of max. 32`, devicesInMesh: "Thread devices", leader: "Leader",
   secBorderRouter: "Border router", brKind: "Type", brOtbr: "OpenThread Border Router (add-on)", borderAgent: "Border agent ID",
   datasets: "Known Thread networks", preferred: "preferred", msgsThrough: "Messages through it",
+  bfLabel: "Forecast",
+  bfEmpty: d => d === Infinity ? "empty in more than 3 years" : d < 14 ? `empty in about ${d} day${d === 1 ? "" : "s"}` : d < 60 ? `empty in about ${Math.round(d / 7)} weeks` : d < 730 ? `empty in about ${Math.round(d / 30)} months` : `empty in about ${Math.round(d / 365)} years`,
+  bfBasis: (days, perMonth) => `based on ${days} days, −${perMonth} % per month`,
+  bfNoDrop: days => `no measurable drop in the last ${days} days`,
+  bfNoData: days => `not enough data yet (${days} day${days === 1 ? "" : "s"} – at least 14 needed)`,
+  bfNote: "Estimate from Home Assistant's long-term statistics. Many batteries stay almost full for a long time and then drop quickly.",
+  hBattSoon: d => `The battery will probably be empty in about ${d} day${d === 1 ? "" : "s"} (estimate) – keep a replacement ready.`,
   secHints: "Hints", hintsHead: "Hints for the network", listHints: n => ` · ${n} hint${n === 1 ? "" : "s"}`,
   hintsNote: "Hints are rules of thumb based on the data the devices report – suggestions, not measurements.",
   noHints: "No weak spots found.",
@@ -209,6 +216,13 @@ const TEXT_DE = {
   routersInMesh: "Router im Netz", ofMax: n => `${n} von max. 32`, devicesInMesh: "Thread-Geräte", leader: "Leader",
   secBorderRouter: "Border Router", brKind: "Typ", brOtbr: "OpenThread Border Router (Add-on)", borderAgent: "Border-Agent-ID",
   datasets: "Bekannte Thread-Netze", preferred: "bevorzugt", msgsThrough: "Nachrichten darüber",
+  bfLabel: "Prognose",
+  bfEmpty: d => d === Infinity ? "leer in mehr als 3 Jahren" : d < 14 ? `leer in ca. ${d} Tag${d === 1 ? "" : "en"}` : d < 60 ? `leer in ca. ${Math.round(d / 7)} Wochen` : d < 730 ? `leer in ca. ${Math.round(d / 30)} Monaten` : `leer in ca. ${Math.round(d / 365)} Jahren`,
+  bfBasis: (days, perMonth) => `basiert auf ${days} Tagen, −${perMonth} % pro Monat`,
+  bfNoDrop: days => `kein messbarer Rückgang in den letzten ${days} Tagen`,
+  bfNoData: days => `noch zu wenig Daten (${days} Tag${days === 1 ? "" : "e"} – mindestens 14 nötig)`,
+  bfNote: "Schätzung aus der Langzeitstatistik von Home Assistant. Viele Batterien bleiben lange fast voll und fallen dann schnell ab.",
+  hBattSoon: d => `Die Batterie ist voraussichtlich in ca. ${d} Tag${d === 1 ? "" : "en"} leer (Schätzung) – Ersatz bereithalten.`,
   secHints: "Hinweise", hintsHead: "Hinweise zum Netz", listHints: n => ` · ${n} Hinweis${n === 1 ? "" : "e"}`,
   hintsNote: "Hinweise sind Faustregeln aus den Daten, die die Geräte melden – Vorschläge, keine Messungen.",
   noHints: "Keine Schwachstellen gefunden.",
@@ -277,6 +291,13 @@ const TEXT_ES = {
   routersInMesh: "Routers en la red", ofMax: n => `${n} de máx. 32`, devicesInMesh: "Dispositivos Thread", leader: "Líder",
   secBorderRouter: "Router de borde", brKind: "Tipo", brOtbr: "OpenThread Border Router (complemento)", borderAgent: "ID del agente de borde",
   datasets: "Redes Thread conocidas", preferred: "preferida", msgsThrough: "Mensajes que pasan por él",
+  bfLabel: "Previsión",
+  bfEmpty: d => d === Infinity ? "vacía en más de 3 años" : d < 14 ? `vacía en unos ${d} día${d === 1 ? "" : "s"}` : d < 60 ? `vacía en unas ${Math.round(d / 7)} semanas` : d < 730 ? `vacía en unos ${Math.round(d / 30)} meses` : `vacía en unos ${Math.round(d / 365)} años`,
+  bfBasis: (days, perMonth) => `basada en ${days} días, −${perMonth} % al mes`,
+  bfNoDrop: days => `sin descenso medible en los últimos ${days} días`,
+  bfNoData: days => `aún no hay datos suficientes (${days} día${days === 1 ? "" : "s"} – se necesitan al menos 14)`,
+  bfNote: "Estimación a partir de las estadísticas a largo plazo de Home Assistant. Muchas baterías se mantienen casi llenas mucho tiempo y luego bajan rápidamente.",
+  hBattSoon: d => `La batería probablemente se agotará en unos ${d} día${d === 1 ? "" : "s"} (estimación) – ten una de repuesto a mano.`,
   secHints: "Consejos", hintsHead: "Consejos para la red", listHints: n => ` · ${n} consejo${n === 1 ? "" : "s"}`,
   hintsNote: "Los consejos son reglas prácticas basadas en los datos que informan los dispositivos – sugerencias, no mediciones.",
   noHints: "No se encontraron puntos débiles.",
@@ -345,6 +366,13 @@ const TEXT_FR = {
   routersInMesh: "Routeurs dans le réseau", ofMax: n => `${n} sur 32 max.`, devicesInMesh: "Appareils Thread", leader: "Leader",
   secBorderRouter: "Routeur de bordure", brKind: "Type", brOtbr: "OpenThread Border Router (module)", borderAgent: "ID de l'agent de bordure",
   datasets: "Réseaux Thread connus", preferred: "préféré", msgsThrough: "Messages qui y transitent",
+  bfLabel: "Prévision",
+  bfEmpty: d => d === Infinity ? "vide dans plus de 3 ans" : d < 14 ? `vide dans environ ${d} jour${d === 1 ? "" : "s"}` : d < 60 ? `vide dans environ ${Math.round(d / 7)} semaines` : d < 730 ? `vide dans environ ${Math.round(d / 30)} mois` : `vide dans environ ${Math.round(d / 365)} ans`,
+  bfBasis: (days, perMonth) => `sur la base de ${days} jours, −${perMonth} % par mois`,
+  bfNoDrop: days => `aucune baisse mesurable au cours des ${days} derniers jours`,
+  bfNoData: days => `pas encore assez de données (${days} jour${days === 1 ? "" : "s"} – au moins 14 nécessaires)`,
+  bfNote: "Estimation à partir des statistiques à long terme de Home Assistant. Beaucoup de piles restent presque pleines longtemps, puis baissent rapidement.",
+  hBattSoon: d => `La pile sera probablement vide dans environ ${d} jour${d === 1 ? "" : "s"} (estimation) – prévoyez une pile de rechange.`,
   secHints: "Conseils", hintsHead: "Conseils pour le réseau", listHints: n => ` · ${n} conseil${n === 1 ? "" : "s"}`,
   hintsNote: "Les conseils sont des règles empiriques basées sur les données signalées par les appareils – des suggestions, pas des mesures.",
   noHints: "Aucun point faible trouvé.",
@@ -413,6 +441,13 @@ const TEXT_IT = {
   routersInMesh: "Router nella rete", ofMax: n => `${n} su max. 32`, devicesInMesh: "Dispositivi Thread", leader: "Leader",
   secBorderRouter: "Border router", brKind: "Tipo", brOtbr: "OpenThread Border Router (add-on)", borderAgent: "ID del border agent",
   datasets: "Reti Thread note", preferred: "preferita", msgsThrough: "Messaggi che vi transitano",
+  bfLabel: "Previsione",
+  bfEmpty: d => d === Infinity ? "scarica tra più di 3 anni" : d < 14 ? `scarica tra circa ${d} giorn${d === 1 ? "o" : "i"}` : d < 60 ? `scarica tra circa ${Math.round(d / 7)} settimane` : d < 730 ? `scarica tra circa ${Math.round(d / 30)} mesi` : `scarica tra circa ${Math.round(d / 365)} anni`,
+  bfBasis: (days, perMonth) => `basata su ${days} giorni, −${perMonth} % al mese`,
+  bfNoDrop: days => `nessun calo misurabile negli ultimi ${days} giorni`,
+  bfNoData: days => `dati ancora insufficienti (${days} giorn${days === 1 ? "o" : "i"} – ne servono almeno 14)`,
+  bfNote: "Stima dalle statistiche a lungo termine di Home Assistant. Molte batterie restano quasi piene a lungo e poi calano rapidamente.",
+  hBattSoon: d => `La batteria sarà probabilmente scarica tra circa ${d} giorn${d === 1 ? "o" : "i"} (stima) – tieni pronta una batteria di ricambio.`,
   secHints: "Suggerimenti", hintsHead: "Suggerimenti per la rete", listHints: n => ` · ${n} suggeriment${n === 1 ? "o" : "i"}`,
   hintsNote: "I suggerimenti sono regole empiriche basate sui dati segnalati dai dispositivi – proposte, non misurazioni.",
   noHints: "Nessun punto debole trovato.",
@@ -481,6 +516,13 @@ const TEXT_NL = {
   routersInMesh: "Routers in het netwerk", ofMax: n => `${n} van max. 32`, devicesInMesh: "Thread-apparaten", leader: "Leader",
   secBorderRouter: "Border router", brKind: "Type", brOtbr: "OpenThread Border Router (add-on)", borderAgent: "Border-agent-ID",
   datasets: "Bekende Thread-netwerken", preferred: "voorkeur", msgsThrough: "Berichten erdoorheen",
+  bfLabel: "Prognose",
+  bfEmpty: d => d === Infinity ? "leeg over meer dan 3 jaar" : d < 14 ? `leeg over ongeveer ${d} dag${d === 1 ? "" : "en"}` : d < 60 ? `leeg over ongeveer ${Math.round(d / 7)} weken` : d < 730 ? `leeg over ongeveer ${Math.round(d / 30)} maanden` : `leeg over ongeveer ${Math.round(d / 365)} jaar`,
+  bfBasis: (days, perMonth) => `op basis van ${days} dagen, −${perMonth} % per maand`,
+  bfNoDrop: days => `geen meetbare daling in de laatste ${days} dagen`,
+  bfNoData: days => `nog te weinig gegevens (${days} dag${days === 1 ? "" : "en"} – minstens 14 nodig)`,
+  bfNote: "Schatting op basis van de langetermijnstatistieken van Home Assistant. Veel batterijen blijven lang bijna vol en lopen dan snel leeg.",
+  hBattSoon: d => `De batterij is waarschijnlijk over ongeveer ${d} dag${d === 1 ? "" : "en"} leeg (schatting) – houd een reserve klaar.`,
   secHints: "Tips", hintsHead: "Tips voor het netwerk", listHints: n => ` · ${n} tip${n === 1 ? "" : "s"}`,
   hintsNote: "Tips zijn vuistregels op basis van de gegevens die de apparaten melden – suggesties, geen metingen.",
   noHints: "Geen zwakke plekken gevonden.",
@@ -1129,7 +1171,7 @@ function createThreadPulse(root, opts, host) {
         const b = battOf[n.id];
         pill(ctx, p.x + r * 0.55, p.y + r * 0.75, b + "%", b < 20 ? "#e53935" : b < 40 ? "#fb8c00" : "#607d8b");
       }
-      if (!warningsOf(n).length && ((hintsOf[n.id] || []).length || slowHint(n))) {
+      if (!warningsOf(n).length && ((hintsOf[n.id] || []).length || slowHint(n) || batteryHint(n))) {
         const x = p.x + r * 0.75, y = p.y - r * 0.85;
         ctx.fillStyle = "#1e88e5"; ctx.strokeStyle = "white"; ctx.lineWidth = 1.5;
         ctx.beginPath(); ctx.arc(x, y, 7, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
@@ -1218,7 +1260,7 @@ function createThreadPulse(root, opts, host) {
             `<div class="s">${esc(T.roles[n.role] || T.types[n.type] || "")}${n.area ? " · " + esc(n.area) : ""}${n.available ? "" : esc(T.unreachable)}</div></div>` +
             `<button class="x" title="×" data-act="close">×</button></div>`;
     for (const w of warningsOf(n)) h += `<div class="warn">⚠ ${esc(w)}</div>`;
-    const hs = (hintsOf[n.id] || []).concat(slowHint(n) || []);
+    const hs = (hintsOf[n.id] || []).concat(slowHint(n) || [], batteryHint(n) || []);
     if (hs.length) h += `<h4>${T.secHints}</h4>` + hs.map(t => `<div class="hint">💡 ${esc(t)}</div>`).join("") + `<div class="note">${T.hintsNote}</div>`;
     // live
     const c = counts[n.id], now = Date.now();
@@ -1253,7 +1295,8 @@ function createThreadPulse(root, opts, host) {
     // battery
     if (battOf[n.id] !== undefined || i.batType) {
       const b = battOf[n.id];
-      h += `<h4>${T.secBattery}</h4><dl>` + row(T.level, b !== undefined ? `<span class="${b < 20 ? "r" : b < 40 ? "o" : "g"}">${b} %</span>` : "") + row(T.type, esc(i.batType)) + `</dl>`;
+      h += `<h4>${T.secBattery}</h4><dl>` + row(T.level, b !== undefined ? `<span class="${b < 20 ? "r" : b < 40 ? "o" : "g"}">${b} %</span>` : "") + row(T.type, esc(i.batType)) +
+           row(T.bfLabel, forecastText(battForecast[n.id])) + `</dl>` + (battForecast[n.id] && battForecast[n.id].state === "ok" ? `<div class="note">${T.bfNote}</div>` : "");
     }
     // thread
     const links = (linksOf[n.id] || []).slice().sort((p, q) => q.rssi - p.rssi);
@@ -1446,6 +1489,71 @@ function createThreadPulse(root, opts, host) {
     return r && r.n >= SLOW_MIN && r.med >= SLOW_MS ? T.hSlow(r.med, r.n) : null;
   }
   const controllable = n => (n.mainEntities || []).some(e => ["light", "switch", "cover", "lock", "fan", "climate", "valve", "media_player"].includes(e.split(".")[0]));
+  // ---------- battery forecast (issue #39) ----------
+  // Estimate when a battery will be empty, from Home Assistant's long-term statistics (daily mean of the battery
+  // entity, kept permanently – the normal history is only kept for 10 days by default). Linear trend over up to
+  // 120 days, only since the last battery change (a jump upwards). Shown only with at least 14 days of data and a
+  // measurable drop. It is an estimate: many batteries stay almost full for a long time and then drop quickly.
+  const BF_DAYS = 120, BF_MIN_DAYS = 14, BF_SOON = 30, BF_MAX = 3 * 365;
+  let battForecast = {};
+  function forecastFrom(points, current) {           // points: [{ t: ms, v: % }] oldest first
+    let p = points.filter(x => typeof x.v === "number" && !isNaN(x.v));
+    for (let i = p.length - 1; i > 0; i--) if (p[i].v - p[i - 1].v >= 10) { p = p.slice(i); break; }   // battery changed
+    if (!p.length) return { state: "nodata", days: 0 };
+    const span = (p[p.length - 1].t - p[0].t) / 86400000;
+    if (span < BF_MIN_DAYS || p.length < 5) return { state: "nodata", days: Math.max(1, Math.round(span) + 1) };
+    const t0 = p[0].t, xs = p.map(x => (x.t - t0) / 86400000), ys = p.map(x => x.v);
+    const mx = xs.reduce((a, b) => a + b, 0) / xs.length, my = ys.reduce((a, b) => a + b, 0) / ys.length;
+    const sxx = xs.reduce((a, x) => a + (x - mx) ** 2, 0), sxy = xs.reduce((a, x, i) => a + (x - mx) * (ys[i] - my), 0);
+    const slope = sxx ? sxy / sxx : 0;                // % per day
+    const drop = ys[0] - ys[ys.length - 1];
+    const basis = Math.round(span);
+    if (slope > -0.02 || drop < 2) return { state: "nodrop", basis };
+    const now = typeof current === "number" ? current : ys[ys.length - 1];
+    const days = now / -slope;
+    return { state: "ok", days: days > BF_MAX ? Infinity : Math.max(1, Math.round(days)), perMonth: Math.round(-slope * 30 * 10) / 10, basis };
+  }
+  async function loadBatteryForecasts(hass) {
+    battForecast = {};
+    if (DEMO) {
+      // invented daily series that end at the demo battery level
+      for (const n of Object.values(nodeById)) if (n.demoBattery !== undefined) {
+        const rate = 1 / 1.5, pts = [];
+        for (let i = 60; i >= 0; i--) pts.push({ t: Date.now() - i * 86400000, v: Math.min(100, n.demoBattery + rate * i) });
+        battForecast[n.id] = forecastFrom(n.demoBattery === 100 ? pts.map(x => ({ t: x.t, v: 100 })) : pts, n.demoBattery);
+      }
+      return;
+    }
+    const entOf = {};
+    for (const n of Object.values(nodeById)) for (const id of n.entities || []) {
+      const st = hass.states[id];
+      if (st && st.attributes.device_class === "battery" && st.attributes.unit_of_measurement === "%") { entOf[n.id] = id; break; }
+    }
+    const ids = Object.values(entOf); if (!ids.length) return;
+    let res = {};
+    try {
+      res = await hass.callWS({ type: "recorder/statistics_during_period", start_time: new Date(Date.now() - BF_DAYS * 86400000).toISOString(),
+                                statistic_ids: ids, period: "day", types: ["mean"] });
+    } catch (e) { console.warn("Thread Pulse: battery statistics", e); return; }
+    for (const [nodeId, ent] of Object.entries(entOf)) {
+      const rows = res[ent] || [];
+      const pts = rows.map(r => ({ t: typeof r.start === "number" ? r.start : Date.parse(r.start), v: r.mean }));
+      battForecast[nodeId] = forecastFrom(pts, battOf[nodeId]);
+    }
+    if (panelNode && battForecast[panelNode]) renderPanel();
+    if (network) network.redraw();
+  }
+  every(() => { if (!DEMO) { const h = freshHass(); if (h) loadBatteryForecasts(h); } }, 6 * 3600000);
+  function forecastText(f) {
+    if (!f) return "";
+    if (f.state === "nodata") return T.bfNoData(f.days);
+    if (f.state === "nodrop") return T.bfNoDrop(f.basis);
+    return `${T.bfEmpty(f.days)} <span style="color:var(--muted)">· ${esc(T.bfBasis(f.basis, f.perMonth.toLocaleString(lang)))}</span>`;
+  }
+  function batteryHint(n) {
+    const f = battForecast[n.id];
+    return f && f.state === "ok" && f.days <= BF_SOON ? T.hBattSoon(f.days) : null;
+  }
   // ---------- sound (issue #12) ----------
   // A short, quiet tick for every animated message: high for messages to Home Assistant, low for commands.
   // Generated with Web Audio (no files). Off by default; browsers only allow sound after the page was clicked/tapped.
@@ -1592,10 +1700,11 @@ function createThreadPulse(root, opts, host) {
   async function load() {
     $("status").textContent = T.loading;
     const prev = lastSnap;
-    if (DEMO) { const m = demoState || (demoState = demoModel()); render(m); diffSnaps(prev, lastSnap); return m; }
+    if (DEMO) { const m = demoState || (demoState = demoModel()); render(m); diffSnaps(prev, lastSnap); loadBatteryForecasts(null); return m; }
     const m = await loadHa();
     render(m);
     diffSnaps(prev, lastSnap);
+    loadBatteryForecasts(m.hass);          // runs in the background, panel and badges update when it arrives
     await subscribeLive(m.hass);
     return m;
   }
