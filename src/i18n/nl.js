@@ -1,6 +1,7 @@
 //# Dutch texts. Defines TEXT_NL and NAMES_NL (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_NL = {
+  identifyBtn: "💡 Identificeren", identifyNote: "Stuurt een echt commando: het apparaat knippert, piept of licht enkele seconden op, als het dat ondersteunt.", identifySleepy: "Apparaten op batterij reageren pas als ze wakker worden – dat kan even duren.", identifySending: "versturen …", identifySent: "verstuurd – let op het apparaat", identifyFailed: "Mislukt",
   exportBtn: "📷 Afbeelding", exportTitle: "Kaart opslaan als afbeelding", exportPlain: "Afbeelding opslaan (met namen)", exportAnon: "Geanonimiseerde afbeelding opslaan (zonder namen)",
   anonDevice: i => `Apparaat ${i}`, anonRoom: c => `Ruimte ${c}`, anonNote: "geanonimiseerd", exportFailed: "De afbeelding kon niet worden opgeslagen", exportDevices: n => `${n} apparaten`,
   reload: "↻ Herladen", showList: "☰ Lijst tonen", hideList: "☰ Lijst verbergen", pause: "⏸ Live pauzeren", resume: "▶ Live hervatten",

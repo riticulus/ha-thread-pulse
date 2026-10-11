@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 ### Added
+- **💡 Identify** button in the detail panel of Thread and Wi-Fi devices that have an *identify* button in Home Assistant (Matter Identify cluster): the device blinks, beeps or flashes for a few seconds. Clearly marked as a real command, locked for 4 s after pressing, feedback in the panel; battery devices get a note that they react only when they wake up. The command is animated like any other ([#4](https://github.com/riticulus/ha-thread-pulse/issues/4))
 - Automation blueprint *Thread Pulse: device offline notification* (`blueprints/automation/thread-device-offline.yaml`, import button in the README): notifies when a selected Matter device has been unavailable for a delay (default 5 min), optionally when it is back (with the duration) and in the Home Assistant notifications; any notify action, own texts with placeholders. Runs in Home Assistant in the background, unlike the change log ([#42](https://github.com/riticulus/ha-thread-pulse/issues/42))
 - Save the map as an image: button **📷 Image** in the toolbar, *with names* or *anonymised* (devices *Device 1, 2 …* numbered by position on the map, rooms *Room A, B …*, no address suffixes). The PNG shows the map as it is on screen (zoom, links, badges, room areas, traffic, messages) on the page background, with a line for version, date and number of devices; file name `thread-pulse-<date>.png` / `…-anonymised.png`. On phones and tablets the share sheet opens where available ([#40](https://github.com/riticulus/ha-thread-pulse/issues/40))
 
@@ -16,6 +17,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The standalone page is now generated into `dist/thread-pulse.html`, next to the graph library; the duplicate copies at the top level of the repository are removed. **Manual installation of the standalone page:** take `thread-pulse.html` and `thread-pulse-vis-network.js` from the `dist` folder of *Source code (zip)*. Existing installations are not affected ([#47](https://github.com/riticulus/ha-thread-pulse/issues/47))
 - Code tidy-ups without change in behaviour: the device panel uses the shared live rows, `deName()` renamed to `localName()`, icon data moved to `src/icons.js`, colours defined once in `COLORS` (the CSS gets them as variables) ([#51](https://github.com/riticulus/ha-thread-pulse/issues/51))
 - Settings remembered by the browser are handled in one place (`src/prefs.js`: keys, types, defaults). Same storage keys and formats as before – existing settings keep working; safe when storage is blocked ([#50](https://github.com/riticulus/ha-thread-pulse/issues/50))
+
+### Fixed
+- Pressing a button entity (e.g. *Identify*) no longer shows up as a message from the device and is no longer counted as a response time of about 0 ms – a button's state is the time of the press, set by Home Assistant itself
 
 ## [1.4.0] – 2026-10-11
 

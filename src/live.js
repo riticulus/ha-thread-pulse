@@ -115,6 +115,7 @@
         if (!mainIds.length || mainIds.includes(d.entity_id)) liveAvailability(n, d.new_state.state !== "unavailable");
       }
       if (!n || !d.new_state || !d.old_state || d.new_state.state === "unavailable" || d.old_state.state === "unavailable") return;
+      if (d.entity_id.startsWith("button.")) return;   // the state of a button is the time of the last press, set by HA itself – not a message from the device
       if (d.new_state.state === d.old_state.state && JSON.stringify(d.new_state.attributes) === JSON.stringify(d.old_state.attributes)) return;
       const what = localName((d.new_state.attributes.friendly_name || d.entity_id).replace(nodeName[n], "").trim()) || T.state;
       let resp = "";
@@ -130,7 +131,7 @@
     const u2 = await conn.subscribeEvents(ev => {
       const sd = ev.data.service_data || {};
       const t = haTime(ev.time_fired), now = Date.now();
-      for (const e of [].concat(sd.entity_id || [])) if (entToNode[e] && !isNaN(t)) pendingCmd[e] = { t, ctx: ev.context && ev.context.id, at: now };
+      for (const e of [].concat(sd.entity_id || [])) if (entToNode[e] && !isNaN(t) && !e.startsWith("button.")) pendingCmd[e] = { t, ctx: ev.context && ev.context.id, at: now };
       for (const e in pendingCmd) if (now - pendingCmd[e].at > RESP_WINDOW) delete pendingCmd[e];
       const targets = new Set([].concat(sd.entity_id || []).map(e => entToNode[e]).filter(Boolean));
       for (const dv of [].concat(sd.device_id || [])) if (devToNode[dv]) targets.add(devToNode[dv]);
