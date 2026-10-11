@@ -35,7 +35,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - **Response time:** how long a device takes to confirm a command from Home Assistant – measured while the page is open
 - **Live counter per device:** messages to and from Home Assistant since the page was opened (last minute, last hour, last message)
 - Optional table: battery devices and their parents, weakest first, plus weak router-to-router links
-- Follows the Home Assistant theme (light/dark); English and German (from your Home Assistant language)
+- Follows the Home Assistant theme (light/dark); English, German, French, Italian, Spanish and Dutch (from your Home Assistant language)
 - Does **not** wake up battery devices: it only reads data Home Assistant already has
 
 ### Detail view
@@ -67,7 +67,7 @@ HACS shows updates like for any other card. HACS installs from the latest *relea
 | Option | Default | Description |
 |---|---|---|
 | `height` | fills the available space (at least 450 px) | Any CSS height, e.g. `600px`, or `calc(100vh - 120px)` for a full-screen panel view |
-| `language` | Home Assistant language | `en` or `de` |
+| `language` | Home Assistant language | `en`, `de`, `fr`, `it`, `es` or `nl` |
 | `ambient` | `false` | Ambient mode for wall tablets: only the mesh, dark, slow automatic zoom |
 | `ambient_motion` | `true` | In ambient mode: slow automatic zoom on (`true`) or off (`false`) |
 | `demo` | `false` | Show invented devices instead of your network |
@@ -139,6 +139,10 @@ The graph library (`thread-pulse-vis-network.js`, ~1.6 MB) is only loaded when a
 ## Privacy
 
 Everything runs in your browser. The page uses the session of the logged-in Home Assistant user to read data from your own Home Assistant and sends nothing anywhere else. No external scripts or fonts are loaded.
+
+## Translations
+
+Thread Pulse speaks English, German, French, Italian, Spanish and Dutch. The French, Italian, Spanish and Dutch texts have **not been checked by native speakers** yet. Corrections are very welcome – the texts are in [`src/i18n.js`](src/i18n.js); please open an issue or a pull request.
 
 ## Development
 
