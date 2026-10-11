@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Ambient mode for wall tablets: card option `ambient: true` or `?ambient` – only the pulsing mesh on a fixed dark background, no toolbar, legend, list or ticker; slow automatic zoom to a router and back every 25 s (`ambient_motion: false` / `&still` to switch off, paused for 60 s after touching the screen); the detail panel closes by itself after 15 s; asks the browser to keep the screen on where possible ([#11](https://github.com/riticulus/ha-thread-pulse/issues/11))
 - Double-click / double-tap: on empty space the whole mesh is centered and fitted to the map area, on a device the map zooms to it (centered in the part not covered by the detail panel); the browser's page zoom no longer triggers inside the map ([#23](https://github.com/riticulus/ha-thread-pulse/issues/23))
 
+### Changed
+- Source split into one file per topic in `src/` (`version.js`, `i18n.js`, `styles.css`, `markup.html`, `core.js`, one file per feature, `ui.js`, `start.js`); `build.py` assembles them in a fixed order. No change in behaviour – the generated files contain exactly the same lines as before ([#33](https://github.com/riticulus/ha-thread-pulse/issues/33))
+
 ## [1.3.0] – 2026-10-10
 
 ### Added

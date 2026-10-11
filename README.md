@@ -140,15 +140,20 @@ Everything runs in your browser. The page uses the session of the logged-in Home
 
 ## Development
 
-The code lives in `src/`:
+The code lives in `src/`, one file per topic:
 
 | File | Content |
 |---|---|
-| `src/core.js` | Everything that draws and updates the map – shared by the page and the card |
-| `src/standalone.html` | Shell of the standalone page (iframe) |
-| `src/card.js` | Shell of the dashboard card (`custom:thread-pulse-card`) |
+| `src/version.js` | Version number |
+| `src/i18n.js` | Texts (English, German) |
+| `src/styles.css`, `src/markup.html` | Styles and HTML skeleton |
+| `src/core.js` | Start of `createThreadPulse()` and the state shared by all parts |
+| `src/helpers.js`, `data.js`, `graph.js` | Helpers and Home Assistant connection, loading the data, drawing the map |
+| `src/live.js`, `heat.js`, `rooms.js`, `panel.js`, `hints.js`, `search.js`, `changes.js`, `response.js`, `demo.js`, `ambient.js` | One file per feature |
+| `src/ui.js`, `src/start.js` | List, legend, errors, event handling; start-up |
+| `src/standalone.html`, `src/card.js` | Shells for the standalone page and the dashboard card |
 
-`python3 build.py` generates `thread-pulse.html`, `dist/ha-thread-pulse.js` and `dist/thread-pulse-vis-network.js` – do not edit those by hand. A GitHub action checks on every pull request that the generated files are up to date and runs the HACS validation.
+`python3 build.py` assembles the files (in a fixed order, no bundler) into `thread-pulse.html`, `dist/ha-thread-pulse.js` and `dist/thread-pulse-vis-network.js` – do not edit those by hand. The feature files are placed *inside* `createThreadPulse()` and share its state. A GitHub action checks on every pull request that the generated files are up to date and runs the HACS validation. More in the [wiki](https://github.com/riticulus/ha-thread-pulse/wiki/Development).
 
 ## Related projects
 

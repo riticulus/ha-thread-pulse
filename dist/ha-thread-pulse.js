@@ -543,6 +543,106 @@ function createThreadPulse(root, opts, host) {
     return p.length > 1 ? p : null;
   }
   const counts = {};   // per device: timestamps of messages since the page was opened
+
+  function launch(nodeId, down, html) {
+    const now = performance.now(), key = nodeId + down;
+    if (lastPkt[key] && now - lastPkt[key] < 400) return;        // one radio message often updates several entities
+    lastPkt[key] = now;
+    const c = counts[nodeId] = counts[nodeId] || { up: [], down: [], last: null };
+    (down ? c.down : c.up).push(Date.now()); c.last = { t: Date.now(), down };
+    const cut = Date.now() - 3600000; c.up = c.up.filter(t => t > cut); c.down = c.down.filter(t => t > cut);
+    c.total = (c.total || 0) + 1;
+    let path = network ? pathToBr(nodeId) : null;
+    if (path) {
+      if (down) path = path.slice().reverse();
+      recordTraffic(path);
+    }
+    if (panelNode === nodeId) renderPanel();
+    if (!liveOn || !network || !path) return;
+    packets.push({ path, t0: now, color: down ? COLORS.down : COLORS.up, origin: down ? path[path.length - 1] : nodeId });
+    recent.unshift({ t: new Date(), html, down }); recent = recent.slice(0, 60);
+    showTicker();
+    if (!animating) { animating = true; requestAnimationFrame(tick); }
+  }
+  function tick() {
+    const now = performance.now();
+    packets = packets.filter(p => now - p.t0 < (p.path.length - 1) * HOP_MS + 900);
+    if (network) network.redraw();
+    if (packets.length && !destroyed) requestAnimationFrame(tick); else animating = false;
+  }
+
+  function drawPackets(ctx) {
+    if (!packets.length) return;
+    const now = performance.now(), pos = network.getPositions();
+    for (const p of packets) {
+      const el = now - p.t0, hops = p.path.length - 1, f = Math.min(el / HOP_MS, hops);
+      const i = Math.min(Math.floor(f), hops - 1), k = f - i, a = pos[p.path[i]], b = pos[p.path[i + 1]];
+      if (!a || !b) continue;
+      // trail along the hops already travelled
+      ctx.save(); ctx.strokeStyle = p.color; ctx.lineWidth = 3; ctx.globalAlpha = Math.max(0, 0.6 - Math.max(0, el - hops * HOP_MS) / 1500);
+      ctx.beginPath(); ctx.moveTo(pos[p.path[0]].x, pos[p.path[0]].y);
+      for (let j = 1; j <= i; j++) ctx.lineTo(pos[p.path[j]].x, pos[p.path[j]].y);
+      ctx.lineTo(a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k); ctx.stroke(); ctx.restore();
+      // ring around the sender
+      const o = pos[p.origin], ring = Math.min(el / 700, 1);
+      if (o && ring < 1) { ctx.save(); ctx.strokeStyle = p.color; ctx.globalAlpha = 1 - ring; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(o.x, o.y, 18 + ring * 22, 0, 2 * Math.PI); ctx.stroke(); ctx.restore(); }
+      // the packet itself
+      if (el <= hops * HOP_MS) { const x = a.x + (b.x - a.x) * k, y = a.y + (b.y - a.y) * k;
+        ctx.save(); ctx.shadowColor = p.color; ctx.shadowBlur = 14; ctx.fillStyle = p.color; ctx.strokeStyle = "white"; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(x, y, 7, 0, 2 * Math.PI); ctx.fill(); ctx.stroke(); ctx.restore(); }
+    }
+  }
+  function showTicker() {
+    const now = Date.now(), perMin = recent.filter(r => now - r.t < 60000).length;
+    $("live").innerHTML = `<div><b>Live</b> · ${T.perMin(perMin)}</div>` +
+      recent.slice(0, 3).map(r => `<div><span style="color:${r.down ? COLORS.down : COLORS.up}">●</span> ${r.t.toLocaleTimeString(lang)} ${r.html}</div>`).join("");
+  }
+  function deName(t) {
+    if (lang !== "de") return t;
+    for (const [en, de] of DE_NAMES) if (t.toLowerCase().startsWith(en.toLowerCase())) return de + t.slice(en.length);
+    return t;
+  }
+  function fmtState(st) {
+    const u = st.attributes && st.attributes.unit_of_measurement;
+    return (T.states[st.state] || st.state) + (u ? " " + u : "");
+  }
+
+  async function subscribeLive(hass) {
+    if (unsub) return;
+    const conn = hass.connection;
+    const u1 = await conn.subscribeEvents(ev => {
+      const d = ev.data, n = entToNode[d.entity_id];
+      if (n && d.new_state && d.old_state && (d.new_state.state === "unavailable") !== (d.old_state.state === "unavailable")) {
+        const mainIds = (nodeById[n] && nodeById[n].mainEntities) || [];
+        if (!mainIds.length || mainIds.includes(d.entity_id)) liveAvailability(n, d.new_state.state !== "unavailable");
+      }
+      if (!n || !d.new_state || !d.old_state || d.new_state.state === "unavailable" || d.old_state.state === "unavailable") return;
+      if (d.new_state.state === d.old_state.state && JSON.stringify(d.new_state.attributes) === JSON.stringify(d.old_state.attributes)) return;
+      const what = deName((d.new_state.attributes.friendly_name || d.entity_id).replace(nodeName[n], "").trim()) || T.state;
+      let resp = "";
+      const p = pendingCmd[d.entity_id];
+      if (p) {
+        const tState = haTime(ev.time_fired), ctxMatch = p.ctx && d.new_state.context && d.new_state.context.id === p.ctx;
+        const ms = tState - p.t;
+        if (ms >= 0 && (ctxMatch || ms <= RESP_WINDOW)) { recordResponse(n, ms); resp = ` · ${Math.round(ms)} ms`; }
+        if (ms >= 0) delete pendingCmd[d.entity_id];
+      }
+      launch(n, false, `<b>${esc(nodeName[n])}</b> → HA: ${esc(what)} ${esc(fmtState(d.new_state))}${resp}`);
+    }, "state_changed");
+    const u2 = await conn.subscribeEvents(ev => {
+      const sd = ev.data.service_data || {};
+      const t = haTime(ev.time_fired), now = Date.now();
+      for (const e of [].concat(sd.entity_id || [])) if (entToNode[e] && !isNaN(t)) pendingCmd[e] = { t, ctx: ev.context && ev.context.id, at: now };
+      for (const e in pendingCmd) if (now - pendingCmd[e].at > RESP_WINDOW) delete pendingCmd[e];
+      const targets = new Set([].concat(sd.entity_id || []).map(e => entToNode[e]).filter(Boolean));
+      for (const dv of [].concat(sd.device_id || [])) if (devToNode[dv]) targets.add(devToNode[dv]);
+      for (const n of targets) launch(n, true, `HA → <b>${esc(nodeName[n])}</b>: ${esc(ev.data.domain + "." + ev.data.service)}`);
+    }, "call_service");
+    unsub = () => { u1(); u2(); };
+    showTicker();
+    every(showTicker, 10000);
+  }
   // ---------- traffic heat (issue #3) ----------
   // Every message counts on each link of its (computed) path. Shown as a glow under the links, window HEAT_MS.
   // This is an estimate of where traffic flows, based on the most likely paths – not measured radio traffic.
@@ -573,6 +673,14 @@ function createThreadPulse(root, opts, host) {
     }
     ctx.restore();
   }
+
+  function updateEdgeTitles() {
+    if (!network) return;
+    const ds = network.body.data.edges, upd = [];
+    ds.forEach(e => { if (e.room) return; const n = (linkHits[e.id] || []).length; const title = e.rssiTitle + (n ? "\n" + T.heatTitle(n) : ""); if (title !== e.title) upd.push({ id: e.id, title }); });
+    if (upd.length) ds.update(upd);
+  }
+  every(() => { pruneHeat(); updateEdgeTitles(); if (network && !animating) network.redraw(); }, 5000);
   // ---------- room view (issue #8) ----------
   // Calculated layout: every Home Assistant area gets its own spot on a grid, its devices sit in a ring around it,
   // and a coloured area with the room name is drawn behind them. Devices without an area and the border router share
@@ -666,40 +774,6 @@ function createThreadPulse(root, opts, host) {
     for (const l of labels) { ctx.fillStyle = l.color; ctx.globalAlpha = 0.9; ctx.fillText(l.text, l.x, l.y); }
     ctx.restore();
   }
-
-  function updateEdgeTitles() {
-    if (!network) return;
-    const ds = network.body.data.edges, upd = [];
-    ds.forEach(e => { if (e.room) return; const n = (linkHits[e.id] || []).length; const title = e.rssiTitle + (n ? "\n" + T.heatTitle(n) : ""); if (title !== e.title) upd.push({ id: e.id, title }); });
-    if (upd.length) ds.update(upd);
-  }
-  every(() => { pruneHeat(); updateEdgeTitles(); if (network && !animating) network.redraw(); }, 5000);
-  function launch(nodeId, down, html) {
-    const now = performance.now(), key = nodeId + down;
-    if (lastPkt[key] && now - lastPkt[key] < 400) return;        // one radio message often updates several entities
-    lastPkt[key] = now;
-    const c = counts[nodeId] = counts[nodeId] || { up: [], down: [], last: null };
-    (down ? c.down : c.up).push(Date.now()); c.last = { t: Date.now(), down };
-    const cut = Date.now() - 3600000; c.up = c.up.filter(t => t > cut); c.down = c.down.filter(t => t > cut);
-    c.total = (c.total || 0) + 1;
-    let path = network ? pathToBr(nodeId) : null;
-    if (path) {
-      if (down) path = path.slice().reverse();
-      recordTraffic(path);
-    }
-    if (panelNode === nodeId) renderPanel();
-    if (!liveOn || !network || !path) return;
-    packets.push({ path, t0: now, color: down ? COLORS.down : COLORS.up, origin: down ? path[path.length - 1] : nodeId });
-    recent.unshift({ t: new Date(), html, down }); recent = recent.slice(0, 60);
-    showTicker();
-    if (!animating) { animating = true; requestAnimationFrame(tick); }
-  }
-  function tick() {
-    const now = performance.now();
-    packets = packets.filter(p => now - p.t0 < (p.path.length - 1) * HOP_MS + 900);
-    if (network) network.redraw();
-    if (packets.length && !destroyed) requestAnimationFrame(tick); else animating = false;
-  }
   // ---------- badges and detail panel ----------
   let panelNode = null;
   function freshHass() { try { return host.hass(); } catch (e) { return null; } }
@@ -753,31 +827,6 @@ function createThreadPulse(root, opts, host) {
       }
       ctx.restore();
     }
-  }
-  // ---------- weak-spot hints (issue #10) ----------
-  // Rules of thumb from the reported data. Thresholds: signal below −80 dBm is "weak" (same as the link colours);
-  // ≥ 5 attach attempts / ≥ 3 drop-offs as for the warnings; ≥ 50 restarts in total for a router suggests it loses power regularly.
-  // Note: switching a smart plug off does NOT stop it from routing – only its socket is switched – so that is not a hint.
-  function computeHints(parents) {
-    const out = {}, add = (id, t) => (out[id] = out[id] || []).push(t);
-    const isRouterId = id => (nodeById[id] && nodeById[id].type === "routing_end_device") || id === brExt;
-    for (const n of Object.values(nodeById)) {
-      const i = n.info || {}, links = linksOf[n.id] || [];
-      if (n.type !== "routing_end_device") {
-        const par = links.find(l => l.kind === "parent") || links.slice().sort((a, b) => b.rssi - a.rssi)[0];
-        const pinfo = parents.find(p => p.child === n.name);
-        if (par && par.rssi < -80) add(n.id, T.hWeakParent(par.name, par.rssi, pinfo && pinfo.src === "device"));
-      } else {
-        if (i.reboots >= 50) {
-          const kids = links.filter(l => l.kind === "child").map(l => l.name);
-          add(n.id, T.hPowerCut(i.reboots, kids));
-        }
-        const rl = links.filter(l => l.kind === "neighbour" && isRouterId(l.id));
-        if (rl.length) { const best = Math.max(...rl.map(l => l.rssi)); if (best < -80) add(n.id, T.hEdge(best)); }
-      }
-      if (i.attach >= 5 || i.detached >= 3) add(n.id, T.hUnstable);
-    }
-    return out;
   }
 
   let ambientClose = null;
@@ -857,8 +906,31 @@ function createThreadPulse(root, opts, host) {
     host.navigate("/config/devices/device/" + devId);
   }
   every(() => { if (panelNode) renderPanel(); }, 5000);
-  root.addEventListener("keydown", e => { if (e.key === "Escape" && e.target.id !== "search") closePanel(); });
-
+  // ---------- weak-spot hints (issue #10) ----------
+  // Rules of thumb from the reported data. Thresholds: signal below −80 dBm is "weak" (same as the link colours);
+  // ≥ 5 attach attempts / ≥ 3 drop-offs as for the warnings; ≥ 50 restarts in total for a router suggests it loses power regularly.
+  // Note: switching a smart plug off does NOT stop it from routing – only its socket is switched – so that is not a hint.
+  function computeHints(parents) {
+    const out = {}, add = (id, t) => (out[id] = out[id] || []).push(t);
+    const isRouterId = id => (nodeById[id] && nodeById[id].type === "routing_end_device") || id === brExt;
+    for (const n of Object.values(nodeById)) {
+      const i = n.info || {}, links = linksOf[n.id] || [];
+      if (n.type !== "routing_end_device") {
+        const par = links.find(l => l.kind === "parent") || links.slice().sort((a, b) => b.rssi - a.rssi)[0];
+        const pinfo = parents.find(p => p.child === n.name);
+        if (par && par.rssi < -80) add(n.id, T.hWeakParent(par.name, par.rssi, pinfo && pinfo.src === "device"));
+      } else {
+        if (i.reboots >= 50) {
+          const kids = links.filter(l => l.kind === "child").map(l => l.name);
+          add(n.id, T.hPowerCut(i.reboots, kids));
+        }
+        const rl = links.filter(l => l.kind === "neighbour" && isRouterId(l.id));
+        if (rl.length) { const best = Math.max(...rl.map(l => l.rssi)); if (best < -80) add(n.id, T.hEdge(best)); }
+      }
+      if (i.attach >= 5 || i.detached >= 3) add(n.id, T.hUnstable);
+    }
+    return out;
+  }
   // ---------- search (issue #9) ----------
   // Matches device name and area (case and accents ignored). Matches stay bright and are selected, the rest fades out,
   // the map zooms to the matches. Enter opens the first match, Esc clears the search.
@@ -886,15 +958,6 @@ function createThreadPulse(root, opts, host) {
     if (e.key === "Enter" && searchHits.length) { e.preventDefault(); openPanel(searchHits[0]); }
     else if (e.key === "Escape") { e.preventDefault(); $("search").value = ""; applySearch(); $("search").blur(); }
   });
-  root.addEventListener("click", e => {
-    const t = e.target.closest && e.target.closest("[data-open],[data-act],[data-device]"); if (!t) return;
-    e.preventDefault();
-    if (t.dataset.open) openPanel(t.dataset.open);
-    else if (t.dataset.act === "close") closePanel();
-    else if (t.dataset.act === "clearchanges") { changes = []; try { localStorage.removeItem(LOG_KEY); } catch (e) {} renderChanges(); }
-    else if (t.dataset.device) openDevice(t.dataset.device);
-  });
-
   // ---------- change log (issue #7) ----------
   // Every 5 minutes the data is loaded again (map positions kept) and compared with the previous state. Reachability
   // changes are logged live from Home Assistant. The list is kept in this browser (localStorage), max. 100 entries.
@@ -986,43 +1049,6 @@ function createThreadPulse(root, opts, host) {
     const n = nodeById[nodeId];
     logChange(nodeId, n.name, available ? T.chOnline : T.chOffline, available ? "online" : "offline");
   }
-
-  function drawPackets(ctx) {
-    if (!packets.length) return;
-    const now = performance.now(), pos = network.getPositions();
-    for (const p of packets) {
-      const el = now - p.t0, hops = p.path.length - 1, f = Math.min(el / HOP_MS, hops);
-      const i = Math.min(Math.floor(f), hops - 1), k = f - i, a = pos[p.path[i]], b = pos[p.path[i + 1]];
-      if (!a || !b) continue;
-      // trail along the hops already travelled
-      ctx.save(); ctx.strokeStyle = p.color; ctx.lineWidth = 3; ctx.globalAlpha = Math.max(0, 0.6 - Math.max(0, el - hops * HOP_MS) / 1500);
-      ctx.beginPath(); ctx.moveTo(pos[p.path[0]].x, pos[p.path[0]].y);
-      for (let j = 1; j <= i; j++) ctx.lineTo(pos[p.path[j]].x, pos[p.path[j]].y);
-      ctx.lineTo(a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k); ctx.stroke(); ctx.restore();
-      // ring around the sender
-      const o = pos[p.origin], ring = Math.min(el / 700, 1);
-      if (o && ring < 1) { ctx.save(); ctx.strokeStyle = p.color; ctx.globalAlpha = 1 - ring; ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.arc(o.x, o.y, 18 + ring * 22, 0, 2 * Math.PI); ctx.stroke(); ctx.restore(); }
-      // the packet itself
-      if (el <= hops * HOP_MS) { const x = a.x + (b.x - a.x) * k, y = a.y + (b.y - a.y) * k;
-        ctx.save(); ctx.shadowColor = p.color; ctx.shadowBlur = 14; ctx.fillStyle = p.color; ctx.strokeStyle = "white"; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(x, y, 7, 0, 2 * Math.PI); ctx.fill(); ctx.stroke(); ctx.restore(); }
-    }
-  }
-  function showTicker() {
-    const now = Date.now(), perMin = recent.filter(r => now - r.t < 60000).length;
-    $("live").innerHTML = `<div><b>Live</b> · ${T.perMin(perMin)}</div>` +
-      recent.slice(0, 3).map(r => `<div><span style="color:${r.down ? COLORS.down : COLORS.up}">●</span> ${r.t.toLocaleTimeString(lang)} ${r.html}</div>`).join("");
-  }
-  function deName(t) {
-    if (lang !== "de") return t;
-    for (const [en, de] of DE_NAMES) if (t.toLowerCase().startsWith(en.toLowerCase())) return de + t.slice(en.length);
-    return t;
-  }
-  function fmtState(st) {
-    const u = st.attributes && st.attributes.unit_of_measurement;
-    return (T.states[st.state] || st.state) + (u ? " " + u : "");
-  }
   // ---------- response time per device (issue #2) ----------
   // Command (call_service) → first state report of the same entity (state_changed), both with Home Assistant's own
   // time stamps (time_fired), so the browser's connection does not distort the result. Matched by context id, or else
@@ -1048,43 +1074,6 @@ function createThreadPulse(root, opts, host) {
     return r && r.n >= SLOW_MIN && r.med >= SLOW_MS ? T.hSlow(r.med, r.n) : null;
   }
   const controllable = n => (n.mainEntities || []).some(e => ["light", "switch", "cover", "lock", "fan", "climate", "valve", "media_player"].includes(e.split(".")[0]));
-
-  async function subscribeLive(hass) {
-    if (unsub) return;
-    const conn = hass.connection;
-    const u1 = await conn.subscribeEvents(ev => {
-      const d = ev.data, n = entToNode[d.entity_id];
-      if (n && d.new_state && d.old_state && (d.new_state.state === "unavailable") !== (d.old_state.state === "unavailable")) {
-        const mainIds = (nodeById[n] && nodeById[n].mainEntities) || [];
-        if (!mainIds.length || mainIds.includes(d.entity_id)) liveAvailability(n, d.new_state.state !== "unavailable");
-      }
-      if (!n || !d.new_state || !d.old_state || d.new_state.state === "unavailable" || d.old_state.state === "unavailable") return;
-      if (d.new_state.state === d.old_state.state && JSON.stringify(d.new_state.attributes) === JSON.stringify(d.old_state.attributes)) return;
-      const what = deName((d.new_state.attributes.friendly_name || d.entity_id).replace(nodeName[n], "").trim()) || T.state;
-      let resp = "";
-      const p = pendingCmd[d.entity_id];
-      if (p) {
-        const tState = haTime(ev.time_fired), ctxMatch = p.ctx && d.new_state.context && d.new_state.context.id === p.ctx;
-        const ms = tState - p.t;
-        if (ms >= 0 && (ctxMatch || ms <= RESP_WINDOW)) { recordResponse(n, ms); resp = ` · ${Math.round(ms)} ms`; }
-        if (ms >= 0) delete pendingCmd[d.entity_id];
-      }
-      launch(n, false, `<b>${esc(nodeName[n])}</b> → HA: ${esc(what)} ${esc(fmtState(d.new_state))}${resp}`);
-    }, "state_changed");
-    const u2 = await conn.subscribeEvents(ev => {
-      const sd = ev.data.service_data || {};
-      const t = haTime(ev.time_fired), now = Date.now();
-      for (const e of [].concat(sd.entity_id || [])) if (entToNode[e] && !isNaN(t)) pendingCmd[e] = { t, ctx: ev.context && ev.context.id, at: now };
-      for (const e in pendingCmd) if (now - pendingCmd[e].at > RESP_WINDOW) delete pendingCmd[e];
-      const targets = new Set([].concat(sd.entity_id || []).map(e => entToNode[e]).filter(Boolean));
-      for (const dv of [].concat(sd.device_id || [])) if (devToNode[dv]) targets.add(devToNode[dv]);
-      for (const n of targets) launch(n, true, `HA → <b>${esc(nodeName[n])}</b>: ${esc(ev.data.domain + "." + ev.data.service)}`);
-    }, "call_service");
-    unsub = () => { u1(); u2(); };
-    showTicker();
-    every(showTicker, 10000);
-  }
-
   // ---------- demo (invented devices, works without Home Assistant) ----------
   function demoModel() {
     const de = lang === "de";
@@ -1201,6 +1190,17 @@ function createThreadPulse(root, opts, host) {
   }
 
   theme();
+
+  root.addEventListener("keydown", e => { if (e.key === "Escape" && e.target.id !== "search") closePanel(); });
+
+  root.addEventListener("click", e => {
+    const t = e.target.closest && e.target.closest("[data-open],[data-act],[data-device]"); if (!t) return;
+    e.preventDefault();
+    if (t.dataset.open) openPanel(t.dataset.open);
+    else if (t.dataset.act === "close") closePanel();
+    else if (t.dataset.act === "clearchanges") { changes = []; try { localStorage.removeItem(LOG_KEY); } catch (e) {} renderChanges(); }
+    else if (t.dataset.device) openDevice(t.dataset.device);
+  });
   // ---------- ambient mode (issue #11) ----------
   // Only the mesh, dark. Every 25 s the view glides slowly to a router and back to the whole mesh (against burn-in).
   // Paused for 60 s after the screen was touched. Asks the browser to keep the screen on (needs HTTPS – fails silently otherwise).
