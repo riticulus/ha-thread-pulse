@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: User guide
+    url: https://github.com/riticulus/ha-thread-pulse/wiki
+    about: Installation, configuration and every feature explained
+  - name: Troubleshooting & FAQ
+    url: https://github.com/riticulus/ha-thread-pulse/wiki/Troubleshooting-and-FAQ
+    about: Error messages and common questions

@@ -1,0 +1,36 @@
+name: Translation correction
+description: A text is wrong, unclear or sounds unnatural in your language
+labels: ["translation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The French, Italian, Spanish and Dutch texts have not been checked by native speakers yet – thank you for helping!
+        The texts are in [`src/i18n/`](https://github.com/riticulus/ha-thread-pulse/tree/main/src/i18n), one file per language. A pull request is welcome too.
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language
+      options:
+        - German (de)
+        - French (fr)
+        - Italian (it)
+        - Spanish (es)
+        - Dutch (nl)
+        - English (en)
+        - New language
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current text
+      description: Copy the text as shown, and where it appears (toolbar, detail panel, list …)
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested text
+    validations:
+      required: true
