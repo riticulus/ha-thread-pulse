@@ -6,6 +6,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+# read-only token: the checks only read the repository
+permissions:
+  contents: read
+
 jobs:
   hacs:
     name: HACS validation
