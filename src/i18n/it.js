@@ -8,7 +8,7 @@ const TEXT_IT = {
   anonDevice: i => `Dispositivo ${i}`, anonRoom: c => `Stanza ${c}`, anonNote: "anonimizzata", exportFailed: "Non è stato possibile salvare l'immagine", exportDevices: n => `${n} dispositivi`,
   reload: "↻ Ricarica", showList: "☰ Mostra elenco", hideList: "☰ Nascondi elenco", pause: "⏸ Metti in pausa", resume: "▶ Riprendi diretta",
   changesHead: "Modifiche nella rete", changesNone: "Nessuna modifica rilevata finora.", changesClear: "Svuota elenco",
-  changesNote: "Controllato ogni 5 minuti e salvato in questo browser. La raggiungibilità viene segnalata in diretta; le modifiche di parent, ruolo e collegamenti compaiono solo quando i dispositivi le segnalano.",
+  changesNote: "Controllato ogni 5 minuti e salvato in Home Assistant per il tuo utente – lo stesso elenco su tutti i tuoi dispositivi. La raggiungibilità viene segnalata in diretta; le modifiche di parent, ruolo e collegamenti compaiono solo quando i dispositivi le segnalano.",
   chNew: "nuovo nella rete", chGone: "non più nella rete", chOffline: "non raggiungibile", chOnline: "di nuovo raggiungibile",
   chParent: (a, b, r) => `nuovo parent: ${a} → ${b} (${r} dBm)`, chSignal: (p, q1, q2, r) => `segnale verso il parent ${p}: ${q1} → ${q2} (${r} dBm)`,
   chRole: (a, b) => `ruolo: ${a} → ${b}`, chLinkNew: o => `nuovo collegamento con ${o}`, chLinkGone: o => `collegamento con ${o} perso`,

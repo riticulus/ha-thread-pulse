@@ -8,7 +8,7 @@ const TEXT_FR = {
   anonDevice: i => `Appareil ${i}`, anonRoom: c => `Pièce ${c}`, anonNote: "anonymisée", exportFailed: "L'image n'a pas pu être enregistrée", exportDevices: n => `${n} appareils`,
   reload: "↻ Recharger", showList: "☰ Afficher la liste", hideList: "☰ Masquer la liste", pause: "⏸ Mettre en pause", resume: "▶ Reprendre le direct",
   changesHead: "Changements dans le réseau", changesNone: "Aucun changement détecté pour l'instant.", changesClear: "Vider la liste",
-  changesNote: "Vérifié toutes les 5 minutes et conservé dans ce navigateur. L'accessibilité est signalée en direct ; les changements de parent, de rôle et de liaison n'apparaissent qu'une fois signalés par les appareils.",
+  changesNote: "Vérifié toutes les 5 minutes et enregistré dans Home Assistant pour votre utilisateur – la même liste sur tous vos appareils. L'accessibilité est signalée en direct ; les changements de parent, de rôle et de liaison n'apparaissent qu'une fois signalés par les appareils.",
   chNew: "nouveau dans le réseau", chGone: "n'est plus dans le réseau", chOffline: "injoignable", chOnline: "de nouveau joignable",
   chParent: (a, b, r) => `nouveau parent : ${a} → ${b} (${r} dBm)`, chSignal: (p, q1, q2, r) => `signal vers le parent ${p} : ${q1} → ${q2} (${r} dBm)`,
   chRole: (a, b) => `rôle : ${a} → ${b}`, chLinkNew: o => `nouvelle liaison avec ${o}`, chLinkGone: o => `liaison avec ${o} perdue`,

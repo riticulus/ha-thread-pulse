@@ -8,7 +8,7 @@ const TEXT_EN = {
   anonDevice: i => `Device ${i}`, anonRoom: c => `Room ${c}`, anonNote: "anonymised", exportFailed: "The image could not be saved", exportDevices: n => `${n} devices`,
   reload: "↻ Reload", showList: "☰ Show list", hideList: "☰ Hide list", pause: "⏸ Pause live", resume: "▶ Resume live",
   changesHead: "Changes in the network", changesNone: "No changes detected yet.", changesClear: "Clear list",
-  changesNote: "Checked every 5 minutes and kept in this browser. Reachability is reported live; parent, role and link changes only show up once the devices report them.",
+  changesNote: "Checked every 5 minutes and stored in Home Assistant for your user – the same list on all your devices. Reachability is reported live; parent, role and link changes only show up once the devices report them.",
   chNew: "new in the network", chGone: "no longer in the network", chOffline: "not reachable", chOnline: "reachable again",
   chParent: (a, b, r) => `new parent: ${a} → ${b} (${r} dBm)`, chSignal: (p, q1, q2, r) => `signal to parent ${p}: ${q1} → ${q2} (${r} dBm)`,
   chRole: (a, b) => `role: ${a} → ${b}`, chLinkNew: o => `new link to ${o}`, chLinkGone: o => `link to ${o} lost`,

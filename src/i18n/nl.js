@@ -8,7 +8,7 @@ const TEXT_NL = {
   anonDevice: i => `Apparaat ${i}`, anonRoom: c => `Ruimte ${c}`, anonNote: "geanonimiseerd", exportFailed: "De afbeelding kon niet worden opgeslagen", exportDevices: n => `${n} apparaten`,
   reload: "↻ Herladen", showList: "☰ Lijst tonen", hideList: "☰ Lijst verbergen", pause: "⏸ Live pauzeren", resume: "▶ Live hervatten",
   changesHead: "Wijzigingen in het netwerk", changesNone: "Nog geen wijzigingen gevonden.", changesClear: "Lijst wissen",
-  changesNote: "Wordt elke 5 minuten gecontroleerd en in deze browser bewaard. Bereikbaarheid wordt live gemeld; wijzigingen van parent, rol en verbindingen verschijnen pas als de apparaten ze melden.",
+  changesNote: "Wordt elke 5 minuten gecontroleerd en in Home Assistant voor je gebruiker bewaard – dezelfde lijst op al je apparaten. Bereikbaarheid wordt live gemeld; wijzigingen van parent, rol en verbindingen verschijnen pas als de apparaten ze melden.",
   chNew: "nieuw in het netwerk", chGone: "niet meer in het netwerk", chOffline: "niet bereikbaar", chOnline: "weer bereikbaar",
   chParent: (a, b, r) => `nieuwe parent: ${a} → ${b} (${r} dBm)`, chSignal: (p, q1, q2, r) => `signaal naar parent ${p}: ${q1} → ${q2} (${r} dBm)`,
   chRole: (a, b) => `rol: ${a} → ${b}`, chLinkNew: o => `nieuwe verbinding met ${o}`, chLinkGone: o => `verbinding met ${o} verloren`,

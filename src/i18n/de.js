@@ -8,7 +8,7 @@ const TEXT_DE = {
   anonDevice: i => `Gerät ${i}`, anonRoom: c => `Raum ${c}`, anonNote: "anonymisiert", exportFailed: "Das Bild konnte nicht gespeichert werden", exportDevices: n => `${n} Geräte`,
   reload: "↻ Neu laden", showList: "☰ Liste anzeigen", hideList: "☰ Liste ausblenden", pause: "⏸ Live pausieren", resume: "▶ Live starten",
   changesHead: "Änderungen im Netz", changesNone: "Noch keine Änderungen festgestellt.", changesClear: "Liste leeren",
-  changesNote: "Wird alle 5 Minuten geprüft und in diesem Browser gespeichert. Erreichbarkeit wird live gemeldet; Parent-, Rollen- und Verbindungsänderungen erscheinen erst, wenn die Geräte sie melden.",
+  changesNote: "Wird alle 5 Minuten geprüft und in Home Assistant für deinen Benutzer gespeichert – dieselbe Liste auf allen deinen Geräten. Erreichbarkeit wird live gemeldet; Parent-, Rollen- und Verbindungsänderungen erscheinen erst, wenn die Geräte sie melden.",
   chNew: "neu im Netz", chGone: "nicht mehr im Netz", chOffline: "nicht erreichbar", chOnline: "wieder erreichbar",
   chParent: (a, b, r) => `neuer Parent: ${a} → ${b} (${r} dBm)`, chSignal: (p, q1, q2, r) => `Signal zum Parent ${p}: ${q1} → ${q2} (${r} dBm)`,
   chRole: (a, b) => `Rolle: ${a} → ${b}`, chLinkNew: o => `neue Verbindung zu ${o}`, chLinkGone: o => `Verbindung zu ${o} verloren`,

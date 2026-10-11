@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+- The change log is stored in Home Assistant per user (`frontend/set_user_data`) instead of per browser: the same list on every device, synchronised live between open pages, up to 200 entries. The same change noticed by several open pages is kept once; *Clear list* applies to all devices. Entries stored in the browser by older versions are moved to Home Assistant on first use; if Home Assistant refuses, the browser is used as before ([#86](https://github.com/riticulus/ha-thread-pulse/issues/86))
+
 ### Changed
 - Maintenance after enabling CodeQL code scanning: the *Validate* workflow runs with a read-only token, line breaks in router names are replaced completely in the panel title. The two warnings in the unmodified graph library (vis-network) are dismissed with a documented reason ([#94](https://github.com/riticulus/ha-thread-pulse/issues/94))
 
