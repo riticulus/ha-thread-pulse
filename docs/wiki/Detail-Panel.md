@@ -4,7 +4,7 @@ Tap or click a device on the map to open its detail panel. On wide screens it op
 
 ![Detail panel](images/detail-panel.png)
 
-**Close it** with **×**, by tapping empty space on the map, or with the **Esc** key. You can also open it from the [list](The-List) (device names are links) and with **Enter** in the [search](Search).
+**Close it** with **×**, by tapping empty space on the map, or with the **Esc** key. You can also open it from the [network panel](The-List) (device names are links) and with **Enter** in the [search](Search).
 
 The panel updates itself every 5 seconds while it is open.
 

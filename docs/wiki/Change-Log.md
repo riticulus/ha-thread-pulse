@@ -4,7 +4,7 @@ Thread Pulse notices when something changes in your Thread network and lists it 
 
 > The change log only works while a Thread Pulse page is open. For a message on your phone when a device goes offline, use the [offline notification blueprint](Offline-Notification).
 
-![Change log in the list](images/list.png)
+![Network panel](images/list.png)
 
 ## What is detected
 
@@ -28,7 +28,7 @@ The affected device **flashes** three times on the map.
 
 ## The list
 
-The section **Changes in the network** at the top of the [list](The-List) shows the latest 30 entries: time, coloured dot, device (a link to its [detail panel](Detail-Panel)) and the change. **Clear list** empties it – on all your devices.
+The tab **Changes** of the [network panel](The-List) *(after version 1.5.2; before: the section at the top of the list)* shows how many entries are new since you last looked, and the latest 30 entries: time, coloured dot, device (a link to its [detail panel](Detail-Panel)) and the change. **Clear list** empties it – on all your devices.
 
 ## Where the list is stored
 

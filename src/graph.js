@@ -152,36 +152,14 @@
     renderList();
     const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
     if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
+    else if (markedIds) {                     // devices marked from the panel below the map (#108) stay marked after a refresh
+      const keepIds = markedIds.filter(id => onMap.has(id)); markedIds = null;
+      if (keepIds.length) setTimeout(() => markDevices(keepIds, false), 50); else clearMarks();
+    }
     renderChanges();
     if (panelNode && (nodeById[panelNode] || extraIds.has(panelNode) || wifiById[panelNode])) renderPanel(); else if (panelNode) closePanel();
     lastSnap = snapshotOf(nodes, edges, byId);
     lastSnap.grade = (computeHealth() || {}).grade;    // grade changes go to the change log (issue #84)
     // short (issue #107): the version is in the ⋯ menu; the tap hint only until a device was opened once
     $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + (prefs.get("tapped") ? "" : " · " + T.tapHint);
-  }
-
-  // hints and the list below the map – rebuilt when names of border routers arrive (#71)
-  function renderList() {
-    if (!listData) return;
-    const { parents, weak, count } = listData;
-    hintsOf = computeHints(parents);
-    const allHints = Object.entries(hintsOf).flatMap(([id, hs]) => hs.map(t => [id, t]));
-    let h = `<div id="changes"></div>` + healthHtml() + `<b>${T.hintsHead}</b>` + (allHints.length
-      ? `<table>${allHints.map(([id, t]) => `<tr><td style="white-space:nowrap;vertical-align:top"><a href="#" data-open="${id}">${esc(nodeById[id].name)}</a></td><td>${esc(t)}</td></tr>`).join("")}</table>`
-      : `<div>${T.noHints}</div>`) + `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${T.hintsNote}</div>`;
-    hintCount = allHints.length; setList(!$("info").classList.contains("hidden"), false);
-    h += `<b>${T.parentsHead}</b> ${T.parentsSub}<table><tr><th>${T.thDevice}</th><th>${T.thVia}</th><th>${T.thSignal}</th></tr>`;
-    for (const p of parents.filter(p => p.type !== "end_device")) {
-      const [, cls, txt] = QUAL(p.rssi);
-      h += `<tr><td>${esc(p.child)}</td><td>${esc(p.parent)}</td><td class="${cls}">${p.rssi} dBm · ${txt}${p.src === "device" ? ` <span style="color:var(--muted)">${T.selfMeasured}</span>` : ""}</td></tr>`;
-    }
-    h += `</table>`;
-    if (weak.length) {
-      h += `<br><b>${T.weakHead}</b> ${T.weakSub}<table>`;
-      for (const w of weak) h += `<tr><td>${esc(nameOf(w.a))} ↔ ${esc(nameOf(w.b))}</td><td class="r">${w.r} dBm</td></tr>`;
-      h += `</table>`;
-    }
-    h += firmwareListHtml();
-    h += `<br><span style="color:var(--muted);font-size:12px">${T.foot(count)}</span>`;
-    $("info").innerHTML = h;
   }

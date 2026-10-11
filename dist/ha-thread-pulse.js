@@ -66,6 +66,39 @@ const TP_CSS = `
   #live b { color: var(--fg); font-weight: 600; }
   #info { padding: 8px 12px 14px; border-top: 1px solid var(--line); font-size: 13px; max-height: 45%; overflow: auto; }
   #info.hidden { display: none; }
+  /* panel below the map: tabs (issue #108) */
+  #info { padding-top: 0; }
+  #tabbar { position: sticky; top: 0; z-index: 2; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; background: var(--bg);
+            border-bottom: 1px solid var(--line); margin: 0 -12px 10px; padding: 0 8px; }
+  #tabbar::-webkit-scrollbar { display: none; }
+  #tabbar button { border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font: inherit; font-size: 13px; padding: 8px 8px 7px;
+                   cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; }
+  #tabbar button:hover { color: var(--fg); }
+  #tabbar button.on { color: var(--fg); border-bottom-color: var(--c-hint, #1e88e5); font-weight: 600; }
+  #tabbar .cnt { background: var(--line); color: var(--fg); border-radius: 9px; padding: 0 6px; font-size: 11px; font-weight: 600; line-height: 16px; }
+  #tabbar .cnt.new { background: var(--c-hint, #1e88e5); color: white; }
+  .tabp h4 { margin: 14px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; }
+  .tnote { color: var(--muted); font-size: 12px; margin: 4px 0 10px; }
+  .b { color: var(--c-hint, #1e88e5); }
+  .hcard { display: flex; align-items: center; gap: 12px; margin: 2px 0 8px; }
+  .hgrade { width: 44px; height: 44px; border-radius: 10px; color: white; font-size: 26px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex: none; }
+  tr.mark { cursor: pointer; }
+  tr.mark:hover td { background: var(--card); }
+  details.okf { margin: 4px 0; }
+  details.okf summary { cursor: pointer; color: var(--muted); font-size: 12px; padding: 3px 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+  .chips button { border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 14px; padding: 2px 10px; font: inherit; font-size: 12px; cursor: pointer; }
+  .chips button span { color: var(--muted); }
+  .chips button.on { border-color: var(--c-hint, #1e88e5); background: color-mix(in srgb, var(--c-hint, #1e88e5) 16%, var(--card)); }
+  .tscroll { overflow-x: auto; }
+  table.devs th a { color: inherit; text-decoration: none; white-space: nowrap; }
+  table.lk { width: auto; min-width: min(100%, 420px); }
+  #markchip { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); z-index: 4; font-size: 12px; white-space: nowrap;
+              background: color-mix(in srgb, var(--bg) 92%, transparent); border: 1px solid var(--c-hint, #1e88e5); border-radius: 14px; padding: 3px 10px; }
+  #markchip[hidden] { display: none; }
+  #markchip a { color: inherit; font-weight: 600; }
+  #wrap.ambient #markchip { display: none !important; }
+  a.more { display: inline-block; margin-top: 6px; font-size: 12px; }
   /* ambient mode (issue #11): only the pulsing mesh, dark, for wall tablets */
   #wrap.ambient { background: #05070a !important; }
   #wrap.ambient #bar, #wrap.ambient #live, #wrap.ambient #legbtn, #wrap.ambient #legend, #wrap.ambient #info:not(.errshown) { display: none !important; }
@@ -129,12 +162,29 @@ const TP_HTML = `
     </span></span>
     <span id="status" role="button" tabindex="0"></span>
   </div>
-  <div id="stage"><div id="net"></div><button id="legbtn" aria-expanded="false">?</button><div id="legend" class="hidden"></div><div id="live"></div><div id="panel" hidden></div><div id="report" hidden></div></div>
+  <div id="stage"><div id="net"></div><button id="legbtn" aria-expanded="false">?</button><div id="legend" class="hidden"></div><div id="markchip" hidden></div><div id="live"></div><div id="panel" hidden></div><div id="report" hidden></div></div>
   <div id="info" class="hidden"></div>
 </div>
 `;
 // ---------- texts (one file per language in src/i18n/) ----------
 const TEXT_EN = {
+  rLinksShort: n => `${n} router link${n === 1 ? "" : "s"}`,
+  netBtn: "📊 Network",
+  tabNames: { overview: "Overview", hints: "Hints", devices: "Devices", links: "Links", changes: "Changes" },
+  devFilters: { all: "All", routers: "Routers", mains: "Mains", battery: "Battery", wifi: "Wi-Fi" },
+  topHints: "Most important",
+  allHints: n => `All ${n} hints →`,
+  factorsToCheck: n => `${n} factor${n === 1 ? "" : "s"} to check`,
+  factorsAllOk: "All factors ok",
+  factorsOk: (ok, n) => ok === n ? `${n} factors ok` : `${n} more factors (${ok} ok)`,
+  markHint: "Tap to show these devices on the map",
+  marked: n => `${n} marked`,
+  unmark: "Show all",
+  roleWifi: "Matter over Wi-Fi",
+  roleEth: "Matter over Ethernet",
+  weakParentHead: "Weak signal to the parent",
+  noWeakLinks: "No weak links – all links are −80 dBm or better.",
+  linksNote: "Tap a link to show both devices on the map. Links between routers are measured by both routers and averaged.",
   healthPartial: (k, n) => `only ${k} of ${n} factors judged`, htRedundancyNoData: "Not judged – none of the routers reports its links to Home Assistant (e.g. only Apple or Google border routers).",
   healthHead: "Mesh health",
   healthGrade: "Grade",
@@ -173,7 +223,7 @@ const TEXT_EN = {
   identifyBtn: "💡 Identify", identifyNote: "Sends a real command: the device blinks, beeps or flashes for a few seconds, if it supports it.", identifySleepy: "Battery devices react only when they wake up – this can take a while.", identifySending: "sending …", identifySent: "sent – watch the device", identifyFailed: "Failed",
   moreBtn: "More", exportHead: "Export", statusReload: "Tap to reload", exportPlain: "Save image (with names)", exportAnon: "Save anonymised image (no names)",
   anonDevice: i => `Device ${i}`, anonRoom: c => `Room ${c}`, anonNote: "anonymised", exportFailed: "The image could not be saved", exportDevices: n => `${n} devices`,
-  reload: "↻ Reload", showList: "☰ Show list", hideList: "☰ Hide list", pause: "⏸ Pause live", resume: "▶ Resume live",
+  reload: "↻ Reload", pause: "⏸ Pause live", resume: "▶ Resume live",
   changesHead: "Changes in the network", changesNone: "No changes detected yet.", changesClear: "Clear list",
   changesNote: "Checked every 5 minutes and stored in Home Assistant for your user – the same list on all your devices. Reachability is reported live; parent, role and link changes only show up once the devices report them.",
   chNew: "new in the network", chGone: "no longer in the network", chOffline: "not reachable", chOnline: "reachable again",
@@ -193,7 +243,7 @@ const TEXT_EN = {
   unreachable: " – NOT REACHABLE", brLabel: "Border router", brTitle: "Thread border router (OpenThread Border Router add-on)",
   foreignLabel: id => `Other Thread router\n…${id.slice(-4)}`,
   foreignTitle: "Thread router that is not a Matter device of Home Assistant (e.g. Apple TV / HomePod, Google Nest, another border router)",
-  parentsHead: "Battery devices and their parent", parentsSub: "(the router they talk through – weakest first)",
+ 
   thDevice: "Device", thVia: "talks through", thSignal: "Signal", selfMeasured: "(own measurement, unreliable)",
   weakHead: "Weak links between routers", weakSub: "(below −80 dBm)",
   foot: n => `${n} Thread devices · Lines: signal strength (RSSI). Dashed = battery device ↔ parent. Data from the Matter diagnostics, as last reported by the devices. Animated paths are the most likely route according to the routing tables, not a radio capture.`,
@@ -235,7 +285,7 @@ const TEXT_EN = {
   hBattSoon: d => `The battery will probably be empty in about ${d} day${d === 1 ? "" : "s"} (estimate) – keep a replacement ready.`,
   lgWifi: "Matter on Wi-Fi", wifiSub: "Matter over Wi-Fi – not part of the Thread mesh", ethSub: "Matter over Ethernet – not part of the Thread mesh",
   secWifi: "Wi-Fi", wifiStd: "Standard", wifiNote: "Wi-Fi values as last reported by the device, may be outdated.",
-  secHints: "Hints", hintsHead: "Hints for the network", listHints: n => ` · ${n} hint${n === 1 ? "" : "s"}`,
+  secHints: "Hints", listHints: n => ` · ${n} hint${n === 1 ? "" : "s"}`,
   hintsNote: "Hints are rules of thumb based on the data the devices report – suggestions, not measurements.",
   noHints: "No weak spots found.",
   hWeakParent: (p, r, unsure) => `Weak signal to its parent ${p} (${r} dBm${unsure ? ", measured by the device itself – uncertain" : ""}). A mains-powered Thread device (plug or bulb) placed closer to this device could improve the connection.`,
@@ -244,6 +294,23 @@ const TEXT_EN = {
   hEdge: r => `Only weak links to other routers (best: ${r} dBm) – it sits at the edge of the mesh. Another router in between would strengthen it.`,
 };
 const TEXT_DE = {
+  rLinksShort: n => `${n} Router-Verbindung${n === 1 ? "" : "en"}`,
+  netBtn: "📊 Netz",
+  tabNames: { overview: "Übersicht", hints: "Hinweise", devices: "Geräte", links: "Verbindungen", changes: "Änderungen" },
+  devFilters: { all: "Alle", routers: "Router", mains: "Netzstrom", battery: "Batterie", wifi: "WLAN" },
+  topHints: "Am wichtigsten",
+  allHints: n => `Alle ${n} Hinweise →`,
+  factorsToCheck: n => `${n} Faktor${n === 1 ? "" : "en"} zu prüfen`,
+  factorsAllOk: "Alle Faktoren ok",
+  factorsOk: (ok, n) => ok === n ? `${n} Faktoren ok` : `${n} weitere Faktoren (${ok} ok)`,
+  markHint: "Antippen zeigt diese Geräte auf der Karte",
+  marked: n => `${n} markiert`,
+  unmark: "Alle zeigen",
+  roleWifi: "Matter über WLAN",
+  roleEth: "Matter über Ethernet",
+  weakParentHead: "Schwaches Signal zum Parent",
+  noWeakLinks: "Keine schwachen Verbindungen – alle sind −80 dBm oder besser.",
+  linksNote: "Antippen zeigt beide Geräte auf der Karte. Verbindungen zwischen Routern werden von beiden gemessen und gemittelt.",
   healthPartial: (k, n) => `nur ${k} von ${n} Faktoren beurteilt`, htRedundancyNoData: "Nicht beurteilt – keiner der Router meldet seine Verbindungen an Home Assistant (z. B. nur Apple- oder Google-Border-Router).",
   healthHead: "Zustand des Netzes",
   healthGrade: "Note",
@@ -282,7 +349,7 @@ const TEXT_DE = {
   identifyBtn: "💡 Identifizieren", identifyNote: "Sendet einen echten Befehl: Das Gerät blinkt, piept oder leuchtet einige Sekunden lang, wenn es das unterstützt.", identifySleepy: "Batteriegeräte reagieren erst, wenn sie aufwachen – das kann etwas dauern.", identifySending: "wird gesendet …", identifySent: "gesendet – achte auf das Gerät", identifyFailed: "Fehlgeschlagen",
   moreBtn: "Mehr", exportHead: "Export", statusReload: "Tippen zum Neuladen", exportPlain: "Bild speichern (mit Namen)", exportAnon: "Anonymisiertes Bild speichern (ohne Namen)",
   anonDevice: i => `Gerät ${i}`, anonRoom: c => `Raum ${c}`, anonNote: "anonymisiert", exportFailed: "Das Bild konnte nicht gespeichert werden", exportDevices: n => `${n} Geräte`,
-  reload: "↻ Neu laden", showList: "☰ Liste anzeigen", hideList: "☰ Liste ausblenden", pause: "⏸ Live pausieren", resume: "▶ Live starten",
+  reload: "↻ Neu laden", pause: "⏸ Live pausieren", resume: "▶ Live starten",
   changesHead: "Änderungen im Netz", changesNone: "Noch keine Änderungen festgestellt.", changesClear: "Liste leeren",
   changesNote: "Wird alle 5 Minuten geprüft und in Home Assistant für deinen Benutzer gespeichert – dieselbe Liste auf allen deinen Geräten. Erreichbarkeit wird live gemeldet; Parent-, Rollen- und Verbindungsänderungen erscheinen erst, wenn die Geräte sie melden.",
   chNew: "neu im Netz", chGone: "nicht mehr im Netz", chOffline: "nicht erreichbar", chOnline: "wieder erreichbar",
@@ -302,7 +369,7 @@ const TEXT_DE = {
   unreachable: " – NICHT ERREICHBAR", brLabel: "Border Router", brTitle: "Thread Border Router (Add-on OpenThread Border Router)",
   foreignLabel: id => `Fremder Thread-Router\n…${id.slice(-4)}`,
   foreignTitle: "Thread-Router, der kein Matter-Gerät von Home Assistant ist (z. B. Apple TV / HomePod, Google Nest, anderer Border Router)",
-  parentsHead: "Batteriegeräte und ihr «Parent»", parentsSub: "(Gerät, über das sie funken – schwächste zuerst)",
+ 
   thDevice: "Gerät", thVia: "funkt über", thSignal: "Signal", selfMeasured: "(Gerätemessung, unsicher)",
   weakHead: "Schwache Verbindungen zwischen Routern", weakSub: "(unter −80 dBm)",
   foot: n => `${n} Thread-Geräte · Linien: Signalstärke (RSSI). Gestrichelt = Batteriegerät ↔ Parent. Daten aus den Matter-Diagnosen, Stand der letzten Meldung der Geräte. Animierte Wege sind der wahrscheinlichste Weg laut Routing-Tabellen, keine Funkaufzeichnung.`,
@@ -344,7 +411,7 @@ const TEXT_DE = {
   hBattSoon: d => `Die Batterie ist voraussichtlich in ca. ${d} Tag${d === 1 ? "" : "en"} leer (Schätzung) – Ersatz bereithalten.`,
   lgWifi: "Matter über WLAN", wifiSub: "Matter über WLAN – nicht Teil des Thread-Netzes", ethSub: "Matter über Ethernet – nicht Teil des Thread-Netzes",
   secWifi: "WLAN", wifiStd: "Standard", wifiNote: "WLAN-Werte: letzter Stand, den das Gerät gemeldet hat – kann veraltet sein.",
-  secHints: "Hinweise", hintsHead: "Hinweise zum Netz", listHints: n => ` · ${n} Hinweis${n === 1 ? "" : "e"}`,
+  secHints: "Hinweise", listHints: n => ` · ${n} Hinweis${n === 1 ? "" : "e"}`,
   hintsNote: "Hinweise sind Faustregeln aus den Daten, die die Geräte melden – Vorschläge, keine Messungen.",
   noHints: "Keine Schwachstellen gefunden.",
   hWeakParent: (p, r, unsure) => `Schwaches Signal zum Parent ${p} (${r} dBm${unsure ? ", vom Gerät selbst gemessen – unsicher" : ""}). Ein Thread-Gerät mit Netzstrom (Steckdose oder Lampe) näher bei diesem Gerät könnte die Verbindung verbessern.`,
@@ -359,6 +426,23 @@ const NAMES_DE = [["Effective current", "Strom (effektiv)"], ["Effective voltage
   ["Occupancy", "Anwesenheit"], ["Door", "Kontakt"], ["Opening", "Kontakt"], ["Temperature", "Temperatur"], ["Humidity", "Luftfeuchte"],
   ["Identify", "Identifizieren"], ["Button", "Taste"], ["Light", "Licht"], ["Switch", "Schalter"], ["Motion", "Bewegung"]];
 const TEXT_ES = {
+  rLinksShort: n => `${n} enlace${n === 1 ? "" : "s"} con routers`,
+  netBtn: "📊 Red",
+  tabNames: { overview: "Resumen", hints: "Consejos", devices: "Dispositivos", links: "Enlaces", changes: "Cambios" },
+  devFilters: { all: "Todos", routers: "Routers", mains: "Corriente", battery: "Batería", wifi: "Wi-Fi" },
+  topHints: "Lo más importante",
+  allHints: n => `Los ${n} consejos →`,
+  factorsToCheck: n => `${n} factor${n === 1 ? "" : "es"} a revisar`,
+  factorsAllOk: "Todos los factores ok",
+  factorsOk: (ok, n) => ok === n ? `${n} factores ok` : `${n} factores más (${ok} ok)`,
+  markHint: "Toca para mostrar estos dispositivos en el mapa",
+  marked: n => `${n} marcado${n === 1 ? "" : "s"}`,
+  unmark: "Mostrar todos",
+  roleWifi: "Matter por Wi-Fi",
+  roleEth: "Matter por Ethernet",
+  weakParentHead: "Señal débil hacia el parent",
+  noWeakLinks: "Sin enlaces débiles – todos tienen −80 dBm o mejor.",
+  linksNote: "Toca un enlace para mostrar ambos dispositivos en el mapa. Los enlaces entre routers los miden ambos y se promedian.",
   healthPartial: (k, n) => `solo ${k} de ${n} factores valorados`, htRedundancyNoData: "No valorado – ninguno de los routers informa de sus enlaces a Home Assistant (p. ej. solo border routers de Apple o Google).",
   healthHead: "Estado de la malla",
   healthGrade: "Nota",
@@ -397,7 +481,7 @@ const TEXT_ES = {
   identifyBtn: "💡 Identificar", identifyNote: "Envía un comando real: el dispositivo parpadea, pita o se ilumina unos segundos, si lo admite.", identifySleepy: "Los dispositivos con batería solo reaccionan cuando se despiertan; puede tardar un poco.", identifySending: "enviando …", identifySent: "enviado – observa el dispositivo", identifyFailed: "Error",
   moreBtn: "Más", exportHead: "Exportar", statusReload: "Toca para recargar", exportPlain: "Guardar imagen (con nombres)", exportAnon: "Guardar imagen anonimizada (sin nombres)",
   anonDevice: i => `Dispositivo ${i}`, anonRoom: c => `Habitación ${c}`, anonNote: "anonimizada", exportFailed: "No se pudo guardar la imagen", exportDevices: n => `${n} dispositivos`,
-  reload: "↻ Recargar", showList: "☰ Mostrar lista", hideList: "☰ Ocultar lista", pause: "⏸ Pausar directo", resume: "▶ Reanudar directo",
+  reload: "↻ Recargar", pause: "⏸ Pausar directo", resume: "▶ Reanudar directo",
   changesHead: "Cambios en la red", changesNone: "Todavía no se han detectado cambios.", changesClear: "Vaciar lista",
   changesNote: "Se comprueba cada 5 minutos y se guarda en Home Assistant para tu usuario: la misma lista en todos tus dispositivos. La accesibilidad se informa en directo; los cambios de padre, rol y enlaces solo aparecen cuando los dispositivos los informan.",
   chNew: "nuevo en la red", chGone: "ya no está en la red", chOffline: "no accesible", chOnline: "accesible de nuevo",
@@ -417,7 +501,7 @@ const TEXT_ES = {
   unreachable: " – NO ACCESIBLE", brLabel: "Router de borde", brTitle: "Router de borde Thread (complemento OpenThread Border Router)",
   foreignLabel: id => `Otro router Thread\n…${id.slice(-4)}`,
   foreignTitle: "Router Thread que no es un dispositivo Matter de Home Assistant (p. ej. Apple TV / HomePod, Google Nest, otro router de borde)",
-  parentsHead: "Dispositivos a pilas y su padre", parentsSub: "(el router a través del que se comunican – primero los más débiles)",
+ 
   thDevice: "Dispositivo", thVia: "se comunica a través de", thSignal: "Señal", selfMeasured: "(medición propia, poco fiable)",
   weakHead: "Enlaces débiles entre routers", weakSub: "(por debajo de −80 dBm)",
   foot: n => `${n} dispositivos Thread · Líneas: intensidad de la señal (RSSI). Discontinua = dispositivo a pilas ↔ padre. Datos de los diagnósticos Matter, tal como los informaron por última vez los dispositivos. Las rutas animadas son el camino más probable según las tablas de enrutamiento, no una captura de radio.`,
@@ -459,7 +543,7 @@ const TEXT_ES = {
   hBattSoon: d => `La batería probablemente se agotará en unos ${d} día${d === 1 ? "" : "s"} (estimación) – ten una de repuesto a mano.`,
   lgWifi: "Matter por Wi-Fi", wifiSub: "Matter por Wi-Fi – no forma parte de la red Thread", ethSub: "Matter por Ethernet – no forma parte de la red Thread",
   secWifi: "Wi-Fi", wifiStd: "Estándar", wifiNote: "Valores Wi-Fi tal como los informó por última vez el dispositivo; pueden estar desactualizados.",
-  secHints: "Consejos", hintsHead: "Consejos para la red", listHints: n => ` · ${n} consejo${n === 1 ? "" : "s"}`,
+  secHints: "Consejos", listHints: n => ` · ${n} consejo${n === 1 ? "" : "s"}`,
   hintsNote: "Los consejos son reglas prácticas basadas en los datos que informan los dispositivos – sugerencias, no mediciones.",
   noHints: "No se encontraron puntos débiles.",
   hWeakParent: (p, r, unsure) => `Señal débil hacia su padre ${p} (${r} dBm${unsure ? ", medida por el propio dispositivo – incierta" : ""}). Un dispositivo Thread conectado a la red (enchufe o bombilla) más cerca podría mejorar la conexión.`,
@@ -474,6 +558,23 @@ const NAMES_ES = [["Effective current", "Corriente (eficaz)"], ["Effective volta
   ["Occupancy", "Presencia"], ["Door", "Contacto"], ["Opening", "Contacto"], ["Temperature", "Temperatura"], ["Humidity", "Humedad"],
   ["Identify", "Identificar"], ["Button", "Botón"], ["Light", "Luz"], ["Switch", "Interruptor"], ["Motion", "Movimiento"]];
 const TEXT_FR = {
+  rLinksShort: n => `${n} liaison${n === 1 ? "" : "s"} routeur`,
+  netBtn: "📊 Réseau",
+  tabNames: { overview: "Aperçu", hints: "Conseils", devices: "Appareils", links: "Liaisons", changes: "Changements" },
+  devFilters: { all: "Tous", routers: "Routeurs", mains: "Secteur", battery: "Pile", wifi: "Wi-Fi" },
+  topHints: "Le plus important",
+  allHints: n => `Les ${n} conseils →`,
+  factorsToCheck: n => `${n} facteur${n === 1 ? "" : "s"} à vérifier`,
+  factorsAllOk: "Tous les facteurs sont ok",
+  factorsOk: (ok, n) => ok === n ? `${n} facteurs ok` : `${n} autres facteurs (${ok} ok)`,
+  markHint: "Toucher pour montrer ces appareils sur la carte",
+  marked: n => `${n} marqué${n === 1 ? "" : "s"}`,
+  unmark: "Tout afficher",
+  roleWifi: "Matter via Wi-Fi",
+  roleEth: "Matter via Ethernet",
+  weakParentHead: "Signal faible vers le parent",
+  noWeakLinks: "Aucune liaison faible – toutes sont à −80 dBm ou mieux.",
+  linksNote: "Toucher une liaison montre les deux appareils sur la carte. Les liaisons entre routeurs sont mesurées par les deux et moyennées.",
   healthPartial: (k, n) => `seulement ${k} facteurs sur ${n} évalués`, htRedundancyNoData: "Non évalué – aucun des routeurs ne signale ses liaisons à Home Assistant (p. ex. uniquement des border routers Apple ou Google).",
   healthHead: "État du maillage",
   healthGrade: "Note",
@@ -512,7 +613,7 @@ const TEXT_FR = {
   identifyBtn: "💡 Identifier", identifyNote: "Envoie une vraie commande : l'appareil clignote, bipe ou s'allume quelques secondes, s'il le prend en charge.", identifySleepy: "Les appareils sur batterie ne réagissent qu'à leur réveil – cela peut prendre un moment.", identifySending: "envoi …", identifySent: "envoyé – regardez l'appareil", identifyFailed: "Échec",
   moreBtn: "Plus", exportHead: "Exporter", statusReload: "Toucher pour recharger", exportPlain: "Enregistrer l'image (avec les noms)", exportAnon: "Enregistrer une image anonymisée (sans noms)",
   anonDevice: i => `Appareil ${i}`, anonRoom: c => `Pièce ${c}`, anonNote: "anonymisée", exportFailed: "L'image n'a pas pu être enregistrée", exportDevices: n => `${n} appareils`,
-  reload: "↻ Recharger", showList: "☰ Afficher la liste", hideList: "☰ Masquer la liste", pause: "⏸ Mettre en pause", resume: "▶ Reprendre le direct",
+  reload: "↻ Recharger", pause: "⏸ Mettre en pause", resume: "▶ Reprendre le direct",
   changesHead: "Changements dans le réseau", changesNone: "Aucun changement détecté pour l'instant.", changesClear: "Vider la liste",
   changesNote: "Vérifié toutes les 5 minutes et enregistré dans Home Assistant pour votre utilisateur – la même liste sur tous vos appareils. L'accessibilité est signalée en direct ; les changements de parent, de rôle et de liaison n'apparaissent qu'une fois signalés par les appareils.",
   chNew: "nouveau dans le réseau", chGone: "n'est plus dans le réseau", chOffline: "injoignable", chOnline: "de nouveau joignable",
@@ -532,7 +633,7 @@ const TEXT_FR = {
   unreachable: " – INJOIGNABLE", brLabel: "Routeur de bordure", brTitle: "Routeur de bordure Thread (module OpenThread Border Router)",
   foreignLabel: id => `Autre routeur Thread\n…${id.slice(-4)}`,
   foreignTitle: "Routeur Thread qui n'est pas un appareil Matter de Home Assistant (p. ex. Apple TV / HomePod, Google Nest, autre routeur de bordure)",
-  parentsHead: "Appareils sur pile et leur parent", parentsSub: "(le routeur par lequel ils communiquent – les plus faibles d'abord)",
+ 
   thDevice: "Appareil", thVia: "communique via", thSignal: "Signal", selfMeasured: "(mesure propre, peu fiable)",
   weakHead: "Liaisons faibles entre routeurs", weakSub: "(en dessous de −80 dBm)",
   foot: n => `${n} appareils Thread · Lignes : puissance du signal (RSSI). En pointillés = appareil sur pile ↔ parent. Données issues des diagnostics Matter, telles que signalées en dernier par les appareils. Les chemins animés sont l'itinéraire le plus probable d'après les tables de routage, pas un enregistrement radio.`,
@@ -574,7 +675,7 @@ const TEXT_FR = {
   hBattSoon: d => `La pile sera probablement vide dans environ ${d} jour${d === 1 ? "" : "s"} (estimation) – prévoyez une pile de rechange.`,
   lgWifi: "Matter en Wi-Fi", wifiSub: "Matter en Wi-Fi – ne fait pas partie du réseau Thread", ethSub: "Matter en Ethernet – ne fait pas partie du réseau Thread",
   secWifi: "Wi-Fi", wifiStd: "Norme", wifiNote: "Valeurs Wi-Fi telles que signalées en dernier par l'appareil, peuvent être obsolètes.",
-  secHints: "Conseils", hintsHead: "Conseils pour le réseau", listHints: n => ` · ${n} conseil${n === 1 ? "" : "s"}`,
+  secHints: "Conseils", listHints: n => ` · ${n} conseil${n === 1 ? "" : "s"}`,
   hintsNote: "Les conseils sont des règles empiriques basées sur les données signalées par les appareils – des suggestions, pas des mesures.",
   noHints: "Aucun point faible trouvé.",
   hWeakParent: (p, r, unsure) => `Signal faible vers son parent ${p} (${r} dBm${unsure ? ", mesuré par l'appareil lui-même – incertain" : ""}). Un appareil Thread sur secteur (prise ou ampoule) placé plus près pourrait améliorer la connexion.`,
@@ -589,6 +690,23 @@ const NAMES_FR = [["Effective current", "Courant (efficace)"], ["Effective volta
   ["Occupancy", "Présence"], ["Door", "Contact"], ["Opening", "Contact"], ["Temperature", "Température"], ["Humidity", "Humidité"],
   ["Identify", "Identifier"], ["Button", "Bouton"], ["Light", "Lumière"], ["Switch", "Interrupteur"], ["Motion", "Mouvement"]];
 const TEXT_IT = {
+  rLinksShort: n => `${n} collegament${n === 1 ? "o" : "i"} router`,
+  netBtn: "📊 Rete",
+  tabNames: { overview: "Panoramica", hints: "Suggerimenti", devices: "Dispositivi", links: "Collegamenti", changes: "Modifiche" },
+  devFilters: { all: "Tutti", routers: "Router", mains: "Rete elettrica", battery: "Batteria", wifi: "Wi-Fi" },
+  topHints: "I più importanti",
+  allHints: n => `Tutti i ${n} suggerimenti →`,
+  factorsToCheck: n => `${n} fattor${n === 1 ? "e" : "i"} da verificare`,
+  factorsAllOk: "Tutti i fattori ok",
+  factorsOk: (ok, n) => ok === n ? `${n} fattori ok` : `altri ${n} fattori (${ok} ok)`,
+  markHint: "Tocca per mostrare questi dispositivi sulla mappa",
+  marked: n => `${n} evidenziat${n === 1 ? "o" : "i"}`,
+  unmark: "Mostra tutti",
+  roleWifi: "Matter via Wi-Fi",
+  roleEth: "Matter via Ethernet",
+  weakParentHead: "Segnale debole verso il parent",
+  noWeakLinks: "Nessun collegamento debole – tutti sono a −80 dBm o meglio.",
+  linksNote: "Tocca un collegamento per mostrare entrambi i dispositivi sulla mappa. I collegamenti tra router sono misurati da entrambi e mediati.",
   healthPartial: (k, n) => `valutati solo ${k} fattori su ${n}`, htRedundancyNoData: "Non valutato – nessuno dei router comunica i suoi collegamenti a Home Assistant (ad es. solo border router Apple o Google).",
   healthHead: "Stato della rete mesh",
   healthGrade: "Voto",
@@ -627,7 +745,7 @@ const TEXT_IT = {
   identifyBtn: "💡 Identifica", identifyNote: "Invia un comando reale: il dispositivo lampeggia, emette un suono o si illumina per alcuni secondi, se lo supporta.", identifySleepy: "I dispositivi a batteria reagiscono solo quando si risvegliano – può volerci un po'.", identifySending: "invio …", identifySent: "inviato – osserva il dispositivo", identifyFailed: "Non riuscito",
   moreBtn: "Altro", exportHead: "Esporta", statusReload: "Tocca per ricaricare", exportPlain: "Salva immagine (con i nomi)", exportAnon: "Salva immagine anonimizzata (senza nomi)",
   anonDevice: i => `Dispositivo ${i}`, anonRoom: c => `Stanza ${c}`, anonNote: "anonimizzata", exportFailed: "Non è stato possibile salvare l'immagine", exportDevices: n => `${n} dispositivi`,
-  reload: "↻ Ricarica", showList: "☰ Mostra elenco", hideList: "☰ Nascondi elenco", pause: "⏸ Metti in pausa", resume: "▶ Riprendi diretta",
+  reload: "↻ Ricarica", pause: "⏸ Metti in pausa", resume: "▶ Riprendi diretta",
   changesHead: "Modifiche nella rete", changesNone: "Nessuna modifica rilevata finora.", changesClear: "Svuota elenco",
   changesNote: "Controllato ogni 5 minuti e salvato in Home Assistant per il tuo utente – lo stesso elenco su tutti i tuoi dispositivi. La raggiungibilità viene segnalata in diretta; le modifiche di parent, ruolo e collegamenti compaiono solo quando i dispositivi le segnalano.",
   chNew: "nuovo nella rete", chGone: "non più nella rete", chOffline: "non raggiungibile", chOnline: "di nuovo raggiungibile",
@@ -647,7 +765,7 @@ const TEXT_IT = {
   unreachable: " – NON RAGGIUNGIBILE", brLabel: "Border router", brTitle: "Border router Thread (add-on OpenThread Border Router)",
   foreignLabel: id => `Altro router Thread\n…${id.slice(-4)}`,
   foreignTitle: "Router Thread che non è un dispositivo Matter di Home Assistant (ad es. Apple TV / HomePod, Google Nest, un altro border router)",
-  parentsHead: "Dispositivi a batteria e il loro parent", parentsSub: "(il router tramite cui comunicano – prima i più deboli)",
+ 
   thDevice: "Dispositivo", thVia: "comunica tramite", thSignal: "Segnale", selfMeasured: "(misura propria, poco affidabile)",
   weakHead: "Collegamenti deboli tra router", weakSub: "(sotto −80 dBm)",
   foot: n => `${n} dispositivi Thread · Linee: intensità del segnale (RSSI). Tratteggiate = dispositivo a batteria ↔ parent. Dati dalla diagnostica Matter, come segnalati per ultimi dai dispositivi. I percorsi animati sono il percorso più probabile secondo le tabelle di routing, non una registrazione radio.`,
@@ -689,7 +807,7 @@ const TEXT_IT = {
   hBattSoon: d => `La batteria sarà probabilmente scarica tra circa ${d} giorn${d === 1 ? "o" : "i"} (stima) – tieni pronta una batteria di ricambio.`,
   lgWifi: "Matter su Wi-Fi", wifiSub: "Matter su Wi-Fi – non fa parte della rete Thread", ethSub: "Matter su Ethernet – non fa parte della rete Thread",
   secWifi: "Wi-Fi", wifiStd: "Standard", wifiNote: "Valori Wi-Fi come segnalati per ultimi dal dispositivo, potrebbero non essere aggiornati.",
-  secHints: "Suggerimenti", hintsHead: "Suggerimenti per la rete", listHints: n => ` · ${n} suggeriment${n === 1 ? "o" : "i"}`,
+  secHints: "Suggerimenti", listHints: n => ` · ${n} suggeriment${n === 1 ? "o" : "i"}`,
   hintsNote: "I suggerimenti sono regole empiriche basate sui dati segnalati dai dispositivi – proposte, non misurazioni.",
   noHints: "Nessun punto debole trovato.",
   hWeakParent: (p, r, unsure) => `Segnale debole verso il parent ${p} (${r} dBm${unsure ? ", misurato dal dispositivo stesso – incerto" : ""}). Un dispositivo Thread alimentato a rete (presa o lampadina) più vicino potrebbe migliorare la connessione.`,
@@ -704,6 +822,23 @@ const NAMES_IT = [["Effective current", "Corrente (efficace)"], ["Effective volt
   ["Occupancy", "Presenza"], ["Door", "Contatto"], ["Opening", "Contatto"], ["Temperature", "Temperatura"], ["Humidity", "Umidità"],
   ["Identify", "Identifica"], ["Button", "Pulsante"], ["Light", "Luce"], ["Switch", "Interruttore"], ["Motion", "Movimento"]];
 const TEXT_NL = {
+  rLinksShort: n => `${n} routerverbinding${n === 1 ? "" : "en"}`,
+  netBtn: "📊 Netwerk",
+  tabNames: { overview: "Overzicht", hints: "Tips", devices: "Apparaten", links: "Verbindingen", changes: "Wijzigingen" },
+  devFilters: { all: "Alle", routers: "Routers", mains: "Netstroom", battery: "Batterij", wifi: "Wifi" },
+  topHints: "Belangrijkste",
+  allHints: n => `Alle ${n} tips →`,
+  factorsToCheck: n => `${n} factor${n === 1 ? "" : "en"} te controleren`,
+  factorsAllOk: "Alle factoren ok",
+  factorsOk: (ok, n) => ok === n ? `${n} factoren ok` : `${n} andere factoren (${ok} ok)`,
+  markHint: "Tik om deze apparaten op de kaart te tonen",
+  marked: n => `${n} gemarkeerd`,
+  unmark: "Alles tonen",
+  roleWifi: "Matter via wifi",
+  roleEth: "Matter via ethernet",
+  weakParentHead: "Zwak signaal naar de parent",
+  noWeakLinks: "Geen zwakke verbindingen – alle zijn −80 dBm of beter.",
+  linksNote: "Tik op een verbinding om beide apparaten op de kaart te tonen. Verbindingen tussen routers worden door beide gemeten en gemiddeld.",
   healthPartial: (k, n) => `slechts ${k} van ${n} factoren beoordeeld`, htRedundancyNoData: "Niet beoordeeld – geen van de routers meldt zijn verbindingen aan Home Assistant (bijv. alleen border routers van Apple of Google).",
   healthHead: "Staat van het mesh",
   healthGrade: "Cijfer",
@@ -742,7 +877,7 @@ const TEXT_NL = {
   identifyBtn: "💡 Identificeren", identifyNote: "Stuurt een echt commando: het apparaat knippert, piept of licht enkele seconden op, als het dat ondersteunt.", identifySleepy: "Apparaten op batterij reageren pas als ze wakker worden – dat kan even duren.", identifySending: "versturen …", identifySent: "verstuurd – let op het apparaat", identifyFailed: "Mislukt",
   moreBtn: "Meer", exportHead: "Exporteren", statusReload: "Tik om te herladen", exportPlain: "Afbeelding opslaan (met namen)", exportAnon: "Geanonimiseerde afbeelding opslaan (zonder namen)",
   anonDevice: i => `Apparaat ${i}`, anonRoom: c => `Ruimte ${c}`, anonNote: "geanonimiseerd", exportFailed: "De afbeelding kon niet worden opgeslagen", exportDevices: n => `${n} apparaten`,
-  reload: "↻ Herladen", showList: "☰ Lijst tonen", hideList: "☰ Lijst verbergen", pause: "⏸ Live pauzeren", resume: "▶ Live hervatten",
+  reload: "↻ Herladen", pause: "⏸ Live pauzeren", resume: "▶ Live hervatten",
   changesHead: "Wijzigingen in het netwerk", changesNone: "Nog geen wijzigingen gevonden.", changesClear: "Lijst wissen",
   changesNote: "Wordt elke 5 minuten gecontroleerd en in Home Assistant voor je gebruiker bewaard – dezelfde lijst op al je apparaten. Bereikbaarheid wordt live gemeld; wijzigingen van parent, rol en verbindingen verschijnen pas als de apparaten ze melden.",
   chNew: "nieuw in het netwerk", chGone: "niet meer in het netwerk", chOffline: "niet bereikbaar", chOnline: "weer bereikbaar",
@@ -762,7 +897,7 @@ const TEXT_NL = {
   unreachable: " – NIET BEREIKBAAR", brLabel: "Border router", brTitle: "Thread border router (OpenThread Border Router add-on)",
   foreignLabel: id => `Andere Thread-router\n…${id.slice(-4)}`,
   foreignTitle: "Thread-router die geen Matter-apparaat van Home Assistant is (bijv. Apple TV / HomePod, Google Nest, een andere border router)",
-  parentsHead: "Batterij-apparaten en hun parent", parentsSub: "(de router waarlangs ze communiceren – zwakste eerst)",
+ 
   thDevice: "Apparaat", thVia: "communiceert via", thSignal: "Signaal", selfMeasured: "(eigen meting, onbetrouwbaar)",
   weakHead: "Zwakke verbindingen tussen routers", weakSub: "(onder −80 dBm)",
   foot: n => `${n} Thread-apparaten · Lijnen: signaalsterkte (RSSI). Gestippeld = batterij-apparaat ↔ parent. Gegevens uit de Matter-diagnose, zoals laatst gemeld door de apparaten. Geanimeerde paden zijn de meest waarschijnlijke route volgens de routeringstabellen, geen radio-opname.`,
@@ -804,7 +939,7 @@ const TEXT_NL = {
   hBattSoon: d => `De batterij is waarschijnlijk over ongeveer ${d} dag${d === 1 ? "" : "en"} leeg (schatting) – houd een reserve klaar.`,
   lgWifi: "Matter via wifi", wifiSub: "Matter via wifi – geen deel van het Thread-netwerk", ethSub: "Matter via ethernet – geen deel van het Thread-netwerk",
   secWifi: "Wifi", wifiStd: "Standaard", wifiNote: "Wifi-waarden zoals laatst gemeld door het apparaat, kunnen verouderd zijn.",
-  secHints: "Tips", hintsHead: "Tips voor het netwerk", listHints: n => ` · ${n} tip${n === 1 ? "" : "s"}`,
+  secHints: "Tips", listHints: n => ` · ${n} tip${n === 1 ? "" : "s"}`,
   hintsNote: "Tips zijn vuistregels op basis van de gegevens die de apparaten melden – suggesties, geen metingen.",
   noHints: "Geen zwakke plekken gevonden.",
   hWeakParent: (p, r, unsure) => `Zwak signaal naar de parent ${p} (${r} dBm${unsure ? ", door het apparaat zelf gemeten – onzeker" : ""}). Een Thread-apparaat op netstroom (stekker of lamp) dichterbij kan de verbinding verbeteren.`,
@@ -872,6 +1007,8 @@ function createThreadPulse(root, opts, host) {
     sound:   { key: "threadPulseSound", type: "bool", def: false },
     volume:  { key: "threadPulseVolume", type: "number", def: 0.4 },
     tapped:  { key: "threadPulseTapped", type: "bool", def: false },    // a device was opened once – no tap hint in the status line
+    tab:     { key: "threadPulseTab", type: "json", def: "overview" },  // tab of the panel below the map (#108)
+    changesSeen: { key: "threadPulseChangesSeen", type: "number", def: null },   // change log last viewed – counter on its tab
     changes: { key: "threadPulseChanges", type: "json", def: [] },      // change log – only until it is moved to Home Assistant (#86)
   };
   const prefs = {
@@ -1212,38 +1349,16 @@ function createThreadPulse(root, opts, host) {
     renderList();
     const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
     if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
+    else if (markedIds) {                     // devices marked from the panel below the map (#108) stay marked after a refresh
+      const keepIds = markedIds.filter(id => onMap.has(id)); markedIds = null;
+      if (keepIds.length) setTimeout(() => markDevices(keepIds, false), 50); else clearMarks();
+    }
     renderChanges();
     if (panelNode && (nodeById[panelNode] || extraIds.has(panelNode) || wifiById[panelNode])) renderPanel(); else if (panelNode) closePanel();
     lastSnap = snapshotOf(nodes, edges, byId);
     lastSnap.grade = (computeHealth() || {}).grade;    // grade changes go to the change log (issue #84)
     // short (issue #107): the version is in the ⋯ menu; the tap hint only until a device was opened once
     $("status").textContent = (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + (prefs.get("tapped") ? "" : " · " + T.tapHint);
-  }
-
-  // hints and the list below the map – rebuilt when names of border routers arrive (#71)
-  function renderList() {
-    if (!listData) return;
-    const { parents, weak, count } = listData;
-    hintsOf = computeHints(parents);
-    const allHints = Object.entries(hintsOf).flatMap(([id, hs]) => hs.map(t => [id, t]));
-    let h = `<div id="changes"></div>` + healthHtml() + `<b>${T.hintsHead}</b>` + (allHints.length
-      ? `<table>${allHints.map(([id, t]) => `<tr><td style="white-space:nowrap;vertical-align:top"><a href="#" data-open="${id}">${esc(nodeById[id].name)}</a></td><td>${esc(t)}</td></tr>`).join("")}</table>`
-      : `<div>${T.noHints}</div>`) + `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${T.hintsNote}</div>`;
-    hintCount = allHints.length; setList(!$("info").classList.contains("hidden"), false);
-    h += `<b>${T.parentsHead}</b> ${T.parentsSub}<table><tr><th>${T.thDevice}</th><th>${T.thVia}</th><th>${T.thSignal}</th></tr>`;
-    for (const p of parents.filter(p => p.type !== "end_device")) {
-      const [, cls, txt] = QUAL(p.rssi);
-      h += `<tr><td>${esc(p.child)}</td><td>${esc(p.parent)}</td><td class="${cls}">${p.rssi} dBm · ${txt}${p.src === "device" ? ` <span style="color:var(--muted)">${T.selfMeasured}</span>` : ""}</td></tr>`;
-    }
-    h += `</table>`;
-    if (weak.length) {
-      h += `<br><b>${T.weakHead}</b> ${T.weakSub}<table>`;
-      for (const w of weak) h += `<tr><td>${esc(nameOf(w.a))} ↔ ${esc(nameOf(w.b))}</td><td class="r">${w.r} dBm</td></tr>`;
-      h += `</table>`;
-    }
-    h += firmwareListHtml();
-    h += `<br><span style="color:var(--muted);font-size:12px">${T.foot(count)}</span>`;
-    $("info").innerHTML = h;
   }
   // ---------- border router names (issue #37) ----------
   // Home Assistant finds border routers on the local network via mDNS (thread/discover_routers: Apple TV / HomePod,
@@ -1852,7 +1967,7 @@ function createThreadPulse(root, opts, host) {
     const isRouterId = id => (nodeById[id] && nodeById[id].type === "routing_end_device") || extraIds.has(id);
     const list = ids => ids.map(nm).join(", ");
     const factors = [];
-    const add = (key, level, value, text) => factors.push({ key, level, value, text });
+    const add = (key, level, value, text, ids = []) => factors.push({ key, level, value, text, ids });   // ids: shown on the map (#108)
 
     // 1. routers: every mains-powered Thread device can route; with only the border router everything depends on it
     const nR = routerCount();
@@ -1864,21 +1979,21 @@ function createThreadPulse(root, opts, host) {
     else {
       const single = routers.filter(r => (linksOf[r.id] || []).filter(l => l.kind === "neighbour" && isRouterId(l.id) && l.rssi >= -80).length < 2).map(r => r.id);
       add("redundancy", !single.length ? "ok" : single.length === 1 || single.length / routers.length <= 0.25 ? "warn" : "bad",
-          T.hvOf(routers.length - single.length, routers.length), single.length ? T.htRedundancyBad(list(single)) : T.htRedundancyOk);
+          T.hvOf(routers.length - single.length, routers.length), single.length ? T.htRedundancyBad(list(single)) : T.htRedundancyOk, single);
     }
 
     // 3. weak parent signal
     const kids = listData.parents.filter(p => nodeById[p.childId]);
     const weak = kids.filter(p => p.rssi < -80).map(p => p.childId);
     add("weak", !weak.length ? "ok" : weak.length <= 2 || weak.length / Math.max(kids.length, 1) <= 0.15 ? "warn" : "bad",
-        T.hvOf(weak.length, kids.length), weak.length ? T.htWeakBad(list(weak)) : T.htWeakOk);
+        T.hvOf(weak.length, kids.length), weak.length ? T.htWeakBad(list(weak)) : T.htWeakOk, weak);
 
     // 4. hops to the border router (only when the border router is known)
     if (!brExt) add("depth", "na", "–", T.htDepthNa);
     else {
       const hops = nodes.map(n => { const p = pathToBr(n.id); return p ? { id: n.id, h: p.length - 1 } : null; }).filter(Boolean);
       const max = Math.max(0, ...hops.map(x => x.h)), deep = hops.filter(x => x.h >= 4).map(x => x.id);
-      add("depth", max <= 3 ? "ok" : max === 4 ? "warn" : "bad", T.hvHops(max), deep.length ? T.htDepthBad(list(deep)) : T.htDepthOk);
+      add("depth", max <= 3 ? "ok" : max === 4 ? "warn" : "bad", T.hvHops(max), deep.length ? T.htDepthBad(list(deep)) : T.htDepthOk, deep);
     }
 
     // 5. children per router: many devices on one router = many devices affected when it fails
@@ -1886,13 +2001,14 @@ function createThreadPulse(root, opts, host) {
     for (const p of kids) per[p.parentId] = (per[p.parentId] || 0) + 1;
     const [topId, top] = Object.entries(per).sort((a, b) => b[1] - a[1])[0] || [null, 0];
     const crowded = top > 20 ? "bad" : top > 10 || (kids.length >= 6 && top / kids.length > 0.6 && nR >= 3) ? "warn" : "ok";
-    add("children", crowded, T.hvMax(top), topId && crowded !== "ok" ? T.htChildrenBad(nm(topId), top, kids.length) : T.htChildrenOk);
+    add("children", crowded, T.hvMax(top), topId && crowded !== "ok" ? T.htChildrenBad(nm(topId), top, kids.length) : T.htChildrenOk,
+        topId && crowded !== "ok" ? [topId, ...kids.filter(p => p.parentId === topId).map(p => p.childId)] : []);
 
     // 6. stability: unstable connection, not reachable, router that loses power regularly
     const shaky = nodes.filter(n => { const i = n.info || {};
       return !n.available || i.attach >= 5 || i.detached >= 3 || (n.type === "routing_end_device" && i.reboots >= 50); }).map(n => n.id);
     add("stability", !shaky.length ? "ok" : shaky.length <= 2 ? "warn" : "bad", T.hvOf(shaky.length, nodes.length),
-        shaky.length ? T.htStabilityBad(list(shaky)) : T.htStabilityOk);
+        shaky.length ? T.htStabilityBad(list(shaky)) : T.htStabilityOk, shaky);
 
     const points = factors.reduce((s, f) => s + HEALTH_POINTS[f.level], 0);
     return { grade: gradeOf(points), points, factors, known: factors.filter(f => f.level !== "na").length };
@@ -1922,28 +2038,51 @@ function createThreadPulse(root, opts, host) {
   // Matches device name and area (case and accents ignored). Matches stay bright and are selected, the rest fades out,
   // the map zooms to the matches. Enter opens the first match, Esc clears the search.
   const norm = t => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  function applySearch() {
-    if (!network) return;
-    const q = norm($("search").value.trim());
+  function dimExcept(ids) {                     // ids: devices that stay bright; null: all bright
     const fg = getComputedStyle(host.styleTarget).getPropertyValue("--fg").trim() || "#1f2733";
-    searchActive = !!q;
-    searchHits = q ? Object.values(nodeById).concat(Object.values(wifiById)).filter(n => norm(n.name).includes(q) || norm(n.area).includes(q)).map(n => n.id) : [];
+    searchActive = !!ids; searchHits = ids || [];
     const hit = new Set(searchHits), upd = [];
     network.body.data.nodes.forEach(v => {
-      const on = !q || hit.has(v.id);
+      const on = !ids || hit.has(v.id);
       upd.push({ id: v.id, opacity: on ? 1 : 0.18, font: { color: on ? fg : "rgba(128,128,128,.35)" } });
     });
     network.body.data.nodes.update(upd);
+  }
+  function fitTo(ids) {
+    if (ids.length === 1) { network.selectNodes(ids); network.focus(ids[0], { scale: 1.3, animation: { duration: 400 } }); }
+    else if (ids.length) { network.selectNodes(ids); network.fit({ nodes: ids, animation: { duration: 400 } }); }
+  }
+  function applySearch() {
+    if (!network) return;
+    const q = norm($("search").value.trim());
+    if (q) { markedIds = null; $("markchip").hidden = true; }
+    dimExcept(q ? Object.values(nodeById).concat(Object.values(wifiById)).filter(n => norm(n.name).includes(q) || norm(n.area).includes(q)).map(n => n.id) : null);
     $("hits").textContent = q ? T.hits(searchHits.length) : "";
-    if (q && searchHits.length === 1) { network.selectNodes(searchHits); network.focus(searchHits[0], { scale: 1.3, animation: { duration: 400 } }); }
-    else if (q && searchHits.length) { network.selectNodes(searchHits); network.fit({ nodes: searchHits, animation: { duration: 400 } }); }
-    else if (!q) { network.unselectAll(); network.fit({ animation: { duration: 400 } }); }
+    if (q) fitTo(searchHits);
+    else { network.unselectAll(); network.fit({ animation: { duration: 400 } }); }
+  }
+  // devices marked from the panel below the map (issue #108): a factor of the mesh health, a weak link …
+  // shown like search results; "Show all" (or Esc) ends it
+  let markedIds = null;
+  function markDevices(ids, fit = true) {
+    if (!network || !ids.length) return;
+    $("search").value = ""; markedIds = ids.slice();
+    dimExcept(markedIds);
+    $("hits").textContent = "";
+    const c = $("markchip"); c.hidden = false;      // on the map, not in the toolbar – the toolbar must stay one row on phones
+    c.innerHTML = `${esc(T.marked(markedIds.length))} · <a href="#" data-act="unmark">${esc(T.unmark)}</a>`;
+    if (fit) fitTo(markedIds);
+  }
+  function clearMarks() {
+    if (!markedIds && $("markchip").hidden) return;
+    markedIds = null; $("markchip").hidden = true;
+    if (network) { dimExcept(null); network.unselectAll(); network.fit({ animation: { duration: 400 } }); }
   }
   let searchTimer = null;
   $("search").addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(applySearch, 150); });
   $("search").addEventListener("keydown", e => {
     if (e.key === "Enter" && searchHits.length) { e.preventDefault(); openPanel(searchHits[0]); }
-    else if (e.key === "Escape") { e.preventDefault(); $("search").value = ""; applySearch(); $("search").blur(); }
+    else if (e.key === "Escape") { e.preventDefault(); $("search").value = ""; markedIds = null; $("markchip").hidden = true; applySearch(); $("search").blur(); }
   });
   // ---------- change log (issue #7) ----------
   // Every 5 minutes the data is loaded again (map positions kept) and compared with the previous state. Reachability
@@ -2073,6 +2212,7 @@ function createThreadPulse(root, opts, host) {
           `<tr><td style="white-space:nowrap;color:var(--muted);vertical-align:top">${fmt(c.t)}</td><td style="white-space:nowrap;vertical-align:top"><span style="color:${CH_COLOR[c.kind] || "inherit"}">●</span> ` +
           (nodeById[c.id] ? `<a href="#" data-open="${c.id}">${esc(c.name)}</a>` : esc(c.name)) + `</td><td>${esc(c.text)}</td></tr>`).join("") + `</table>`
       : `<div>${T.changesNone}</div>`) + `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${T.changesNote}</div>`;
+    renderTabBar();                        // counter of new entries on the tab (#108)
   }
   async function refresh() {
     if (refreshing || destroyed || !network) return;
@@ -2541,6 +2681,130 @@ function createThreadPulse(root, opts, host) {
     try { done = document.execCommand("copy"); } catch (e) {}
     ok(done, done ? T.reportCopied : T.reportCopyManual);
   }
+  // ---------- network panel (issue #108) ----------
+  // Overview (mesh health and the most important points), hints, devices (one sortable table), links, changes.
+  // All tabs are rendered, only the chosen one is shown – the tab bar shows counters, the change log is updated live.
+  // Tapping a factor or a link marks the devices on the map (like the search).
+  const TABS = ["overview", "hints", "devices", "links", "changes"];
+  let tab = TABS.includes(prefs.get("tab")) ? prefs.get("tab") : "overview";
+  let devSort = { key: "role", dir: 1 }, devFilter = "all";
+  if (prefs.get("changesSeen") === null) prefs.set("changesSeen", Date.now());   // first start: old entries are not "new"
+  function setTab(t) {
+    tab = t; prefs.set("tab", t);
+    if (t === "changes") prefs.set("changesSeen", Date.now());
+    for (const x of TABS) { const p = $("tab-" + x); if (p) p.hidden = x !== t; }
+    renderTabBar();
+  }
+  function renderTabBar() {
+    const bar = $("tabbar"); if (!bar) return;
+    if (tab === "changes" && !$("info").classList.contains("hidden")) prefs.set("changesSeen", Date.now());
+    const seen = prefs.get("changesSeen") || 0, fresh = changes.filter(c => c.t > seen).length;
+    const count = { hints: hintCount, changes: fresh };
+    bar.innerHTML = TABS.map(t => `<button role="tab" data-tab="${t}" aria-selected="${t === tab}"${t === tab ? ' class="on"' : ""}>${T.tabNames[t]}` +
+      (count[t] ? `<span class="cnt${t === "changes" ? " new" : ""}">${count[t] > 99 ? "99+" : count[t]}</span>` : "") + `</button>`).join("");
+  }
+  // all warnings and hints, warnings first – the same as in the detail panels
+  function allHints() {
+    const out = [];
+    for (const n of Object.values(nodeById)) {
+      for (const w of warningsOf(n)) out.push({ id: n.id, text: w, warn: true });
+      for (const h of (hintsOf[n.id] || []).concat(slowHint(n) || [], batteryHint(n) || [])) out.push({ id: n.id, text: h, warn: false });
+    }
+    return out.sort((a, b) => (b.warn - a.warn) || nameOf(a.id).localeCompare(nameOf(b.id), lang));
+  }
+  const muted = t => `<div class="tnote">${t}</div>`;
+  const devLink = id => nodeById[id] || wifiById[id] ? `<a href="#" data-open="${esc(id)}">${esc(nameOf(id))}</a>` : esc(nameOf(id));
+  function hintTable(list) {
+    return `<table class="hints">${list.map(x => `<tr><td class="${x.warn ? "r" : "b"}" style="width:1.2em;vertical-align:top">${x.warn ? "⚠" : "ℹ"}</td>` +
+      `<td style="white-space:nowrap;vertical-align:top">${devLink(x.id)}</td><td>${esc(x.text)}</td></tr>`).join("")}</table>`;
+  }
+  function overviewHtml(hints) {
+    const hl = computeHealth(); let h = "";
+    if (hl) {
+      const bad = hl.factors.filter(f => f.level === "warn" || f.level === "bad"), rest = hl.factors.filter(f => !bad.includes(f));
+      const fRow = f => `<tr${f.ids.length ? ` class="mark" data-mark="${esc(f.ids.join(","))}" title="${esc(T.markHint)}"` : ""}>` +
+        `<td style="vertical-align:top;white-space:nowrap"><span style="color:${HEALTH_COLOR[f.level]}">●</span> ${T.hfTitle[f.key]}</td>` +
+        `<td>${f.level === "na" ? "" : `<b style="color:${HEALTH_COLOR[f.level]}">${esc(f.value)}</b> · `}${esc(f.text)}</td></tr>`;
+      h += `<div class="hcard"><div class="hgrade" style="background:${gradeColor(hl.grade)}">${hl.grade}</div><div><b>${T.healthHead}</b>` +
+        (hl.known < hl.factors.length ? `<div class="tnote" style="margin:0">${T.healthPartial(hl.known, hl.factors.length)}</div>` : "") +
+        `<div>${bad.length ? T.factorsToCheck(bad.length) : T.factorsAllOk}</div></div></div>`;
+      if (bad.length) h += `<table class="factors">${bad.map(fRow).join("")}</table>`;
+      if (rest.length) h += `<details class="okf"><summary>${T.factorsOk(rest.filter(f => f.level === "ok").length, rest.length)}</summary><table class="factors">${rest.map(fRow).join("")}</table></details>`;
+      h += muted(T.healthNote);
+    }
+    h += `<h4>${T.topHints}</h4>` + (hints.length ? hintTable(hints.slice(0, 3)) +
+      (hints.length > 3 ? `<a href="#" data-tab="hints" class="more">${T.allHints(hints.length)}</a>` : "") : `<div>${T.noHints}</div>`);
+    return h + `<div class="tnote" style="margin-top:12px">${T.foot(listData.count)}</div>`;
+  }
+  function hintsHtml(hints) {
+    return (hints.length ? hintTable(hints) : `<div>${T.noHints}</div>`) + muted(T.hintsNote);
+  }
+  // one row per device: role, parent (or the router links of a router), signal, firmware
+  function deviceRows() {
+    const isRouterId = id => (nodeById[id] && nodeById[id].type === "routing_end_device") || extraIds.has(id);
+    const order = { routing_end_device: 0, end_device: 1, sleepy_end_device: 2, wifi: 3 };
+    const rows = Object.values(nodeById).map(n => {
+      const p = n.type === "routing_end_device" ? null : listData.parents.find(x => x.childId === n.id);
+      const rl = (linksOf[n.id] || []).filter(l => l.kind === "neighbour" && isRouterId(l.id));
+      const best = rl.length ? Math.max(...rl.map(l => l.rssi)) : null;
+      return { id: n.id, type: n.type, available: n.available, role: (T.types[n.type] || n.type), filter: n.type === "routing_end_device" ? "routers" : n.type === "end_device" ? "mains" : "battery",
+               conn: p ? devLink(p.parentId) : n.type !== "sleepy_end_device" && rl.length ? esc(T.rLinksShort(rl.length)) : "–",   // the best one is in the signal column
+               connSort: p ? nameOf(p.parentId) : "", rssi: p ? p.rssi : n.type !== "sleepy_end_device" ? best : null, self: p && p.src === "device", sw: (n.info || {}).sw || "" };
+    });
+    for (const w of Object.values(wifiById)) rows.push({ id: w.id, type: "wifi", available: w.available, role: w.kind === "ethernet" ? T.roleEth : T.roleWifi, filter: "wifi",
+      conn: "–", connSort: "", rssi: null, self: false, sw: (w.info || {}).sw || "" });
+    const k = devSort.key, d = devSort.dir;
+    const val = r => k === "name" ? nameOf(r.id) : k === "conn" ? r.connSort : k === "rssi" ? (r.rssi === null ? -999 : r.rssi) : k === "fw" ? r.sw : order[r.type];
+    return rows.sort((a, b) => { const x = val(a), y = val(b);
+      return (typeof x === "number" ? x - y : String(x).localeCompare(String(y), lang, { numeric: true })) * d || nameOf(a.id).localeCompare(nameOf(b.id), lang); });
+  }
+  function devicesHtml() {
+    const rows = deviceRows(), kinds = ["all", "routers", "mains", "battery", "wifi"].filter(f => f === "all" || rows.some(r => r.filter === f));
+    if (!kinds.includes(devFilter)) devFilter = "all";
+    const shown = rows.filter(r => devFilter === "all" || r.filter === devFilter);
+    const th = (key, label) => `<th><a href="#" data-sort="${key}">${label}${devSort.key === key ? (devSort.dir > 0 ? " ▲" : " ▼") : ""}</a></th>`;
+    let h = `<div class="chips">${kinds.map(f => `<button data-filter="${f}"${f === devFilter ? ' class="on"' : ""}>${T.devFilters[f]} <span>${f === "all" ? rows.length : rows.filter(r => r.filter === f).length}</span></button>`).join("")}</div>`;
+    h += `<div class="tscroll"><table class="devs"><tr>${th("name", T.thDevice)}${th("role", T.rRole)}${th("conn", T.rConnection)}${th("rssi", T.thSignal)}${th("fw", T.firmware)}</tr>` +
+      shown.map(r => {
+        const u = fwOf[r.id], q = r.rssi !== null ? QUAL(r.rssi) : null;
+        return `<tr><td>${devLink(r.id)}</td><td>${esc(r.role)}${r.available ? "" : ` <span class="r">${esc(T.unreachable.replace(/^\s*[–-]\s*/, ""))}</span>`}</td><td>${r.conn}</td>` +
+          `<td${q ? ` class="${q[1]}"` : ""} style="white-space:nowrap">${r.rssi !== null ? `${r.rssi} dBm` : "–"}${r.self ? ` <span class="tnote" style="display:inline">*</span>` : ""}</td>` +
+          `<td style="white-space:nowrap">${esc(r.sw || "–")}${u && (u.available || u.progress !== null) ? ` <span class="o">→ ${esc(u.latest)}</span>` : ""}</td></tr>`;
+      }).join("") + `</table></div>`;
+    if (rows.some(r => r.self)) h += muted("* " + T.selfMeasured.replace(/^\(|\)$/g, ""));
+    return h + firmwareListHtml();
+  }
+  function linksHtml() {
+    const weakParents = listData.parents.filter(p => p.rssi < -80 && nodeById[p.childId]);
+    let h = "";
+    const linkRow = (a, b, r, self) => `<tr class="mark" data-mark="${esc(a + "," + b)}" title="${esc(T.markHint)}"><td>${esc(nameOf(a))} ↔ ${esc(nameOf(b))}</td>` +
+      `<td class="${QUAL(r)[1]}" style="white-space:nowrap">${r} dBm${self ? ` <span class="tnote" style="display:inline">${T.selfMeasured}</span>` : ""}</td></tr>`;
+    if (listData.weak.length) h += `<h4>${T.weakHead} ${T.weakSub}</h4><table class="lk">${listData.weak.map(w => linkRow(w.a, w.b, w.r)).join("")}</table>`;
+    if (weakParents.length) h += `<h4>${T.weakParentHead} ${T.weakSub}</h4><table class="lk">${weakParents.map(p => linkRow(p.childId, p.parentId, p.rssi, p.src === "device")).join("")}</table>`;
+    return (h || `<div>${T.noWeakLinks}</div>`) + muted(T.linksNote);
+  }
+  // the panel below the map – rebuilt when the data changes (refresh, border router names #71, firmware every minute)
+  function renderList() {
+    if (!listData) return;
+    hintsOf = computeHints(listData.parents);
+    const hints = allHints();
+    hintCount = hints.length; setList(!$("info").classList.contains("hidden"), false);
+    const body = { overview: () => overviewHtml(hints), hints: () => hintsHtml(hints), devices: devicesHtml, links: linksHtml, changes: () => `<div id="changes"></div>` };
+    const open = $("info").querySelector("details.okf[open]");
+    $("info").innerHTML = `<div id="tabbar" role="tablist" aria-label="${esc(T.netBtn.replace(/^\S+\s/, ""))}"></div>` +
+      TABS.map(t => `<div class="tabp" id="tab-${t}" role="tabpanel"${t === tab ? "" : " hidden"}>${body[t]()}</div>`).join("");
+    if (open) { const d = $("info").querySelector("details.okf"); if (d) d.open = true; }
+    renderTabBar(); renderChanges();
+  }
+  root.addEventListener("click", e => {
+    const t = e.target.closest && e.target.closest("[data-tab],[data-sort],[data-filter],[data-mark]"); if (!t || !$("info").contains(t)) return;
+    if (e.target.closest("a[data-open]")) return;              // a device name inside a marked row opens the device
+    e.preventDefault();
+    if (t.dataset.tab) setTab(t.dataset.tab);
+    else if (t.dataset.sort) { devSort = { key: t.dataset.sort, dir: devSort.key === t.dataset.sort ? -devSort.dir : 1 }; renderList(); }
+    else if (t.dataset.filter) { devFilter = t.dataset.filter; renderList(); }
+    else if (t.dataset.mark) markDevices(t.dataset.mark.split(","));
+  });
   // ---------- demo (invented devices, works without Home Assistant) ----------
   function demoModel() {
     if (opts.demo === "apple") return demoModelApple();
@@ -2693,7 +2957,8 @@ function createThreadPulse(root, opts, host) {
   let hintCount = 0;
   function setList(show, save = true) {
     $("info").classList.toggle("hidden", !show);
-    setBtn($("toggle"), show ? T.hideList : T.showList, show, hintCount, hintCount ? T.listHints(hintCount) : "");
+    setBtn($("toggle"), T.netBtn, show, hintCount, hintCount ? T.listHints(hintCount) : "");
+    if (show) renderTabBar();              // opening the change log tab marks its entries as seen
     if (save) prefs.set("list", show);
     if (network && save) setTimeout(() => { network.redraw(); network.fit({ animation: { duration: 300 } }); }, 50);
   }
@@ -2732,7 +2997,7 @@ function createThreadPulse(root, opts, host) {
   applyColorVars();
   theme();
 
-  root.addEventListener("keydown", e => { if (e.key === "Escape" && !$("report").hidden) return closeReport(); if (e.key === "Escape" && !$("moremenu").hidden) { setMoreMenu(false); $("morebtn").focus(); return; } if (e.key === "Escape" && e.target.id !== "search") closePanel(); });
+  root.addEventListener("keydown", e => { if (e.key === "Escape" && !$("report").hidden) return closeReport(); if (e.key === "Escape" && !$("moremenu").hidden) { setMoreMenu(false); $("morebtn").focus(); return; } if (e.key === "Escape" && e.target.id !== "search") { if (markedIds && panelNode === null) clearMarks(); closePanel(); } });
   root.addEventListener("pointerdown", e => { if (!e.target.closest || !e.target.closest("#morebox")) setMoreMenu(false); });
 
   root.addEventListener("click", e => {
@@ -2745,6 +3010,7 @@ function createThreadPulse(root, opts, host) {
     else if (t.dataset.act === "reportclose") closeReport();
     else if (t.dataset.act === "reportcopy") copyReport();
     else if (t.dataset.act === "clearchanges") clearChanges();
+    else if (t.dataset.act === "unmark") clearMarks();
     else if (t.dataset.device) openDevice(t.dataset.device);
     else if (t.dataset.identify) pressIdentify(t.dataset.identify);
   });

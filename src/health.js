@@ -16,7 +16,7 @@
     const isRouterId = id => (nodeById[id] && nodeById[id].type === "routing_end_device") || extraIds.has(id);
     const list = ids => ids.map(nm).join(", ");
     const factors = [];
-    const add = (key, level, value, text) => factors.push({ key, level, value, text });
+    const add = (key, level, value, text, ids = []) => factors.push({ key, level, value, text, ids });   // ids: shown on the map (#108)
 
     // 1. routers: every mains-powered Thread device can route; with only the border router everything depends on it
     const nR = routerCount();
@@ -28,21 +28,21 @@
     else {
       const single = routers.filter(r => (linksOf[r.id] || []).filter(l => l.kind === "neighbour" && isRouterId(l.id) && l.rssi >= -80).length < 2).map(r => r.id);
       add("redundancy", !single.length ? "ok" : single.length === 1 || single.length / routers.length <= 0.25 ? "warn" : "bad",
-          T.hvOf(routers.length - single.length, routers.length), single.length ? T.htRedundancyBad(list(single)) : T.htRedundancyOk);
+          T.hvOf(routers.length - single.length, routers.length), single.length ? T.htRedundancyBad(list(single)) : T.htRedundancyOk, single);
     }
 
     // 3. weak parent signal
     const kids = listData.parents.filter(p => nodeById[p.childId]);
     const weak = kids.filter(p => p.rssi < -80).map(p => p.childId);
     add("weak", !weak.length ? "ok" : weak.length <= 2 || weak.length / Math.max(kids.length, 1) <= 0.15 ? "warn" : "bad",
-        T.hvOf(weak.length, kids.length), weak.length ? T.htWeakBad(list(weak)) : T.htWeakOk);
+        T.hvOf(weak.length, kids.length), weak.length ? T.htWeakBad(list(weak)) : T.htWeakOk, weak);
 
     // 4. hops to the border router (only when the border router is known)
     if (!brExt) add("depth", "na", "–", T.htDepthNa);
     else {
       const hops = nodes.map(n => { const p = pathToBr(n.id); return p ? { id: n.id, h: p.length - 1 } : null; }).filter(Boolean);
       const max = Math.max(0, ...hops.map(x => x.h)), deep = hops.filter(x => x.h >= 4).map(x => x.id);
-      add("depth", max <= 3 ? "ok" : max === 4 ? "warn" : "bad", T.hvHops(max), deep.length ? T.htDepthBad(list(deep)) : T.htDepthOk);
+      add("depth", max <= 3 ? "ok" : max === 4 ? "warn" : "bad", T.hvHops(max), deep.length ? T.htDepthBad(list(deep)) : T.htDepthOk, deep);
     }
 
     // 5. children per router: many devices on one router = many devices affected when it fails
@@ -50,13 +50,14 @@
     for (const p of kids) per[p.parentId] = (per[p.parentId] || 0) + 1;
     const [topId, top] = Object.entries(per).sort((a, b) => b[1] - a[1])[0] || [null, 0];
     const crowded = top > 20 ? "bad" : top > 10 || (kids.length >= 6 && top / kids.length > 0.6 && nR >= 3) ? "warn" : "ok";
-    add("children", crowded, T.hvMax(top), topId && crowded !== "ok" ? T.htChildrenBad(nm(topId), top, kids.length) : T.htChildrenOk);
+    add("children", crowded, T.hvMax(top), topId && crowded !== "ok" ? T.htChildrenBad(nm(topId), top, kids.length) : T.htChildrenOk,
+        topId && crowded !== "ok" ? [topId, ...kids.filter(p => p.parentId === topId).map(p => p.childId)] : []);
 
     // 6. stability: unstable connection, not reachable, router that loses power regularly
     const shaky = nodes.filter(n => { const i = n.info || {};
       return !n.available || i.attach >= 5 || i.detached >= 3 || (n.type === "routing_end_device" && i.reboots >= 50); }).map(n => n.id);
     add("stability", !shaky.length ? "ok" : shaky.length <= 2 ? "warn" : "bad", T.hvOf(shaky.length, nodes.length),
-        shaky.length ? T.htStabilityBad(list(shaky)) : T.htStabilityOk);
+        shaky.length ? T.htStabilityBad(list(shaky)) : T.htStabilityOk, shaky);
 
     const points = factors.reduce((s, f) => s + HEALTH_POINTS[f.level], 0);
     return { grade: gradeOf(points), points, factors, known: factors.filter(f => f.level !== "na").length };

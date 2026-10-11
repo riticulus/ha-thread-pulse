@@ -68,7 +68,7 @@ Some choices are remembered per browser (and per Home Assistant address), not pe
 
 | Setting | Where |
 |---|---|
-| List below the map shown or hidden | ☰ Show list / Hide list |
+| Network panel below the map shown or hidden, its tab | 📊 Network (up to version 1.5.2: ☰ Show list) |
 | Legend shown or hidden | **?** on the map (up to version 1.5.2: ⓘ Legend in the toolbar) |
 | Traffic heat on or off | ≋ Traffic |
 | Room view on or off | ⌂ Rooms |
