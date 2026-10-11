@@ -77,7 +77,7 @@
     let h = `<div class="hd"><img src="${iconImg(isBr ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 80)}" alt=""><div>` +
             `<div class="t">${esc(isBr ? T.brLabel : T.foreignLabel(id).replace("\n", " "))}</div><div class="s">${esc(isBr ? T.brSub : T.foreignSub)}</div></div>` +
             `<button class="x" title="×" data-act="close">×</button></div>`;
-    if (isBr) h += `<h4>${T.secLive} · ${T.msgsThrough}</h4><dl>` + liveRows(id) + `</dl>`;
+    if (isBr || counts[id]) h += `<h4>${T.secLive} · ${T.msgsThrough}</h4><dl>` + liveRows(id) + `</dl>` + (isBr ? "" : `<div class="note">${T.parentHopNote}</div>`);
     if (isBr) {
       // network values: OTBR / preferred dataset first, else what the Matter devices report
       const ds = (threadInfo && threadInfo.datasets || []).find(d => d.preferred) || (threadInfo && threadInfo.datasets || [])[0];

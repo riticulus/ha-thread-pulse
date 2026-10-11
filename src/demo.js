@@ -2,6 +2,7 @@
 //# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
   // ---------- demo (invented devices, works without Home Assistant) ----------
   function demoModel() {
+    if (opts.demo === "apple") return demoModelApple();
     const de = lang === "de";
     let seq = 0x1000;
     const mk = (name, icon, role, extra = {}) => ({ id: "f2a0c0de0000" + (seq++).toString(16), name, icon, role, available: true, neigh: [], routes: [],
@@ -59,6 +60,12 @@
   // demo: one invented change per refresh – a battery device moves to another parent, or a device drops out / comes back
   function demoMutate() {
     const m = demoState, { routers, sleepy, dec, rid } = m.demo;
+    if (m.demo.apple) {                         // Apple demo: a battery device moves to another Apple router
+      const s = sleepy[Math.floor(Math.random() * sleepy.length)], cur = s.neigh[0] && s.neigh[0]["0"];
+      const others = m.demo.apple.filter(a => dec(a) !== cur);
+      s.neigh = [{ "0": dec(others[Math.floor(Math.random() * others.length)]), "6": Math.round(-80 + Math.random() * 25) }];
+      return m;
+    }
     if (Math.random() < 0.6) {
       const s = sleepy.filter(x => x.available)[Math.floor(Math.random() * 5)] || sleepy[0];
       const oldP = routers.find(r => r.neigh.some(x => x["13"] && x["0"] === dec(s.id)));
@@ -72,6 +79,31 @@
       n.available = !n.available;
     }
     return m;
+  }
+  // Apple-only network (issue #71): Thread network from an iPhone, three Apple border routers (not Matter devices of HA),
+  // only battery devices, no OpenThread add-on – the border router is unknown, messages go device → parent router only.
+  function demoModelApple() {
+    const de = lang === "de";
+    let seq = 0x2000;
+    const mk = (name, icon) => ({ id: "f2a0c0de0000" + (seq++).toString(16), name, icon, role: 2, type: "sleepy_end_device", available: true, neigh: [], routes: [] });
+    const apple = ["e2b17114", "a90cd4ce", "5f31eb09"].map(x => "86d1aa10" + x);      // shown as …7114, …d4ce, …eb09
+    const dec = id => BigInt("0x" + id).toString();
+    const sleepy = [mk(de ? "Wetter Balkon" : "Balcony weather", "thermometer"), mk(de ? "Wetter Garten" : "Garden weather", "thermometer"),
+                    mk(de ? "Haustür" : "Front door", "door"), mk(de ? "Fenster Küche" : "Kitchen window", "window-closed-variant")];
+    sleepy.forEach((s, i) => {
+      const p = apple[[0, 0, 1, 2][i]], rs = Math.round(-80 + Math.random() * 25);
+      s.neigh = [{ "0": dec(p), "6": rs }]; s.routes = [];
+      s.area = de ? ["Balkon", "Garten", "Flur", "Küche"][i] : ["Balcony", "Garden", "Hallway", "Kitchen"][i];
+      s.info = { vendor: i < 2 ? "Eve Systems" : "Aqara", product: i < 2 ? "Eve Weather" : "Door and Window Sensor P2", sw: "3.2.1", hw: "1.1",
+                 reboots: 1, bootReason: 1, detached: 1, attach: 1, parentChanges: i, batType: i < 2 ? "CR2450" : "CR123A", net: { name: "MyHome", channel: 25, panId: 4097, extPanId: "86d1a0b0c0d0e0f0" } };
+      s.demoBattery = [91, 84, 100, 67][i]; s.demoIdentify = true;
+      s.demoValues = s.icon === "thermometer" ? [[localName("Temperature"), "14.2 °C", 120], [localName("Humidity"), "71 %", 300]] : [[localName("Contact"), T.states.closed, 3600]];
+    });
+    const wifi = [{ id: "wifi:demo-air", kind: "wifi", name: de ? "Luftqualität" : "Air quality monitor", icon: "air-filter", available: true, area: de ? "Büro" : "Office",
+      entities: [], mainEntities: [], demoValues: [["CO₂", "612 ppm", 180]], demoIdentify: true,
+      info: { vendor: "Demo Inc.", product: "Air quality monitor", sw: "1.0.4", hw: "1.0", reboots: 3, bootReason: 1, rssi: -58, channel: 11, wifiVersion: 3 } }];
+    return { nodes: sleepy, wifi, brExt: null, demo: { routers: [], sleepy, dec, rid: {}, apple },
+             thread: { otbr: null, datasets: [{ name: "MyHome", channel: 25, panId: "1001", extPanId: "86d1a0b0c0d0e0f0", preferred: true, source: "iOS-app" }] } };
   }
   function demoTraffic(model) {
     const de = lang === "de";

@@ -1,6 +1,7 @@
 //# Spanish texts. Defines TEXT_ES and NAMES_ES (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_ES = {
+  parentHopNote: "No se conoce el router de borde (p. ej., solo routers de borde de Apple o Google, sin el complemento OpenThread Border Router): los mensajes solo se animan del dispositivo a su router padre; el camino desde aquí hasta Home Assistant no se conoce.",
   identifyBtn: "💡 Identificar", identifyNote: "Envía un comando real: el dispositivo parpadea, pita o se ilumina unos segundos, si lo admite.", identifySleepy: "Los dispositivos con batería solo reaccionan cuando se despiertan; puede tardar un poco.", identifySending: "enviando …", identifySent: "enviado – observa el dispositivo", identifyFailed: "Error",
   exportBtn: "📷 Imagen", exportTitle: "Guardar el mapa como imagen", exportPlain: "Guardar imagen (con nombres)", exportAnon: "Guardar imagen anonimizada (sin nombres)",
   anonDevice: i => `Dispositivo ${i}`, anonRoom: c => `Habitación ${c}`, anonNote: "anonimizada", exportFailed: "No se pudo guardar la imagen", exportDevices: n => `${n} dispositivos`,
@@ -52,7 +53,7 @@ const TEXT_ES = {
   warnBattery: p => `Batería baja (${p} %)`,
   stale: "Datos Thread tal como los informó por última vez el dispositivo; pueden estar desactualizados.",
   brSub: "Conecta la red Thread con Home Assistant", foreignSub: "Router Thread que no es un dispositivo Matter de Home Assistant",
-  foreignNote: "Home Assistant no tiene más datos de este dispositivo – solo lo que informan los routers vecinos.",
+  foreignNote: "Home Assistant no tiene más datos de este dispositivo – solo lo que informan los dispositivos cercanos (routers vecinos, hijos).",
   secNetwork: "Red Thread", networkName: "Nombre de la red", channel: "Canal", panId: "PAN ID", extPanId: "PAN ID extendido",
   routersInMesh: "Routers en la red", ofMax: n => `${n} de máx. 32`, devicesInMesh: "Dispositivos Thread", leader: "Líder",
   secBorderRouter: "Router de borde", brKind: "Tipo", brOtbr: "OpenThread Border Router (complemento)", borderAgent: "ID del agente de borde",

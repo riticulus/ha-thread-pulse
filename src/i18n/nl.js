@@ -1,6 +1,7 @@
 //# Dutch texts. Defines TEXT_NL and NAMES_NL (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_NL = {
+  parentHopNote: "De border router is niet bekend (bijv. alleen Apple- of Google-border routers, geen OpenThread Border Router-add-on): berichten worden alleen van het apparaat naar zijn parent-router geanimeerd – de weg van hier naar Home Assistant is niet bekend.",
   identifyBtn: "💡 Identificeren", identifyNote: "Stuurt een echt commando: het apparaat knippert, piept of licht enkele seconden op, als het dat ondersteunt.", identifySleepy: "Apparaten op batterij reageren pas als ze wakker worden – dat kan even duren.", identifySending: "versturen …", identifySent: "verstuurd – let op het apparaat", identifyFailed: "Mislukt",
   exportBtn: "📷 Afbeelding", exportTitle: "Kaart opslaan als afbeelding", exportPlain: "Afbeelding opslaan (met namen)", exportAnon: "Geanonimiseerde afbeelding opslaan (zonder namen)",
   anonDevice: i => `Apparaat ${i}`, anonRoom: c => `Ruimte ${c}`, anonNote: "geanonimiseerd", exportFailed: "De afbeelding kon niet worden opgeslagen", exportDevices: n => `${n} apparaten`,
@@ -52,7 +53,7 @@ const TEXT_NL = {
   warnBattery: p => `Batterij bijna leeg (${p} %)`,
   stale: "Thread-gegevens zoals laatst gemeld door het apparaat, kunnen verouderd zijn.",
   brSub: "Verbindt het Thread-netwerk met Home Assistant", foreignSub: "Thread-router die geen Matter-apparaat van Home Assistant is",
-  foreignNote: "Home Assistant heeft geen verdere gegevens over dit apparaat – alleen wat de naburige routers melden.",
+  foreignNote: "Home Assistant heeft geen verdere gegevens over dit apparaat – alleen wat de apparaten in de buurt melden (naburige routers, kinderen).",
   secNetwork: "Thread-netwerk", networkName: "Netwerknaam", channel: "Kanaal", panId: "PAN-ID", extPanId: "Uitgebreide PAN-ID",
   routersInMesh: "Routers in het netwerk", ofMax: n => `${n} van max. 32`, devicesInMesh: "Thread-apparaten", leader: "Leader",
   secBorderRouter: "Border router", brKind: "Type", brOtbr: "OpenThread Border Router (add-on)", borderAgent: "Border-agent-ID",

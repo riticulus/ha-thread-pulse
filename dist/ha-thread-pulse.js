@@ -93,6 +93,7 @@ const TP_HTML = `
 `;
 // ---------- texts (one file per language in src/i18n/) ----------
 const TEXT_EN = {
+  parentHopNote: "The border router is not known (e.g. only Apple or Google border routers, no OpenThread Border Router add-on): messages are only animated from the device to its parent router – the way from here to Home Assistant is not known.",
   identifyBtn: "💡 Identify", identifyNote: "Sends a real command: the device blinks, beeps or flashes for a few seconds, if it supports it.", identifySleepy: "Battery devices react only when they wake up – this can take a while.", identifySending: "sending …", identifySent: "sent – watch the device", identifyFailed: "Failed",
   exportBtn: "📷 Image", exportTitle: "Save the map as an image", exportPlain: "Save image (with names)", exportAnon: "Save anonymised image (no names)",
   anonDevice: i => `Device ${i}`, anonRoom: c => `Room ${c}`, anonNote: "anonymised", exportFailed: "The image could not be saved", exportDevices: n => `${n} devices`,
@@ -144,7 +145,7 @@ const TEXT_EN = {
   warnBattery: p => `Battery low (${p} %)`,
   stale: "Thread data as last reported by the device, may be outdated.",
   brSub: "Connects the Thread network to Home Assistant", foreignSub: "Thread router that is not a Matter device of Home Assistant",
-  foreignNote: "Home Assistant has no further data about this device – only what the neighbouring routers report.",
+  foreignNote: "Home Assistant has no further data about this device – only what the devices around it report (neighbouring routers, children).",
   secNetwork: "Thread network", networkName: "Network name", channel: "Channel", panId: "PAN ID", extPanId: "Extended PAN ID",
   routersInMesh: "Routers in the mesh", ofMax: n => `${n} of max. 32`, devicesInMesh: "Thread devices", leader: "Leader",
   secBorderRouter: "Border router", brKind: "Type", brOtbr: "OpenThread Border Router (add-on)", borderAgent: "Border agent ID",
@@ -167,6 +168,7 @@ const TEXT_EN = {
   hEdge: r => `Only weak links to other routers (best: ${r} dBm) – it sits at the edge of the mesh. Another router in between would strengthen it.`,
 };
 const TEXT_DE = {
+  parentHopNote: "Der Border Router ist nicht bekannt (z. B. nur Apple- oder Google-Border-Router, kein OpenThread-Border-Router-Add-on): Nachrichten werden nur vom Gerät bis zu seinem Parent-Router animiert – der Weg von hier zu Home Assistant ist nicht bekannt.",
   identifyBtn: "💡 Identifizieren", identifyNote: "Sendet einen echten Befehl: Das Gerät blinkt, piept oder leuchtet einige Sekunden lang, wenn es das unterstützt.", identifySleepy: "Batteriegeräte reagieren erst, wenn sie aufwachen – das kann etwas dauern.", identifySending: "wird gesendet …", identifySent: "gesendet – achte auf das Gerät", identifyFailed: "Fehlgeschlagen",
   exportBtn: "📷 Bild", exportTitle: "Karte als Bild speichern", exportPlain: "Bild speichern (mit Namen)", exportAnon: "Anonymisiertes Bild speichern (ohne Namen)",
   anonDevice: i => `Gerät ${i}`, anonRoom: c => `Raum ${c}`, anonNote: "anonymisiert", exportFailed: "Das Bild konnte nicht gespeichert werden", exportDevices: n => `${n} Geräte`,
@@ -218,7 +220,7 @@ const TEXT_DE = {
   warnBattery: p => `Batterie schwach (${p} %)`,
   stale: "Thread-Daten: letzter Stand, den das Gerät gemeldet hat – kann veraltet sein.",
   brSub: "Verbindet das Thread-Netz mit Home Assistant", foreignSub: "Thread-Router, der kein Matter-Gerät von Home Assistant ist",
-  foreignNote: "Home Assistant hat keine weiteren Daten zu diesem Gerät – nur das, was die benachbarten Router melden.",
+  foreignNote: "Home Assistant hat keine weiteren Daten zu diesem Gerät – nur das, was die Geräte in seiner Nähe melden (benachbarte Router, Kinder).",
   secNetwork: "Thread-Netz", networkName: "Netzwerkname", channel: "Kanal", panId: "PAN-ID", extPanId: "Erweiterte PAN-ID",
   routersInMesh: "Router im Netz", ofMax: n => `${n} von max. 32`, devicesInMesh: "Thread-Geräte", leader: "Leader",
   secBorderRouter: "Border Router", brKind: "Typ", brOtbr: "OpenThread Border Router (Add-on)", borderAgent: "Border-Agent-ID",
@@ -247,6 +249,7 @@ const NAMES_DE = [["Effective current", "Strom (effektiv)"], ["Effective voltage
   ["Occupancy", "Anwesenheit"], ["Door", "Kontakt"], ["Opening", "Kontakt"], ["Temperature", "Temperatur"], ["Humidity", "Luftfeuchte"],
   ["Identify", "Identifizieren"], ["Button", "Taste"], ["Light", "Licht"], ["Switch", "Schalter"], ["Motion", "Bewegung"]];
 const TEXT_ES = {
+  parentHopNote: "No se conoce el router de borde (p. ej., solo routers de borde de Apple o Google, sin el complemento OpenThread Border Router): los mensajes solo se animan del dispositivo a su router padre; el camino desde aquí hasta Home Assistant no se conoce.",
   identifyBtn: "💡 Identificar", identifyNote: "Envía un comando real: el dispositivo parpadea, pita o se ilumina unos segundos, si lo admite.", identifySleepy: "Los dispositivos con batería solo reaccionan cuando se despiertan; puede tardar un poco.", identifySending: "enviando …", identifySent: "enviado – observa el dispositivo", identifyFailed: "Error",
   exportBtn: "📷 Imagen", exportTitle: "Guardar el mapa como imagen", exportPlain: "Guardar imagen (con nombres)", exportAnon: "Guardar imagen anonimizada (sin nombres)",
   anonDevice: i => `Dispositivo ${i}`, anonRoom: c => `Habitación ${c}`, anonNote: "anonimizada", exportFailed: "No se pudo guardar la imagen", exportDevices: n => `${n} dispositivos`,
@@ -298,7 +301,7 @@ const TEXT_ES = {
   warnBattery: p => `Batería baja (${p} %)`,
   stale: "Datos Thread tal como los informó por última vez el dispositivo; pueden estar desactualizados.",
   brSub: "Conecta la red Thread con Home Assistant", foreignSub: "Router Thread que no es un dispositivo Matter de Home Assistant",
-  foreignNote: "Home Assistant no tiene más datos de este dispositivo – solo lo que informan los routers vecinos.",
+  foreignNote: "Home Assistant no tiene más datos de este dispositivo – solo lo que informan los dispositivos cercanos (routers vecinos, hijos).",
   secNetwork: "Red Thread", networkName: "Nombre de la red", channel: "Canal", panId: "PAN ID", extPanId: "PAN ID extendido",
   routersInMesh: "Routers en la red", ofMax: n => `${n} de máx. 32`, devicesInMesh: "Dispositivos Thread", leader: "Líder",
   secBorderRouter: "Router de borde", brKind: "Tipo", brOtbr: "OpenThread Border Router (complemento)", borderAgent: "ID del agente de borde",
@@ -327,6 +330,7 @@ const NAMES_ES = [["Effective current", "Corriente (eficaz)"], ["Effective volta
   ["Occupancy", "Presencia"], ["Door", "Contacto"], ["Opening", "Contacto"], ["Temperature", "Temperatura"], ["Humidity", "Humedad"],
   ["Identify", "Identificar"], ["Button", "Botón"], ["Light", "Luz"], ["Switch", "Interruptor"], ["Motion", "Movimiento"]];
 const TEXT_FR = {
+  parentHopNote: "Le routeur de bordure n'est pas connu (p. ex. uniquement des routeurs de bordure Apple ou Google, pas de module OpenThread Border Router) : les messages ne sont animés que de l'appareil jusqu'à son routeur parent – le chemin vers Home Assistant n'est pas connu.",
   identifyBtn: "💡 Identifier", identifyNote: "Envoie une vraie commande : l'appareil clignote, bipe ou s'allume quelques secondes, s'il le prend en charge.", identifySleepy: "Les appareils sur batterie ne réagissent qu'à leur réveil – cela peut prendre un moment.", identifySending: "envoi …", identifySent: "envoyé – regardez l'appareil", identifyFailed: "Échec",
   exportBtn: "📷 Image", exportTitle: "Enregistrer la carte en image", exportPlain: "Enregistrer l'image (avec les noms)", exportAnon: "Enregistrer une image anonymisée (sans noms)",
   anonDevice: i => `Appareil ${i}`, anonRoom: c => `Pièce ${c}`, anonNote: "anonymisée", exportFailed: "L'image n'a pas pu être enregistrée", exportDevices: n => `${n} appareils`,
@@ -378,7 +382,7 @@ const TEXT_FR = {
   warnBattery: p => `Pile faible (${p} %)`,
   stale: "Données Thread telles que signalées en dernier par l'appareil, peuvent être obsolètes.",
   brSub: "Relie le réseau Thread à Home Assistant", foreignSub: "Routeur Thread qui n'est pas un appareil Matter de Home Assistant",
-  foreignNote: "Home Assistant n'a pas d'autres données sur cet appareil – seulement ce que signalent les routeurs voisins.",
+  foreignNote: "Home Assistant n'a pas d'autres données sur cet appareil – seulement ce que signalent les appareils proches (routeurs voisins, enfants).",
   secNetwork: "Réseau Thread", networkName: "Nom du réseau", channel: "Canal", panId: "PAN ID", extPanId: "PAN ID étendu",
   routersInMesh: "Routeurs dans le réseau", ofMax: n => `${n} sur 32 max.`, devicesInMesh: "Appareils Thread", leader: "Leader",
   secBorderRouter: "Routeur de bordure", brKind: "Type", brOtbr: "OpenThread Border Router (module)", borderAgent: "ID de l'agent de bordure",
@@ -407,6 +411,7 @@ const NAMES_FR = [["Effective current", "Courant (efficace)"], ["Effective volta
   ["Occupancy", "Présence"], ["Door", "Contact"], ["Opening", "Contact"], ["Temperature", "Température"], ["Humidity", "Humidité"],
   ["Identify", "Identifier"], ["Button", "Bouton"], ["Light", "Lumière"], ["Switch", "Interrupteur"], ["Motion", "Mouvement"]];
 const TEXT_IT = {
+  parentHopNote: "Il border router non è noto (ad es. solo border router Apple o Google, nessun add-on OpenThread Border Router): i messaggi sono animati solo dal dispositivo al suo router padre – il percorso da qui a Home Assistant non è noto.",
   identifyBtn: "💡 Identifica", identifyNote: "Invia un comando reale: il dispositivo lampeggia, emette un suono o si illumina per alcuni secondi, se lo supporta.", identifySleepy: "I dispositivi a batteria reagiscono solo quando si risvegliano – può volerci un po'.", identifySending: "invio …", identifySent: "inviato – osserva il dispositivo", identifyFailed: "Non riuscito",
   exportBtn: "📷 Immagine", exportTitle: "Salva la mappa come immagine", exportPlain: "Salva immagine (con i nomi)", exportAnon: "Salva immagine anonimizzata (senza nomi)",
   anonDevice: i => `Dispositivo ${i}`, anonRoom: c => `Stanza ${c}`, anonNote: "anonimizzata", exportFailed: "Non è stato possibile salvare l'immagine", exportDevices: n => `${n} dispositivi`,
@@ -458,7 +463,7 @@ const TEXT_IT = {
   warnBattery: p => `Batteria scarica (${p} %)`,
   stale: "Dati Thread come segnalati per ultimi dal dispositivo, potrebbero non essere aggiornati.",
   brSub: "Collega la rete Thread a Home Assistant", foreignSub: "Router Thread che non è un dispositivo Matter di Home Assistant",
-  foreignNote: "Home Assistant non ha altri dati su questo dispositivo – solo ciò che segnalano i router vicini.",
+  foreignNote: "Home Assistant non ha altri dati su questo dispositivo – solo ciò che segnalano i dispositivi vicini (router vicini, figli).",
   secNetwork: "Rete Thread", networkName: "Nome della rete", channel: "Canale", panId: "PAN ID", extPanId: "PAN ID esteso",
   routersInMesh: "Router nella rete", ofMax: n => `${n} su max. 32`, devicesInMesh: "Dispositivi Thread", leader: "Leader",
   secBorderRouter: "Border router", brKind: "Tipo", brOtbr: "OpenThread Border Router (add-on)", borderAgent: "ID del border agent",
@@ -487,6 +492,7 @@ const NAMES_IT = [["Effective current", "Corrente (efficace)"], ["Effective volt
   ["Occupancy", "Presenza"], ["Door", "Contatto"], ["Opening", "Contatto"], ["Temperature", "Temperatura"], ["Humidity", "Umidità"],
   ["Identify", "Identifica"], ["Button", "Pulsante"], ["Light", "Luce"], ["Switch", "Interruttore"], ["Motion", "Movimento"]];
 const TEXT_NL = {
+  parentHopNote: "De border router is niet bekend (bijv. alleen Apple- of Google-border routers, geen OpenThread Border Router-add-on): berichten worden alleen van het apparaat naar zijn parent-router geanimeerd – de weg van hier naar Home Assistant is niet bekend.",
   identifyBtn: "💡 Identificeren", identifyNote: "Stuurt een echt commando: het apparaat knippert, piept of licht enkele seconden op, als het dat ondersteunt.", identifySleepy: "Apparaten op batterij reageren pas als ze wakker worden – dat kan even duren.", identifySending: "versturen …", identifySent: "verstuurd – let op het apparaat", identifyFailed: "Mislukt",
   exportBtn: "📷 Afbeelding", exportTitle: "Kaart opslaan als afbeelding", exportPlain: "Afbeelding opslaan (met namen)", exportAnon: "Geanonimiseerde afbeelding opslaan (zonder namen)",
   anonDevice: i => `Apparaat ${i}`, anonRoom: c => `Ruimte ${c}`, anonNote: "geanonimiseerd", exportFailed: "De afbeelding kon niet worden opgeslagen", exportDevices: n => `${n} apparaten`,
@@ -538,7 +544,7 @@ const TEXT_NL = {
   warnBattery: p => `Batterij bijna leeg (${p} %)`,
   stale: "Thread-gegevens zoals laatst gemeld door het apparaat, kunnen verouderd zijn.",
   brSub: "Verbindt het Thread-netwerk met Home Assistant", foreignSub: "Thread-router die geen Matter-apparaat van Home Assistant is",
-  foreignNote: "Home Assistant heeft geen verdere gegevens over dit apparaat – alleen wat de naburige routers melden.",
+  foreignNote: "Home Assistant heeft geen verdere gegevens over dit apparaat – alleen wat de apparaten in de buurt melden (naburige routers, kinderen).",
   secNetwork: "Thread-netwerk", networkName: "Netwerknaam", channel: "Kanaal", panId: "PAN-ID", extPanId: "Uitgebreide PAN-ID",
   routersInMesh: "Routers in het netwerk", ofMax: n => `${n} van max. 32`, devicesInMesh: "Thread-apparaten", leader: "Leader",
   secBorderRouter: "Border router", brKind: "Type", brOtbr: "OpenThread Border Router (add-on)", borderAgent: "Border-agent-ID",
@@ -798,7 +804,7 @@ function createThreadPulse(root, opts, host) {
 
   // ---------- graph ----------
   let searchHits = [], searchActive = false;
-  let extraIds = new Set(), threadInfo = null, wifiById = {};
+  let extraIds = new Set(), threadInfo = null, wifiById = {}, parentOf = {};
   let hintsOf = {}, nodeById = {}, linksOf = {}, battOf = {}, brExt = null, devToNode = {}, entToNode = {}, nodeName = {}, onMap = new Set(), ridToId = {}, routeOf = {}, parentRid = {}, ownRid = {};
 
   function render(model, keep) {      // keep: positions of the previous map (refresh without layout jump)
@@ -826,9 +832,21 @@ function createThreadPulse(root, opts, host) {
         (edges[key] = edges[key] || { a: n.id, b: other, rssi: [] }).rssi.push(x["6"]);
       }
     }
-    const extras = Object.keys(extra);
-    extraIds = new Set(extras); threadInfo = model.thread || null;
+    let extras = Object.keys(extra);
+    threadInfo = model.thread || null;
     if (!brExt && extras.length === 1) brExt = extras[0];         // no OTBR info: a single unknown router is most likely the border router
+    // the parent of a device that is not a Matter device of HA (e.g. an Apple TV / HomePod) is not in any neighbour table of
+    // a Matter router when the mesh has no Matter routers: add it from the device's own neighbour table (issue #71)
+    parentOf = {};
+    const bestOf = n => [...n.neigh].sort((p, q) => q["6"] - p["6"])[0];
+    for (const n of nodes.filter(n => !isRouter(n))) {
+      const best = bestOf(n); if (!best) continue;
+      const pid = hex16(best["0"]);
+      parentOf[n.id] = pid;
+      if (!byId[pid]) extra[pid] = true;
+    }
+    extras = Object.keys(extra);
+    extraIds = new Set(extras);
     for (const id of extras) {
       const isBr = id === brExt;
       visNodes.push({ id, label: isBr ? T.brLabel : T.foreignLabel(id), shape: "image",
@@ -839,7 +857,7 @@ function createThreadPulse(root, opts, host) {
     const childRssi = {};
     for (const n of nodes.filter(isRouter)) for (const x of n.neigh) if (x["13"]) childRssi[n.id + "|" + hex16(x["0"])] = x["6"];
     for (const n of nodes.filter(n => !isRouter(n))) {
-      const best = [...n.neigh].sort((p, q) => q["6"] - p["6"])[0];
+      const best = bestOf(n);
       if (!best) continue;
       const pid = hex16(best["0"]);
       let rssi = best["6"], src = "device";
@@ -848,6 +866,7 @@ function createThreadPulse(root, opts, host) {
       if (n.type === "end_device") {                             // mains end devices: show all their links like routers
         for (const x of n.neigh) { const o = hex16(x["0"]); if (!byId[o]) continue;
           const key = [n.id, o].sort().join("|"); (edges[key] = edges[key] || { a: n.id, b: o, rssi: [] }).rssi.push(x["6"]); }
+        if (!byId[pid]) edges["p|" + n.id] = { a: n.id, b: pid, rssi: [rssi], parent: true };     // parent outside HA (issue #71)
       } else {
         edges["p|" + n.id] = { a: n.id, b: pid, rssi: [rssi], parent: true };
       }
@@ -963,7 +982,13 @@ function createThreadPulse(root, opts, host) {
     }
   }
   function pathToBr(nodeId) {
-    if (!brExt || isWifiId(nodeId)) return null;      // Matter over Wi-Fi: counted, but no Thread path
+    if (isWifiId(nodeId)) return null;                 // Matter over Wi-Fi: counted, but no Thread path
+    if (!brExt) {
+      // border router unknown (no OpenThread add-on, several or no unknown routers – e.g. Apple border routers only):
+      // only the first hop is known, from the device to its parent (issue #71)
+      const p = parentOf[nodeId];
+      return p && onMap.has(p) ? [nodeId, p] : null;
+    }
     const br = Object.keys(ridToId).find(r => ridToId[r] === brExt);
     const ids = [nodeId];
     let r = ownRid[nodeId] ?? parentRid[nodeId];
@@ -993,13 +1018,14 @@ function createThreadPulse(root, opts, host) {
     if (path) {
       if (down) path = path.slice().reverse();
       recordTraffic(path);
-      if (brExt && path.includes(brExt)) {             // every animated message passes the border router
-        const b = counts[brExt] = counts[brExt] || { up: [], down: [], last: null };
+      const via = brExt && path.includes(brExt) ? brExt : extraIds.has(path[down ? 0 : path.length - 1]) ? path[down ? 0 : path.length - 1] : null;
+      if (via) {                                       // every animated message passes the border router (or, if unknown, the parent router)
+        const b = counts[via] = counts[via] || { up: [], down: [], last: null };
         (down ? b.down : b.up).push(Date.now()); b.last = { t: Date.now(), down };
         b.up = b.up.filter(t => t > cut); b.down = b.down.filter(t => t > cut); b.total = (b.total || 0) + 1;
       }
     }
-    if (panelNode === nodeId || (panelNode && panelNode === brExt)) renderPanel();
+    if (panelNode === nodeId || (panelNode && extraIds.has(panelNode))) renderPanel();
     if (!liveOn || !network || !path) return;
     playTick(down);
     packets.push({ path, t0: now, color: down ? COLORS.down : COLORS.up, origin: down ? path[path.length - 1] : nodeId });
@@ -1295,7 +1321,7 @@ function createThreadPulse(root, opts, host) {
     let h = `<div class="hd"><img src="${iconImg(isBr ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 80)}" alt=""><div>` +
             `<div class="t">${esc(isBr ? T.brLabel : T.foreignLabel(id).replace("\n", " "))}</div><div class="s">${esc(isBr ? T.brSub : T.foreignSub)}</div></div>` +
             `<button class="x" title="×" data-act="close">×</button></div>`;
-    if (isBr) h += `<h4>${T.secLive} · ${T.msgsThrough}</h4><dl>` + liveRows(id) + `</dl>`;
+    if (isBr || counts[id]) h += `<h4>${T.secLive} · ${T.msgsThrough}</h4><dl>` + liveRows(id) + `</dl>` + (isBr ? "" : `<div class="note">${T.parentHopNote}</div>`);
     if (isBr) {
       // network values: OTBR / preferred dataset first, else what the Matter devices report
       const ds = (threadInfo && threadInfo.datasets || []).find(d => d.preferred) || (threadInfo && threadInfo.datasets || [])[0];
@@ -1833,6 +1859,7 @@ function createThreadPulse(root, opts, host) {
   }
   // ---------- demo (invented devices, works without Home Assistant) ----------
   function demoModel() {
+    if (opts.demo === "apple") return demoModelApple();
     const de = lang === "de";
     let seq = 0x1000;
     const mk = (name, icon, role, extra = {}) => ({ id: "f2a0c0de0000" + (seq++).toString(16), name, icon, role, available: true, neigh: [], routes: [],
@@ -1890,6 +1917,12 @@ function createThreadPulse(root, opts, host) {
   // demo: one invented change per refresh – a battery device moves to another parent, or a device drops out / comes back
   function demoMutate() {
     const m = demoState, { routers, sleepy, dec, rid } = m.demo;
+    if (m.demo.apple) {                         // Apple demo: a battery device moves to another Apple router
+      const s = sleepy[Math.floor(Math.random() * sleepy.length)], cur = s.neigh[0] && s.neigh[0]["0"];
+      const others = m.demo.apple.filter(a => dec(a) !== cur);
+      s.neigh = [{ "0": dec(others[Math.floor(Math.random() * others.length)]), "6": Math.round(-80 + Math.random() * 25) }];
+      return m;
+    }
     if (Math.random() < 0.6) {
       const s = sleepy.filter(x => x.available)[Math.floor(Math.random() * 5)] || sleepy[0];
       const oldP = routers.find(r => r.neigh.some(x => x["13"] && x["0"] === dec(s.id)));
@@ -1903,6 +1936,31 @@ function createThreadPulse(root, opts, host) {
       n.available = !n.available;
     }
     return m;
+  }
+  // Apple-only network (issue #71): Thread network from an iPhone, three Apple border routers (not Matter devices of HA),
+  // only battery devices, no OpenThread add-on – the border router is unknown, messages go device → parent router only.
+  function demoModelApple() {
+    const de = lang === "de";
+    let seq = 0x2000;
+    const mk = (name, icon) => ({ id: "f2a0c0de0000" + (seq++).toString(16), name, icon, role: 2, type: "sleepy_end_device", available: true, neigh: [], routes: [] });
+    const apple = ["e2b17114", "a90cd4ce", "5f31eb09"].map(x => "86d1aa10" + x);      // shown as …7114, …d4ce, …eb09
+    const dec = id => BigInt("0x" + id).toString();
+    const sleepy = [mk(de ? "Wetter Balkon" : "Balcony weather", "thermometer"), mk(de ? "Wetter Garten" : "Garden weather", "thermometer"),
+                    mk(de ? "Haustür" : "Front door", "door"), mk(de ? "Fenster Küche" : "Kitchen window", "window-closed-variant")];
+    sleepy.forEach((s, i) => {
+      const p = apple[[0, 0, 1, 2][i]], rs = Math.round(-80 + Math.random() * 25);
+      s.neigh = [{ "0": dec(p), "6": rs }]; s.routes = [];
+      s.area = de ? ["Balkon", "Garten", "Flur", "Küche"][i] : ["Balcony", "Garden", "Hallway", "Kitchen"][i];
+      s.info = { vendor: i < 2 ? "Eve Systems" : "Aqara", product: i < 2 ? "Eve Weather" : "Door and Window Sensor P2", sw: "3.2.1", hw: "1.1",
+                 reboots: 1, bootReason: 1, detached: 1, attach: 1, parentChanges: i, batType: i < 2 ? "CR2450" : "CR123A", net: { name: "MyHome", channel: 25, panId: 4097, extPanId: "86d1a0b0c0d0e0f0" } };
+      s.demoBattery = [91, 84, 100, 67][i]; s.demoIdentify = true;
+      s.demoValues = s.icon === "thermometer" ? [[localName("Temperature"), "14.2 °C", 120], [localName("Humidity"), "71 %", 300]] : [[localName("Contact"), T.states.closed, 3600]];
+    });
+    const wifi = [{ id: "wifi:demo-air", kind: "wifi", name: de ? "Luftqualität" : "Air quality monitor", icon: "air-filter", available: true, area: de ? "Büro" : "Office",
+      entities: [], mainEntities: [], demoValues: [["CO₂", "612 ppm", 180]], demoIdentify: true,
+      info: { vendor: "Demo Inc.", product: "Air quality monitor", sw: "1.0.4", hw: "1.0", reboots: 3, bootReason: 1, rssi: -58, channel: 11, wifiVersion: 3 } }];
+    return { nodes: sleepy, wifi, brExt: null, demo: { routers: [], sleepy, dec, rid: {}, apple },
+             thread: { otbr: null, datasets: [{ name: "MyHome", channel: 25, panId: "1001", extPanId: "86d1a0b0c0d0e0f0", preferred: true, source: "iOS-app" }] } };
   }
   function demoTraffic(model) {
     const de = lang === "de";
