@@ -122,7 +122,7 @@
         if (!mainIds.length || mainIds.includes(d.entity_id)) liveAvailability(n, d.new_state.state !== "unavailable");
       }
       if (!n || !d.new_state || !d.old_state || d.new_state.state === "unavailable" || d.old_state.state === "unavailable") return;
-      if (d.entity_id.startsWith("button.")) return;   // the state of a button is the time of the last press, set by HA itself – not a message from the device
+      if (d.entity_id.startsWith("button.") || d.entity_id.startsWith("update.")) return;   // set by HA itself (press time, versions found online) – not messages from the device   // the state of a button is the time of the last press, set by HA itself – not a message from the device
       if (d.new_state.state === d.old_state.state && JSON.stringify(d.new_state.attributes) === JSON.stringify(d.old_state.attributes)) return;
       const what = localName((d.new_state.attributes.friendly_name || d.entity_id).replace(nodeName[n], "").trim()) || T.state;
       let resp = "";

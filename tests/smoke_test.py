@@ -80,6 +80,13 @@ async def main_page(r, quick):
         r.check("no identify button on an unreachable device", await b.js(PANEL_TITLE) == "Bedside button" and await b.js("!document.querySelector('#panel [data-identify]')"))
         await b.js(CLOSE)
 
+        # firmware (demo: Kitchen plug has an update, Office plug skipped it, Bedroom climate installs one)
+        await b.js(search_js("Kitchen plug")); await asyncio.sleep(1.2)
+        r.check("firmware update shown in the panel", "1.4.0 available" in await b.js(f"{G}('panel').textContent"))
+        await b.js(CLOSE); await asyncio.sleep(0.3)
+        fw = await b.js(f"{G}('info').textContent")
+        r.check("firmware section in the list", "Same model, different firmware" in fw and "skipped" in fw and "installing 2.1.0" in fw)
+
         # image export (anonymised: no device or room names drawn)
         await b.js(f"{G}('exportbtn').click()")
         r.check("image button opens its menu", await b.js(f"!{G}('exportmenu').hidden"))

@@ -105,6 +105,7 @@ const TP_HTML = `
 `;
 // ---------- texts (one file per language in src/i18n/) ----------
 const TEXT_EN = {
+  fwHead: "Firmware", fwMixed: "Same model, different firmware:", fwNote: "Updates are installed in Home Assistant (device page). Skipped updates are not marked on the map.", fwUpdate: "Update", fwAvailable: v => `${v} available`, fwSkipped: v => `${v} available – skipped`, fwInstalling: (v, p) => `installing ${v}${p !== null ? ` · ${p} %` : " …"}`, fwCurrent: "up to date",
   hDupAddr: names => `Reports the same hardware address as ${names} – a firmware quirk of some devices. The device works, but its links on the map may be incomplete.`,
   brOther: x => `Border router …${x}`, brOtherTitle: "Border router of another system, found on the local network", brOtherSub: "Border router of another system (found on the local network)", brOtherNote: "Announced on the local network and found by Home Assistant's border router discovery. Matched to the map by its address.", brName: "Name", threadVersion: "Thread version", usedByHa: "Used by Home Assistant", usedByHaNo: "no – Home Assistant uses the border router shown in purple",
   parentHopNote: "The border router is not known (e.g. only Apple or Google border routers, no OpenThread Border Router add-on): messages are only animated from the device to its parent router – the way from here to Home Assistant is not known.",
@@ -182,6 +183,7 @@ const TEXT_EN = {
   hEdge: r => `Only weak links to other routers (best: ${r} dBm) – it sits at the edge of the mesh. Another router in between would strengthen it.`,
 };
 const TEXT_DE = {
+  fwHead: "Firmware", fwMixed: "Gleiches Modell, unterschiedliche Firmware:", fwNote: "Updates werden in Home Assistant installiert (Geräteseite). Übersprungene Updates werden auf der Karte nicht markiert.", fwUpdate: "Update", fwAvailable: v => `${v} verfügbar`, fwSkipped: v => `${v} verfügbar – übersprungen`, fwInstalling: (v, p) => `${v} wird installiert${p !== null ? ` · ${p} %` : " …"}`, fwCurrent: "aktuell",
   hDupAddr: names => `Meldet dieselbe Hardware-Adresse wie ${names} – eine Firmware-Eigenheit mancher Geräte. Das Gerät funktioniert, aber seine Verbindungen auf der Karte können unvollständig sein.`,
   brOther: x => `Border Router …${x}`, brOtherTitle: "Border Router eines anderen Systems, im lokalen Netz gefunden", brOtherSub: "Border Router eines anderen Systems (im lokalen Netz gefunden)", brOtherNote: "Im lokalen Netz angekündigt und von der Border-Router-Suche von Home Assistant gefunden. Über seine Adresse der Karte zugeordnet.", brName: "Name", threadVersion: "Thread-Version", usedByHa: "Von Home Assistant genutzt", usedByHaNo: "nein – Home Assistant nutzt den violett gezeigten Border Router",
   parentHopNote: "Der Border Router ist nicht bekannt (z. B. nur Apple- oder Google-Border-Router, kein OpenThread-Border-Router-Add-on): Nachrichten werden nur vom Gerät bis zu seinem Parent-Router animiert – der Weg von hier zu Home Assistant ist nicht bekannt.",
@@ -265,6 +267,7 @@ const NAMES_DE = [["Effective current", "Strom (effektiv)"], ["Effective voltage
   ["Occupancy", "Anwesenheit"], ["Door", "Kontakt"], ["Opening", "Kontakt"], ["Temperature", "Temperatur"], ["Humidity", "Luftfeuchte"],
   ["Identify", "Identifizieren"], ["Button", "Taste"], ["Light", "Licht"], ["Switch", "Schalter"], ["Motion", "Bewegung"]];
 const TEXT_ES = {
+  fwHead: "Firmware", fwMixed: "Mismo modelo, firmware distinto:", fwNote: "Las actualizaciones se instalan en Home Assistant (página del dispositivo). Las actualizaciones omitidas no se marcan en el mapa.", fwUpdate: "Actualización", fwAvailable: v => `${v} disponible`, fwSkipped: v => `${v} disponible – omitida`, fwInstalling: (v, p) => `instalando ${v}${p !== null ? ` · ${p} %` : " …"}`, fwCurrent: "actualizado",
   hDupAddr: names => `Indica la misma dirección de hardware que ${names}: una peculiaridad del firmware de algunos dispositivos. El dispositivo funciona, pero sus enlaces en el mapa pueden estar incompletos.`,
   brOther: x => `Router de borde …${x}`, brOtherTitle: "Router de borde de otro sistema, encontrado en la red local", brOtherSub: "Router de borde de otro sistema (encontrado en la red local)", brOtherNote: "Anunciado en la red local y encontrado por la búsqueda de routers de borde de Home Assistant. Asignado al mapa por su dirección.", brName: "Nombre", threadVersion: "Versión de Thread", usedByHa: "Usado por Home Assistant", usedByHaNo: "no – Home Assistant usa el router de borde mostrado en violeta",
   parentHopNote: "No se conoce el router de borde (p. ej., solo routers de borde de Apple o Google, sin el complemento OpenThread Border Router): los mensajes solo se animan del dispositivo a su router padre; el camino desde aquí hasta Home Assistant no se conoce.",
@@ -348,6 +351,7 @@ const NAMES_ES = [["Effective current", "Corriente (eficaz)"], ["Effective volta
   ["Occupancy", "Presencia"], ["Door", "Contacto"], ["Opening", "Contacto"], ["Temperature", "Temperatura"], ["Humidity", "Humedad"],
   ["Identify", "Identificar"], ["Button", "Botón"], ["Light", "Luz"], ["Switch", "Interruptor"], ["Motion", "Movimiento"]];
 const TEXT_FR = {
+  fwHead: "Firmware", fwMixed: "Même modèle, firmware différent :", fwNote: "Les mises à jour s'installent dans Home Assistant (page de l'appareil). Les mises à jour ignorées ne sont pas signalées sur la carte.", fwUpdate: "Mise à jour", fwAvailable: v => `${v} disponible`, fwSkipped: v => `${v} disponible – ignorée`, fwInstalling: (v, p) => `installation de ${v}${p !== null ? ` · ${p} %` : " …"}`, fwCurrent: "à jour",
   hDupAddr: names => `Indique la même adresse matérielle que ${names} – une particularité du firmware de certains appareils. L'appareil fonctionne, mais ses liaisons sur la carte peuvent être incomplètes.`,
   brOther: x => `Routeur de bordure …${x}`, brOtherTitle: "Routeur de bordure d'un autre système, trouvé sur le réseau local", brOtherSub: "Routeur de bordure d'un autre système (trouvé sur le réseau local)", brOtherNote: "Annoncé sur le réseau local et trouvé par la recherche de routeurs de bordure de Home Assistant. Associé à la carte par son adresse.", brName: "Nom", threadVersion: "Version Thread", usedByHa: "Utilisé par Home Assistant", usedByHaNo: "non – Home Assistant utilise le routeur de bordure affiché en violet",
   parentHopNote: "Le routeur de bordure n'est pas connu (p. ex. uniquement des routeurs de bordure Apple ou Google, pas de module OpenThread Border Router) : les messages ne sont animés que de l'appareil jusqu'à son routeur parent – le chemin vers Home Assistant n'est pas connu.",
@@ -431,6 +435,7 @@ const NAMES_FR = [["Effective current", "Courant (efficace)"], ["Effective volta
   ["Occupancy", "Présence"], ["Door", "Contact"], ["Opening", "Contact"], ["Temperature", "Température"], ["Humidity", "Humidité"],
   ["Identify", "Identifier"], ["Button", "Bouton"], ["Light", "Lumière"], ["Switch", "Interrupteur"], ["Motion", "Mouvement"]];
 const TEXT_IT = {
+  fwHead: "Firmware", fwMixed: "Stesso modello, firmware diverso:", fwNote: "Gli aggiornamenti si installano in Home Assistant (pagina del dispositivo). Gli aggiornamenti saltati non sono segnalati sulla mappa.", fwUpdate: "Aggiornamento", fwAvailable: v => `${v} disponibile`, fwSkipped: v => `${v} disponibile – saltato`, fwInstalling: (v, p) => `installazione di ${v}${p !== null ? ` · ${p} %` : " …"}`, fwCurrent: "aggiornato",
   hDupAddr: names => `Riporta lo stesso indirizzo hardware di ${names} – una particolarità del firmware di alcuni dispositivi. Il dispositivo funziona, ma i suoi collegamenti sulla mappa possono essere incompleti.`,
   brOther: x => `Border router …${x}`, brOtherTitle: "Border router di un altro sistema, trovato nella rete locale", brOtherSub: "Border router di un altro sistema (trovato nella rete locale)", brOtherNote: "Annunciato nella rete locale e trovato dalla ricerca dei border router di Home Assistant. Associato alla mappa tramite il suo indirizzo.", brName: "Nome", threadVersion: "Versione Thread", usedByHa: "Usato da Home Assistant", usedByHaNo: "no – Home Assistant usa il border router mostrato in viola",
   parentHopNote: "Il border router non è noto (ad es. solo border router Apple o Google, nessun add-on OpenThread Border Router): i messaggi sono animati solo dal dispositivo al suo router padre – il percorso da qui a Home Assistant non è noto.",
@@ -514,6 +519,7 @@ const NAMES_IT = [["Effective current", "Corrente (efficace)"], ["Effective volt
   ["Occupancy", "Presenza"], ["Door", "Contatto"], ["Opening", "Contatto"], ["Temperature", "Temperatura"], ["Humidity", "Umidità"],
   ["Identify", "Identifica"], ["Button", "Pulsante"], ["Light", "Luce"], ["Switch", "Interruttore"], ["Motion", "Movimento"]];
 const TEXT_NL = {
+  fwHead: "Firmware", fwMixed: "Zelfde model, andere firmware:", fwNote: "Updates worden in Home Assistant geïnstalleerd (apparaatpagina). Overgeslagen updates worden niet op de kaart gemarkeerd.", fwUpdate: "Update", fwAvailable: v => `${v} beschikbaar`, fwSkipped: v => `${v} beschikbaar – overgeslagen`, fwInstalling: (v, p) => `${v} wordt geïnstalleerd${p !== null ? ` · ${p} %` : " …"}`, fwCurrent: "actueel",
   hDupAddr: names => `Meldt hetzelfde hardwareadres als ${names} – een firmware-eigenaardigheid van sommige apparaten. Het apparaat werkt, maar de verbindingen op de kaart kunnen onvolledig zijn.`,
   brOther: x => `Border router …${x}`, brOtherTitle: "Border router van een ander systeem, gevonden in het lokale netwerk", brOtherSub: "Border router van een ander systeem (gevonden in het lokale netwerk)", brOtherNote: "Aangekondigd in het lokale netwerk en gevonden door de border-router-zoekfunctie van Home Assistant. Via zijn adres aan de kaart gekoppeld.", brName: "Naam", threadVersion: "Thread-versie", usedByHa: "Gebruikt door Home Assistant", usedByHaNo: "nee – Home Assistant gebruikt de paars weergegeven border router",
   parentHopNote: "De border router is niet bekend (bijv. alleen Apple- of Google-border routers, geen OpenThread Border Router-add-on): berichten worden alleen van het apparaat naar zijn parent-router geanimeerd – de weg van hier naar Home Assistant is niet bekend.",
@@ -671,7 +677,7 @@ function createThreadPulse(root, opts, host) {
   // ---------- helpers ----------
   // All colours used by the map, badges and boxes. The CSS gets the semantic ones as variables (--c-<name>), see applyColorVars().
   const COLORS = { good: "#43a047", medium: "#fb8c00", weak: "#e53935", warn: "#fb8c00", hint: "#1e88e5", battOk: "#607d8b", change: "#ab47bc",
-                   wifi: "#78909c", heat: "#ffb300", br: "#7b1fa2", router: "#1e88e5", end: "#90caf9", sleepy: "#43a047", off: "#9e9e9e", up: "#00bcd4", down: "#e91e63" };
+                   wifi: "#78909c", heat: "#ffb300", br: "#7b1fa2", router: "#1e88e5", end: "#90caf9", sleepy: "#43a047", off: "#9e9e9e", up: "#00bcd4", down: "#e91e63", update: "#00897b" };
   const QUAL = rssi => rssi >= -65 ? [COLORS.good, "g", T.good] : rssi >= -80 ? [COLORS.medium, "o", T.medium] : [COLORS.weak, "r", T.weak];
   function applyColorVars() { for (const k of ["good", "medium", "weak", "warn", "hint"]) host.styleTarget.style.setProperty("--c-" + k, COLORS[k]); }
   const hex16 = s => BigInt(s).toString(16).padStart(16, "0");
@@ -973,6 +979,7 @@ function createThreadPulse(root, opts, host) {
     parents.sort((p, q) => p.rssi - q.rssi);
     listData = { parents, count: nodes.length,
                  weak: Object.values(edges).filter(e => !e.parent && ids.has(e.b)).map(e => ({ a: e.a, b: e.b, r: avg(e) })).filter(e => e.r < -80).sort((p, q) => p.r - q.r) };
+    refreshFirmware(model.hass);
     renderList();
     const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
     if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
@@ -1003,6 +1010,7 @@ function createThreadPulse(root, opts, host) {
       for (const w of weak) h += `<tr><td>${esc(nameOf(w.a))} ↔ ${esc(nameOf(w.b))}</td><td class="r">${w.r} dBm</td></tr>`;
       h += `</table>`;
     }
+    h += firmwareListHtml();
     h += `<br><span style="color:var(--muted);font-size:12px">${T.foot(count)}</span>`;
     $("info").innerHTML = h;
   }
@@ -1183,7 +1191,7 @@ function createThreadPulse(root, opts, host) {
         if (!mainIds.length || mainIds.includes(d.entity_id)) liveAvailability(n, d.new_state.state !== "unavailable");
       }
       if (!n || !d.new_state || !d.old_state || d.new_state.state === "unavailable" || d.old_state.state === "unavailable") return;
-      if (d.entity_id.startsWith("button.")) return;   // the state of a button is the time of the last press, set by HA itself – not a message from the device
+      if (d.entity_id.startsWith("button.") || d.entity_id.startsWith("update.")) return;   // set by HA itself (press time, versions found online) – not messages from the device   // the state of a button is the time of the last press, set by HA itself – not a message from the device
       if (d.new_state.state === d.old_state.state && JSON.stringify(d.new_state.attributes) === JSON.stringify(d.old_state.attributes)) return;
       const what = localName((d.new_state.attributes.friendly_name || d.entity_id).replace(nodeName[n], "").trim()) || T.state;
       let resp = "";
@@ -1391,6 +1399,7 @@ function createThreadPulse(root, opts, host) {
         ctx.beginPath(); ctx.moveTo(x, y - 8); ctx.lineTo(x + 8, y + 6); ctx.lineTo(x - 8, y + 6); ctx.closePath(); ctx.fill(); ctx.stroke();
         ctx.fillStyle = "white"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("!", x, y + 1.5);
       }
+      drawUpdateBadge(ctx, p, r, n.id);
       ctx.restore();
     }
   }
@@ -1523,7 +1532,7 @@ function createThreadPulse(root, opts, host) {
     }
     // device
     h += `<h4>${T.secDevice}</h4><dl>` + row(T.manufacturer, esc(i.vendor || "")) + row(T.model, esc(i.product || "")) +
-         row(T.firmware, esc(i.sw || "")) + row(T.hardware, esc(i.hw || "")) + row(T.area, esc(n.area || "")) + `</dl>`;
+         row(T.firmware, esc(i.sw || "")) + row(T.fwUpdate, updateText(updateOf(n, hass))) + row(T.hardware, esc(i.hw || "")) + row(T.area, esc(n.area || "")) + `</dl>`;
     h += identifyHtml(n, hass);
     if (n.devId && !DEMO) h += `<button class="btn" data-device="${esc(n.devId)}">${T.openDevice} ↗</button>`;
     $("panel").innerHTML = h;
@@ -1858,6 +1867,62 @@ function createThreadPulse(root, opts, host) {
     const f = battForecast[n.id];
     return f && f.state === "ok" && f.days <= BF_SOON ? T.hBattSoon(f.days) : null;
   }
+  // ---------- firmware (issue #81) ----------
+  // Matter devices have an update entity in Home Assistant (device class firmware): state "on" = an update is
+  // available and not skipped. Thread Pulse only shows it – installing stays in Home Assistant.
+  let fwOf = {};                                // device id on the map → { installed, latest, available, skipped, progress }
+  function updateOf(dev, hass) {
+    if (DEMO) return dev.demoUpdate || null;
+    if (!hass) return null;
+    const ent = (dev.entities || []).filter(e => e.startsWith("update.")).sort()[0], st = ent && hass.states[ent];
+    if (!st || st.state === "unavailable") return null;
+    const a = st.attributes;
+    return { installed: a.installed_version || "", latest: a.latest_version || "", available: st.state === "on",
+             skipped: !!a.skipped_version && a.skipped_version === a.latest_version && a.latest_version !== a.installed_version,
+             progress: a.in_progress ? (typeof a.update_percentage === "number" ? a.update_percentage : true) : null };
+  }
+  function refreshFirmware(hass) {
+    fwOf = {};
+    for (const d of [...Object.values(nodeById), ...Object.values(wifiById)]) { const u = updateOf(d, hass); if (u) fwOf[d.id] = u; }
+  }
+  if (!DEMO) every(() => {                      // update states change in Home Assistant, not on the map – check every minute
+    if (!network || destroyed) return;
+    refreshFirmware(freshHass()); renderList(); renderChanges(); network.redraw();
+  }, 60000);
+  function updateText(u) {                      // panel row "Update"
+    if (!u) return "";
+    if (u.progress !== null) return esc(T.fwInstalling(u.latest, typeof u.progress === "number" ? u.progress : null));
+    if (u.available) return `<span class="o">${esc(T.fwAvailable(u.latest))}</span>`;
+    if (u.skipped) return esc(T.fwSkipped(u.latest));
+    return `<span class="g">${esc(T.fwCurrent)}</span>`;
+  }
+  function drawUpdateBadge(ctx, p, r, id) {     // small arrow at the top left of a device with an update
+    const u = fwOf[id]; if (!u || (!u.available && u.progress === null)) return;
+    const x = p.x - r * 0.75, y = p.y - r * 0.85;
+    ctx.fillStyle = COLORS.update; ctx.strokeStyle = "white"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(x, y, 7, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "white"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(u.progress !== null ? "…" : "↑", x, y + 0.5);
+  }
+  function firmwareListHtml() {                 // section in the list below the map
+    const devs = [...Object.values(nodeById), ...Object.values(wifiById)];
+    const pending = devs.filter(d => fwOf[d.id] && (fwOf[d.id].available || fwOf[d.id].skipped || fwOf[d.id].progress !== null));
+    const groups = {};
+    for (const d of devs) {
+      const i = d.info || {}; if (!i.sw || !i.product) continue;
+      const key = `${i.vendor || ""} ${i.product}`.trim();
+      ((groups[key] = groups[key] || {})[i.sw] = groups[key][i.sw] || []).push(d.name);
+    }
+    const mixed = Object.entries(groups).filter(([, v]) => Object.keys(v).length > 1);
+    if (!pending.length && !mixed.length) return "";
+    let h = `<br><b>${T.fwHead}</b>`;
+    if (pending.length) h += `<table>` + pending.map(d => `<tr><td><a href="#" data-open="${esc(d.id)}">${esc(d.name)}</a></td>` +
+      `<td>${esc(fwOf[d.id].installed)} → ${esc(fwOf[d.id].latest)}</td><td>${updateText(fwOf[d.id])}</td></tr>`).join("") + `</table>`;
+    if (mixed.length) h += `<div style="margin-top:6px">${T.fwMixed}</div><table>` + mixed.map(([model, v]) => `<tr><td>${esc(model)}</td><td>` +
+      Object.entries(v).sort((a, b) => b[1].length - a[1].length).map(([sw, names]) =>
+        `${esc(sw)} (${names.length <= 3 ? names.map(esc).join(", ") : names.length})`).join(" · ") + `</td></tr>`).join("") + `</table>`;
+    return h + `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${T.fwNote}</div>`;
+  }
   // ---------- Matter devices on Wi-Fi / Ethernet (issue #43) ----------
   // They do not take part in the Thread mesh: shown as a separate group in a column to the right of the mesh,
   // without links and without path animation (their messages are only counted). Hidden with show_wifi: false / ?nowifi.
@@ -1903,7 +1968,7 @@ function createThreadPulse(root, opts, host) {
     if (i.reboots !== undefined && i.reboots !== null)
       h += `<h4>${T.secStability}</h4><dl>` + row(T.reboots, i.reboots) + row(T.bootReason, i.bootReason !== undefined && i.bootReason !== null ? esc(T.bootReasons[i.bootReason] || i.bootReason) : "") + `</dl>`;
     h += `<h4>${T.secDevice}</h4><dl>` + row(T.manufacturer, esc(i.vendor || "")) + row(T.model, esc(i.product || "")) +
-         row(T.firmware, esc(i.sw || "")) + row(T.hardware, esc(i.hw || "")) + row(T.area, esc(w.area || "")) + `</dl>`;
+         row(T.firmware, esc(i.sw || "")) + row(T.fwUpdate, updateText(updateOf(w, hass))) + row(T.hardware, esc(i.hw || "")) + row(T.area, esc(w.area || "")) + `</dl>`;
     h += identifyHtml(w, hass);
     if (w.devId && !DEMO) h += `<button class="btn" data-device="${esc(w.devId)}">${T.openDevice} ↗</button>`;
     $("panel").innerHTML = h;
@@ -2061,6 +2126,14 @@ function createThreadPulse(root, opts, host) {
         : n.icon === "thermometer" ? [[localName("Temperature"), "21.4 °C", 2 * m], [localName("Humidity"), "48 %", 5 * m]]
         : n.icon === "lightbulb" ? [[localName("Light"), T.states.on, 40 * m]] : [[T.state, T.states.off, 90 * m]]; });
     for (const n of all2) n.demoIdentify = true;
+    // firmware (issue #81): same models with different versions, one update available, one skipped, one installing
+    for (const n of all2) {
+      if (n.icon === "power-plug") n.info.product = "Smart Plug"; else if (n.icon === "lightbulb") n.info.product = "Smart Bulb";
+      n.demoUpdate = { installed: n.info.sw, latest: n.info.sw, available: false, skipped: false, progress: null };
+    }
+    routers[1].demoUpdate = { installed: routers[1].info.sw, latest: "1.4.0", available: true, skipped: false, progress: null };
+    routers[3].demoUpdate = { installed: routers[3].info.sw, latest: "1.4.0", available: false, skipped: true, progress: null };
+    sleepy[5].demoUpdate = { installed: sleepy[5].info.sw, latest: "2.1.0", available: true, skipped: false, progress: 40 };
     sleepy[1].info.attach = 9; sleepy[1].info.detached = 3;
     routers[2].info.reboots = 140;   // a bulb on a wall switch
     sleepy[2].neigh[0]["6"] = -86;   // weak parent link (as seen by the device and by its parent router)

@@ -45,7 +45,7 @@
     if (i.reboots !== undefined && i.reboots !== null)
       h += `<h4>${T.secStability}</h4><dl>` + row(T.reboots, i.reboots) + row(T.bootReason, i.bootReason !== undefined && i.bootReason !== null ? esc(T.bootReasons[i.bootReason] || i.bootReason) : "") + `</dl>`;
     h += `<h4>${T.secDevice}</h4><dl>` + row(T.manufacturer, esc(i.vendor || "")) + row(T.model, esc(i.product || "")) +
-         row(T.firmware, esc(i.sw || "")) + row(T.hardware, esc(i.hw || "")) + row(T.area, esc(w.area || "")) + `</dl>`;
+         row(T.firmware, esc(i.sw || "")) + row(T.fwUpdate, updateText(updateOf(w, hass))) + row(T.hardware, esc(i.hw || "")) + row(T.area, esc(w.area || "")) + `</dl>`;
     h += identifyHtml(w, hass);
     if (w.devId && !DEMO) h += `<button class="btn" data-device="${esc(w.devId)}">${T.openDevice} ↗</button>`;
     $("panel").innerHTML = h;

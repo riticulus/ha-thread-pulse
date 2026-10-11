@@ -70,6 +70,8 @@ These values are what the device last reported to Home Assistant and may be outd
 
 Manufacturer, model, firmware version, hardware version and area.
 
+**Update** *(after version 1.5.2)*: the firmware update state that Home Assistant knows for the device – *up to date*, *1.4.0 available*, *1.4.0 available – skipped* (skipped in Home Assistant) or *installing 1.4.0 · 40 %*. Updates are installed in Home Assistant, not in Thread Pulse.
+
 ## Border router and other Thread routers
 
 *Available from version 1.4.0.*
