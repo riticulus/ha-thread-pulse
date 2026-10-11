@@ -22,6 +22,6 @@ Add `&lang=de` (page) or `language: de` (card) for German.
 
 ### Apple-only network
 
-`?demo=apple` (standalone page only) shows a network without OpenThread add-on and without Matter routers: four battery devices whose parents are three Apple border routers, shown with their (invented) names, e.g. *HomePod mini · Border router …7114* Messages are animated from the device to its parent only – what you would see in such a network *(after version 1.4.0)*.
+`?demo=apple` (standalone page only) shows a network without OpenThread add-on and without Matter routers: four battery devices whose parents are three Apple border routers, shown with their (invented) names, e.g. *HomePod mini · Border router …7114* Messages are animated from the device to its parent only – what you would see in such a network *(from version 1.5.0)*.
 
 Nothing in demo mode touches your Home Assistant; the demo change log is not stored.

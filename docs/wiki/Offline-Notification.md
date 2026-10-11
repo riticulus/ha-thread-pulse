@@ -1,6 +1,6 @@
 # Offline notification (blueprint)
 
-*Available in the repository after version 1.4.0.*
+*Available from version 1.5.0.*
 
 The [change log](Change-Log) only sees what happens while a Thread Pulse page is open. For a message on your phone when a device drops off the network – also at night or on holiday – the repository contains an **automation blueprint** that runs in Home Assistant in the background.
 

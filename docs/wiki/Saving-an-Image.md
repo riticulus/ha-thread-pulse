@@ -1,6 +1,6 @@
 # Saving an image
 
-*Available in the next release after version 1.4.0.*
+*Available from version 1.5.0.*
 
 **📷 Image** in the toolbar saves the map as a PNG file, e.g. to document your network or to ask for help in a forum.
 
