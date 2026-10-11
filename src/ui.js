@@ -4,7 +4,8 @@
   let hintCount = 0;
   function setList(show, save = true) {
     $("info").classList.toggle("hidden", !show);
-    setBtn($("toggle"), show ? T.hideList : T.showList, show, hintCount, hintCount ? T.listHints(hintCount) : "");
+    setBtn($("toggle"), T.netBtn, show, hintCount, hintCount ? T.listHints(hintCount) : "");
+    if (show) renderTabBar();              // opening the change log tab marks its entries as seen
     if (save) prefs.set("list", show);
     if (network && save) setTimeout(() => { network.redraw(); network.fit({ animation: { duration: 300 } }); }, 50);
   }
@@ -43,7 +44,7 @@
   applyColorVars();
   theme();
 
-  root.addEventListener("keydown", e => { if (e.key === "Escape" && !$("report").hidden) return closeReport(); if (e.key === "Escape" && !$("moremenu").hidden) { setMoreMenu(false); $("morebtn").focus(); return; } if (e.key === "Escape" && e.target.id !== "search") closePanel(); });
+  root.addEventListener("keydown", e => { if (e.key === "Escape" && !$("report").hidden) return closeReport(); if (e.key === "Escape" && !$("moremenu").hidden) { setMoreMenu(false); $("morebtn").focus(); return; } if (e.key === "Escape" && e.target.id !== "search") { if (markedIds && panelNode === null) clearMarks(); closePanel(); } });
   root.addEventListener("pointerdown", e => { if (!e.target.closest || !e.target.closest("#morebox")) setMoreMenu(false); });
 
   root.addEventListener("click", e => {
@@ -56,6 +57,7 @@
     else if (t.dataset.act === "reportclose") closeReport();
     else if (t.dataset.act === "reportcopy") copyReport();
     else if (t.dataset.act === "clearchanges") clearChanges();
+    else if (t.dataset.act === "unmark") clearMarks();
     else if (t.dataset.device) openDevice(t.dataset.device);
     else if (t.dataset.identify) pressIdentify(t.dataset.identify);
   });

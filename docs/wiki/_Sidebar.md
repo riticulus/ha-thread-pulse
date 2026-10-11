@@ -17,7 +17,7 @@
 - [Search](Search)
 - [Saving an image](Saving-an-Image)
 - [Text report](Text-Report)
-- [The list](The-List)
+- [Network panel](The-List)
 - [Ambient mode](Ambient-Mode)
 - [Demo mode](Demo-Mode)
 

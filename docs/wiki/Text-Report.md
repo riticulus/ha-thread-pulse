@@ -20,7 +20,7 @@ The report opens in a window over the map. You see the full text **before** you 
   - routers: number of links to other routers and the best signal
   - other devices: the parent router (*talks through*) and the signal; *(own measurement, unreliable)* when only the device itself reported it
 - **Mesh health:** the [grade](Mesh-Health) in the overview, and every factor with its value and explanation
-- **Weak links between routers** (below −80 dBm), as in [the list](The-List)
+- **Weak links between routers** (below −80 dBm), as in the [network panel](The-List)
 - **Warnings and hints** for each device, as in the [detail panel](Detail-Panel) – see [Hints and warnings](Hints-and-Warnings)
 
 The report is written in the language of the dashboard. Paste it into a forum or GitHub as it is: the tables are Markdown.

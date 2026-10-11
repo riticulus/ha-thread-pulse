@@ -24,7 +24,7 @@ from pathlib import Path
 
 here = Path(__file__).parent
 src = here / "src"
-PARTS = ["prefs", "helpers", "data", "graph", "routers", "live", "heat", "rooms", "panel", "identify", "hints", "health", "search", "changes", "response", "battery", "firmware", "fabrics", "wifi", "sound", "export", "report", "demo", "ui", "ambient"]
+PARTS = ["prefs", "helpers", "data", "graph", "routers", "live", "heat", "rooms", "panel", "identify", "hints", "health", "search", "changes", "response", "battery", "firmware", "fabrics", "wifi", "sound", "export", "report", "tabs", "demo", "ui", "ambient"]
 
 def languages():
     """Language files in src/i18n/: English first, then alphabetical. Each defines TEXT_XX and optionally NAMES_XX."""

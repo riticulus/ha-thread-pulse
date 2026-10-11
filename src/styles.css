@@ -58,6 +58,39 @@
   #live b { color: var(--fg); font-weight: 600; }
   #info { padding: 8px 12px 14px; border-top: 1px solid var(--line); font-size: 13px; max-height: 45%; overflow: auto; }
   #info.hidden { display: none; }
+  /* panel below the map: tabs (issue #108) */
+  #info { padding-top: 0; }
+  #tabbar { position: sticky; top: 0; z-index: 2; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; background: var(--bg);
+            border-bottom: 1px solid var(--line); margin: 0 -12px 10px; padding: 0 8px; }
+  #tabbar::-webkit-scrollbar { display: none; }
+  #tabbar button { border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font: inherit; font-size: 13px; padding: 8px 8px 7px;
+                   cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; }
+  #tabbar button:hover { color: var(--fg); }
+  #tabbar button.on { color: var(--fg); border-bottom-color: var(--c-hint, #1e88e5); font-weight: 600; }
+  #tabbar .cnt { background: var(--line); color: var(--fg); border-radius: 9px; padding: 0 6px; font-size: 11px; font-weight: 600; line-height: 16px; }
+  #tabbar .cnt.new { background: var(--c-hint, #1e88e5); color: white; }
+  .tabp h4 { margin: 14px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; }
+  .tnote { color: var(--muted); font-size: 12px; margin: 4px 0 10px; }
+  .b { color: var(--c-hint, #1e88e5); }
+  .hcard { display: flex; align-items: center; gap: 12px; margin: 2px 0 8px; }
+  .hgrade { width: 44px; height: 44px; border-radius: 10px; color: white; font-size: 26px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex: none; }
+  tr.mark { cursor: pointer; }
+  tr.mark:hover td { background: var(--card); }
+  details.okf { margin: 4px 0; }
+  details.okf summary { cursor: pointer; color: var(--muted); font-size: 12px; padding: 3px 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+  .chips button { border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 14px; padding: 2px 10px; font: inherit; font-size: 12px; cursor: pointer; }
+  .chips button span { color: var(--muted); }
+  .chips button.on { border-color: var(--c-hint, #1e88e5); background: color-mix(in srgb, var(--c-hint, #1e88e5) 16%, var(--card)); }
+  .tscroll { overflow-x: auto; }
+  table.devs th a { color: inherit; text-decoration: none; white-space: nowrap; }
+  table.lk { width: auto; min-width: min(100%, 420px); }
+  #markchip { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); z-index: 4; font-size: 12px; white-space: nowrap;
+              background: color-mix(in srgb, var(--bg) 92%, transparent); border: 1px solid var(--c-hint, #1e88e5); border-radius: 14px; padding: 3px 10px; }
+  #markchip[hidden] { display: none; }
+  #markchip a { color: inherit; font-weight: 600; }
+  #wrap.ambient #markchip { display: none !important; }
+  a.more { display: inline-block; margin-top: 6px; font-size: 12px; }
   /* ambient mode (issue #11): only the pulsing mesh, dark, for wall tablets */
   #wrap.ambient { background: #05070a !important; }
   #wrap.ambient #bar, #wrap.ambient #live, #wrap.ambient #legbtn, #wrap.ambient #legend, #wrap.ambient #info:not(.errshown) { display: none !important; }

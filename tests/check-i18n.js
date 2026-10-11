@@ -13,7 +13,7 @@ const codes = fs.readdirSync(dir).filter(f => f.endsWith(".js")).map(f => f.slic
 const en = load("en").text, keys = Object.keys(en).sort();
 // sample arguments per function, so that every text function can be called
 const samples = { foreignLabel: ["f2a0c0de0000d212"], hPowerCut: [140, ["Lamp"]], hWeakParent: ["Plug", -85, true], chParent: ["A", "B", -70],
-  chSignal: ["A", "good", "weak", -82], chRole: ["Router", "End device"], respVal: [96, 95, 6], forwardedVal: [3, 12], asOf: ["10:00", 19], htChildrenBad: ["Plug", 8, 12], chGrade: ["B", "C"], hvOf: [2, 8] };
+  chSignal: ["A", "good", "weak", -82], chRole: ["Router", "End device"], respVal: [96, 95, 6], forwardedVal: [3, 12], asOf: ["10:00", 19], htChildrenBad: ["Plug", 8, 12], chGrade: ["B", "C"], hvOf: [2, 8], factorsOk: [3, 4] };
 let problems = 0;
 const fail = (code, msg) => { problems++; console.log(`  ${code}: ${msg}`); };
 for (const code of codes) {
@@ -23,7 +23,7 @@ for (const code of codes) {
   for (const x of keys) if (!k.includes(x)) fail(code, "missing key " + x);
   for (const x of k) if (!keys.includes(x)) fail(code, "unknown key " + x);
   for (const x of keys) if (k.includes(x) && typeof t[x] !== typeof en[x]) fail(code, `${x} is ${typeof t[x]}, expected ${typeof en[x]}`);
-  for (const o of ["types", "states", "roles", "hfTitle", "hlLevel"]) if (JSON.stringify(Object.keys(t[o] || {}).sort()) !== JSON.stringify(Object.keys(en[o]).sort())) fail(code, o + " has other keys");
+  for (const o of ["types", "states", "roles", "hfTitle", "hlLevel", "tabNames", "devFilters"]) if (JSON.stringify(Object.keys(t[o] || {}).sort()) !== JSON.stringify(Object.keys(en[o]).sort())) fail(code, o + " has other keys");
   if ((t.bootReasons || []).length !== en.bootReasons.length) fail(code, "bootReasons has another length");
   for (const x of keys) if (typeof en[x] === "function" && typeof t[x] === "function") {
     for (const args of [samples[x] || [1], samples[x] ? samples[x] : [3]]) {

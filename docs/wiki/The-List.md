@@ -1,39 +1,52 @@
-# The list below the map
+# Network panel (below the map)
 
-**☰ Show list** opens an area below the map with tables. It is hidden by default to leave more room for the map; the button shows the number of hints, e.g. *Show list · 3 hints*. The choice is remembered by the browser.
+**📊 Network** in the toolbar opens a panel below the map with everything about the network, in **tabs**. The blue number on the button is the number of warnings and hints. The panel is hidden by default to leave more room for the map; whether it is open and which tab you chose is remembered by the browser.
 
-![List](images/list.png)
+*After version 1.5.2.* Up to version 1.5.2 the button is called **☰ Show list** and the panel is one long list with all sections below each other.
 
-## Sections
+![Network panel](images/list.png)
 
-### Changes in the network
+## Overview
 
-The [change log](Change-Log): latest changes with time, device and what changed. *Clear list* empties it.
+- The **[mesh health](Mesh-Health)** grade as a large card. Only the factors that need checking (orange, red) are shown; the others are folded into one line, e.g. *4 factors ok* – tap it to see them.
+- **Most important:** the first three warnings and hints, warnings first, with *All n hints →* to the hints tab.
+- A footnote: number of Thread devices and where the data comes from.
 
-### Mesh health
+## Hints
 
-*After version 1.5.2.* The [mesh health](Mesh-Health) grade (A–E) with its six factors, each with its value, the affected devices and an explanation.
+All [warnings and hints](Hints-and-Warnings) of all devices: **⚠ warnings first** (red), then **ℹ hints** (blue) – the same as in the [detail panels](Detail-Panel). The tab shows how many there are. Device names are links to their detail panel.
 
-### Hints for the network
+## Devices
 
-All [hints](Hints-and-Warnings) with the device name (a link to its [detail panel](Detail-Panel)) and the full text. *No weak spots found* if there are none.
+One table with every device:
 
-### Battery devices and their parent
+| Column | Content |
+|---|---|
+| Device | Name – a link to the [detail panel](Detail-Panel) |
+| Role | Router, end device (mains), battery device, Matter over Wi-Fi / Ethernet; *NOT REACHABLE* when Home Assistant reports it as unavailable |
+| Connection | The parent router a device talks through; for routers the number of links to other routers |
+| Signal | Signal to the parent; for routers the best link to another router. Colours as on the map; **\*** = measured only by the device itself, unreliable |
+| Firmware | Installed version; **→ 1.4.0** in orange when an update is available or being installed |
 
-Every battery device with the router it talks through and the signal strength, **weakest first**. *(own measurement, unreliable)* marks values that only the device itself reported – sleepy devices often report implausible values.
+- **Sort:** tap a column header (tap again to reverse).
+- **Filter:** *All*, *Routers*, *Mains*, *Battery*, *Wi-Fi* – with the number of devices.
+- Below the table: the **firmware** overview – devices with an update (available, skipped or being installed) and models whose devices run **different firmware versions**, e.g. *MYGGBETT door/window sensor: 1.0.9 (4) · 1.1.4 (Front door)*.
 
-### Weak links between routers
+## Links
 
-Router-to-router links weaker than −80 dBm, weakest first. The section is only shown if there are any.
+- **Weak links between routers** (below −80 dBm), weakest first
+- **Weak signal to the parent** (below −80 dBm)
 
-### Firmware
+**Tap a link** to show both devices on the map: all other devices fade out, as with the [search](Search). A small note on the map (*2 marked · Show all*) ends it; so does **Esc** or a new search. *No weak links* when all links are −80 dBm or better.
 
-*After version 1.5.2.* Devices with a firmware update (available, skipped or being installed) with installed and new version, and models whose devices run **different firmware versions**, e.g. *MYGGBETT door/window sensor: 1.0.9 (4) · 1.1.4 (Front door)*. The section is only shown if there is something to show.
+## Changes
 
-### Footnote
+The [change log](Change-Log): latest changes with time, device and what changed. *Clear list* empties it. The tab shows how many entries are **new since you last looked** at it.
 
-Number of Thread devices and a short explanation of the lines and data sources.
+## Marking devices on the map
+
+In the overview, **tap a factor** of the mesh health (e.g. *Stability*) to show the devices it names on the map. In the links tab, tap a link. The marking stays after the automatic refresh; *Show all* ends it.
 
 ## Error messages
 
-If the map cannot be loaded, the list opens automatically and shows the error – see [Troubleshooting & FAQ](Troubleshooting-and-FAQ).
+If the map cannot be loaded, the panel opens automatically and shows the error – see [Troubleshooting & FAQ](Troubleshooting-and-FAQ).

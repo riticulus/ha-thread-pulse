@@ -128,6 +128,7 @@
           `<tr><td style="white-space:nowrap;color:var(--muted);vertical-align:top">${fmt(c.t)}</td><td style="white-space:nowrap;vertical-align:top"><span style="color:${CH_COLOR[c.kind] || "inherit"}">●</span> ` +
           (nodeById[c.id] ? `<a href="#" data-open="${c.id}">${esc(c.name)}</a>` : esc(c.name)) + `</td><td>${esc(c.text)}</td></tr>`).join("") + `</table>`
       : `<div>${T.changesNone}</div>`) + `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${T.changesNote}</div>`;
+    renderTabBar();                        // counter of new entries on the tab (#108)
   }
   async function refresh() {
     if (refreshing || destroyed || !network) return;

@@ -6,7 +6,7 @@
 
 ![Toolbar](images/toolbar.png)
 
-*After version 1.5.2* the toolbar is one row: the search, the view switches, the list and a **⋯** menu for everything else. Up to version 1.5.2 all buttons and the legend were in the toolbar.
+*After version 1.5.2* the toolbar is one row: the search, the view switches, the network panel and a **⋯** menu for everything else. Up to version 1.5.2 all buttons and the legend were in the toolbar.
 
 | Element | Function |
 |---|---|
@@ -14,12 +14,12 @@
 | **⏸ Pause live / ▶ Resume live** | Stop or restart the [live animation](Live-Data-Flow). Counting continues while paused |
 | **≋ Traffic / Traffic off** | Switch the [traffic heat](Live-Data-Flow#traffic-heat) on or off |
 | **⌂ Rooms / Rooms off** | Switch the [room view](Room-View) on or off |
-| **☰ Show list / Hide list** | Show the [list below the map](The-List). The blue number is the number of [hints](Hints-and-Warnings) |
+| **📊 Network** | Show the [network panel below the map](The-List) with its tabs (overview, hints, devices, links, changes). The blue number is the number of [warnings and hints](Hints-and-Warnings) |
 | **⋯** | Menu: **↻ Reload** (load the network data again and redraw the map, also compares with the previous state for the [change log](Change-Log)), **🔇 Sound** with its volume slider (see [sound](Live-Data-Flow#sound)), **Export**: [save the map as an image](Saving-an-Image) with names or anonymised, or copy a [text report](Text-Report), and the installed version |
 | Status line | Time of the last update and number of devices; *Tap a device for details* until you have opened a device once. **Tap the status line to reload** |
 | **?** (top left on the map) | Show or hide the colour legend |
 
-Buttons that switch something on (live, traffic, rooms, list) are **highlighted while it is on**. Tooltips show what a button does.
+Buttons that switch something on (live, traffic, rooms, network panel) are **highlighted while it is on**. Tooltips show what a button does.
 
 ## Devices (nodes)
 
