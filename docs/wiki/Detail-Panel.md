@@ -44,7 +44,7 @@ Battery level (from the battery entity in Home Assistant) and battery type as re
 - *No measurable drop* – the level has hardly changed (common for new batteries and coin cells).
 - It is an **estimate**: many batteries stay almost full for a long time and then drop quickly, and some devices report the level in coarse steps.
 
-**Trend** *(after version 1.5.2)*: a small chart of the battery level over the **last 7 days** – the hourly average from Home Assistant's statistics, so it is complete even for times when no Thread Pulse page was open. The dashed line marks 20 %. See [trends](#trends).
+**Trend** *(from version 1.6.0)*: a small chart of the battery level over the **last 7 days** – the hourly average from Home Assistant's statistics, so it is complete even for times when no Thread Pulse page was open. The dashed line marks 20 %. See [trends](#trends).
 
 ## Thread
 
@@ -60,7 +60,7 @@ These values are what the device last reported to Home Assistant and may be outd
 
 ## If this router fails
 
-*After version 1.5.2.* In the panel of every router (not the border router) – an **estimate** of what would happen if this router went offline:
+*From version 1.6.0.* In the panel of every router (not the border router) – an **estimate** of what would happen if this router went offline:
 
 - **Devices that use it as parent**, each with what it could do:
   - *can switch to Kitchen plug (−62 dBm)* – a mains device that already has another router in reach (from its own neighbour table, −85 dBm or better)
@@ -75,7 +75,7 @@ It is based on the last reported neighbour tables. Thread repairs itself: device
 
 ## Trends
 
-*After version 1.5.2.* Below the Thread section, a small chart shows the signal over the **last 7 days**:
+*From version 1.6.0.* Below the Thread section, a small chart shows the signal over the **last 7 days**:
 
 - **Battery and end devices:** the signal to their parent (*Signal to the parent · 7 days*)
 - **Routers:** the best link to another router (*Best link to a router · 7 days*)
@@ -102,11 +102,11 @@ The battery chart is in the [battery section](#battery).
 
 Manufacturer, model, firmware version, hardware version and area.
 
-**Update** *(after version 1.5.2)*: the firmware update state that Home Assistant knows for the device – *up to date*, *1.4.0 available*, *1.4.0 available – skipped* (skipped in Home Assistant) or *installing 1.4.0 · 40 %*. Updates are installed in Home Assistant, not in Thread Pulse.
+**Update** *(from version 1.6.0)*: the firmware update state that Home Assistant knows for the device – *up to date*, *1.4.0 available*, *1.4.0 available – skipped* (skipped in Home Assistant) or *installing 1.4.0 · 40 %*. Updates are installed in Home Assistant, not in Thread Pulse.
 
 ## Connected systems
 
-*After version 1.5.2.* A Matter device can be controlled by several systems at the same time (Matter *fabrics*): Home Assistant, Apple Home, Google Home, Amazon Alexa … This section shows how many systems the device is connected to and which ones, e.g. *Apple Keychain* and *Home Assistant (Open Home Foundation) · this Home Assistant*.
+*From version 1.6.0.* A Matter device can be controlled by several systems at the same time (Matter *fabrics*): Home Assistant, Apple Home, Google Home, Amazon Alexa … This section shows how many systems the device is connected to and which ones, e.g. *Apple Keychain* and *Home Assistant (Open Home Foundation) · this Home Assistant*.
 
 - *Apple Keychain* is the connection an iPhone keeps after it was used to add a Matter device – also if the device was then shared with Home Assistant only.
 - The number is known right away; the list of systems is loaded when the panel is opened (Home Assistant may ask the device, which takes a moment – battery devices can take longer).
@@ -122,7 +122,7 @@ Tap the **border router** to see the Thread network and the border router itself
 |---|---|
 | Live · Messages through it | Every animated message passes the border router: total, last minute, last hour, last message |
 | Thread network | Network name, channel, PAN ID, extended PAN ID, routers in the mesh (*n of max. 32* – Thread allows at most 32 routers), Thread devices, leader router |
-| Mesh health | The [mesh health](Mesh-Health) grade with its factors *(after version 1.5.2)* |
+| Mesh health | The [mesh health](Mesh-Health) grade with its factors *(from version 1.6.0)* |
 | Border router | Type (*OpenThread Border Router (add-on)*); manufacturer, model, name and Thread version as announced on the network *(from version 1.5.0)*; Thread address, border agent ID, the Thread networks known to Home Assistant (the preferred one is marked) |
 | Thread | Neighbours and children (battery devices using the border router as parent) with signal strength |
 

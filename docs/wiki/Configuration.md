@@ -75,7 +75,7 @@ Some choices are remembered per browser (and per Home Assistant address), not pe
 | Sound on or off, volume | **⋯** → 🔇 Sound (up to version 1.5.2: in the toolbar) |
 | Change log entries | – |
 
-The legend starts hidden *(after version 1.5.2; before, it started shown on screens wider than 700 px)*. Whether a device was opened once is also remembered: until then the status line shows *Tap a device for details*.
+The legend starts hidden *(from version 1.6.0; before, it started shown on screens wider than 700 px)*. Whether a device was opened once is also remembered: until then the status line shows *Tap a device for details*.
 
 ## Language
 

@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.6.0] – 2026-10-12
+
 ### Added
 - Section *Connected systems* in the detail panel: how many and which systems (Matter fabrics) can control the device, e.g. *Apple Keychain* and *Home Assistant · this Home Assistant*. The number comes from the cached diagnostics; the list is loaded from `matter/node_diagnostics` only when the panel is opened, once per device ([#79](https://github.com/riticulus/ha-thread-pulse/issues/79))
 - Firmware overview: badge **↑** on devices with a firmware update available in Home Assistant (**…** while one is installed; skipped updates get no badge), row *Update* in the detail panel (up to date / available / skipped / installing with percentage), and a section *Firmware* in the list with pending updates and models whose devices run different firmware versions. Checked every minute; installing stays in Home Assistant. Changes of update entities are no longer animated as messages from the device ([#81](https://github.com/riticulus/ha-thread-pulse/issues/81))
@@ -119,7 +121,8 @@ Thanks to @oxmo75 for testing 1.5.0 on a real Apple-only network and for the ana
 - Demo mode (`?demo`) that works without Home Assistant
 - Readable (unminified) vis-network build
 
-[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.5.2...HEAD
+[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.5.2...v1.6.0
 [1.5.2]: https://github.com/riticulus/ha-thread-pulse/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/riticulus/ha-thread-pulse/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.4.0...v1.5.0

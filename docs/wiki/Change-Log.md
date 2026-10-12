@@ -16,23 +16,23 @@ Thread Pulse notices when something changes in your Thread network and lists it 
 | **Signal to the parent** changes quality (good / medium / weak) | orange | at the next check |
 | **Role** changes, e.g. router → end device | purple | at the next check |
 | A usable **link between two routers** appears or is lost | orange | at the next check; only links of −80 dBm or better are watched, to avoid noise |
-| The **[mesh health](Mesh-Health) grade** changes, e.g. *Mesh health B → C* *(after version 1.5.2)* | green (better) / red (worse) | when two checks in a row agree |
+| The **[mesh health](Mesh-Health) grade** changes, e.g. *Mesh health B → C* *(from version 1.6.0)* | green (better) / red (worse) | when two checks in a row agree |
 
 The affected device **flashes** three times on the map.
 
 ## When it is checked
 
 - **Every 5 minutes** while a Thread Pulse page is open. The data is loaded again and compared with the previous state. The map keeps its positions and zoom; only devices whose data changed move.
-- When you click **↻ Reload** (in the **⋯** menu after version 1.5.2) or tap the status line.
+- When you click **↻ Reload** (in the **⋯** menu from version 1.6.0) or tap the status line.
 - Reachability changes are logged **immediately**.
 
 ## The list
 
-The tab **Changes** of the [network panel](The-List) *(after version 1.5.2; before: the section at the top of the list)* shows how many entries are new since you last looked, and the latest 30 entries: time, coloured dot, device (a link to its [detail panel](Detail-Panel)) and the change. **Clear list** empties it – on all your devices.
+The tab **Changes** of the [network panel](The-List) *(from version 1.6.0; before: the section at the top of the list)* shows how many entries are new since you last looked, and the latest 30 entries: time, coloured dot, device (a link to its [detail panel](Detail-Panel)) and the change. **Clear list** empties it – on all your devices.
 
 ## Where the list is stored
 
-*From the next release after version 1.5.1; up to 1.5.1 every browser had its own list.*
+*From version 1.6.0; up to 1.5.2 every browser had its own list.*
 
 - The list is stored **in Home Assistant, per user** (up to 200 entries; the [signal trend](Detail-Panel#trends) is stored the same way) – the same list on your phone, tablet and computer. Other Home Assistant users have their own list.
 - Open pages **synchronise live**: a change seen on the wall tablet appears in the list on the phone right away.
