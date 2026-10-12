@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 ### Added
+- Chattiest devices: in the tab *Devices* of the network panel the ten devices with the most messages in the last hour, with ↑ reports / ↓ commands, and a sortable column *Msgs/h*. Reports of the hour before the page was opened come from Home Assistant's history (`history/history_during_period`, coalesced like the live counter); commands only count since the page was opened. New hint for battery devices that report 60 times an hour or more ([#80](https://github.com/riticulus/ha-thread-pulse/issues/80))
 - Response times on the map (**⋯ → ⏱ Response times on the map**): a ring around every device with measurements, coloured by the median (green < 0.5 s, orange < 1 s, red ≥ 1 s) with the value above it; devices without measurements stay unchanged. Commands to a device travel at its measured speed. The legend shows the scale; the choice is remembered ([#89](https://github.com/riticulus/ha-thread-pulse/issues/89))
 
 ## [1.6.0] – 2026-10-12

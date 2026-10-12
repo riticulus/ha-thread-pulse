@@ -24,6 +24,7 @@
       }
       if (i.attach >= 5 || i.detached >= 3) add(n.id, T.hUnstable);
       if (n.dupWith) add(n.id, T.hDupAddr(n.dupWith.map(nm).join(", ")));
+      const ch = chattyHint(n); if (ch) add(n.id, ch);                  // reports unusually often (#80)
     }
     return out;
   }

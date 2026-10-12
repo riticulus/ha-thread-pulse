@@ -1,6 +1,12 @@
 //# Dutch texts. Defines TEXT_NL and NAMES_NL (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_NL = {
+  chatHead: "Meeste berichten in het afgelopen uur",
+  chatNone: "Nog geen berichten geteld.",
+  thMsgs: "Ber./u",
+  chatNoteHist: m => `↑ meldingen aan Home Assistant (uit de geschiedenis, daarna live) · ↓ opdrachten van Home Assistant (alleen sinds de pagina open is, ${m} min geleden). Stekkers met vermogensmeting melden om de paar seconden – dat is normaal.`,
+  chatNoteLive: m => `Geteld sinds de pagina open is (${m} min geleden). ↑ meldingen aan Home Assistant · ↓ opdrachten van Home Assistant.`,
+  hChatty: n => `Meldt erg vaak: ongeveer ${n} berichten per uur (apparaten op batterij sturen er normaal een paar tot ongeveer 20). Dat leegt de batterij en belast het mesh – controleer het meldinterval of de gevoeligheid in de app.`,
   respViewOn: "⏱ Reactietijden op de kaart", respViewOff: "⏱ Reactietijden verbergen", lgRespFast: "Reactie < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (traag)",
   secWhatIf: "Als deze router uitvalt",
   wiKids: n => `${n} apparat${n === 1 ? "uur gebruikt" : "en gebruiken"} hem als parent:`,

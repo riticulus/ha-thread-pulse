@@ -110,6 +110,8 @@ const TP_CSS = `
   #markchip[hidden] { display: none; }
   #markchip a { color: inherit; font-weight: 600; }
   #wrap.ambient #markchip { display: none !important; }
+  .cbar { display: block; height: 8px; border-radius: 4px; background: var(--card); overflow: hidden; }
+  .cbar span { display: block; height: 100%; background: var(--c-hint, #1e88e5); border-radius: 4px; }
   a.more { display: inline-block; margin-top: 6px; font-size: 12px; }
   /* ambient mode (issue #11): only the pulsing mesh, dark, for wall tablets */
   #wrap.ambient { background: #05070a !important; }
@@ -192,6 +194,12 @@ const TP_HTML = `
 `;
 // ---------- texts (one file per language in src/i18n/) ----------
 const TEXT_EN = {
+  chatHead: "Most messages in the last hour",
+  chatNone: "No messages counted yet.",
+  thMsgs: "Msgs/h",
+  chatNoteHist: m => `↑ reports to Home Assistant (from its history, then live) · ↓ commands from Home Assistant (only since this page was opened, ${m} min ago). Plugs that measure power report every few seconds – that is normal.`,
+  chatNoteLive: m => `Counted since this page was opened (${m} min ago). ↑ reports to Home Assistant · ↓ commands from Home Assistant.`,
+  hChatty: n => `Reports very often: about ${n} messages an hour (battery devices normally send a few to about 20). That drains the battery and loads the mesh – check its report interval or sensitivity in its app.`,
   respViewOn: "⏱ Response times on the map", respViewOff: "⏱ Hide response times", lgRespFast: "Response < 0.5 s", lgRespMid: "0.5–1 s", lgRespSlow: "≥ 1 s (slow)",
   secWhatIf: "If this router fails",
   wiKids: n => `${n} device${n === 1 ? " uses" : "s use"} it as parent:`,
@@ -339,6 +347,12 @@ const TEXT_EN = {
   hEdge: r => `Only weak links to other routers (best: ${r} dBm) – it sits at the edge of the mesh. Another router in between would strengthen it.`,
 };
 const TEXT_DE = {
+  chatHead: "Meiste Nachrichten in der letzten Stunde",
+  chatNone: "Noch keine Nachrichten gezählt.",
+  thMsgs: "Nachr./h",
+  chatNoteHist: m => `↑ Meldungen an Home Assistant (aus dessen Verlauf, danach live) · ↓ Befehle von Home Assistant (nur seit Seitenaufruf vor ${m} Min.). Steckdosen mit Strommessung melden alle paar Sekunden – das ist normal.`,
+  chatNoteLive: m => `Gezählt seit Seitenaufruf (vor ${m} Min.). ↑ Meldungen an Home Assistant · ↓ Befehle von Home Assistant.`,
+  hChatty: n => `Meldet sehr oft: etwa ${n} Nachrichten pro Stunde (Batteriegeräte senden normalerweise einige bis etwa 20). Das leert die Batterie und belastet das Netz – Meldeintervall oder Empfindlichkeit in seiner App prüfen.`,
   respViewOn: "⏱ Antwortzeiten auf der Karte", respViewOff: "⏱ Antwortzeiten ausblenden", lgRespFast: "Antwort < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (langsam)",
   secWhatIf: "Wenn dieser Router ausfällt",
   wiKids: n => `${n} Gerät${n === 1 ? " nutzt" : "e nutzen"} ihn als Parent:`,
@@ -492,6 +506,12 @@ const NAMES_DE = [["Effective current", "Strom (effektiv)"], ["Effective voltage
   ["Occupancy", "Anwesenheit"], ["Door", "Kontakt"], ["Opening", "Kontakt"], ["Temperature", "Temperatur"], ["Humidity", "Luftfeuchte"],
   ["Identify", "Identifizieren"], ["Button", "Taste"], ["Light", "Licht"], ["Switch", "Schalter"], ["Motion", "Bewegung"]];
 const TEXT_ES = {
+  chatHead: "Más mensajes en la última hora",
+  chatNone: "Aún no se han contado mensajes.",
+  thMsgs: "Msj/h",
+  chatNoteHist: m => `↑ informes a Home Assistant (de su historial, luego en directo) · ↓ comandos de Home Assistant (solo desde que se abrió la página, hace ${m} min). Los enchufes que miden potencia informan cada pocos segundos – es normal.`,
+  chatNoteLive: m => `Contados desde que se abrió la página (hace ${m} min). ↑ informes a Home Assistant · ↓ comandos de Home Assistant.`,
+  hChatty: n => `Informa muy a menudo: unos ${n} mensajes por hora (los dispositivos con batería suelen enviar unos pocos hasta unos 20). Agota la batería y carga la malla – revisa el intervalo de informe o la sensibilidad en su app.`,
   respViewOn: "⏱ Tiempos de respuesta en el mapa", respViewOff: "⏱ Ocultar tiempos de respuesta", lgRespFast: "Respuesta < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (lento)",
   secWhatIf: "Si este router falla",
   wiKids: n => `${n} dispositivo${n === 1 ? " lo usa" : "s lo usan"} como parent:`,
@@ -645,6 +665,12 @@ const NAMES_ES = [["Effective current", "Corriente (eficaz)"], ["Effective volta
   ["Occupancy", "Presencia"], ["Door", "Contacto"], ["Opening", "Contacto"], ["Temperature", "Temperatura"], ["Humidity", "Humedad"],
   ["Identify", "Identificar"], ["Button", "Botón"], ["Light", "Luz"], ["Switch", "Interruptor"], ["Motion", "Movimiento"]];
 const TEXT_FR = {
+  chatHead: "Le plus de messages dans la dernière heure",
+  chatNone: "Aucun message compté pour l'instant.",
+  thMsgs: "Msg/h",
+  chatNoteHist: m => `↑ rapports vers Home Assistant (depuis son historique, puis en direct) · ↓ commandes de Home Assistant (seulement depuis l'ouverture de la page, il y a ${m} min). Les prises qui mesurent la puissance envoient un rapport toutes les quelques secondes – c'est normal.`,
+  chatNoteLive: m => `Comptés depuis l'ouverture de la page (il y a ${m} min). ↑ rapports vers Home Assistant · ↓ commandes de Home Assistant.`,
+  hChatty: n => `Envoie très souvent : environ ${n} messages par heure (un appareil sur pile en envoie normalement quelques-uns à environ 20). Cela vide la pile et charge le maillage – vérifiez l'intervalle de rapport ou la sensibilité dans son app.`,
   respViewOn: "⏱ Temps de réponse sur la carte", respViewOff: "⏱ Masquer les temps de réponse", lgRespFast: "Réponse < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (lent)",
   secWhatIf: "Si ce routeur tombe en panne",
   wiKids: n => `${n} appareil${n === 1 ? " l'utilise" : "s l'utilisent"} comme parent :`,
@@ -798,6 +824,12 @@ const NAMES_FR = [["Effective current", "Courant (efficace)"], ["Effective volta
   ["Occupancy", "Présence"], ["Door", "Contact"], ["Opening", "Contact"], ["Temperature", "Température"], ["Humidity", "Humidité"],
   ["Identify", "Identifier"], ["Button", "Bouton"], ["Light", "Lumière"], ["Switch", "Interrupteur"], ["Motion", "Mouvement"]];
 const TEXT_IT = {
+  chatHead: "Più messaggi nell'ultima ora",
+  chatNone: "Ancora nessun messaggio contato.",
+  thMsgs: "Msg/h",
+  chatNoteHist: m => `↑ segnalazioni a Home Assistant (dalla sua cronologia, poi in diretta) · ↓ comandi da Home Assistant (solo da quando la pagina è aperta, ${m} min fa). Le prese con misura di potenza segnalano ogni pochi secondi – è normale.`,
+  chatNoteLive: m => `Contati da quando la pagina è aperta (${m} min fa). ↑ segnalazioni a Home Assistant · ↓ comandi da Home Assistant.`,
+  hChatty: n => `Segnala molto spesso: circa ${n} messaggi all'ora (i dispositivi a batteria ne inviano di solito da pochi a circa 20). Scarica la batteria e carica la rete – controlla l'intervallo di segnalazione o la sensibilità nella sua app.`,
   respViewOn: "⏱ Tempi di risposta sulla mappa", respViewOff: "⏱ Nascondi i tempi di risposta", lgRespFast: "Risposta < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (lento)",
   secWhatIf: "Se questo router si guasta",
   wiKids: n => `${n} dispositiv${n === 1 ? "o lo usa" : "i lo usano"} come parent:`,
@@ -951,6 +983,12 @@ const NAMES_IT = [["Effective current", "Corrente (efficace)"], ["Effective volt
   ["Occupancy", "Presenza"], ["Door", "Contatto"], ["Opening", "Contatto"], ["Temperature", "Temperatura"], ["Humidity", "Umidità"],
   ["Identify", "Identifica"], ["Button", "Pulsante"], ["Light", "Luce"], ["Switch", "Interruttore"], ["Motion", "Movimento"]];
 const TEXT_NL = {
+  chatHead: "Meeste berichten in het afgelopen uur",
+  chatNone: "Nog geen berichten geteld.",
+  thMsgs: "Ber./u",
+  chatNoteHist: m => `↑ meldingen aan Home Assistant (uit de geschiedenis, daarna live) · ↓ opdrachten van Home Assistant (alleen sinds de pagina open is, ${m} min geleden). Stekkers met vermogensmeting melden om de paar seconden – dat is normaal.`,
+  chatNoteLive: m => `Geteld sinds de pagina open is (${m} min geleden). ↑ meldingen aan Home Assistant · ↓ opdrachten van Home Assistant.`,
+  hChatty: n => `Meldt erg vaak: ongeveer ${n} berichten per uur (apparaten op batterij sturen er normaal een paar tot ongeveer 20). Dat leegt de batterij en belast het mesh – controleer het meldinterval of de gevoeligheid in de app.`,
   respViewOn: "⏱ Reactietijden op de kaart", respViewOff: "⏱ Reactietijden verbergen", lgRespFast: "Reactie < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (traag)",
   secWhatIf: "Als deze router uitvalt",
   wiKids: n => `${n} apparat${n === 1 ? "uur gebruikt" : "en gebruiken"} hem als parent:`,
@@ -1760,6 +1798,61 @@ function createThreadPulse(root, opts, host) {
     if (upd.length) ds.update(upd);
   }
   every(() => { pruneHeat(); updateEdgeTitles(); if (network && !animating) network.redraw(); }, 5000);
+  // ---------- chattiest devices (issue #80) ----------
+  // Reports to Home Assistant: the hour before the page was opened from Home Assistant's history (each state change of
+  // a device's entities; changes within 400 ms count as one radio message, like the live counter), afterwards live.
+  // Commands from Home Assistant are not in the history, so they only count since the page was opened.
+  // Battery devices that report 60 times an hour or more get a hint (normal: a few to ~20 an hour).
+  const CHAT_H = 3600000, CHATTY_BATT = 60, CHATTY_MIN_OBS = 30 * 60000, PAGE_START = Date.now();
+  let msgHist = {}, histLoaded = false, histLoading = false;     // node id → timestamps of reports before the page was opened
+  async function loadMsgHistory(hass) {
+    if (DEMO || !hass || histLoaded || histLoading) return;
+    const ents = Object.keys(entToNode).filter(e => !/^(button|update)\./.test(e));
+    if (!ents.length) return;
+    histLoading = true;
+    const start = PAGE_START - CHAT_H;
+    try {
+      const r = await hass.callWS({ type: "history/history_during_period", start_time: new Date(start).toISOString(), end_time: new Date(PAGE_START).toISOString(),
+                                    entity_ids: ents, minimal_response: true, no_attributes: true, significant_changes_only: false });
+      const per = {};
+      for (const [e, list] of Object.entries(r || {})) {
+        const id = entToNode[e]; if (!id) continue;
+        for (const x of list || []) { const t = (x.lu || x.lc || 0) * 1000; if (t > start && t < PAGE_START) (per[id] = per[id] || []).push(t); }
+      }
+      msgHist = {};
+      for (const [id, ts] of Object.entries(per)) {
+        ts.sort((a, b) => a - b);
+        const out = []; for (const t of ts) if (!out.length || t - out[out.length - 1] >= 400) out.push(t);
+        msgHist[id] = out;
+      }
+      histLoaded = true;
+      renderList();
+    } catch (e) { console.warn("Thread Pulse: message history", e); }
+    histLoading = false;
+  }
+  function msgsLastHour(id) {
+    const cut = Date.now() - CHAT_H, c = counts[id] || { up: [], down: [] };
+    const up = (msgHist[id] || []).filter(t => t > cut).length + c.up.filter(t => t > cut).length;
+    return { up, down: c.down.filter(t => t > cut).length };
+  }
+  const chatObservedMs = () => histLoaded ? CHAT_H : Math.min(CHAT_H, Date.now() - PAGE_START);
+  function chattyHint(n) {                           // for computeHints: battery devices that report unusually often
+    if (n.type !== "sleepy_end_device" || chatObservedMs() < CHATTY_MIN_OBS) return null;
+    const up = Math.round(msgsLastHour(n.id).up * CHAT_H / chatObservedMs());
+    return up >= CHATTY_BATT ? T.hChatty(up) : null;
+  }
+  function chattyHtml() {                            // top 10 in the "Devices" tab of the network panel
+    const rows = [...Object.values(nodeById), ...Object.values(wifiById)].map(n => ({ id: n.id, ...msgsLastHour(n.id) }))
+      .filter(r => r.up + r.down).sort((a, b) => (b.up + b.down) - (a.up + a.down)).slice(0, 10);
+    const mins = Math.round(chatObservedMs() / 60000);
+    let h = `<h4>${T.chatHead}</h4>`;
+    if (!rows.length) return h + `<div class="tnote">${T.chatNone}</div>`;
+    const max = rows[0].up + rows[0].down;
+    h += `<table class="chat">` + rows.map(r => `<tr><td style="white-space:nowrap"><a href="#" data-open="${esc(r.id)}">${esc(nameOf(r.id))}</a></td>` +
+      `<td style="width:40%"><span class="cbar"><span style="width:${Math.max(2, Math.round((r.up + r.down) / max * 100))}%"></span></span></td>` +
+      `<td style="white-space:nowrap;text-align:right"><b>${r.up + r.down}</b> <span class="tnote" style="display:inline">↑ ${r.up} · ↓ ${r.down}</span></td></tr>`).join("") + `</table>`;
+    return h + `<div class="tnote">${histLoaded ? T.chatNoteHist(Math.round((Date.now() - PAGE_START) / 60000)) : T.chatNoteLive(mins)}</div>`;
+  }
   // ---------- room view (issue #8) ----------
   // Calculated layout: every Home Assistant area gets its own spot on a grid, its devices sit in a ring around it,
   // and a coloured area with the room name is drawn behind them. Devices without an area and the border router share
@@ -2111,6 +2204,7 @@ function createThreadPulse(root, opts, host) {
       }
       if (i.attach >= 5 || i.detached >= 3) add(n.id, T.hUnstable);
       if (n.dupWith) add(n.id, T.hDupAddr(n.dupWith.map(nm).join(", ")));
+      const ch = chattyHint(n); if (ch) add(n.id, ch);                  // reports unusually often (#80)
     }
     return out;
   }
@@ -3154,12 +3248,13 @@ function createThreadPulse(root, opts, host) {
       const best = rl.length ? Math.max(...rl.map(l => l.rssi)) : null;
       return { id: n.id, type: n.type, available: n.available, role: (T.types[n.type] || n.type), filter: n.type === "routing_end_device" ? "routers" : n.type === "end_device" ? "mains" : "battery",
                conn: p ? devLink(p.parentId) : n.type !== "sleepy_end_device" && rl.length ? esc(T.rLinksShort(rl.length)) : "–",   // the best one is in the signal column
-               connSort: p ? nameOf(p.parentId) : "", rssi: p ? p.rssi : n.type !== "sleepy_end_device" ? best : null, self: p && p.src === "device", sw: (n.info || {}).sw || "" };
+               connSort: p ? nameOf(p.parentId) : "", rssi: p ? p.rssi : n.type !== "sleepy_end_device" ? best : null, self: p && p.src === "device", sw: (n.info || {}).sw || "",
+               msgs: (m => m.up + m.down)(msgsLastHour(n.id)) };
     });
     for (const w of Object.values(wifiById)) rows.push({ id: w.id, type: "wifi", available: w.available, role: w.kind === "ethernet" ? T.roleEth : T.roleWifi, filter: "wifi",
-      conn: "–", connSort: "", rssi: null, self: false, sw: (w.info || {}).sw || "" });
+      conn: "–", connSort: "", rssi: null, self: false, sw: (w.info || {}).sw || "", msgs: (m => m.up + m.down)(msgsLastHour(w.id)) });
     const k = devSort.key, d = devSort.dir;
-    const val = r => k === "name" ? nameOf(r.id) : k === "conn" ? r.connSort : k === "rssi" ? (r.rssi === null ? -999 : r.rssi) : k === "fw" ? r.sw : order[r.type];
+    const val = r => k === "name" ? nameOf(r.id) : k === "conn" ? r.connSort : k === "rssi" ? (r.rssi === null ? -999 : r.rssi) : k === "fw" ? r.sw : k === "msgs" ? r.msgs : order[r.type];
     return rows.sort((a, b) => { const x = val(a), y = val(b);
       return (typeof x === "number" ? x - y : String(x).localeCompare(String(y), lang, { numeric: true })) * d || nameOf(a.id).localeCompare(nameOf(b.id), lang); });
   }
@@ -3169,15 +3264,16 @@ function createThreadPulse(root, opts, host) {
     const shown = rows.filter(r => devFilter === "all" || r.filter === devFilter);
     const th = (key, label) => `<th><a href="#" data-sort="${key}">${label}${devSort.key === key ? (devSort.dir > 0 ? " ▲" : " ▼") : ""}</a></th>`;
     let h = `<div class="chips">${kinds.map(f => `<button data-filter="${f}"${f === devFilter ? ' class="on"' : ""}>${T.devFilters[f]} <span>${f === "all" ? rows.length : rows.filter(r => r.filter === f).length}</span></button>`).join("")}</div>`;
-    h += `<div class="tscroll"><table class="devs"><tr>${th("name", T.thDevice)}${th("role", T.rRole)}${th("conn", T.rConnection)}${th("rssi", T.thSignal)}${th("fw", T.firmware)}</tr>` +
+    h += `<div class="tscroll"><table class="devs"><tr>${th("name", T.thDevice)}${th("role", T.rRole)}${th("conn", T.rConnection)}${th("rssi", T.thSignal)}${th("msgs", T.thMsgs)}${th("fw", T.firmware)}</tr>` +
       shown.map(r => {
         const u = fwOf[r.id], q = r.rssi !== null ? QUAL(r.rssi) : null;
         return `<tr><td>${devLink(r.id)}</td><td>${esc(r.role)}${r.available ? "" : ` <span class="r">${esc(T.unreachable.replace(/^\s*[–-]\s*/, ""))}</span>`}</td><td>${r.conn}</td>` +
           `<td${q ? ` class="${q[1]}"` : ""} style="white-space:nowrap">${r.rssi !== null ? `${r.rssi} dBm` : "–"}${r.self ? ` <span class="tnote" style="display:inline">*</span>` : ""}</td>` +
+          `<td style="text-align:right">${r.msgs || "–"}</td>` +
           `<td style="white-space:nowrap">${esc(r.sw || "–")}${u && (u.available || u.progress !== null) ? ` <span class="o">→ ${esc(u.latest)}</span>` : ""}</td></tr>`;
       }).join("") + `</table></div>`;
     if (rows.some(r => r.self)) h += muted("* " + T.selfMeasured.replace(/^\(|\)$/g, ""));
-    return h + firmwareListHtml();
+    return h + chattyHtml() + firmwareListHtml();
   }
   function linksHtml() {
     const weakParents = listData.parents.filter(p => p.rssi < -80 && nodeById[p.childId]);
@@ -3397,6 +3493,7 @@ function createThreadPulse(root, opts, host) {
     loadBatteryForecasts(m.hass);          // runs in the background, panel and badges update when it arrives
     await subscribeLive(m.hass);
     discoverRouters(m.hass);              // names of other border routers arrive in the background
+    loadMsgHistory(m.hass);               // reports of the last hour for the chattiest devices (#80)
     return m;
   }
 

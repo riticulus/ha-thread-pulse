@@ -20,6 +20,7 @@ All source code is in `src/`, one file per topic. `build.py` assembles the files
 | `src/routers.js` | Names of other border routers from Home Assistant's border router discovery |
 | `src/live.js` | Routing tables, path calculation, animated messages, ticker, subscription to Home Assistant events |
 | `src/heat.js` | Traffic heat |
+| `src/chatty.js` | Chattiest devices (messages per hour) |
 | `src/rooms.js` | Room view |
 | `src/panel.js` | Badges and detail panel |
 | `src/identify.js` | Identify button in the detail panel |

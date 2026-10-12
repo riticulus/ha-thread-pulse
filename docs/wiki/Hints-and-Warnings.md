@@ -43,6 +43,16 @@ The thresholds come from a real network of about 20 devices, where healthy devic
 
 **Suggestion:** leave it powered and switch it via Home Assistant.
 
+### Battery device reports very often
+
+*After version 1.6.0.*
+
+**When:** a battery device sent **60 or more** messages in the last hour (one a minute), counted over at least 30 minutes. Normal is a few to about 20 an hour.
+
+**Meaning:** every message costs battery and adds load to the mesh. Typical causes: a very short report interval, a motion or presence sensor that is too sensitive, or a temperature sensor that reports every small change.
+
+**Suggestion:** check the report interval or sensitivity in the device's app. The counts are in the [network panel](The-List) (tab *Devices*, *Most messages in the last hour*).
+
 > Switching a smart **plug off** does *not* stop it from routing – only its socket is switched off, the plug itself stays powered. That is why this is not a reason for a hint.
 
 ### Router at the edge of the mesh

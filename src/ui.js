@@ -38,6 +38,7 @@
     loadBatteryForecasts(m.hass);          // runs in the background, panel and badges update when it arrives
     await subscribeLive(m.hass);
     discoverRouters(m.hass);              // names of other border routers arrive in the background
+    loadMsgHistory(m.hass);               // reports of the last hour for the chattiest devices (#80)
     return m;
   }
 
