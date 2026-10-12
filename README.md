@@ -4,7 +4,9 @@
 
 📖 **[User guide in the wiki](https://github.com/riticulus/ha-thread-pulse/wiki)** – installation, configuration, every feature explained, troubleshooting.
 
-![Thread Pulse demo](docs/screenshot.png)
+![Thread Pulse demo: live messages on the mesh, a device panel, the room view and the network panel](docs/demo.gif)
+
+*Demo mode with invented devices – try it yourself: open `dist/thread-pulse.html?demo` in a browser.*
 
 Thread Pulse draws the mesh of your Matter-over-Thread devices (routers, battery devices, border router, signal strength) and animates every message as it happens:
 
