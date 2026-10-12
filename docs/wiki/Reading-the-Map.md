@@ -15,7 +15,7 @@
 | **≋ Traffic / Traffic off** | Switch the [traffic heat](Live-Data-Flow#traffic-heat) on or off |
 | **⌂ Rooms / Rooms off** | Switch the [room view](Room-View) on or off |
 | **📊 Network** | Show the [network panel below the map](The-List) with its tabs (overview, hints, devices, links, changes). The blue number is the number of [warnings and hints](Hints-and-Warnings) |
-| **⋯** | Menu: **↻ Reload** (load the network data again and redraw the map, also compares with the previous state for the [change log](Change-Log)), **🔇 Sound** with its volume slider (see [sound](Live-Data-Flow#sound)), **Export**: [save the map as an image](Saving-an-Image) with names or anonymised, or copy a [text report](Text-Report), and the installed version |
+| **⋯** | Menu: **↻ Reload** (load the network data again and redraw the map, also compares with the previous state for the [change log](Change-Log)), **🔇 Sound** with its volume slider (see [sound](Live-Data-Flow#sound)), **⏱ Response times on the map** (see [response time](Response-Time#on-the-map), after version 1.6.0), **Export**: [save the map as an image](Saving-an-Image) with names or anonymised, or copy a [text report](Text-Report), and the installed version |
 | Status line | Time of the last update and number of devices; *Tap a device for details* until you have opened a device once. **Tap the status line to reload** |
 | **?** (top left on the map) | Show or hide the colour legend |
 

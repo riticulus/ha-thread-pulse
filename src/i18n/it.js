@@ -1,6 +1,7 @@
 //# Italian texts. Defines TEXT_IT and NAMES_IT (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_IT = {
+  respViewOn: "⏱ Tempi di risposta sulla mappa", respViewOff: "⏱ Nascondi i tempi di risposta", lgRespFast: "Risposta < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (lento)",
   secWhatIf: "Se questo router si guasta",
   wiKids: n => `${n} dispositiv${n === 1 ? "o lo usa" : "i lo usano"} come parent:`,
   wiAlt: (name, r) => `può passare a ${name} (${r} dBm)`,

@@ -201,6 +201,17 @@ async def main_page(r, quick):
         await b.js(f"{G}('livebtn').click(); window.__p = window.__ticks.length; {G}('soundbtn').click()")
         await asyncio.sleep(6)
         r.check("no sound while live is paused", await b.js("window.__ticks.length === window.__p"))
+        await b.js(f"{G}('livebtn').click()")          # live on again
+        # response times on the map (issue #89)
+        await b.js(f"{G}('respbtn').click()")
+        r.check("response-time view: menu entry toggles and legend shows the scale", "Hide response times" in await b.js(f"{G}('respbtn').textContent")
+                and await b.js("[...document.querySelectorAll('.lgresp')].every(x => !x.hidden)"))
+        drawn = await b.js("(() => { window.__texts = []; window.__rec = true; document.getElementById('heatbtn').click(); document.getElementById('heatbtn').click(); window.__rec = false; return window.__texts; })()")
+        rt = [t for t in drawn if re.fullmatch(r"\d+ ms|\d+(\.\d)? s", t)]
+        r.check("response-time view: measured devices get their value on the map", len(rt) >= 1, str(rt[:5]))
+        await b.js(f"{G}('respbtn').click()")
+        drawn = await b.js("(() => { window.__texts = []; window.__rec = true; document.getElementById('heatbtn').click(); document.getElementById('heatbtn').click(); window.__rec = false; return window.__texts; })()")
+        r.check("response-time view off: no values drawn", not [t for t in drawn if re.fullmatch(r"\d+ ms|\d+(\.\d)? s", t)] and await b.js("[...document.querySelectorAll('.lgresp')].every(x => x.hidden)"))
 
         if not quick:
             await b.js(f"{G}('livebtn').click()")

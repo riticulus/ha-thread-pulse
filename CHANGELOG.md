@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+- Response times on the map (**⋯ → ⏱ Response times on the map**): a ring around every device with measurements, coloured by the median (green < 0.5 s, orange < 1 s, red ≥ 1 s) with the value above it; devices without measurements stay unchanged. Commands to a device travel at its measured speed. The legend shows the scale; the choice is remembered ([#89](https://github.com/riticulus/ha-thread-pulse/issues/89))
+
 ## [1.6.0] – 2026-10-12
 
 ### Added
