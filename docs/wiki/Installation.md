@@ -17,6 +17,14 @@ Thread Pulse can be used in three ways. All three show the same map with the sam
 
 ## A) Dashboard card via HACS (recommended)
 
+**The quick way:**
+
+[![Open your Home Assistant instance and open Thread Pulse in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=riticulus&repository=ha-thread-pulse&category=plugin)
+
+The button opens Thread Pulse directly in HACS in your Home Assistant – the first time, [My Home Assistant](https://my.home-assistant.io/) asks for the address of your Home Assistant. Confirm adding the repository, click **Download**, reload the browser when HACS asks for it, and continue with step 6 below.
+
+**By hand:**
+
 1. Open **HACS** in Home Assistant.
 2. Click **⋮** (top right) → **Custom repositories**.
 3. Enter `https://github.com/riticulus/ha-thread-pulse`, choose the type **Dashboard** and click **Add**.
