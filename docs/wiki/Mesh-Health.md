@@ -1,6 +1,6 @@
 # Mesh health
 
-*Available after version 1.5.2.*
+*Available from version 1.6.0.*
 
 One grade from **A** (nothing to check) to **E** (several problems) for the whole Thread network, always shown **together with the reasons behind it**. It is a rule of thumb from the same data as the map, not a measurement. A single letter hides details, so read the factors, not only the grade.
 

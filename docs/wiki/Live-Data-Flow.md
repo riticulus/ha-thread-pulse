@@ -48,7 +48,7 @@ The box in the bottom left of the map shows:
 
 *Available from version 1.4.0.*
 
-**🔇 Sound** (in the **⋯** menu after version 1.5.2, before in the toolbar) plays a short, quiet tick for every animated message:
+**🔇 Sound** (in the **⋯** menu from version 1.6.0, before in the toolbar) plays a short, quiet tick for every animated message:
 
 - **high** tone – a message to Home Assistant
 - **low** tone – a command from Home Assistant

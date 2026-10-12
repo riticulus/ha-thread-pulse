@@ -2,7 +2,7 @@
 
 **📊 Network** in the toolbar opens a panel below the map with everything about the network, in **tabs**. The blue number on the button is the number of warnings and hints. The panel is hidden by default to leave more room for the map; whether it is open and which tab you chose is remembered by the browser.
 
-*After version 1.5.2.* Up to version 1.5.2 the button is called **☰ Show list** and the panel is one long list with all sections below each other.
+*From version 1.6.0.* Up to version 1.5.2 the button is called **☰ Show list** and the panel is one long list with all sections below each other.
 
 ![Network panel](images/list.png)
 
@@ -37,7 +37,7 @@ One table with every device:
 - **Weak links between routers** (below −80 dBm), weakest first
 - **Weak signal to the parent** (below −80 dBm)
 
-**Routers the mesh depends on** *(after version 1.5.2)*: every router with the number of devices that would lose their parent or be cut off if it failed, and how many of them have **no known alternative** – most important first. Tap a router to show the affected devices. Details: [If this router fails](Detail-Panel#if-this-router-fails).
+**Routers the mesh depends on** *(from version 1.6.0)*: every router with the number of devices that would lose their parent or be cut off if it failed, and how many of them have **no known alternative** – most important first. Tap a router to show the affected devices. Details: [If this router fails](Detail-Panel#if-this-router-fails).
 
 **Tap a link** to show both devices on the map: all other devices fade out, as with the [search](Search). A small note on the map (*2 marked · Show all*) ends it; so does **Esc** or a new search. *No weak links* when all links are −80 dBm or better.
 

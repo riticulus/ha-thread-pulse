@@ -1,6 +1,6 @@
 # Text report
 
-*Available after version 1.5.2.*
+*Available from version 1.6.0.*
 
 **⋯ → 📝 Text report for forums …** writes a short summary of your Thread network as Markdown, ready to paste into a forum post or a GitHub issue. When you ask for help, a table is often more useful than a screenshot: the other person can see models, firmware, roles and signal values at a glance.
 
