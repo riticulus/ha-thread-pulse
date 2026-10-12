@@ -46,7 +46,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - **Mesh health:** one grade (A–E) for the whole mesh with the six factors behind it – routers, redundancy, weak signal, hops, devices per router, stability; grade changes go to the change log
 - **Text report:** a Markdown summary for forums and issues – devices, models, firmware, roles, signal, weak links and hints; anonymised by default, never addresses or network identifiers
 - **Search:** find a device by name or area; matches are highlighted and zoomed to, Enter opens the details
-- **Response time:** how long a device takes to confirm a command from Home Assistant – measured while the page is open
+- **Response time:** how long a device takes to confirm a command from Home Assistant – measured while the page is open; optionally shown on the map as coloured rings, with commands travelling at the measured speed
 - **Live counter per device:** messages to and from Home Assistant since the page was opened (last minute, last hour, last message)
 - Optional table: battery devices and their parents, weakest first, plus weak router-to-router links
 - Follows the Home Assistant theme (light/dark); English, German, French, Italian, Spanish and Dutch (from your Home Assistant language)

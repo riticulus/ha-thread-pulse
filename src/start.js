@@ -19,6 +19,7 @@
     applyRooms(roomOn);
   };
   $("soundbtn").onclick = () => setSound(!soundOn);
+  $("respbtn").onclick = () => setRespView(!respView);
   $("volume").oninput = () => { soundVolume = Number($("volume").value); prefs.set("volume", soundVolume); playTick(false); };
   $("heatbtn").onclick = () => {
     heatOn = !heatOn; setBtn($("heatbtn"), heatOn ? T.heatOff : T.heatOn, heatOn);

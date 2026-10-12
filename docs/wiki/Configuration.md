@@ -73,6 +73,7 @@ Some choices are remembered per browser (and per Home Assistant address), not pe
 | Traffic heat on or off | ≋ Traffic |
 | Room view on or off | ⌂ Rooms |
 | Sound on or off, volume | **⋯** → 🔇 Sound (up to version 1.5.2: in the toolbar) |
+| Response times on the map | **⋯** → ⏱ Response times on the map *(after version 1.6.0)* |
 | Change log entries | – |
 
 The legend starts hidden *(from version 1.6.0; before, it started shown on screens wider than 700 px)*. Whether a device was opened once is also remembered: until then the status line shows *Tap a device for details*.

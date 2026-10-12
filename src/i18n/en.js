@@ -1,6 +1,7 @@
 //# English texts. Defines TEXT_EN; build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_EN = {
+  respViewOn: "⏱ Response times on the map", respViewOff: "⏱ Hide response times", lgRespFast: "Response < 0.5 s", lgRespMid: "0.5–1 s", lgRespSlow: "≥ 1 s (slow)",
   secWhatIf: "If this router fails",
   wiKids: n => `${n} device${n === 1 ? " uses" : "s use"} it as parent:`,
   wiAlt: (name, r) => `can switch to ${name} (${r} dBm)`,

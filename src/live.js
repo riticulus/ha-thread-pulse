@@ -63,14 +63,17 @@
     if (panelNode === nodeId || (panelNode && extraIds.has(panelNode))) renderPanel();
     if (!liveOn || !network || !path) return;
     playTick(down);
-    packets.push({ path, t0: now, color: down ? COLORS.down : COLORS.up, origin: down ? path[path.length - 1] : nodeId });
+    // response-time view (issue #89): a command travels as long as the device's median response time takes
+    const rt = down && respView ? respSummary(nodeId) : null;
+    const hopMs = rt ? Math.min(3000, Math.max(250, rt.med)) / Math.max(1, path.length - 1) : HOP_MS;
+    packets.push({ path, t0: now, color: down ? COLORS.down : COLORS.up, origin: down ? path[path.length - 1] : nodeId, hopMs });
     recent.unshift({ t: new Date(), html, down }); recent = recent.slice(0, 60);
     showTicker();
     if (!animating) { animating = true; requestAnimationFrame(tick); }
   }
   function tick() {
     const now = performance.now();
-    packets = packets.filter(p => now - p.t0 < (p.path.length - 1) * HOP_MS + 900);
+    packets = packets.filter(p => now - p.t0 < (p.path.length - 1) * p.hopMs + 900);
     if (network) network.redraw();
     if (packets.length && !destroyed) requestAnimationFrame(tick); else animating = false;
   }
@@ -79,11 +82,11 @@
     if (!packets.length) return;
     const now = performance.now(), pos = network.getPositions();
     for (const p of packets) {
-      const el = now - p.t0, hops = p.path.length - 1, f = Math.min(el / HOP_MS, hops);
+      const el = now - p.t0, hops = p.path.length - 1, f = Math.min(el / p.hopMs, hops);
       const i = Math.min(Math.floor(f), hops - 1), k = f - i, a = pos[p.path[i]], b = pos[p.path[i + 1]];
       if (!a || !b) continue;
       // trail along the hops already travelled
-      ctx.save(); ctx.strokeStyle = p.color; ctx.lineWidth = 3; ctx.globalAlpha = Math.max(0, 0.6 - Math.max(0, el - hops * HOP_MS) / 1500);
+      ctx.save(); ctx.strokeStyle = p.color; ctx.lineWidth = 3; ctx.globalAlpha = Math.max(0, 0.6 - Math.max(0, el - hops * p.hopMs) / 1500);
       ctx.beginPath(); ctx.moveTo(pos[p.path[0]].x, pos[p.path[0]].y);
       for (let j = 1; j <= i; j++) ctx.lineTo(pos[p.path[j]].x, pos[p.path[j]].y);
       ctx.lineTo(a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k); ctx.stroke(); ctx.restore();
@@ -92,7 +95,7 @@
       if (o && ring < 1) { ctx.save(); ctx.strokeStyle = p.color; ctx.globalAlpha = 1 - ring; ctx.lineWidth = 3;
         ctx.beginPath(); ctx.arc(o.x, o.y, 18 + ring * 22, 0, 2 * Math.PI); ctx.stroke(); ctx.restore(); }
       // the packet itself
-      if (el <= hops * HOP_MS) { const x = a.x + (b.x - a.x) * k, y = a.y + (b.y - a.y) * k;
+      if (el <= hops * p.hopMs) { const x = a.x + (b.x - a.x) * k, y = a.y + (b.y - a.y) * k;
         ctx.save(); ctx.shadowColor = p.color; ctx.shadowBlur = 14; ctx.fillStyle = p.color; ctx.strokeStyle = "white"; ctx.lineWidth = 2;
         ctx.beginPath(); ctx.arc(x, y, 7, 0, 2 * Math.PI); ctx.fill(); ctx.stroke(); ctx.restore(); }
     }

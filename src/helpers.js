@@ -99,7 +99,10 @@
     const lg = (cls, color, text) => `<span class="lg"><span class="${cls}" style="background:${color}"></span>${text}</span>`;
     $("legend").innerHTML =
       lg("dot", COLORS.br, T.lgBr) + lg("dot", COLORS.router, T.lgRouter) + lg("dot", COLORS.end, T.lgEnd) + lg("dot", COLORS.sleepy, T.lgSleepy) +
-      lg("ln", COLORS.good, T.good) + lg("ln", COLORS.medium, T.medium) + lg("ln", COLORS.weak, T.weak) + lg("dot", COLORS.up, T.lgUp) + lg("dot", COLORS.down, T.lgDown) + lg("ln heatln", COLORS.heat, T.lgHeat) + `<span class="lg" id="lgwifi" hidden><span class="dot" style="background:${COLORS.wifi}"></span>${T.lgWifi}</span>`;
+      lg("ln", COLORS.good, T.good) + lg("ln", COLORS.medium, T.medium) + lg("ln", COLORS.weak, T.weak) + lg("dot", COLORS.up, T.lgUp) + lg("dot", COLORS.down, T.lgDown) + lg("ln heatln", COLORS.heat, T.lgHeat) + `<span class="lg" id="lgwifi" hidden><span class="dot" style="background:${COLORS.wifi}"></span>${T.lgWifi}</span>` +
+      [[COLORS.good, T.lgRespFast], [COLORS.medium, T.lgRespMid], [COLORS.weak, T.lgRespSlow]].map(([c, t]) =>
+        `<span class="lg lgresp"${respView ? "" : " hidden"}><span class="dot" style="background:transparent;border:2.5px solid ${c};box-sizing:border-box"></span>${t}</span>`).join("");
+    $("respbtn").textContent = respView ? T.respViewOff : T.respViewOn;
     setList(!$("info").classList.contains("hidden"), false);
     setLegend(!$("legend").classList.contains("hidden"), false);
   }

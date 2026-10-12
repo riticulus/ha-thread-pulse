@@ -179,6 +179,7 @@ const TP_HTML = `
     <span id="morebox"><button id="morebtn" class="tb" aria-haspopup="true" aria-expanded="false">⋯</button><span id="moremenu" hidden>
       <button id="reload"></button>
       <span class="mrow"><button id="soundbtn"></button><input id="volume" type="range" min="0" max="1" step="0.05" hidden></span>
+      <button id="respbtn"></button>
       <span class="msep"></span><span class="mhead" id="exporthead"></span>
       <button data-act="export"></button><button data-act="exportanon"></button><button data-act="report"></button>
       <span class="msep"></span><span class="mver" id="version"></span>
@@ -191,6 +192,7 @@ const TP_HTML = `
 `;
 // ---------- texts (one file per language in src/i18n/) ----------
 const TEXT_EN = {
+  respViewOn: "⏱ Response times on the map", respViewOff: "⏱ Hide response times", lgRespFast: "Response < 0.5 s", lgRespMid: "0.5–1 s", lgRespSlow: "≥ 1 s (slow)",
   secWhatIf: "If this router fails",
   wiKids: n => `${n} device${n === 1 ? " uses" : "s use"} it as parent:`,
   wiAlt: (name, r) => `can switch to ${name} (${r} dBm)`,
@@ -337,6 +339,7 @@ const TEXT_EN = {
   hEdge: r => `Only weak links to other routers (best: ${r} dBm) – it sits at the edge of the mesh. Another router in between would strengthen it.`,
 };
 const TEXT_DE = {
+  respViewOn: "⏱ Antwortzeiten auf der Karte", respViewOff: "⏱ Antwortzeiten ausblenden", lgRespFast: "Antwort < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (langsam)",
   secWhatIf: "Wenn dieser Router ausfällt",
   wiKids: n => `${n} Gerät${n === 1 ? " nutzt" : "e nutzen"} ihn als Parent:`,
   wiAlt: (name, r) => `kann zu ${name} wechseln (${r} dBm)`,
@@ -489,6 +492,7 @@ const NAMES_DE = [["Effective current", "Strom (effektiv)"], ["Effective voltage
   ["Occupancy", "Anwesenheit"], ["Door", "Kontakt"], ["Opening", "Kontakt"], ["Temperature", "Temperatur"], ["Humidity", "Luftfeuchte"],
   ["Identify", "Identifizieren"], ["Button", "Taste"], ["Light", "Licht"], ["Switch", "Schalter"], ["Motion", "Bewegung"]];
 const TEXT_ES = {
+  respViewOn: "⏱ Tiempos de respuesta en el mapa", respViewOff: "⏱ Ocultar tiempos de respuesta", lgRespFast: "Respuesta < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (lento)",
   secWhatIf: "Si este router falla",
   wiKids: n => `${n} dispositivo${n === 1 ? " lo usa" : "s lo usan"} como parent:`,
   wiAlt: (name, r) => `puede cambiar a ${name} (${r} dBm)`,
@@ -641,6 +645,7 @@ const NAMES_ES = [["Effective current", "Corriente (eficaz)"], ["Effective volta
   ["Occupancy", "Presencia"], ["Door", "Contacto"], ["Opening", "Contacto"], ["Temperature", "Temperatura"], ["Humidity", "Humedad"],
   ["Identify", "Identificar"], ["Button", "Botón"], ["Light", "Luz"], ["Switch", "Interruptor"], ["Motion", "Movimiento"]];
 const TEXT_FR = {
+  respViewOn: "⏱ Temps de réponse sur la carte", respViewOff: "⏱ Masquer les temps de réponse", lgRespFast: "Réponse < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (lent)",
   secWhatIf: "Si ce routeur tombe en panne",
   wiKids: n => `${n} appareil${n === 1 ? " l'utilise" : "s l'utilisent"} comme parent :`,
   wiAlt: (name, r) => `peut passer à ${name} (${r} dBm)`,
@@ -793,6 +798,7 @@ const NAMES_FR = [["Effective current", "Courant (efficace)"], ["Effective volta
   ["Occupancy", "Présence"], ["Door", "Contact"], ["Opening", "Contact"], ["Temperature", "Température"], ["Humidity", "Humidité"],
   ["Identify", "Identifier"], ["Button", "Bouton"], ["Light", "Lumière"], ["Switch", "Interrupteur"], ["Motion", "Mouvement"]];
 const TEXT_IT = {
+  respViewOn: "⏱ Tempi di risposta sulla mappa", respViewOff: "⏱ Nascondi i tempi di risposta", lgRespFast: "Risposta < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (lento)",
   secWhatIf: "Se questo router si guasta",
   wiKids: n => `${n} dispositiv${n === 1 ? "o lo usa" : "i lo usano"} come parent:`,
   wiAlt: (name, r) => `può passare a ${name} (${r} dBm)`,
@@ -945,6 +951,7 @@ const NAMES_IT = [["Effective current", "Corrente (efficace)"], ["Effective volt
   ["Occupancy", "Presenza"], ["Door", "Contatto"], ["Opening", "Contatto"], ["Temperature", "Temperatura"], ["Humidity", "Umidità"],
   ["Identify", "Identifica"], ["Button", "Pulsante"], ["Light", "Luce"], ["Switch", "Interruttore"], ["Motion", "Movimento"]];
 const TEXT_NL = {
+  respViewOn: "⏱ Reactietijden op de kaart", respViewOff: "⏱ Reactietijden verbergen", lgRespFast: "Reactie < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (traag)",
   secWhatIf: "Als deze router uitvalt",
   wiKids: n => `${n} apparat${n === 1 ? "uur gebruikt" : "en gebruiken"} hem als parent:`,
   wiAlt: (name, r) => `kan overstappen naar ${name} (${r} dBm)`,
@@ -1153,6 +1160,7 @@ function createThreadPulse(root, opts, host) {
     tab:     { key: "threadPulseTab", type: "json", def: "overview" },  // tab of the panel below the map (#108)
     changesSeen: { key: "threadPulseChangesSeen", type: "number", def: null },   // change log last viewed – counter on its tab
     signal:  { key: "threadPulseSignal", type: "json", def: null },     // signal trend – only when Home Assistant refuses to store it (#38)
+    resp:    { key: "threadPulseResp", type: "bool", def: false },      // response times on the map (#89)
     changes: { key: "threadPulseChanges", type: "json", def: [] },      // change log – only until it is moved to Home Assistant (#86)
   };
   const prefs = {
@@ -1271,7 +1279,10 @@ function createThreadPulse(root, opts, host) {
     const lg = (cls, color, text) => `<span class="lg"><span class="${cls}" style="background:${color}"></span>${text}</span>`;
     $("legend").innerHTML =
       lg("dot", COLORS.br, T.lgBr) + lg("dot", COLORS.router, T.lgRouter) + lg("dot", COLORS.end, T.lgEnd) + lg("dot", COLORS.sleepy, T.lgSleepy) +
-      lg("ln", COLORS.good, T.good) + lg("ln", COLORS.medium, T.medium) + lg("ln", COLORS.weak, T.weak) + lg("dot", COLORS.up, T.lgUp) + lg("dot", COLORS.down, T.lgDown) + lg("ln heatln", COLORS.heat, T.lgHeat) + `<span class="lg" id="lgwifi" hidden><span class="dot" style="background:${COLORS.wifi}"></span>${T.lgWifi}</span>`;
+      lg("ln", COLORS.good, T.good) + lg("ln", COLORS.medium, T.medium) + lg("ln", COLORS.weak, T.weak) + lg("dot", COLORS.up, T.lgUp) + lg("dot", COLORS.down, T.lgDown) + lg("ln heatln", COLORS.heat, T.lgHeat) + `<span class="lg" id="lgwifi" hidden><span class="dot" style="background:${COLORS.wifi}"></span>${T.lgWifi}</span>` +
+      [[COLORS.good, T.lgRespFast], [COLORS.medium, T.lgRespMid], [COLORS.weak, T.lgRespSlow]].map(([c, t]) =>
+        `<span class="lg lgresp"${respView ? "" : " hidden"}><span class="dot" style="background:transparent;border:2.5px solid ${c};box-sizing:border-box"></span>${t}</span>`).join("");
+    $("respbtn").textContent = respView ? T.respViewOff : T.respViewOn;
     setList(!$("info").classList.contains("hidden"), false);
     setLegend(!$("legend").classList.contains("hidden"), false);
   }
@@ -1455,7 +1466,7 @@ function createThreadPulse(root, opts, host) {
     }
     network.on("beforeDrawing", ctx => { drawRooms(ctx); drawHeat(ctx); drawWifiLabel(ctx); });
     if (roomOn) applyRooms(true, false);
-    network.on("afterDrawing", ctx => { drawBadges(ctx); drawFlashes(ctx); drawPackets(ctx); });
+    network.on("afterDrawing", ctx => { drawBadges(ctx); drawResponseRings(ctx); drawFlashes(ctx); drawPackets(ctx); });
     network.on("click", p => { if (p.nodes.length && (nodeById[p.nodes[0]] || extraIds.has(p.nodes[0]) || wifiById[p.nodes[0]])) openPanel(p.nodes[0]); else closePanel(); });
     // double click / double tap (issue #23): on empty space center and fit the whole mesh, on a device zoom to it
     network.on("doubleClick", p => {
@@ -1623,14 +1634,17 @@ function createThreadPulse(root, opts, host) {
     if (panelNode === nodeId || (panelNode && extraIds.has(panelNode))) renderPanel();
     if (!liveOn || !network || !path) return;
     playTick(down);
-    packets.push({ path, t0: now, color: down ? COLORS.down : COLORS.up, origin: down ? path[path.length - 1] : nodeId });
+    // response-time view (issue #89): a command travels as long as the device's median response time takes
+    const rt = down && respView ? respSummary(nodeId) : null;
+    const hopMs = rt ? Math.min(3000, Math.max(250, rt.med)) / Math.max(1, path.length - 1) : HOP_MS;
+    packets.push({ path, t0: now, color: down ? COLORS.down : COLORS.up, origin: down ? path[path.length - 1] : nodeId, hopMs });
     recent.unshift({ t: new Date(), html, down }); recent = recent.slice(0, 60);
     showTicker();
     if (!animating) { animating = true; requestAnimationFrame(tick); }
   }
   function tick() {
     const now = performance.now();
-    packets = packets.filter(p => now - p.t0 < (p.path.length - 1) * HOP_MS + 900);
+    packets = packets.filter(p => now - p.t0 < (p.path.length - 1) * p.hopMs + 900);
     if (network) network.redraw();
     if (packets.length && !destroyed) requestAnimationFrame(tick); else animating = false;
   }
@@ -1639,11 +1653,11 @@ function createThreadPulse(root, opts, host) {
     if (!packets.length) return;
     const now = performance.now(), pos = network.getPositions();
     for (const p of packets) {
-      const el = now - p.t0, hops = p.path.length - 1, f = Math.min(el / HOP_MS, hops);
+      const el = now - p.t0, hops = p.path.length - 1, f = Math.min(el / p.hopMs, hops);
       const i = Math.min(Math.floor(f), hops - 1), k = f - i, a = pos[p.path[i]], b = pos[p.path[i + 1]];
       if (!a || !b) continue;
       // trail along the hops already travelled
-      ctx.save(); ctx.strokeStyle = p.color; ctx.lineWidth = 3; ctx.globalAlpha = Math.max(0, 0.6 - Math.max(0, el - hops * HOP_MS) / 1500);
+      ctx.save(); ctx.strokeStyle = p.color; ctx.lineWidth = 3; ctx.globalAlpha = Math.max(0, 0.6 - Math.max(0, el - hops * p.hopMs) / 1500);
       ctx.beginPath(); ctx.moveTo(pos[p.path[0]].x, pos[p.path[0]].y);
       for (let j = 1; j <= i; j++) ctx.lineTo(pos[p.path[j]].x, pos[p.path[j]].y);
       ctx.lineTo(a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k); ctx.stroke(); ctx.restore();
@@ -1652,7 +1666,7 @@ function createThreadPulse(root, opts, host) {
       if (o && ring < 1) { ctx.save(); ctx.strokeStyle = p.color; ctx.globalAlpha = 1 - ring; ctx.lineWidth = 3;
         ctx.beginPath(); ctx.arc(o.x, o.y, 18 + ring * 22, 0, 2 * Math.PI); ctx.stroke(); ctx.restore(); }
       // the packet itself
-      if (el <= hops * HOP_MS) { const x = a.x + (b.x - a.x) * k, y = a.y + (b.y - a.y) * k;
+      if (el <= hops * p.hopMs) { const x = a.x + (b.x - a.x) * k, y = a.y + (b.y - a.y) * k;
         ctx.save(); ctx.shadowColor = p.color; ctx.shadowBlur = 14; ctx.fillStyle = p.color; ctx.strokeStyle = "white"; ctx.lineWidth = 2;
         ctx.beginPath(); ctx.arc(x, y, 7, 0, 2 * Math.PI); ctx.fill(); ctx.stroke(); ctx.restore(); }
     }
@@ -2465,6 +2479,35 @@ function createThreadPulse(root, opts, host) {
     return r && r.n >= SLOW_MIN && r.med >= SLOW_MS ? T.hSlow(r.med, r.n) : null;
   }
   const controllable = n => (n.mainEntities || []).some(e => ["light", "switch", "cover", "lock", "fan", "climate", "valve", "media_player"].includes(e.split(".")[0]));
+  // ---------- response time on the map (issue #89) ----------
+  // Optional view (⋯ menu): a ring around every device with measured response times, coloured by the median –
+  // green < 500 ms, orange < 1 s, red ≥ 1 s (the same 1 s as the "slow" hint) – with the value below it. Devices without
+  // measurements stay unchanged (no grey: that means "not reachable"). Commands then travel at the measured speed.
+  const RESP_MID = 500;
+  let respView = prefs.get("resp");
+  const respColor = ms => ms < RESP_MID ? COLORS.good : ms < SLOW_MS ? COLORS.medium : COLORS.weak;
+  function setRespView(on, save = true) {
+    respView = on;
+    $("respbtn").textContent = on ? T.respViewOff : T.respViewOn;
+    for (const el of root.querySelectorAll(".lgresp")) el.hidden = !on;
+    if (save) prefs.set("resp", on);
+    if (network) network.redraw();
+  }
+  function drawResponseRings(ctx) {
+    if (!respView) return;
+    const pos = network.getPositions();
+    for (const n of [...Object.values(nodeById), ...Object.values(wifiById)]) {
+      const r = respSummary(n.id), p = pos[n.id]; if (!r || !p) continue;
+      const rad = (n.type === "routing_end_device" ? 20 : 14) + 6, c = respColor(r.med);
+      ctx.save();
+      if (searchActive && !searchHits.includes(n.id)) ctx.globalAlpha = 0.18;
+      ctx.strokeStyle = c; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.arc(p.x, p.y, rad, 0, 2 * Math.PI); ctx.stroke();
+      ctx.font = "600 10px -apple-system, Segoe UI, Roboto, sans-serif";
+      const t = r.med >= 1000 ? (Math.round(r.med / 100) / 10).toLocaleString(lang) + " s" : r.med + " ms", w = ctx.measureText(t).width + 8;
+      pill(ctx, p.x - w / 2, p.y - rad - 9, t, c);
+      ctx.restore();
+    }
+  }
   // ---------- battery forecast (issue #39) ----------
   // Estimate when a battery will be empty, from Home Assistant's long-term statistics (daily mean of the battery
   // entity, kept permanently – the normal history is only kept for 10 days by default). Linear trend over up to
@@ -3415,6 +3458,7 @@ function createThreadPulse(root, opts, host) {
     applyRooms(roomOn);
   };
   $("soundbtn").onclick = () => setSound(!soundOn);
+  $("respbtn").onclick = () => setRespView(!respView);
   $("volume").oninput = () => { soundVolume = Number($("volume").value); prefs.set("volume", soundVolume); playTick(false); };
   $("heatbtn").onclick = () => {
     heatOn = !heatOn; setBtn($("heatbtn"), heatOn ? T.heatOff : T.heatOn, heatOn);

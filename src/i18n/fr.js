@@ -1,6 +1,7 @@
 //# French texts. Defines TEXT_FR and NAMES_FR (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_FR = {
+  respViewOn: "⏱ Temps de réponse sur la carte", respViewOff: "⏱ Masquer les temps de réponse", lgRespFast: "Réponse < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (lent)",
   secWhatIf: "Si ce routeur tombe en panne",
   wiKids: n => `${n} appareil${n === 1 ? " l'utilise" : "s l'utilisent"} comme parent :`,
   wiAlt: (name, r) => `peut passer à ${name} (${r} dBm)`,

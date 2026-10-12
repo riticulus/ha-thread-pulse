@@ -114,7 +114,7 @@
     }
     network.on("beforeDrawing", ctx => { drawRooms(ctx); drawHeat(ctx); drawWifiLabel(ctx); });
     if (roomOn) applyRooms(true, false);
-    network.on("afterDrawing", ctx => { drawBadges(ctx); drawFlashes(ctx); drawPackets(ctx); });
+    network.on("afterDrawing", ctx => { drawBadges(ctx); drawResponseRings(ctx); drawFlashes(ctx); drawPackets(ctx); });
     network.on("click", p => { if (p.nodes.length && (nodeById[p.nodes[0]] || extraIds.has(p.nodes[0]) || wifiById[p.nodes[0]])) openPanel(p.nodes[0]); else closePanel(); });
     // double click / double tap (issue #23): on empty space center and fit the whole mesh, on a device zoom to it
     network.on("doubleClick", p => {

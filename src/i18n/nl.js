@@ -1,6 +1,7 @@
 //# Dutch texts. Defines TEXT_NL and NAMES_NL (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_NL = {
+  respViewOn: "⏱ Reactietijden op de kaart", respViewOff: "⏱ Reactietijden verbergen", lgRespFast: "Reactie < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (traag)",
   secWhatIf: "Als deze router uitvalt",
   wiKids: n => `${n} apparat${n === 1 ? "uur gebruikt" : "en gebruiken"} hem als parent:`,
   wiAlt: (name, r) => `kan overstappen naar ${name} (${r} dBm)`,
