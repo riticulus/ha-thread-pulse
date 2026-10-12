@@ -34,7 +34,7 @@ The tab **Changes** of the [network panel](The-List) *(after version 1.5.2; befo
 
 *From the next release after version 1.5.1; up to 1.5.1 every browser had its own list.*
 
-- The list is stored **in Home Assistant, per user** (up to 200 entries) – the same list on your phone, tablet and computer. Other Home Assistant users have their own list.
+- The list is stored **in Home Assistant, per user** (up to 200 entries; the [signal trend](Detail-Panel#trends) is stored the same way) – the same list on your phone, tablet and computer. Other Home Assistant users have their own list.
 - Open pages **synchronise live**: a change seen on the wall tablet appears in the list on the phone right away.
 - When several pages are open, each of them notices the same change; it is **kept once** (same device, same change, within 10 minutes). A device that goes offline, online and offline again still shows all three entries.
 - The first time a page connects, the entries that were stored in this browser by older versions are **moved to Home Assistant** and removed from the browser.

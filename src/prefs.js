@@ -14,6 +14,7 @@
     tapped:  { key: "threadPulseTapped", type: "bool", def: false },    // a device was opened once – no tap hint in the status line
     tab:     { key: "threadPulseTab", type: "json", def: "overview" },  // tab of the panel below the map (#108)
     changesSeen: { key: "threadPulseChangesSeen", type: "number", def: null },   // change log last viewed – counter on its tab
+    signal:  { key: "threadPulseSignal", type: "json", def: null },     // signal trend – only when Home Assistant refuses to store it (#38)
     changes: { key: "threadPulseChanges", type: "json", def: [] },      // change log – only until it is moved to Home Assistant (#86)
   };
   const prefs = {

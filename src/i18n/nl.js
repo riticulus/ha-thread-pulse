@@ -1,6 +1,10 @@
 //# Dutch texts. Defines TEXT_NL and NAMES_NL (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_NL = {
+  trendSignal: r => r ? "Beste verbinding met een router · 7 dagen" : "Signaal naar de parent · 7 dagen",
+  trendNoSignal: "Nog geen verloop – Thread Pulse legt het signaal elke 5 minuten vast zolang een pagina open is en bewaart het 7 dagen.",
+  trendSignalNote: (k, n) => `Vastgelegd door Thread Pulse terwijl een pagina open was: ${k} van ${n} uur (uurgemiddelde). Gaten: geen pagina open. Gestreept: −80 dBm (zwak).`,
+  trendBattNote: "Laatste 7 dagen, uurgemiddelde uit de statistieken van Home Assistant. Gestreept: 20 %.",
   rLinksShort: n => `${n} routerverbinding${n === 1 ? "" : "en"}`,
   netBtn: "📊 Netwerk",
   tabNames: { overview: "Overzicht", hints: "Tips", devices: "Apparaten", links: "Verbindingen", changes: "Wijzigingen" },

@@ -29,6 +29,7 @@ All source code is in `src/`, one file per topic. `build.py` assembles the files
 | `src/changes.js` | Change log |
 | `src/response.js` | Response time |
 | `src/battery.js` | Battery forecast |
+| `src/trends.js` | Trends (signal and battery, 7 days) |
 | `src/firmware.js` | Firmware overview and update badge |
 | `src/fabrics.js` | Connected systems (Matter fabrics) |
 | `src/wifi.js` | Matter devices on Wi-Fi / Ethernet |

@@ -141,6 +141,15 @@ const TP_CSS = `
   #info a { color: inherit; }
   #panel .note { color: var(--muted); font-size: 11px; margin-top: 2px; }
   #panel .ident { margin-top: 12px; }
+  /* trends (issue #38) */
+  #panel .trend { margin: 6px 0 2px; }
+  #panel .trend svg { width: 100%; height: 56px; display: block; background: var(--card); border-radius: 6px; touch-action: pan-y; cursor: crosshair; }
+  #panel .trend .tline { fill: none; stroke: var(--c-hint, #1e88e5); stroke-width: 1.6; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; }
+  #panel .trend .tline.dots { stroke-width: 4; }
+  #panel .trend .tguide { stroke: var(--c-weak, #e53935); stroke-dasharray: 3 3; stroke-width: 1; vector-effect: non-scaling-stroke; opacity: .6; }
+  #panel .trend .tday { stroke: var(--line); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  #panel .trend .tdot { fill: var(--fg); }
+  #panel .trend .tread { font-size: 11px; color: var(--muted); min-height: 1.3em; }
   #panel .ident .btn { margin-top: 0; }
   #panel .btn:disabled { opacity: .55; cursor: default; }
   #panel .btn { display: inline-block; margin-top: 12px; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 10px; cursor: pointer; font: inherit; }
@@ -168,6 +177,10 @@ const TP_HTML = `
 `;
 // ---------- texts (one file per language in src/i18n/) ----------
 const TEXT_EN = {
+  trendSignal: r => r ? "Best link to a router · 7 days" : "Signal to the parent · 7 days",
+  trendNoSignal: "No history yet – Thread Pulse records the signal every 5 minutes while a page is open and keeps it for 7 days.",
+  trendSignalNote: (k, n) => `Recorded by Thread Pulse while a page was open: ${k} of ${n} hours (hourly average). Gaps: no page open. Dashed: −80 dBm (weak).`,
+  trendBattNote: "Last 7 days, hourly mean from Home Assistant's statistics. Dashed: 20 %.",
   rLinksShort: n => `${n} router link${n === 1 ? "" : "s"}`,
   netBtn: "📊 Network",
   tabNames: { overview: "Overview", hints: "Hints", devices: "Devices", links: "Links", changes: "Changes" },
@@ -294,6 +307,10 @@ const TEXT_EN = {
   hEdge: r => `Only weak links to other routers (best: ${r} dBm) – it sits at the edge of the mesh. Another router in between would strengthen it.`,
 };
 const TEXT_DE = {
+  trendSignal: r => r ? "Beste Verbindung zu einem Router · 7 Tage" : "Signal zum Parent · 7 Tage",
+  trendNoSignal: "Noch kein Verlauf – Thread Pulse zeichnet das Signal alle 5 Minuten auf, solange eine Seite offen ist, und behält es 7 Tage.",
+  trendSignalNote: (k, n) => `Von Thread Pulse aufgezeichnet, solange eine Seite offen war: ${k} von ${n} Stunden (Stundenmittel). Lücken: keine Seite offen. Gestrichelt: −80 dBm (schwach).`,
+  trendBattNote: "Letzte 7 Tage, Stundenmittel aus den Statistiken von Home Assistant. Gestrichelt: 20 %.",
   rLinksShort: n => `${n} Router-Verbindung${n === 1 ? "" : "en"}`,
   netBtn: "📊 Netz",
   tabNames: { overview: "Übersicht", hints: "Hinweise", devices: "Geräte", links: "Verbindungen", changes: "Änderungen" },
@@ -426,6 +443,10 @@ const NAMES_DE = [["Effective current", "Strom (effektiv)"], ["Effective voltage
   ["Occupancy", "Anwesenheit"], ["Door", "Kontakt"], ["Opening", "Kontakt"], ["Temperature", "Temperatur"], ["Humidity", "Luftfeuchte"],
   ["Identify", "Identifizieren"], ["Button", "Taste"], ["Light", "Licht"], ["Switch", "Schalter"], ["Motion", "Bewegung"]];
 const TEXT_ES = {
+  trendSignal: r => r ? "Mejor enlace con un router · 7 días" : "Señal hacia el parent · 7 días",
+  trendNoSignal: "Aún no hay historial – Thread Pulse registra la señal cada 5 minutos mientras una página está abierta y la guarda 7 días.",
+  trendSignalNote: (k, n) => `Registrado por Thread Pulse mientras una página estaba abierta: ${k} de ${n} horas (media por hora). Huecos: ninguna página abierta. Discontinua: −80 dBm (débil).`,
+  trendBattNote: "Últimos 7 días, media por hora de las estadísticas de Home Assistant. Discontinua: 20 %.",
   rLinksShort: n => `${n} enlace${n === 1 ? "" : "s"} con routers`,
   netBtn: "📊 Red",
   tabNames: { overview: "Resumen", hints: "Consejos", devices: "Dispositivos", links: "Enlaces", changes: "Cambios" },
@@ -558,6 +579,10 @@ const NAMES_ES = [["Effective current", "Corriente (eficaz)"], ["Effective volta
   ["Occupancy", "Presencia"], ["Door", "Contacto"], ["Opening", "Contacto"], ["Temperature", "Temperatura"], ["Humidity", "Humedad"],
   ["Identify", "Identificar"], ["Button", "Botón"], ["Light", "Luz"], ["Switch", "Interruptor"], ["Motion", "Movimiento"]];
 const TEXT_FR = {
+  trendSignal: r => r ? "Meilleure liaison vers un routeur · 7 jours" : "Signal vers le parent · 7 jours",
+  trendNoSignal: "Pas encore d'historique – Thread Pulse enregistre le signal toutes les 5 minutes tant qu'une page est ouverte et le garde 7 jours.",
+  trendSignalNote: (k, n) => `Enregistré par Thread Pulse pendant qu'une page était ouverte : ${k} heures sur ${n} (moyenne horaire). Trous : aucune page ouverte. Pointillés : −80 dBm (faible).`,
+  trendBattNote: "7 derniers jours, moyenne horaire des statistiques de Home Assistant. Pointillés : 20 %.",
   rLinksShort: n => `${n} liaison${n === 1 ? "" : "s"} routeur`,
   netBtn: "📊 Réseau",
   tabNames: { overview: "Aperçu", hints: "Conseils", devices: "Appareils", links: "Liaisons", changes: "Changements" },
@@ -690,6 +715,10 @@ const NAMES_FR = [["Effective current", "Courant (efficace)"], ["Effective volta
   ["Occupancy", "Présence"], ["Door", "Contact"], ["Opening", "Contact"], ["Temperature", "Température"], ["Humidity", "Humidité"],
   ["Identify", "Identifier"], ["Button", "Bouton"], ["Light", "Lumière"], ["Switch", "Interrupteur"], ["Motion", "Mouvement"]];
 const TEXT_IT = {
+  trendSignal: r => r ? "Miglior collegamento con un router · 7 giorni" : "Segnale verso il parent · 7 giorni",
+  trendNoSignal: "Ancora nessuno storico – Thread Pulse registra il segnale ogni 5 minuti finché una pagina è aperta e lo conserva per 7 giorni.",
+  trendSignalNote: (k, n) => `Registrato da Thread Pulse mentre una pagina era aperta: ${k} ore su ${n} (media oraria). Vuoti: nessuna pagina aperta. Tratteggio: −80 dBm (debole).`,
+  trendBattNote: "Ultimi 7 giorni, media oraria dalle statistiche di Home Assistant. Tratteggio: 20 %.",
   rLinksShort: n => `${n} collegament${n === 1 ? "o" : "i"} router`,
   netBtn: "📊 Rete",
   tabNames: { overview: "Panoramica", hints: "Suggerimenti", devices: "Dispositivi", links: "Collegamenti", changes: "Modifiche" },
@@ -822,6 +851,10 @@ const NAMES_IT = [["Effective current", "Corrente (efficace)"], ["Effective volt
   ["Occupancy", "Presenza"], ["Door", "Contatto"], ["Opening", "Contatto"], ["Temperature", "Temperatura"], ["Humidity", "Umidità"],
   ["Identify", "Identifica"], ["Button", "Pulsante"], ["Light", "Luce"], ["Switch", "Interruttore"], ["Motion", "Movimento"]];
 const TEXT_NL = {
+  trendSignal: r => r ? "Beste verbinding met een router · 7 dagen" : "Signaal naar de parent · 7 dagen",
+  trendNoSignal: "Nog geen verloop – Thread Pulse legt het signaal elke 5 minuten vast zolang een pagina open is en bewaart het 7 dagen.",
+  trendSignalNote: (k, n) => `Vastgelegd door Thread Pulse terwijl een pagina open was: ${k} van ${n} uur (uurgemiddelde). Gaten: geen pagina open. Gestreept: −80 dBm (zwak).`,
+  trendBattNote: "Laatste 7 dagen, uurgemiddelde uit de statistieken van Home Assistant. Gestreept: 20 %.",
   rLinksShort: n => `${n} routerverbinding${n === 1 ? "" : "en"}`,
   netBtn: "📊 Netwerk",
   tabNames: { overview: "Overzicht", hints: "Tips", devices: "Apparaten", links: "Verbindingen", changes: "Wijzigingen" },
@@ -1009,6 +1042,7 @@ function createThreadPulse(root, opts, host) {
     tapped:  { key: "threadPulseTapped", type: "bool", def: false },    // a device was opened once – no tap hint in the status line
     tab:     { key: "threadPulseTab", type: "json", def: "overview" },  // tab of the panel below the map (#108)
     changesSeen: { key: "threadPulseChangesSeen", type: "number", def: null },   // change log last viewed – counter on its tab
+    signal:  { key: "threadPulseSignal", type: "json", def: null },     // signal trend – only when Home Assistant refuses to store it (#38)
     changes: { key: "threadPulseChanges", type: "json", def: [] },      // change log – only until it is moved to Home Assistant (#86)
   };
   const prefs = {
@@ -1346,6 +1380,7 @@ function createThreadPulse(root, opts, host) {
     listData = { parents, count: nodes.length,
                  weak: Object.values(edges).filter(e => !e.parent && ids.has(e.b)).map(e => ({ a: e.a, b: e.b, r: avg(e) })).filter(e => e.r < -80).sort((p, q) => p.r - q.r) };
     refreshFirmware(model.hass);
+    recordSignal();                          // signal trend (issue #38)
     renderList();
     const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
     if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
@@ -1862,7 +1897,8 @@ function createThreadPulse(root, opts, host) {
     if (battOf[n.id] !== undefined || i.batType) {
       const b = battOf[n.id];
       h += `<h4>${T.secBattery}</h4><dl>` + row(T.level, b !== undefined ? `<span class="${b < 20 ? "r" : b < 40 ? "o" : "g"}">${b} %</span>` : "") + row(T.type, esc(i.batType)) +
-           row(T.bfLabel, forecastText(battForecast[n.id])) + `</dl>` + (battForecast[n.id] && battForecast[n.id].state === "ok" ? `<div class="note">${T.bfNote}</div>` : "");
+           row(T.bfLabel, forecastText(battForecast[n.id])) + `</dl>` + (battForecast[n.id] && battForecast[n.id].state === "ok" ? `<div class="note">${T.bfNote}</div>` : "") +
+           batteryTrendHtml(n);
     }
     // thread
     const links = (linksOf[n.id] || []).slice().sort((p, q) => q.rssi - p.rssi);
@@ -1872,6 +1908,7 @@ function createThreadPulse(root, opts, host) {
     if (nb.length) h += row(`${T.neighbours} (${nb.length})`, nb.map(l => `${esc(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
     if (kids.length) h += row(`${T.children} (${kids.length})`, kids.map(l => `${esc(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
     h += row(T.address, `<span style="font-family:monospace">${esc(n.hwAddr || n.id)}</span>`) + `</dl><div class="note">${T.stale}</div>`;
+    h += signalTrendHtml(n);
     // stability
     if ([i.reboots, i.detached, i.attach, i.parentChanges].some(x => x !== undefined && x !== null)) {
       h += `<h4>${T.secStability}</h4><dl>` + row(T.reboots, i.reboots) + row(T.bootReason, i.bootReason !== undefined && i.bootReason !== null ? esc(T.bootReasons[i.bootReason] || i.bootReason) : "") +
@@ -2323,6 +2360,162 @@ function createThreadPulse(root, opts, host) {
   function batteryHint(n) {
     const f = battForecast[n.id];
     return f && f.state === "ok" && f.days <= BF_SOON ? T.hBattSoon(f.days) : null;
+  }
+  // ---------- trends (issue #38) ----------
+  // Battery: hourly mean from Home Assistant's long-term statistics – complete, also for times without an open page.
+  // Signal: Thread Pulse's own samples (every load and refresh, i.e. every 5 minutes while a page is open), averaged per
+  // hour – battery devices: signal to the parent; routers: best link to another router. Stored in Home Assistant per user
+  // (like the change log, #86), so a wall tablet that is always open fills the history for every device; hours without
+  // an open page are gaps in the line. Max. 7 days; written at most every 15 minutes (read-merge-write).
+  const SIG_KEY = "thread_pulse_signal", TREND_H = 7 * 24, HOUR_MS = 3600000, SIG_SAVE_MS = 15 * 60000;
+  let sigHist = {}, sigStore = null, sigDirty = false, sigLoading = null;   // id → [[hour, dBm, samples], …] oldest first
+  let battHist = {};                                 // id → { t: loaded at, pts: [[hour, %], …] }
+  let trendHover = null;                             // { key, i } – survives the panel refresh every 5 s
+  const hourNow = () => Math.floor(Date.now() / HOUR_MS);
+  function pruneSig(h = hourNow()) {
+    for (const id of Object.keys(sigHist)) { sigHist[id] = sigHist[id].filter(e => e[0] > h - TREND_H); if (!sigHist[id].length) delete sigHist[id]; }
+  }
+  function mergeSig(a, b) {                          // per device and hour, keep the entry with more samples
+    const out = {};
+    for (const src of [a, b]) for (const [id, list] of Object.entries(src || {})) {
+      const m = out[id] = out[id] || {};
+      for (const e of list) if (Array.isArray(e) && e.length === 3 && (!m[e[0]] || m[e[0]][2] < e[2])) m[e[0]] = e;
+    }
+    for (const id of Object.keys(out)) out[id] = Object.values(out[id]).sort((x, y) => x[0] - y[0]);
+    return out;
+  }
+  // compact form for storage: hours relative to a base hour
+  const packSig = () => { const base = hourNow() - TREND_H;
+    return { version: 1, base, d: Object.fromEntries(Object.entries(sigHist).map(([id, l]) => [id, l.map(([h, v, n]) => [h - base, v, n])])) }; };
+  const unpackSig = v => !v || !v.d ? {} : Object.fromEntries(Object.entries(v.d).map(([id, l]) => [id, (l || []).map(([dh, x, n]) => [v.base + dh, x, n])]));
+  function signalNow() {                             // the value per device right now (same as the panel and the list)
+    const out = {};
+    if (!listData) return out;
+    const isRouterId = id => (nodeById[id] && nodeById[id].type === "routing_end_device") || extraIds.has(id);
+    for (const n of Object.values(nodeById)) {
+      if (n.type === "routing_end_device") {
+        const rl = (linksOf[n.id] || []).filter(l => l.kind === "neighbour" && isRouterId(l.id));
+        if (rl.length) out[n.id] = Math.max(...rl.map(l => l.rssi));
+      } else {
+        const p = listData.parents.find(x => x.childId === n.id);
+        if (p) out[n.id] = p.rssi;
+      }
+    }
+    return out;
+  }
+  function recordSignal() {                          // after every render (load and refresh)
+    if (DEMO) return;
+    const h = hourNow();
+    for (const [id, v] of Object.entries(signalNow())) {
+      const l = sigHist[id] = sigHist[id] || [], last = l[l.length - 1];
+      if (last && last[0] === h) { last[1] = Math.round((last[1] * last[2] + v) / (last[2] + 1) * 10) / 10; last[2]++; }
+      else l.push([h, v, 1]);
+    }
+    pruneSig(h); sigDirty = true;
+    if (!sigLoading) sigLoading = loadSignalStore();
+  }
+  async function loadSignalStore() {                 // once: what other pages and devices recorded
+    const hass = freshHass(), conn = hass && hass.connection;
+    try {
+      if (!conn) throw new Error("no connection");
+      const r = await conn.sendMessagePromise({ type: "frontend/get_user_data", key: SIG_KEY });
+      sigHist = mergeSig(sigHist, unpackSig(r && r.value)); sigStore = conn;
+    } catch (e) { sigHist = mergeSig(sigHist, unpackSig(prefs.get("signal"))); sigStore = null; }   // fallback: this browser
+    pruneSig();
+    if (panelNode && nodeById[panelNode]) renderPanel();
+  }
+  async function saveSignal() {
+    if (DEMO || !sigDirty || destroyed) return;
+    sigDirty = false;
+    if (!sigStore) { prefs.set("signal", packSig()); return; }
+    try {
+      const r = await sigStore.sendMessagePromise({ type: "frontend/get_user_data", key: SIG_KEY });
+      sigHist = mergeSig(sigHist, unpackSig(r && r.value)); pruneSig();
+      await sigStore.sendMessagePromise({ type: "frontend/set_user_data", key: SIG_KEY, value: packSig() });
+    } catch (e) { prefs.set("signal", packSig()); }
+  }
+  every(saveSignal, SIG_SAVE_MS);
+  window.addEventListener("pagehide", () => { saveSignal(); });
+  async function loadBatteryTrend(n) {               // hourly mean of the battery entity, on demand (panel opened)
+    const c = battHist[n.id];
+    if (c && (c.loading || Date.now() - c.t < 30 * 60000)) return;
+    if (DEMO) {
+      const b = battOf[n.id] !== undefined ? battOf[n.id] : n.demoBattery; if (b === undefined) return;
+      const h = hourNow(), drop = b < 50 ? 0.03 : 0.006;
+      battHist[n.id] = { t: Date.now(), pts: Array.from({ length: TREND_H }, (_, k) => [h - TREND_H + 1 + k, Math.min(100, Math.round((b + drop * (TREND_H - 1 - k)) * 10) / 10)]) };
+      return;
+    }
+    const hass = freshHass(), ent = (n.entities || []).find(id => { const st = hass && hass.states[id];
+      return st && st.attributes.device_class === "battery" && st.attributes.unit_of_measurement === "%"; });
+    if (!ent) return;
+    battHist[n.id] = { t: Date.now(), loading: true, pts: c ? c.pts : [] };
+    try {
+      const res = await hass.callWS({ type: "recorder/statistics_during_period", start_time: new Date((hourNow() - TREND_H + 1) * HOUR_MS).toISOString(),
+                                      statistic_ids: [ent], period: "hour", types: ["mean"] });
+      const pts = (res[ent] || []).map(r => [Math.floor((typeof r.start === "number" ? r.start : Date.parse(r.start)) / HOUR_MS), Math.round(r.mean * 10) / 10]).filter(p => !isNaN(p[1]));
+      battHist[n.id] = { t: Date.now(), pts };
+    } catch (e) { battHist[n.id] = { t: Date.now(), pts: [] }; }
+    if (panelNode === n.id) renderPanel();
+  }
+  // demo: an invented week with gaps (no page open at night)
+  function demoSignal(n) {
+    const now = signalNow()[n.id]; if (now === undefined) return [];
+    const h = hourNow(), out = [];
+    for (let k = TREND_H - 1; k >= 0; k--) {
+      const hr = h - k, local = new Date(hr * HOUR_MS).getHours();
+      if (local >= 1 && local < 7 && k > 2) continue;                         // nobody looked at night
+      const wobble = Math.round(Math.sin((hr + n.id.length) / 5) * 3 + Math.sin(hr / 17) * 2);
+      out.push([hr, k < 2 ? now : Math.max(-100, Math.min(-30, now + wobble + (k > 100 ? -4 : 0))), 12]);
+    }
+    return out;
+  }
+  // ---------- sparkline (SVG) ----------
+  const trendPts = {};                               // chart key → points, for the hover readout
+  function sparkline(key, pts, lo, hi, fmt, guide) {
+    if (!pts.length) return "";
+    const W = 300, H = 56, h0 = hourNow() - TREND_H + 1, x = hr => 4 + (hr - h0) / (TREND_H - 1) * (W - 8);   // 4 units margin: the newest point is not cut off
+    const y = v => H - 4 - (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * (H - 8);
+    trendPts[key] = { pts, fmt, x, y };
+    let d = "", dots = "";
+    pts.forEach(([hr, v], i) => {                     // gap > 2 h: the line breaks; a point alone between gaps is a dot
+      const joined = i > 0 && hr - pts[i - 1][0] <= 2, next = i < pts.length - 1 && pts[i + 1][0] - hr <= 2;
+      const at = `${x(hr).toFixed(1)},${y(v).toFixed(1)}`;
+      if (!joined && !next) dots += `M${at} l0.01,0 `; else d += `${joined ? "L" : "M"}${at} `;
+    });
+    const hv = trendHover && trendHover.key === key ? pts[trendHover.i] : null;
+    const days = Array.from({ length: 7 }, (_, k) => { const t = new Date(); t.setHours(0, 0, 0, 0); t.setDate(t.getDate() - k); return Math.floor(t.getTime() / HOUR_MS); })
+      .filter(hr => hr > h0).map(hr => `<line x1="${x(hr).toFixed(1)}" x2="${x(hr).toFixed(1)}" y1="0" y2="${H}" class="tday"/>`).join("");
+    return `<div class="trend"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" data-trend="${esc(key)}" role="img" aria-label="${esc(fmt(pts[pts.length - 1][1]))}">` + days +
+      (guide !== undefined ? `<line x1="0" x2="${W}" y1="${y(guide).toFixed(1)}" y2="${y(guide).toFixed(1)}" class="tguide"/>` : "") +
+      `<path d="${d}" class="tline"/><path d="${dots}" class="tline dots"/><circle r="3" class="tdot"${hv ? ` cx="${x(hv[0]).toFixed(1)}" cy="${y(hv[1]).toFixed(1)}"` : ' style="display:none"'}/></svg>` +
+      `<div class="tread">${esc(readout(hv || pts[pts.length - 1], fmt))}</div></div>`;
+  }
+  const readout = (p, fmt) => new Date(p[0] * HOUR_MS).toLocaleString(lang, { weekday: "short", hour: "2-digit", minute: "2-digit" }) + " · " + fmt(p[1]);
+  function signalTrendHtml(n) {
+    const pts = DEMO ? demoSignal(n) : (sigHist[n.id] || []);
+    if (!pts.length) return `<h4>${T.trendSignal(n.type === "routing_end_device")}</h4><div class="note">${T.trendNoSignal}</div>`;
+    const vals = pts.map(p => p[1]), lo = Math.min(-90, ...vals) - 2, hi = Math.max(-50, ...vals) + 2;
+    return `<h4>${T.trendSignal(n.type === "routing_end_device")}</h4>` + sparkline("s:" + n.id, pts, lo, hi, v => `${Math.round(v)} dBm · ${QUAL(v)[2]}`, -80) +
+      `<div class="note">${T.trendSignalNote(pts.length, TREND_H)}</div>`;
+  }
+  function batteryTrendHtml(n) {
+    loadBatteryTrend(n);
+    const c = battHist[n.id]; if (!c || !c.pts.length) return "";
+    return sparkline("b:" + n.id, c.pts, 0, 100, v => `${Math.round(v)} %`, 20) + `<div class="note">${T.trendBattNote}</div>`;
+  }
+  // hover / tap: nearest hour of the chart
+  root.addEventListener("pointermove", e => trendPointer(e));
+  root.addEventListener("pointerdown", e => trendPointer(e));
+  function trendPointer(e) {
+    const svg = e.target.closest && e.target.closest("svg[data-trend]"); if (!svg) return;
+    const t = trendPts[svg.dataset.trend]; if (!t) return;
+    const r = svg.getBoundingClientRect(), h0 = hourNow() - TREND_H + 1, hr = h0 + ((e.clientX - r.left) / r.width * 300 - 4) / 292 * (TREND_H - 1);
+    let best = 0; t.pts.forEach((p, i) => { if (Math.abs(p[0] - hr) < Math.abs(t.pts[best][0] - hr)) best = i; });
+    if (trendHover && trendHover.key === svg.dataset.trend && trendHover.i === best) return;
+    trendHover = { key: svg.dataset.trend, i: best };
+    const p = t.pts[best], dot = svg.querySelector(".tdot"), rd = svg.parentNode.querySelector(".tread");   // only the dot and the readout
+    dot.setAttribute("cx", t.x(p[0]).toFixed(1)); dot.setAttribute("cy", t.y(p[1]).toFixed(1)); dot.style.display = "";
+    rd.textContent = readout(p, t.fmt);
   }
   // ---------- firmware (issue #81) ----------
   // Matter devices have an update entity in Home Assistant (device class firmware): state "on" = an update is
