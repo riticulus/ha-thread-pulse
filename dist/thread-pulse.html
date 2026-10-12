@@ -153,6 +153,8 @@ const TP_CSS = `
   #info a { color: inherit; }
   #panel .note { color: var(--muted); font-size: 11px; margin-top: 2px; }
   #panel .ident { margin-top: 12px; }
+  #panel ul.wi { margin: 4px 0 6px; padding-left: 18px; }
+  #panel ul.wi li { margin: 2px 0; }
   /* trends (issue #38) */
   #panel .trend { margin: 6px 0 2px; }
   #panel .trend svg { width: 100%; height: 56px; display: block; background: var(--card); border-radius: 6px; touch-action: pan-y; cursor: crosshair; }
@@ -189,6 +191,22 @@ const TP_HTML = `
 `;
 // ---------- texts (one file per language in src/i18n/) ----------
 const TEXT_EN = {
+  secWhatIf: "If this router fails",
+  wiKids: n => `${n} device${n === 1 ? " uses" : "s use"} it as parent:`,
+  wiAlt: (name, r) => `can switch to ${name} (${r} dBm)`,
+  wiNoAlt: "no other router in reach known",
+  wiBattUnknown: "battery device – other routers in reach are not reported",
+  wiCut: n => `Cut off from the border router (${n}):`,
+  wiViaCut: n => `${n} more device${n === 1 ? "" : "s"} use${n === 1 ? "s" : ""} those`,
+  wiNone: "Nothing depends on it alone – its devices and the other routers have other paths.",
+  wiShow: "Show affected devices on the map",
+  wiBrUnknown: "The border router is not known – which routers would be cut off cannot be estimated.",
+  wiNote: "An estimate from the last reported neighbour tables. Thread repairs itself: devices look for a new parent, possibly one that is not in their current table.",
+  wiHead: "Routers the mesh depends on",
+  thRouter: "Router",
+  thDepend: "Depend on it",
+  thNoAlt: "No known alternative",
+  wiTabNote: "Devices that would lose their parent or be cut off if the router failed – an estimate. Tap a router to show them on the map.",
   trendSignal: r => r ? "Best link to a router · 7 days" : "Signal to the parent · 7 days",
   trendNoSignal: "No history yet – Thread Pulse records the signal every 5 minutes while a page is open and keeps it for 7 days.",
   trendSignalNote: (k, n) => `Recorded by Thread Pulse while a page was open: ${k} of ${n} hours (hourly average). Gaps: no page open. Dashed: −80 dBm (weak).`,
@@ -319,6 +337,22 @@ const TEXT_EN = {
   hEdge: r => `Only weak links to other routers (best: ${r} dBm) – it sits at the edge of the mesh. Another router in between would strengthen it.`,
 };
 const TEXT_DE = {
+  secWhatIf: "Wenn dieser Router ausfällt",
+  wiKids: n => `${n} Gerät${n === 1 ? " nutzt" : "e nutzen"} ihn als Parent:`,
+  wiAlt: (name, r) => `kann zu ${name} wechseln (${r} dBm)`,
+  wiNoAlt: "kein anderer Router in Reichweite bekannt",
+  wiBattUnknown: "Batteriegerät – andere Router in Reichweite werden nicht gemeldet",
+  wiCut: n => `Vom Border Router abgeschnitten (${n}):`,
+  wiViaCut: n => `${n} weitere${n === 1 ? "s Gerät nutzt" : " Geräte nutzen"} diese`,
+  wiNone: "Nichts hängt allein an ihm – seine Geräte und die anderen Router haben andere Wege.",
+  wiShow: "Betroffene Geräte auf der Karte zeigen",
+  wiBrUnknown: "Der Border Router ist nicht bekannt – welche Router abgeschnitten wären, lässt sich nicht abschätzen.",
+  wiNote: "Eine Schätzung aus den zuletzt gemeldeten Nachbartabellen. Thread repariert sich selbst: Geräte suchen einen neuen Parent, möglicherweise einen, der nicht in ihrer aktuellen Tabelle steht.",
+  wiHead: "Router, von denen das Netz abhängt",
+  thRouter: "Router",
+  thDepend: "Hängen daran",
+  thNoAlt: "Ohne bekannte Alternative",
+  wiTabNote: "Geräte, die ihren Parent verlieren oder abgeschnitten würden, wenn der Router ausfällt – eine Schätzung. Router antippen zeigt sie auf der Karte.",
   trendSignal: r => r ? "Beste Verbindung zu einem Router · 7 Tage" : "Signal zum Parent · 7 Tage",
   trendNoSignal: "Noch kein Verlauf – Thread Pulse zeichnet das Signal alle 5 Minuten auf, solange eine Seite offen ist, und behält es 7 Tage.",
   trendSignalNote: (k, n) => `Von Thread Pulse aufgezeichnet, solange eine Seite offen war: ${k} von ${n} Stunden (Stundenmittel). Lücken: keine Seite offen. Gestrichelt: −80 dBm (schwach).`,
@@ -455,6 +489,22 @@ const NAMES_DE = [["Effective current", "Strom (effektiv)"], ["Effective voltage
   ["Occupancy", "Anwesenheit"], ["Door", "Kontakt"], ["Opening", "Kontakt"], ["Temperature", "Temperatur"], ["Humidity", "Luftfeuchte"],
   ["Identify", "Identifizieren"], ["Button", "Taste"], ["Light", "Licht"], ["Switch", "Schalter"], ["Motion", "Bewegung"]];
 const TEXT_ES = {
+  secWhatIf: "Si este router falla",
+  wiKids: n => `${n} dispositivo${n === 1 ? " lo usa" : "s lo usan"} como parent:`,
+  wiAlt: (name, r) => `puede cambiar a ${name} (${r} dBm)`,
+  wiNoAlt: "no se conoce otro router al alcance",
+  wiBattUnknown: "dispositivo con batería – no informa de otros routers al alcance",
+  wiCut: n => `Aislados del border router (${n}):`,
+  wiViaCut: n => `${n} dispositivo${n === 1 ? " más los usa" : "s más los usan"}`,
+  wiNone: "Nada depende solo de él – sus dispositivos y los demás routers tienen otros caminos.",
+  wiShow: "Mostrar los dispositivos afectados en el mapa",
+  wiBrUnknown: "No se conoce el border router – no se puede estimar qué routers quedarían aislados.",
+  wiNote: "Una estimación a partir de las últimas tablas de vecinos. Thread se repara solo: los dispositivos buscan un nuevo parent, quizá uno que no está en su tabla actual.",
+  wiHead: "Routers de los que depende la malla",
+  thRouter: "Router",
+  thDepend: "Dependen de él",
+  thNoAlt: "Sin alternativa conocida",
+  wiTabNote: "Dispositivos que perderían su parent o quedarían aislados si el router fallara – una estimación. Toca un router para mostrarlos en el mapa.",
   trendSignal: r => r ? "Mejor enlace con un router · 7 días" : "Señal hacia el parent · 7 días",
   trendNoSignal: "Aún no hay historial – Thread Pulse registra la señal cada 5 minutos mientras una página está abierta y la guarda 7 días.",
   trendSignalNote: (k, n) => `Registrado por Thread Pulse mientras una página estaba abierta: ${k} de ${n} horas (media por hora). Huecos: ninguna página abierta. Discontinua: −80 dBm (débil).`,
@@ -591,6 +641,22 @@ const NAMES_ES = [["Effective current", "Corriente (eficaz)"], ["Effective volta
   ["Occupancy", "Presencia"], ["Door", "Contacto"], ["Opening", "Contacto"], ["Temperature", "Temperatura"], ["Humidity", "Humedad"],
   ["Identify", "Identificar"], ["Button", "Botón"], ["Light", "Luz"], ["Switch", "Interruptor"], ["Motion", "Movimiento"]];
 const TEXT_FR = {
+  secWhatIf: "Si ce routeur tombe en panne",
+  wiKids: n => `${n} appareil${n === 1 ? " l'utilise" : "s l'utilisent"} comme parent :`,
+  wiAlt: (name, r) => `peut passer à ${name} (${r} dBm)`,
+  wiNoAlt: "aucun autre routeur à portée connu",
+  wiBattUnknown: "appareil sur pile – les autres routeurs à portée ne sont pas signalés",
+  wiCut: n => `Coupés du border router (${n}) :`,
+  wiViaCut: n => `${n} autre${n === 1 ? " appareil les utilise" : "s appareils les utilisent"}`,
+  wiNone: "Rien ne dépend de lui seul – ses appareils et les autres routeurs ont d'autres chemins.",
+  wiShow: "Montrer les appareils concernés sur la carte",
+  wiBrUnknown: "Le border router n'est pas connu – impossible d'estimer quels routeurs seraient coupés.",
+  wiNote: "Une estimation à partir des dernières tables de voisins signalées. Thread se répare lui-même : les appareils cherchent un nouveau parent, peut-être un qui n'est pas dans leur table actuelle.",
+  wiHead: "Routeurs dont le maillage dépend",
+  thRouter: "Routeur",
+  thDepend: "En dépendent",
+  thNoAlt: "Sans alternative connue",
+  wiTabNote: "Appareils qui perdraient leur parent ou seraient coupés si le routeur tombait en panne – une estimation. Touchez un routeur pour les montrer sur la carte.",
   trendSignal: r => r ? "Meilleure liaison vers un routeur · 7 jours" : "Signal vers le parent · 7 jours",
   trendNoSignal: "Pas encore d'historique – Thread Pulse enregistre le signal toutes les 5 minutes tant qu'une page est ouverte et le garde 7 jours.",
   trendSignalNote: (k, n) => `Enregistré par Thread Pulse pendant qu'une page était ouverte : ${k} heures sur ${n} (moyenne horaire). Trous : aucune page ouverte. Pointillés : −80 dBm (faible).`,
@@ -727,6 +793,22 @@ const NAMES_FR = [["Effective current", "Courant (efficace)"], ["Effective volta
   ["Occupancy", "Présence"], ["Door", "Contact"], ["Opening", "Contact"], ["Temperature", "Température"], ["Humidity", "Humidité"],
   ["Identify", "Identifier"], ["Button", "Bouton"], ["Light", "Lumière"], ["Switch", "Interrupteur"], ["Motion", "Mouvement"]];
 const TEXT_IT = {
+  secWhatIf: "Se questo router si guasta",
+  wiKids: n => `${n} dispositiv${n === 1 ? "o lo usa" : "i lo usano"} come parent:`,
+  wiAlt: (name, r) => `può passare a ${name} (${r} dBm)`,
+  wiNoAlt: "nessun altro router a portata noto",
+  wiBattUnknown: "dispositivo a batteria – gli altri router a portata non vengono segnalati",
+  wiCut: n => `Tagliati fuori dal border router (${n}):`,
+  wiViaCut: n => `altr${n === 1 ? "o dispositivo li usa" : "i " + n + " dispositivi li usano"}`,
+  wiNone: "Niente dipende solo da lui – i suoi dispositivi e gli altri router hanno altri percorsi.",
+  wiShow: "Mostra i dispositivi interessati sulla mappa",
+  wiBrUnknown: "Il border router non è noto – non si può stimare quali router verrebbero tagliati fuori.",
+  wiNote: "Una stima dalle ultime tabelle dei vicini segnalate. Thread si ripara da solo: i dispositivi cercano un nuovo parent, forse uno che non è nella loro tabella attuale.",
+  wiHead: "Router da cui dipende la rete",
+  thRouter: "Router",
+  thDepend: "Dipendono da lui",
+  thNoAlt: "Senza alternativa nota",
+  wiTabNote: "Dispositivi che perderebbero il parent o verrebbero tagliati fuori se il router si guastasse – una stima. Tocca un router per mostrarli sulla mappa.",
   trendSignal: r => r ? "Miglior collegamento con un router · 7 giorni" : "Segnale verso il parent · 7 giorni",
   trendNoSignal: "Ancora nessuno storico – Thread Pulse registra il segnale ogni 5 minuti finché una pagina è aperta e lo conserva per 7 giorni.",
   trendSignalNote: (k, n) => `Registrato da Thread Pulse mentre una pagina era aperta: ${k} ore su ${n} (media oraria). Vuoti: nessuna pagina aperta. Tratteggio: −80 dBm (debole).`,
@@ -863,6 +945,22 @@ const NAMES_IT = [["Effective current", "Corrente (efficace)"], ["Effective volt
   ["Occupancy", "Presenza"], ["Door", "Contatto"], ["Opening", "Contatto"], ["Temperature", "Temperatura"], ["Humidity", "Umidità"],
   ["Identify", "Identifica"], ["Button", "Pulsante"], ["Light", "Luce"], ["Switch", "Interruttore"], ["Motion", "Movimento"]];
 const TEXT_NL = {
+  secWhatIf: "Als deze router uitvalt",
+  wiKids: n => `${n} apparat${n === 1 ? "uur gebruikt" : "en gebruiken"} hem als parent:`,
+  wiAlt: (name, r) => `kan overstappen naar ${name} (${r} dBm)`,
+  wiNoAlt: "geen andere router binnen bereik bekend",
+  wiBattUnknown: "apparaat op batterij – andere routers binnen bereik worden niet gemeld",
+  wiCut: n => `Afgesneden van de border router (${n}):`,
+  wiViaCut: n => `nog ${n} apparat${n === 1 ? "uur gebruikt" : "en gebruiken"} die`,
+  wiNone: "Niets hangt alleen van hem af – zijn apparaten en de andere routers hebben andere paden.",
+  wiShow: "Getroffen apparaten op de kaart tonen",
+  wiBrUnknown: "De border router is niet bekend – welke routers afgesneden zouden worden, valt niet te schatten.",
+  wiNote: "Een schatting op basis van de laatst gemelde buurtabellen. Thread herstelt zichzelf: apparaten zoeken een nieuwe parent, misschien een die niet in hun huidige tabel staat.",
+  wiHead: "Routers waarvan het mesh afhangt",
+  thRouter: "Router",
+  thDepend: "Hangen ervan af",
+  thNoAlt: "Zonder bekend alternatief",
+  wiTabNote: "Apparaten die hun parent zouden verliezen of afgesneden zouden worden als de router uitvalt – een schatting. Tik op een router om ze op de kaart te tonen.",
   trendSignal: r => r ? "Beste verbinding met een router · 7 dagen" : "Signaal naar de parent · 7 dagen",
   trendNoSignal: "Nog geen verloop – Thread Pulse legt het signaal elke 5 minuten vast zolang een pagina open is en bewaart het 7 dagen.",
   trendSignalNote: (k, n) => `Vastgelegd door Thread Pulse terwijl een pagina open was: ${k} van ${n} uur (uurgemiddelde). Gaten: geen pagina open. Gestreept: −80 dBm (zwak).`,
@@ -1860,6 +1958,7 @@ function createThreadPulse(root, opts, host) {
     }
     if (!isBr && disc) h += `<h4>${T.secBorderRouter}</h4><dl>` + discRows(disc) +
       (brExt ? row(T.usedByHa, esc(T.usedByHaNo)) : "") + `</dl><div class="note">${T.brOtherNote}</div>`;
+    if (!isBr) h += whatIfHtml(id);                                       // issue #77
     const links = (linksOf[id] || []).slice().sort((p, q) => q.rssi - p.rssi);
     const nb = links.filter(l => l.kind === "neighbour"), kids = links.filter(l => l.kind === "child");
     h += `<h4>${T.secThread}</h4><dl>`;
@@ -1921,6 +2020,7 @@ function createThreadPulse(root, opts, host) {
     if (kids.length) h += row(`${T.children} (${kids.length})`, kids.map(l => `${esc(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
     h += row(T.address, `<span style="font-family:monospace">${esc(n.hwAddr || n.id)}</span>`) + `</dl><div class="note">${T.stale}</div>`;
     h += signalTrendHtml(n);
+    if (n.type === "routing_end_device") h += whatIfHtml(n.id);          // issue #77
     // stability
     if ([i.reboots, i.detached, i.attach, i.parentChanges].some(x => x !== undefined && x !== null)) {
       h += `<h4>${T.secStability}</h4><dl>` + row(T.reboots, i.reboots) + row(T.bootReason, i.bootReason !== undefined && i.bootReason !== null ? esc(T.bootReasons[i.bootReason] || i.bootReason) : "") +
@@ -2082,6 +2182,63 @@ function createThreadPulse(root, opts, host) {
     if (gradePending !== g) { gradePending = g; return; }
     logChange("mesh", T.meshName, T.chGrade(gradeLogged, g), g < gradeLogged ? "gradeUp" : "gradeDown");
     gradeLogged = g; gradePending = null;
+  }
+  // ---------- what if a router fails (issue #77) ----------
+  // An estimate from the last reported neighbour tables: the router is removed from the graph of router-to-router
+  // links, and every router that no longer reaches the border router is cut off (with its devices). Devices that use the
+  // router as parent: mains devices report their neighbours – another router in reach is an alternative; battery
+  // devices only report their parent, so whether another router can reach them is unknown. Thread repairs itself:
+  // a device may find a parent that is not in its current table.
+  const ALT_MIN = -85;                               // weaker links rarely carry a connection for long
+  const isRouterNode = id => (nodeById[id] && nodeById[id].type === "routing_end_device") || extraIds.has(id);
+  function routerGraph() {
+    const g = {};
+    for (const [id, links] of Object.entries(linksOf)) if (isRouterNode(id))
+      for (const l of links) if (l.kind === "neighbour" && isRouterNode(l.id)) {
+        (g[id] = g[id] || new Set()).add(l.id); (g[l.id] = g[l.id] || new Set()).add(id);
+      }
+    return g;
+  }
+  function whatIf(failId, g = routerGraph()) {
+    let cut = [], brKnown = !!(brExt && g[brExt]);
+    if (brKnown && failId !== brExt) {
+      const seen = new Set([brExt]), q = [brExt];
+      while (q.length) { const x = q.shift(); for (const y of g[x] || []) if (y !== failId && !seen.has(y)) { seen.add(y); q.push(y); } }
+      cut = Object.keys(g).filter(id => id !== failId && !seen.has(id));
+    }
+    const lost = new Set([failId, ...cut]);
+    const kids = (listData ? listData.parents : []).filter(p => lost.has(p.parentId) && nodeById[p.childId]);
+    const children = kids.filter(p => p.parentId === failId).map(p => {
+      const n = nodeById[p.childId];
+      const alt = (linksOf[p.childId] || []).filter(l => l.kind === "neighbour" && isRouterNode(l.id) && !lost.has(l.id) && l.rssi >= ALT_MIN)
+        .sort((a, b) => b.rssi - a.rssi)[0] || null;
+      return { id: p.childId, alt, battery: n.type === "sleepy_end_device" };
+    });
+    const viaCut = kids.filter(p => p.parentId !== failId).map(p => p.childId);
+    const noAlt = children.filter(c => !c.alt).length + cut.length + viaCut.length;
+    return { failId, cut, children, viaCut, brKnown, noAlt, total: children.length + cut.length + viaCut.length,
+             ids: [failId, ...children.map(c => c.id), ...cut, ...viaCut] };
+  }
+  function whatIfHtml(id) {                          // section in the panel of a router
+    if (id === brExt || !listData) return "";
+    const w = whatIf(id), names = ids => ids.map(x => esc(nameOf(x))).join(", ");
+    let h = `<h4>${T.secWhatIf}</h4>`;
+    if (!w.total) h += `<div>${T.wiNone}</div>`;
+    if (w.children.length) h += `<div>${T.wiKids(w.children.length)}</div><ul class="wi">` + w.children.map(c => `<li>${esc(nameOf(c.id))} – ` +
+      (c.alt ? `<span class="g">${esc(T.wiAlt(nameOf(c.alt.id), c.alt.rssi))}</span>` : `<span class="o">${esc(c.battery ? T.wiBattUnknown : T.wiNoAlt)}</span>`) + `</li>`).join("") + `</ul>`;
+    if (w.cut.length) h += `<div><span class="r">${T.wiCut(w.cut.length)}</span> ${names(w.cut)}` +
+      (w.viaCut.length ? ` · ${esc(T.wiViaCut(w.viaCut.length))}: ${names(w.viaCut)}` : "") + `</div>`;
+    if (!w.brKnown) h += `<div class="note">${T.wiBrUnknown}</div>`;
+    if (w.total) h += `<button class="btn" data-mark="${esc(w.ids.join(","))}">${T.wiShow}</button>`;
+    return h + `<div class="note">${T.wiNote}</div>`;
+  }
+  function dependHtml() {                            // ranking in the "Links" tab of the network panel
+    const g = routerGraph();
+    const rows = Object.keys(g).filter(id => id !== brExt).map(id => whatIf(id, g)).filter(w => w.total).sort((a, b) => b.noAlt - a.noAlt || b.total - a.total);
+    if (!rows.length) return "";
+    return `<h4>${T.wiHead}</h4><table class="lk"><tr><th>${T.thRouter}</th><th>${T.thDepend}</th><th>${T.thNoAlt}</th></tr>` +
+      rows.map(w => `<tr class="mark" data-mark="${esc(w.ids.join(","))}" title="${esc(T.markHint)}"><td>${esc(nameOf(w.failId))}</td><td>${w.total}</td>` +
+        `<td class="${w.noAlt ? "o" : "g"}">${w.noAlt}</td></tr>`).join("") + `</table>` + `<div class="tnote">${T.wiTabNote}</div>`;
   }
   // ---------- search (issue #9) ----------
   // Matches device name and area (case and accents ignored). Matches stay bright and are selected, the rest fades out,
@@ -2986,7 +3143,7 @@ function createThreadPulse(root, opts, host) {
       `<td class="${QUAL(r)[1]}" style="white-space:nowrap">${r} dBm${self ? ` <span class="tnote" style="display:inline">${T.selfMeasured}</span>` : ""}</td></tr>`;
     if (listData.weak.length) h += `<h4>${T.weakHead} ${T.weakSub}</h4><table class="lk">${listData.weak.map(w => linkRow(w.a, w.b, w.r)).join("")}</table>`;
     if (weakParents.length) h += `<h4>${T.weakParentHead} ${T.weakSub}</h4><table class="lk">${weakParents.map(p => linkRow(p.childId, p.parentId, p.rssi, p.src === "device")).join("")}</table>`;
-    return (h || `<div>${T.noWeakLinks}</div>`) + muted(T.linksNote);
+    return (h || `<div>${T.noWeakLinks}</div>`) + muted(T.linksNote) + dependHtml();
   }
   // the panel below the map – rebuilt when the data changes (refresh, border router names #71, firmware every minute)
   function renderList() {
@@ -3002,7 +3159,8 @@ function createThreadPulse(root, opts, host) {
     renderTabBar(); renderChanges();
   }
   root.addEventListener("click", e => {
-    const t = e.target.closest && e.target.closest("[data-tab],[data-sort],[data-filter],[data-mark]"); if (!t || !$("info").contains(t)) return;
+    const t = e.target.closest && e.target.closest("[data-tab],[data-sort],[data-filter],[data-mark]");
+    if (!t || !($("info").contains(t) || $("panel").contains(t))) return;     // data-mark also in the router panel (#77)
     if (e.target.closest("a[data-open]")) return;              // a device name inside a marked row opens the device
     e.preventDefault();
     if (t.dataset.tab) setTab(t.dataset.tab);

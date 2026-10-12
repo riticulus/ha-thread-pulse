@@ -58,6 +58,21 @@ Battery level (from the battery entity in Home Assistant) and battery type as re
 
 These values are what the device last reported to Home Assistant and may be outdated.
 
+## If this router fails
+
+*After version 1.5.2.* In the panel of every router (not the border router) – an **estimate** of what would happen if this router went offline:
+
+- **Devices that use it as parent**, each with what it could do:
+  - *can switch to Kitchen plug (−62 dBm)* – a mains device that already has another router in reach (from its own neighbour table, −85 dBm or better)
+  - *battery device – other routers in reach are not reported* – battery devices only report their parent, so it is unknown whether another router can reach them
+  - *no other router in reach known*
+- **Cut off from the border router:** routers that only reach the border router through this router, and the devices that use them. Calculated from the links between routers; needs a known border router (OpenThread Border Router add-on).
+- *Nothing depends on it alone* when every device and router has another path.
+
+**Show affected devices on the map** marks them (like the [search](Search)); *Show all* on the map ends it.
+
+It is based on the last reported neighbour tables. Thread repairs itself: devices look for a new parent, possibly one that is not in their current table – so it says what is **at risk**, not what will certainly happen. The [network panel](The-List) lists all routers by how many devices depend on them (tab *Links*).
+
 ## Trends
 
 *After version 1.5.2.* Below the Thread section, a small chart shows the signal over the **last 7 days**:

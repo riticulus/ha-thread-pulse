@@ -27,6 +27,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - **Connected systems:** which systems (Home Assistant, Apple, Google …) can control a device
 - **Firmware:** update badge on the map, update state in the panel, and a list of updates and of devices of the same model with different firmware
 - **Border router panel:** tap the border router for the Thread network (name, channel, PAN ID, routers, leader) and the border router itself
+- **What if a router fails:** which devices would lose their parent or be cut off – per router in its panel and as a ranking of the routers the mesh depends on (an estimate from the neighbour tables)
 - **Trends:** signal and battery level of each device over the last 7 days as small charts in the detail panel – battery from Home Assistant's statistics, signal recorded by Thread Pulse while a page is open (gaps are shown)
 - **Battery forecast:** estimate when a battery will be empty, from Home Assistant's long-term statistics
 - **Matter on Wi-Fi / Ethernet:** shown as a separate group next to the mesh, with their own detail panel (Wi-Fi signal, channel)
@@ -177,7 +178,7 @@ The code lives in `src/`, one file per topic:
 | `src/core.js` | Start of `createThreadPulse()` and the state shared by all parts |
 | `src/prefs.js` | Settings remembered by the browser (keys, types, defaults) |
 | `src/helpers.js`, `data.js`, `graph.js` | Helpers and Home Assistant connection, loading the data, drawing the map |
-| `src/live.js`, `heat.js`, `rooms.js`, `panel.js`, `hints.js`, `health.js`, `report.js`, `tabs.js`, `trends.js`, `search.js`, `changes.js`, `response.js`, `sound.js`, `demo.js`, `ambient.js` | One file per feature |
+| `src/live.js`, `heat.js`, `rooms.js`, `panel.js`, `hints.js`, `health.js`, `whatif.js`, `report.js`, `tabs.js`, `trends.js`, `search.js`, `changes.js`, `response.js`, `sound.js`, `demo.js`, `ambient.js` | One file per feature |
 | `src/ui.js`, `src/start.js` | List, legend, errors, event handling; start-up |
 | `src/standalone.html`, `src/card.js` | Shells for the standalone page and the dashboard card |
 

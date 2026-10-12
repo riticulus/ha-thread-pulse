@@ -119,6 +119,7 @@
     }
     if (!isBr && disc) h += `<h4>${T.secBorderRouter}</h4><dl>` + discRows(disc) +
       (brExt ? row(T.usedByHa, esc(T.usedByHaNo)) : "") + `</dl><div class="note">${T.brOtherNote}</div>`;
+    if (!isBr) h += whatIfHtml(id);                                       // issue #77
     const links = (linksOf[id] || []).slice().sort((p, q) => q.rssi - p.rssi);
     const nb = links.filter(l => l.kind === "neighbour"), kids = links.filter(l => l.kind === "child");
     h += `<h4>${T.secThread}</h4><dl>`;
@@ -180,6 +181,7 @@
     if (kids.length) h += row(`${T.children} (${kids.length})`, kids.map(l => `${esc(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
     h += row(T.address, `<span style="font-family:monospace">${esc(n.hwAddr || n.id)}</span>`) + `</dl><div class="note">${T.stale}</div>`;
     h += signalTrendHtml(n);
+    if (n.type === "routing_end_device") h += whatIfHtml(n.id);          // issue #77
     // stability
     if ([i.reboots, i.detached, i.attach, i.parentChanges].some(x => x !== undefined && x !== null)) {
       h += `<h4>${T.secStability}</h4><dl>` + row(T.reboots, i.reboots) + row(T.bootReason, i.bootReason !== undefined && i.bootReason !== null ? esc(T.bootReasons[i.bootReason] || i.bootReason) : "") +

@@ -25,6 +25,7 @@ All source code is in `src/`, one file per topic. `build.py` assembles the files
 | `src/identify.js` | Identify button in the detail panel |
 | `src/hints.js` | Weak-spot hints |
 | `src/health.js` | Mesh health grade and its factors |
+| `src/whatif.js` | What if a router fails |
 | `src/search.js` | Search |
 | `src/changes.js` | Change log |
 | `src/response.js` | Response time |

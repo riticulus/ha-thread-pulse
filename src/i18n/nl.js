@@ -1,6 +1,22 @@
 //# Dutch texts. Defines TEXT_NL and NAMES_NL (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_NL = {
+  secWhatIf: "Als deze router uitvalt",
+  wiKids: n => `${n} apparat${n === 1 ? "uur gebruikt" : "en gebruiken"} hem als parent:`,
+  wiAlt: (name, r) => `kan overstappen naar ${name} (${r} dBm)`,
+  wiNoAlt: "geen andere router binnen bereik bekend",
+  wiBattUnknown: "apparaat op batterij – andere routers binnen bereik worden niet gemeld",
+  wiCut: n => `Afgesneden van de border router (${n}):`,
+  wiViaCut: n => `nog ${n} apparat${n === 1 ? "uur gebruikt" : "en gebruiken"} die`,
+  wiNone: "Niets hangt alleen van hem af – zijn apparaten en de andere routers hebben andere paden.",
+  wiShow: "Getroffen apparaten op de kaart tonen",
+  wiBrUnknown: "De border router is niet bekend – welke routers afgesneden zouden worden, valt niet te schatten.",
+  wiNote: "Een schatting op basis van de laatst gemelde buurtabellen. Thread herstelt zichzelf: apparaten zoeken een nieuwe parent, misschien een die niet in hun huidige tabel staat.",
+  wiHead: "Routers waarvan het mesh afhangt",
+  thRouter: "Router",
+  thDepend: "Hangen ervan af",
+  thNoAlt: "Zonder bekend alternatief",
+  wiTabNote: "Apparaten die hun parent zouden verliezen of afgesneden zouden worden als de router uitvalt – een schatting. Tik op een router om ze op de kaart te tonen.",
   trendSignal: r => r ? "Beste verbinding met een router · 7 dagen" : "Signaal naar de parent · 7 dagen",
   trendNoSignal: "Nog geen verloop – Thread Pulse legt het signaal elke 5 minuten vast zolang een pagina open is en bewaart het 7 dagen.",
   trendSignalNote: (k, n) => `Vastgelegd door Thread Pulse terwijl een pagina open was: ${k} van ${n} uur (uurgemiddelde). Gaten: geen pagina open. Gestreept: −80 dBm (zwak).`,

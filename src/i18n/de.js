@@ -1,6 +1,22 @@
 //# German texts. Defines TEXT_DE and NAMES_DE (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_DE = {
+  secWhatIf: "Wenn dieser Router ausfällt",
+  wiKids: n => `${n} Gerät${n === 1 ? " nutzt" : "e nutzen"} ihn als Parent:`,
+  wiAlt: (name, r) => `kann zu ${name} wechseln (${r} dBm)`,
+  wiNoAlt: "kein anderer Router in Reichweite bekannt",
+  wiBattUnknown: "Batteriegerät – andere Router in Reichweite werden nicht gemeldet",
+  wiCut: n => `Vom Border Router abgeschnitten (${n}):`,
+  wiViaCut: n => `${n} weitere${n === 1 ? "s Gerät nutzt" : " Geräte nutzen"} diese`,
+  wiNone: "Nichts hängt allein an ihm – seine Geräte und die anderen Router haben andere Wege.",
+  wiShow: "Betroffene Geräte auf der Karte zeigen",
+  wiBrUnknown: "Der Border Router ist nicht bekannt – welche Router abgeschnitten wären, lässt sich nicht abschätzen.",
+  wiNote: "Eine Schätzung aus den zuletzt gemeldeten Nachbartabellen. Thread repariert sich selbst: Geräte suchen einen neuen Parent, möglicherweise einen, der nicht in ihrer aktuellen Tabelle steht.",
+  wiHead: "Router, von denen das Netz abhängt",
+  thRouter: "Router",
+  thDepend: "Hängen daran",
+  thNoAlt: "Ohne bekannte Alternative",
+  wiTabNote: "Geräte, die ihren Parent verlieren oder abgeschnitten würden, wenn der Router ausfällt – eine Schätzung. Router antippen zeigt sie auf der Karte.",
   trendSignal: r => r ? "Beste Verbindung zu einem Router · 7 Tage" : "Signal zum Parent · 7 Tage",
   trendNoSignal: "Noch kein Verlauf – Thread Pulse zeichnet das Signal alle 5 Minuten auf, solange eine Seite offen ist, und behält es 7 Tage.",
   trendSignalNote: (k, n) => `Von Thread Pulse aufgezeichnet, solange eine Seite offen war: ${k} von ${n} Stunden (Stundenmittel). Lücken: keine Seite offen. Gestrichelt: −80 dBm (schwach).`,
