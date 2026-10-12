@@ -44,6 +44,8 @@ Battery level (from the battery entity in Home Assistant) and battery type as re
 - *No measurable drop* – the level has hardly changed (common for new batteries and coin cells).
 - It is an **estimate**: many batteries stay almost full for a long time and then drop quickly, and some devices report the level in coarse steps.
 
+**Trend** *(after version 1.5.2)*: a small chart of the battery level over the **last 7 days** – the hourly average from Home Assistant's statistics, so it is complete even for times when no Thread Pulse page was open. The dashed line marks 20 %. See [trends](#trends).
+
 ## Thread
 
 | Row | Meaning |
@@ -55,6 +57,21 @@ Battery level (from the battery entity in Home Assistant) and battery type as re
 | Address | Extended Thread address of the device |
 
 These values are what the device last reported to Home Assistant and may be outdated.
+
+## Trends
+
+*After version 1.5.2.* Below the Thread section, a small chart shows the signal over the **last 7 days**:
+
+- **Battery and end devices:** the signal to their parent (*Signal to the parent · 7 days*)
+- **Routers:** the best link to another router (*Best link to a router · 7 days*)
+
+Below each chart the latest value is shown. **Hover over the chart or tap it** to see the value of that hour, e.g. *Mon, 08:00 · −62 dBm · good*. The thin vertical lines mark midnight; the dashed line marks −80 dBm (weak).
+
+**Where the signal history comes from:** Home Assistant does not keep the Thread signal, so Thread Pulse records it itself – at every load and every automatic check (every 5 minutes) **while a page is open**, averaged per hour. **Gaps** in the line are hours in which no page was open; the note below the chart says how many of the 168 hours are covered. The history starts when you install this version.
+
+The history is stored **in Home Assistant, per user** (frontend user data, about 30–40 KB for 20 devices), written at most every 15 minutes – so a wall tablet that is always open fills the history for your phone too. If Home Assistant refuses to store it, it is kept in the browser. Older than 7 days is removed.
+
+The battery chart is in the [battery section](#battery).
 
 ## Stability
 

@@ -1,6 +1,10 @@
 //# German texts. Defines TEXT_DE and NAMES_DE (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_DE = {
+  trendSignal: r => r ? "Beste Verbindung zu einem Router · 7 Tage" : "Signal zum Parent · 7 Tage",
+  trendNoSignal: "Noch kein Verlauf – Thread Pulse zeichnet das Signal alle 5 Minuten auf, solange eine Seite offen ist, und behält es 7 Tage.",
+  trendSignalNote: (k, n) => `Von Thread Pulse aufgezeichnet, solange eine Seite offen war: ${k} von ${n} Stunden (Stundenmittel). Lücken: keine Seite offen. Gestrichelt: −80 dBm (schwach).`,
+  trendBattNote: "Letzte 7 Tage, Stundenmittel aus den Statistiken von Home Assistant. Gestrichelt: 20 %.",
   rLinksShort: n => `${n} Router-Verbindung${n === 1 ? "" : "en"}`,
   netBtn: "📊 Netz",
   tabNames: { overview: "Übersicht", hints: "Hinweise", devices: "Geräte", links: "Verbindungen", changes: "Änderungen" },

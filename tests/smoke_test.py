@@ -86,6 +86,16 @@ async def main_page(r, quick):
             r.check(f"device panel has section '{s}'", s in sections, str(sections))
         r.check("battery forecast row", await b.js("[...document.querySelectorAll('#panel dt')].some(d => d.textContent === 'Forecast')"))
         r.check("warning box shown (unstable demo device)", await b.js("!!document.querySelector('#panel .warn')"))
+        # trends (issue #38): battery and signal, 7 days, value on tap
+        charts = await b.js("[...document.querySelectorAll('#panel svg[data-trend]')].map(x => x.dataset.trend.split(':')[0])")
+        r.check("trends: battery and signal chart in the panel", sorted(charts) == ["b", "s"], str(charts))
+        reads = await b.js("[...document.querySelectorAll('#panel .tread')].map(x => x.textContent)")
+        r.check("trends: latest value shown under each chart", len(reads) == 2 and "%" in reads[0] and "dBm" in reads[1], str(reads))
+        r.check("trends: note says how many hours are covered", "of 168 hours" in await b.js(f"{G}('panel').textContent"))
+        before = reads[1]
+        await b.js("(() => { const s = document.querySelector('#panel svg[data-trend^=s]'); const r = s.getBoundingClientRect(); s.dispatchEvent(new PointerEvent('pointerdown', {bubbles: true, clientX: r.left + r.width * 0.3, clientY: r.top + 10})); })()")
+        after = await b.js("document.querySelectorAll('#panel .tread')[1].textContent")
+        r.check("trends: tapping the chart shows that hour", after != before and "dBm" in after, f"{before} → {after}")
         await b.js(CLOSE); await asyncio.sleep(0.3)
         r.check("Esc / × close panel and clear search", await b.js(f"{G}('panel').hidden && {G}('search').value === ''"))
 

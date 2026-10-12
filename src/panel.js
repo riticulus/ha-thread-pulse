@@ -168,7 +168,8 @@
     if (battOf[n.id] !== undefined || i.batType) {
       const b = battOf[n.id];
       h += `<h4>${T.secBattery}</h4><dl>` + row(T.level, b !== undefined ? `<span class="${b < 20 ? "r" : b < 40 ? "o" : "g"}">${b} %</span>` : "") + row(T.type, esc(i.batType)) +
-           row(T.bfLabel, forecastText(battForecast[n.id])) + `</dl>` + (battForecast[n.id] && battForecast[n.id].state === "ok" ? `<div class="note">${T.bfNote}</div>` : "");
+           row(T.bfLabel, forecastText(battForecast[n.id])) + `</dl>` + (battForecast[n.id] && battForecast[n.id].state === "ok" ? `<div class="note">${T.bfNote}</div>` : "") +
+           batteryTrendHtml(n);
     }
     // thread
     const links = (linksOf[n.id] || []).slice().sort((p, q) => q.rssi - p.rssi);
@@ -178,6 +179,7 @@
     if (nb.length) h += row(`${T.neighbours} (${nb.length})`, nb.map(l => `${esc(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
     if (kids.length) h += row(`${T.children} (${kids.length})`, kids.map(l => `${esc(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
     h += row(T.address, `<span style="font-family:monospace">${esc(n.hwAddr || n.id)}</span>`) + `</dl><div class="note">${T.stale}</div>`;
+    h += signalTrendHtml(n);
     // stability
     if ([i.reboots, i.detached, i.attach, i.parentChanges].some(x => x !== undefined && x !== null)) {
       h += `<h4>${T.secStability}</h4><dl>` + row(T.reboots, i.reboots) + row(T.bootReason, i.bootReason !== undefined && i.bootReason !== null ? esc(T.bootReasons[i.bootReason] || i.bootReason) : "") +
