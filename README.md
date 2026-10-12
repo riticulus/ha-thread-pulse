@@ -35,6 +35,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - **Matter on Wi-Fi / Ethernet:** shown as a separate group next to the mesh, with their own detail panel (Wi-Fi signal, channel)
 - **Badges on the map:** battery level on battery devices, ⚠ on devices that look unstable or have a low battery
 - **Traffic heat:** links glow the more messages travelled over them in the last 10 minutes, so the busy routes of the mesh stand out (estimate based on the computed paths); routers show how many messages they forwarded for others
+- **Chattiest devices:** the ten devices with the most messages in the last hour (from Home Assistant's history and live), a messages-per-hour column, and a hint for battery devices that report unusually often
 - **Weak-spot hints:** rules of thumb for weak parent signals, unstable connections, routers that probably lose power regularly and routers at the edge of the mesh – suggestions, not measurements
 - **Change log:** checks the network every 5 minutes and lists what changed (new parent, device offline / back, role, links), the device flashes on the map
 - **Room view:** arrange the devices by Home Assistant area, with a coloured area per room – shows at a glance which links cross rooms
@@ -183,7 +184,7 @@ The code lives in `src/`, one file per topic:
 | `src/core.js` | Start of `createThreadPulse()` and the state shared by all parts |
 | `src/prefs.js` | Settings remembered by the browser (keys, types, defaults) |
 | `src/helpers.js`, `data.js`, `graph.js` | Helpers and Home Assistant connection, loading the data, drawing the map |
-| `src/live.js`, `heat.js`, `rooms.js`, `panel.js`, `hints.js`, `health.js`, `whatif.js`, `report.js`, `tabs.js`, `trends.js`, `search.js`, `changes.js`, `response.js`, `sound.js`, `demo.js`, `ambient.js` | One file per feature |
+| `src/live.js`, `heat.js`, `chatty.js`, `rooms.js`, `panel.js`, `hints.js`, `health.js`, `whatif.js`, `report.js`, `tabs.js`, `trends.js`, `search.js`, `changes.js`, `response.js`, `sound.js`, `demo.js`, `ambient.js` | One file per feature |
 | `src/ui.js`, `src/start.js` | List, legend, errors, event handling; start-up |
 | `src/standalone.html`, `src/card.js` | Shells for the standalone page and the dashboard card |
 

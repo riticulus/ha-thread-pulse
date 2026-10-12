@@ -68,12 +68,13 @@
       const best = rl.length ? Math.max(...rl.map(l => l.rssi)) : null;
       return { id: n.id, type: n.type, available: n.available, role: (T.types[n.type] || n.type), filter: n.type === "routing_end_device" ? "routers" : n.type === "end_device" ? "mains" : "battery",
                conn: p ? devLink(p.parentId) : n.type !== "sleepy_end_device" && rl.length ? esc(T.rLinksShort(rl.length)) : "–",   // the best one is in the signal column
-               connSort: p ? nameOf(p.parentId) : "", rssi: p ? p.rssi : n.type !== "sleepy_end_device" ? best : null, self: p && p.src === "device", sw: (n.info || {}).sw || "" };
+               connSort: p ? nameOf(p.parentId) : "", rssi: p ? p.rssi : n.type !== "sleepy_end_device" ? best : null, self: p && p.src === "device", sw: (n.info || {}).sw || "",
+               msgs: (m => m.up + m.down)(msgsLastHour(n.id)) };
     });
     for (const w of Object.values(wifiById)) rows.push({ id: w.id, type: "wifi", available: w.available, role: w.kind === "ethernet" ? T.roleEth : T.roleWifi, filter: "wifi",
-      conn: "–", connSort: "", rssi: null, self: false, sw: (w.info || {}).sw || "" });
+      conn: "–", connSort: "", rssi: null, self: false, sw: (w.info || {}).sw || "", msgs: (m => m.up + m.down)(msgsLastHour(w.id)) });
     const k = devSort.key, d = devSort.dir;
-    const val = r => k === "name" ? nameOf(r.id) : k === "conn" ? r.connSort : k === "rssi" ? (r.rssi === null ? -999 : r.rssi) : k === "fw" ? r.sw : order[r.type];
+    const val = r => k === "name" ? nameOf(r.id) : k === "conn" ? r.connSort : k === "rssi" ? (r.rssi === null ? -999 : r.rssi) : k === "fw" ? r.sw : k === "msgs" ? r.msgs : order[r.type];
     return rows.sort((a, b) => { const x = val(a), y = val(b);
       return (typeof x === "number" ? x - y : String(x).localeCompare(String(y), lang, { numeric: true })) * d || nameOf(a.id).localeCompare(nameOf(b.id), lang); });
   }
@@ -83,15 +84,16 @@
     const shown = rows.filter(r => devFilter === "all" || r.filter === devFilter);
     const th = (key, label) => `<th><a href="#" data-sort="${key}">${label}${devSort.key === key ? (devSort.dir > 0 ? " ▲" : " ▼") : ""}</a></th>`;
     let h = `<div class="chips">${kinds.map(f => `<button data-filter="${f}"${f === devFilter ? ' class="on"' : ""}>${T.devFilters[f]} <span>${f === "all" ? rows.length : rows.filter(r => r.filter === f).length}</span></button>`).join("")}</div>`;
-    h += `<div class="tscroll"><table class="devs"><tr>${th("name", T.thDevice)}${th("role", T.rRole)}${th("conn", T.rConnection)}${th("rssi", T.thSignal)}${th("fw", T.firmware)}</tr>` +
+    h += `<div class="tscroll"><table class="devs"><tr>${th("name", T.thDevice)}${th("role", T.rRole)}${th("conn", T.rConnection)}${th("rssi", T.thSignal)}${th("msgs", T.thMsgs)}${th("fw", T.firmware)}</tr>` +
       shown.map(r => {
         const u = fwOf[r.id], q = r.rssi !== null ? QUAL(r.rssi) : null;
         return `<tr><td>${devLink(r.id)}</td><td>${esc(r.role)}${r.available ? "" : ` <span class="r">${esc(T.unreachable.replace(/^\s*[–-]\s*/, ""))}</span>`}</td><td>${r.conn}</td>` +
           `<td${q ? ` class="${q[1]}"` : ""} style="white-space:nowrap">${r.rssi !== null ? `${r.rssi} dBm` : "–"}${r.self ? ` <span class="tnote" style="display:inline">*</span>` : ""}</td>` +
+          `<td style="text-align:right">${r.msgs || "–"}</td>` +
           `<td style="white-space:nowrap">${esc(r.sw || "–")}${u && (u.available || u.progress !== null) ? ` <span class="o">→ ${esc(u.latest)}</span>` : ""}</td></tr>`;
       }).join("") + `</table></div>`;
     if (rows.some(r => r.self)) h += muted("* " + T.selfMeasured.replace(/^\(|\)$/g, ""));
-    return h + firmwareListHtml();
+    return h + chattyHtml() + firmwareListHtml();
   }
   function linksHtml() {
     const weakParents = listData.parents.filter(p => p.rssi < -80 && nodeById[p.childId]);

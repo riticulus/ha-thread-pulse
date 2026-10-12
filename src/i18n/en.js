@@ -1,6 +1,12 @@
 //# English texts. Defines TEXT_EN; build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_EN = {
+  chatHead: "Most messages in the last hour",
+  chatNone: "No messages counted yet.",
+  thMsgs: "Msgs/h",
+  chatNoteHist: m => `↑ reports to Home Assistant (from its history, then live) · ↓ commands from Home Assistant (only since this page was opened, ${m} min ago). Plugs that measure power report every few seconds – that is normal.`,
+  chatNoteLive: m => `Counted since this page was opened (${m} min ago). ↑ reports to Home Assistant · ↓ commands from Home Assistant.`,
+  hChatty: n => `Reports very often: about ${n} messages an hour (battery devices normally send a few to about 20). That drains the battery and loads the mesh – check its report interval or sensitivity in its app.`,
   respViewOn: "⏱ Response times on the map", respViewOff: "⏱ Hide response times", lgRespFast: "Response < 0.5 s", lgRespMid: "0.5–1 s", lgRespSlow: "≥ 1 s (slow)",
   secWhatIf: "If this router fails",
   wiKids: n => `${n} device${n === 1 ? " uses" : "s use"} it as parent:`,

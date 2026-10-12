@@ -28,9 +28,14 @@ One table with every device:
 | Signal | Signal to the parent; for routers the best link to another router. Colours as on the map; **\*** = measured only by the device itself, unreliable |
 | Firmware | Installed version; **→ 1.4.0** in orange when an update is available or being installed |
 
+| Msgs/h | Messages of the device in the last hour (reports and commands) *(after version 1.6.0)* |
+
 - **Sort:** tap a column header (tap again to reverse).
 - **Filter:** *All*, *Routers*, *Mains*, *Battery*, *Wi-Fi* – with the number of devices.
-- Below the table: the **firmware** overview – devices with an update (available, skipped or being installed) and models whose devices run **different firmware versions**, e.g. *MYGGBETT door/window sensor: 1.0.9 (4) · 1.1.4 (Front door)*.
+- Below the table: **Most messages in the last hour** *(after version 1.6.0)* – the ten devices that sent or received the most messages, with a bar and the split **↑** reports to Home Assistant / **↓** commands from Home Assistant. Tap a name to open the device.
+  - Reports of the hour before the page was opened come from Home Assistant's **history** (each state change counts; changes of several entities within 0.4 s count as one radio message, like the live counter). Commands are not in the history – they only count since the page was opened.
+  - **Plugs that measure power report every few seconds** – several hundred to a thousand messages an hour are normal for them. Battery devices normally send a few to about 20 an hour.
+- Below that: the **firmware** overview – devices with an update (available, skipped or being installed) and models whose devices run **different firmware versions**, e.g. *MYGGBETT door/window sensor: 1.0.9 (4) · 1.1.4 (Front door)*.
 
 ## Links
 

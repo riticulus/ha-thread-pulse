@@ -69,6 +69,12 @@ async def main_page(r, quick):
         sig = await b.js("[...document.querySelectorAll('#tab-devices table.devs tr td:nth-child(4)')].map(td => parseInt(td.textContent)).filter(x => !isNaN(x))")
         r.check("devices tab: sort by signal", sig == sorted(sig) and len(sig) >= 10, str(sig[:6]))
         r.check("devices tab: firmware overview below the table", "Same model, different firmware" in await b.js(f"{G}('tab-devices').textContent"))
+        await b.js("document.querySelector('[data-tab=overview]').click(); document.querySelector('[data-tab=devices]').click()")   # re-render with current counts
+        chat = await b.js("[...document.querySelectorAll('#tab-devices table.chat tr')].map(r => r.innerText)")
+        r.check("devices tab: chattiest devices (#80) with up/down split", len(chat) >= 3 and all("↑" in x and "↓" in x for x in chat), str(chat[:2]))
+        await b.js("document.querySelector('[data-sort=msgs]').click(); document.querySelector('[data-sort=msgs]').click()")
+        m = await b.js("[...document.querySelectorAll('#tab-devices table.devs tr td:nth-child(5)')].map(td => parseInt(td.textContent) || 0)")
+        r.check("devices tab: sort by messages per hour", m == sorted(m, reverse=True) and m[0] > 0, str(m[:6]))
         await b.js("document.querySelector('[data-tab=links]').click()")
         await b.js("document.querySelector('#tab-links tr.mark').click()"); await asyncio.sleep(0.6)
         r.check("links tab: tapping a link marks both devices on the map", await b.js(f"!{G}('markchip').hidden && {G}('markchip').textContent.startsWith('2 marked')"))
@@ -171,7 +177,8 @@ async def main_page(r, quick):
         leaked = [t for t in shown if t in DEMO_NAMES or t.upper() in DEMO_ROOMS]
         r.check("anonymised report has a row per device and no device or room names", len(rows) == 14 and not leaked, str(leaked or len(rows)))
         r.check("report contains no addresses or network identifiers", not re.search(r"[0-9a-f]{12}|dead00beef|MyHome|PAN", anon, re.I))
-        r.check("report lists hints and weak links", "Restarted 140 times" in anon and "Weak links between routers" in anon)
+        weak = await b.js("(document.getElementById('tab-links') || {}).textContent || ''")      # the demo draws random signals: weak links are not always there
+        r.check("report lists hints and weak links", "Restarted 140 times" in anon and (("Weak links between routers" in anon) == ("Weak links between routers" in weak)))
         r.check("report contains the mesh health with its factors", bool(re.search(r"\*\*Mesh health: [A-E]\*\*", anon)) and "· Stability:" in anon)
         await b.js(f"{G}('reportanon').click()")
         named = await b.js(f"{G}('reporttext').value")

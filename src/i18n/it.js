@@ -1,6 +1,12 @@
 //# Italian texts. Defines TEXT_IT and NAMES_IT (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_IT = {
+  chatHead: "Più messaggi nell'ultima ora",
+  chatNone: "Ancora nessun messaggio contato.",
+  thMsgs: "Msg/h",
+  chatNoteHist: m => `↑ segnalazioni a Home Assistant (dalla sua cronologia, poi in diretta) · ↓ comandi da Home Assistant (solo da quando la pagina è aperta, ${m} min fa). Le prese con misura di potenza segnalano ogni pochi secondi – è normale.`,
+  chatNoteLive: m => `Contati da quando la pagina è aperta (${m} min fa). ↑ segnalazioni a Home Assistant · ↓ comandi da Home Assistant.`,
+  hChatty: n => `Segnala molto spesso: circa ${n} messaggi all'ora (i dispositivi a batteria ne inviano di solito da pochi a circa 20). Scarica la batteria e carica la rete – controlla l'intervallo di segnalazione o la sensibilità nella sua app.`,
   respViewOn: "⏱ Tempi di risposta sulla mappa", respViewOff: "⏱ Nascondi i tempi di risposta", lgRespFast: "Risposta < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (lento)",
   secWhatIf: "Se questo router si guasta",
   wiKids: n => `${n} dispositiv${n === 1 ? "o lo usa" : "i lo usano"} come parent:`,

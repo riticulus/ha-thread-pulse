@@ -1,6 +1,12 @@
 //# German texts. Defines TEXT_DE and NAMES_DE (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_DE = {
+  chatHead: "Meiste Nachrichten in der letzten Stunde",
+  chatNone: "Noch keine Nachrichten gezählt.",
+  thMsgs: "Nachr./h",
+  chatNoteHist: m => `↑ Meldungen an Home Assistant (aus dessen Verlauf, danach live) · ↓ Befehle von Home Assistant (nur seit Seitenaufruf vor ${m} Min.). Steckdosen mit Strommessung melden alle paar Sekunden – das ist normal.`,
+  chatNoteLive: m => `Gezählt seit Seitenaufruf (vor ${m} Min.). ↑ Meldungen an Home Assistant · ↓ Befehle von Home Assistant.`,
+  hChatty: n => `Meldet sehr oft: etwa ${n} Nachrichten pro Stunde (Batteriegeräte senden normalerweise einige bis etwa 20). Das leert die Batterie und belastet das Netz – Meldeintervall oder Empfindlichkeit in seiner App prüfen.`,
   respViewOn: "⏱ Antwortzeiten auf der Karte", respViewOff: "⏱ Antwortzeiten ausblenden", lgRespFast: "Antwort < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (langsam)",
   secWhatIf: "Wenn dieser Router ausfällt",
   wiKids: n => `${n} Gerät${n === 1 ? " nutzt" : "e nutzen"} ihn als Parent:`,

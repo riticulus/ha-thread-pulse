@@ -1,6 +1,12 @@
 //# French texts. Defines TEXT_FR and NAMES_FR (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_FR = {
+  chatHead: "Le plus de messages dans la dernière heure",
+  chatNone: "Aucun message compté pour l'instant.",
+  thMsgs: "Msg/h",
+  chatNoteHist: m => `↑ rapports vers Home Assistant (depuis son historique, puis en direct) · ↓ commandes de Home Assistant (seulement depuis l'ouverture de la page, il y a ${m} min). Les prises qui mesurent la puissance envoient un rapport toutes les quelques secondes – c'est normal.`,
+  chatNoteLive: m => `Comptés depuis l'ouverture de la page (il y a ${m} min). ↑ rapports vers Home Assistant · ↓ commandes de Home Assistant.`,
+  hChatty: n => `Envoie très souvent : environ ${n} messages par heure (un appareil sur pile en envoie normalement quelques-uns à environ 20). Cela vide la pile et charge le maillage – vérifiez l'intervalle de rapport ou la sensibilité dans son app.`,
   respViewOn: "⏱ Temps de réponse sur la carte", respViewOff: "⏱ Masquer les temps de réponse", lgRespFast: "Réponse < 0,5 s", lgRespMid: "0,5–1 s", lgRespSlow: "≥ 1 s (lent)",
   secWhatIf: "Si ce routeur tombe en panne",
   wiKids: n => `${n} appareil${n === 1 ? " l'utilise" : "s l'utilisent"} comme parent :`,
