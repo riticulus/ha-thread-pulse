@@ -1,6 +1,22 @@
 //# French texts. Defines TEXT_FR and NAMES_FR (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_FR = {
+  secWhatIf: "Si ce routeur tombe en panne",
+  wiKids: n => `${n} appareil${n === 1 ? " l'utilise" : "s l'utilisent"} comme parent :`,
+  wiAlt: (name, r) => `peut passer à ${name} (${r} dBm)`,
+  wiNoAlt: "aucun autre routeur à portée connu",
+  wiBattUnknown: "appareil sur pile – les autres routeurs à portée ne sont pas signalés",
+  wiCut: n => `Coupés du border router (${n}) :`,
+  wiViaCut: n => `${n} autre${n === 1 ? " appareil les utilise" : "s appareils les utilisent"}`,
+  wiNone: "Rien ne dépend de lui seul – ses appareils et les autres routeurs ont d'autres chemins.",
+  wiShow: "Montrer les appareils concernés sur la carte",
+  wiBrUnknown: "Le border router n'est pas connu – impossible d'estimer quels routeurs seraient coupés.",
+  wiNote: "Une estimation à partir des dernières tables de voisins signalées. Thread se répare lui-même : les appareils cherchent un nouveau parent, peut-être un qui n'est pas dans leur table actuelle.",
+  wiHead: "Routeurs dont le maillage dépend",
+  thRouter: "Routeur",
+  thDepend: "En dépendent",
+  thNoAlt: "Sans alternative connue",
+  wiTabNote: "Appareils qui perdraient leur parent ou seraient coupés si le routeur tombait en panne – une estimation. Touchez un routeur pour les montrer sur la carte.",
   trendSignal: r => r ? "Meilleure liaison vers un routeur · 7 jours" : "Signal vers le parent · 7 jours",
   trendNoSignal: "Pas encore d'historique – Thread Pulse enregistre le signal toutes les 5 minutes tant qu'une page est ouverte et le garde 7 jours.",
   trendSignalNote: (k, n) => `Enregistré par Thread Pulse pendant qu'une page était ouverte : ${k} heures sur ${n} (moyenne horaire). Trous : aucune page ouverte. Pointillés : −80 dBm (faible).`,

@@ -100,7 +100,7 @@
       `<td class="${QUAL(r)[1]}" style="white-space:nowrap">${r} dBm${self ? ` <span class="tnote" style="display:inline">${T.selfMeasured}</span>` : ""}</td></tr>`;
     if (listData.weak.length) h += `<h4>${T.weakHead} ${T.weakSub}</h4><table class="lk">${listData.weak.map(w => linkRow(w.a, w.b, w.r)).join("")}</table>`;
     if (weakParents.length) h += `<h4>${T.weakParentHead} ${T.weakSub}</h4><table class="lk">${weakParents.map(p => linkRow(p.childId, p.parentId, p.rssi, p.src === "device")).join("")}</table>`;
-    return (h || `<div>${T.noWeakLinks}</div>`) + muted(T.linksNote);
+    return (h || `<div>${T.noWeakLinks}</div>`) + muted(T.linksNote) + dependHtml();
   }
   // the panel below the map – rebuilt when the data changes (refresh, border router names #71, firmware every minute)
   function renderList() {
@@ -116,7 +116,8 @@
     renderTabBar(); renderChanges();
   }
   root.addEventListener("click", e => {
-    const t = e.target.closest && e.target.closest("[data-tab],[data-sort],[data-filter],[data-mark]"); if (!t || !$("info").contains(t)) return;
+    const t = e.target.closest && e.target.closest("[data-tab],[data-sort],[data-filter],[data-mark]");
+    if (!t || !($("info").contains(t) || $("panel").contains(t))) return;     // data-mark also in the router panel (#77)
     if (e.target.closest("a[data-open]")) return;              // a device name inside a marked row opens the device
     e.preventDefault();
     if (t.dataset.tab) setTab(t.dataset.tab);

@@ -1,6 +1,22 @@
 //# English texts. Defines TEXT_EN; build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_EN = {
+  secWhatIf: "If this router fails",
+  wiKids: n => `${n} device${n === 1 ? " uses" : "s use"} it as parent:`,
+  wiAlt: (name, r) => `can switch to ${name} (${r} dBm)`,
+  wiNoAlt: "no other router in reach known",
+  wiBattUnknown: "battery device – other routers in reach are not reported",
+  wiCut: n => `Cut off from the border router (${n}):`,
+  wiViaCut: n => `${n} more device${n === 1 ? "" : "s"} use${n === 1 ? "s" : ""} those`,
+  wiNone: "Nothing depends on it alone – its devices and the other routers have other paths.",
+  wiShow: "Show affected devices on the map",
+  wiBrUnknown: "The border router is not known – which routers would be cut off cannot be estimated.",
+  wiNote: "An estimate from the last reported neighbour tables. Thread repairs itself: devices look for a new parent, possibly one that is not in their current table.",
+  wiHead: "Routers the mesh depends on",
+  thRouter: "Router",
+  thDepend: "Depend on it",
+  thNoAlt: "No known alternative",
+  wiTabNote: "Devices that would lose their parent or be cut off if the router failed – an estimate. Tap a router to show them on the map.",
   trendSignal: r => r ? "Best link to a router · 7 days" : "Signal to the parent · 7 days",
   trendNoSignal: "No history yet – Thread Pulse records the signal every 5 minutes while a page is open and keeps it for 7 days.",
   trendSignalNote: (k, n) => `Recorded by Thread Pulse while a page was open: ${k} of ${n} hours (hourly average). Gaps: no page open. Dashed: −80 dBm (weak).`,

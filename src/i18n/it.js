@@ -1,6 +1,22 @@
 //# Italian texts. Defines TEXT_IT and NAMES_IT (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_IT = {
+  secWhatIf: "Se questo router si guasta",
+  wiKids: n => `${n} dispositiv${n === 1 ? "o lo usa" : "i lo usano"} come parent:`,
+  wiAlt: (name, r) => `può passare a ${name} (${r} dBm)`,
+  wiNoAlt: "nessun altro router a portata noto",
+  wiBattUnknown: "dispositivo a batteria – gli altri router a portata non vengono segnalati",
+  wiCut: n => `Tagliati fuori dal border router (${n}):`,
+  wiViaCut: n => `altr${n === 1 ? "o dispositivo li usa" : "i " + n + " dispositivi li usano"}`,
+  wiNone: "Niente dipende solo da lui – i suoi dispositivi e gli altri router hanno altri percorsi.",
+  wiShow: "Mostra i dispositivi interessati sulla mappa",
+  wiBrUnknown: "Il border router non è noto – non si può stimare quali router verrebbero tagliati fuori.",
+  wiNote: "Una stima dalle ultime tabelle dei vicini segnalate. Thread si ripara da solo: i dispositivi cercano un nuovo parent, forse uno che non è nella loro tabella attuale.",
+  wiHead: "Router da cui dipende la rete",
+  thRouter: "Router",
+  thDepend: "Dipendono da lui",
+  thNoAlt: "Senza alternativa nota",
+  wiTabNote: "Dispositivi che perderebbero il parent o verrebbero tagliati fuori se il router si guastasse – una stima. Tocca un router per mostrarli sulla mappa.",
   trendSignal: r => r ? "Miglior collegamento con un router · 7 giorni" : "Segnale verso il parent · 7 giorni",
   trendNoSignal: "Ancora nessuno storico – Thread Pulse registra il segnale ogni 5 minuti finché una pagina è aperta e lo conserva per 7 giorni.",
   trendSignalNote: (k, n) => `Registrato da Thread Pulse mentre una pagina era aperta: ${k} ore su ${n} (media oraria). Vuoti: nessuna pagina aperta. Tratteggio: −80 dBm (debole).`,

@@ -37,6 +37,8 @@ One table with every device:
 - **Weak links between routers** (below −80 dBm), weakest first
 - **Weak signal to the parent** (below −80 dBm)
 
+**Routers the mesh depends on** *(after version 1.5.2)*: every router with the number of devices that would lose their parent or be cut off if it failed, and how many of them have **no known alternative** – most important first. Tap a router to show the affected devices. Details: [If this router fails](Detail-Panel#if-this-router-fails).
+
 **Tap a link** to show both devices on the map: all other devices fade out, as with the [search](Search). A small note on the map (*2 marked · Show all*) ends it; so does **Esc** or a new search. *No weak links* when all links are −80 dBm or better.
 
 ## Changes

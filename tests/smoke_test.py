@@ -74,7 +74,16 @@ async def main_page(r, quick):
         r.check("links tab: tapping a link marks both devices on the map", await b.js(f"!{G}('markchip').hidden && {G}('markchip').textContent.startsWith('2 marked')"))
         await b.js("document.querySelector('#markchip [data-act=unmark]').click()"); await asyncio.sleep(0.3)
         r.check("'Show all' ends the marking", await b.js(f"{G}('markchip').hidden"))
+        dep = await b.js("[...document.querySelectorAll('#tab-links table.lk')].pop().rows.length - 1")
+        r.check("links tab: routers the mesh depends on (#77)", dep >= 3, f"{dep} routers")
         await b.js("document.querySelector('[data-tab=overview]').click()")
+        # what if a router fails (issue #77)
+        await b.js(search_js("Hallway light")); await asyncio.sleep(1.5)
+        wi = await b.js(f"{G}('panel').textContent")
+        r.check("router panel: what if it fails – devices using it as parent", "If this router fails" in wi and "use it as parent" in wi and "can switch to Office plug" in wi and "not reported" in wi, wi[wi.find("If this"):][:160])
+        await b.js("document.querySelector('#panel [data-mark]').click()"); await asyncio.sleep(0.6)
+        r.check("router panel: affected devices marked on the map", await b.js(f"{G}('markchip').textContent.startsWith('3 marked')"))
+        await b.js("document.querySelector('#markchip [data-act=unmark]').click()"); await b.js(CLOSE); await asyncio.sleep(0.3)
 
         # search + panel
         await b.js(search_js("plug", enter=False)); await asyncio.sleep(0.6)
