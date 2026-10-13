@@ -1,6 +1,18 @@
 //# French texts. Defines TEXT_FR and NAMES_FR (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_FR = {
+  hPowerCutRecent: (n, days, kids) => `Redémarré ${n} fois ces ${days} derniers jours – il perd probablement son alimentation de temps en temps (p. ex. ampoule sur un interrupteur mural ou prise débranchée). Éteint, il ne peut pas transmettre de messages${kids.length ? ` ; ${kids.join(", ")} ${kids.length === 1 ? "doit" : "doivent"} alors trouver un nouveau parent` : ""}. Conseil : le laisser alimenté et le commander via Home Assistant.`,
+  warnAttachRecent: (n, days) => `${n} tentatives de connexion ces ${days} derniers jours – connexion instable`,
+  warnDetachedRecent: (n, days) => `A quitté le réseau ${n} fois ces ${days} derniers jours`,
+  trendUnknown: "(total jusqu'ici – la tendance est connue après un jour)",
+  hintDone: "Terminé",
+  hintShowAgain: "Afficher à nouveau",
+  dismissedHead: n => `Marqués comme terminés (${n})`,
+  dismissKinds: { power: "Le routeur perd son alimentation", unstable: "Connexion instable" },
+  dismissedNote: "Un conseil marqué comme terminé revient de lui-même si le compteur augmente à nouveau.",
+  stabWindow: days => `${days} derniers jours`,
+  stabWindowVal: (r, a, d) => `+${r} redémarrages · +${a} tentatives de connexion · +${d} pertes du réseau`,
+  stabNote: days => `Les conseils sur les redémarrages et les connexions instables ne comptent que ce qui s'est passé ces ${days} derniers jours.`,
   chatHead: "Le plus de messages dans la dernière heure",
   chatNone: "Aucun message compté pour l'instant.",
   thMsgs: "Msg/h",

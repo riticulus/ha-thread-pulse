@@ -1,6 +1,18 @@
 //# Dutch texts. Defines TEXT_NL and NAMES_NL (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_NL = {
+  hPowerCutRecent: (n, days, kids) => `${n}× herstart in de afgelopen ${days} dagen – verliest waarschijnlijk af en toe stroom (bijv. lamp op een wandschakelaar of stekker eruit). Zolang hij uit is, kan hij geen berichten doorsturen${kids.length ? `; ${kids.join(", ")} ${kids.length === 1 ? "moet" : "moeten"} dan een nieuwe parent zoeken` : ""}. Tip: laat hem aan de stroom en schakel hem via Home Assistant.`,
+  warnAttachRecent: (n, days) => `${n} verbindingspogingen in de afgelopen ${days} dagen – verbinding instabiel`,
+  warnDetachedRecent: (n, days) => `${n}× uit het netwerk gevallen in de afgelopen ${days} dagen`,
+  trendUnknown: "(totaal tot nu toe – het verloop is na een dag bekend)",
+  hintDone: "Gedaan",
+  hintShowAgain: "Weer tonen",
+  dismissedHead: n => `Als gedaan gemarkeerd (${n})`,
+  dismissKinds: { power: "Router verliest stroom", unstable: "Instabiele verbinding" },
+  dismissedNote: "Een als gedaan gemarkeerde tip komt vanzelf terug als de teller weer stijgt.",
+  stabWindow: days => `Afgelopen ${days} dagen`,
+  stabWindowVal: (r, a, d) => `+${r} herstarts · +${a} verbindingspogingen · +${d}× uit het netwerk`,
+  stabNote: days => `Tips over herstarts en instabiele verbindingen tellen alleen wat er in de afgelopen ${days} dagen gebeurde.`,
   chatHead: "Meeste berichten in het afgelopen uur",
   chatNone: "Nog geen berichten geteld.",
   thMsgs: "Ber./u",

@@ -97,6 +97,7 @@ HACS shows updates like for any other card. HACS installs from the latest *relea
 | `show_wifi` | `true` | Show Matter devices on Wi-Fi / Ethernet as a separate group |
 | `ambient` | `false` | Ambient mode for wall tablets: only the mesh, dark, slow automatic zoom |
 | `ambient_motion` | `true` | In ambient mode: slow automatic zoom on (`true`) or off (`false`) |
+| `hint_window_days` | `7` | Time window in days (1–30) for warnings and hints about restarts and unstable connections |
 | `demo` | `false` | Show invented devices instead of your network |
 
 ```yaml
@@ -184,7 +185,7 @@ The code lives in `src/`, one file per topic:
 | `src/core.js` | Start of `createThreadPulse()` and the state shared by all parts |
 | `src/prefs.js` | Settings remembered by the browser (keys, types, defaults) |
 | `src/helpers.js`, `data.js`, `graph.js` | Helpers and Home Assistant connection, loading the data, drawing the map |
-| `src/live.js`, `heat.js`, `chatty.js`, `rooms.js`, `panel.js`, `hints.js`, `health.js`, `whatif.js`, `report.js`, `tabs.js`, `trends.js`, `search.js`, `changes.js`, `response.js`, `sound.js`, `demo.js`, `ambient.js` | One file per feature |
+| `src/live.js`, `heat.js`, `chatty.js`, `rooms.js`, `panel.js`, `hints.js`, `stability.js`, `health.js`, `whatif.js`, `report.js`, `tabs.js`, `trends.js`, `search.js`, `changes.js`, `response.js`, `sound.js`, `demo.js`, `ambient.js` | One file per feature |
 | `src/ui.js`, `src/start.js` | List, legend, errors, event handling; start-up |
 | `src/standalone.html`, `src/card.js` | Shells for the standalone page and the dashboard card |
 

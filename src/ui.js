@@ -49,6 +49,8 @@
   root.addEventListener("pointerdown", e => { if (!e.target.closest || !e.target.closest("#morebox")) setMoreMenu(false); });
 
   root.addEventListener("click", e => {
+    const d = e.target.closest && e.target.closest("[data-dismiss],[data-undismiss]");
+    if (d) { e.preventDefault(); const [id, k] = (d.dataset.dismiss || d.dataset.undismiss).split("|"); setDismissed(id, k, !!d.dataset.dismiss); return; }   // #24
     const t = e.target.closest && e.target.closest("[data-open],[data-act],[data-device],[data-identify]"); if (!t) return;
     e.preventDefault();
     if (t.dataset.open) openPanel(t.dataset.open);

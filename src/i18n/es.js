@@ -1,6 +1,18 @@
 //# Spanish texts. Defines TEXT_ES and NAMES_ES (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_ES = {
+  hPowerCutRecent: (n, days, kids) => `Reiniciado ${n} veces en los últimos ${days} días – probablemente se queda sin corriente de vez en cuando (p. ej. bombilla en un interruptor de pared o enchufe desconectado). Apagado no puede reenviar mensajes${kids.length ? `; ${kids.join(", ")} ${kids.length === 1 ? "tiene" : "tienen"} entonces que buscar un nuevo parent` : ""}. Consejo: dejarlo con corriente y controlarlo desde Home Assistant.`,
+  warnAttachRecent: (n, days) => `${n} intentos de conexión en los últimos ${days} días – conexión inestable`,
+  warnDetachedRecent: (n, days) => `Salió de la red ${n} veces en los últimos ${days} días`,
+  trendUnknown: "(total hasta ahora – la tendencia se conoce tras un día)",
+  hintDone: "Hecho",
+  hintShowAgain: "Mostrar de nuevo",
+  dismissedHead: n => `Marcados como hechos (${n})`,
+  dismissKinds: { power: "El router se queda sin corriente", unstable: "Conexión inestable" },
+  dismissedNote: "Un consejo marcado como hecho vuelve solo cuando el contador sube de nuevo.",
+  stabWindow: days => `Últimos ${days} días`,
+  stabWindowVal: (r, a, d) => `+${r} reinicios · +${a} intentos de conexión · +${d} salidas de la red`,
+  stabNote: days => `Los consejos sobre reinicios y conexiones inestables solo cuentan lo ocurrido en los últimos ${days} días.`,
   chatHead: "Más mensajes en la última hora",
   chatNone: "Aún no se han contado mensajes.",
   thMsgs: "Msj/h",

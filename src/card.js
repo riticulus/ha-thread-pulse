@@ -44,7 +44,7 @@ class ThreadPulseCard extends HTMLElement {
     catch (e) { root.querySelector("#status").textContent = e.message; this._starting = false; return; }
     if (!this._starting) return;            // removed while loading
     this._dark = this._hass.themes && this._hass.themes.darkMode;
-    this._tp = createThreadPulse(root, { demo: !!this._config.demo, lang: this._config.language || "", ambient: !!this._config.ambient, showWifi: this._config.show_wifi !== false, ambientMotion: this._config.ambient_motion !== false }, {
+    this._tp = createThreadPulse(root, { demo: !!this._config.demo, lang: this._config.language || "", ambient: !!this._config.ambient, showWifi: this._config.show_wifi !== false, ambientMotion: this._config.ambient_motion !== false, hintDays: this._config.hint_window_days }, {
       embedded: true,
       hass: () => this._hass,
       themeSource: () => this,
@@ -68,9 +68,10 @@ class ThreadPulseCard extends HTMLElement {
         { name: "show_wifi", selector: { boolean: {} } },
         { name: "ambient", selector: { boolean: {} } },
         { name: "ambient_motion", selector: { boolean: {} } },
+        { name: "hint_window_days", selector: { number: { min: 1, max: 30, mode: "box", unit_of_measurement: "days" } } },
         { name: "demo", selector: { boolean: {} } },
       ],
-      computeLabel: s => ({ height: "Height (e.g. 600px or calc(100vh - 120px); empty = fill the space)", language: "Language", show_wifi: "Show Matter devices on Wi-Fi / Ethernet (default on)", ambient: "Ambient mode for wall tablets (only the mesh, dark)", ambient_motion: "Ambient mode: slow automatic zoom (default on)", demo: "Demo mode (invented devices)" })[s.name],
+      computeLabel: s => ({ height: "Height (e.g. 600px or calc(100vh - 120px); empty = fill the space)", language: "Language", show_wifi: "Show Matter devices on Wi-Fi / Ethernet (default on)", ambient: "Ambient mode for wall tablets (only the mesh, dark)", ambient_motion: "Ambient mode: slow automatic zoom (default on)", hint_window_days: "Hints about restarts and unstable connections: time window in days (default 7)", demo: "Demo mode (invented devices)" })[s.name],
     };
   }
 }

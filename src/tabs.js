@@ -34,8 +34,21 @@
   const muted = t => `<div class="tnote">${t}</div>`;
   const devLink = id => nodeById[id] || wifiById[id] ? `<a href="#" data-open="${esc(id)}">${esc(nameOf(id))}</a>` : esc(nameOf(id));
   function hintTable(list) {
-    return `<table class="hints">${list.map(x => `<tr><td class="${x.warn ? "r" : "b"}" style="width:1.2em;vertical-align:top">${x.warn ? "⚠" : "ℹ"}</td>` +
-      `<td style="white-space:nowrap;vertical-align:top">${devLink(x.id)}</td><td>${esc(x.text)}</td></tr>`).join("")}</table>`;
+    return `<table class="hints">${list.map(x => { const k = x.warn ? null : hintKind(x.id, x.text);
+      return `<tr><td class="${x.warn ? "r" : "b"}" style="width:1.2em;vertical-align:top">${x.warn ? "⚠" : "ℹ"}</td>` +
+      `<td style="white-space:nowrap;vertical-align:top">${devLink(x.id)}</td><td>${esc(x.text)}` +
+      (k ? ` <a href="#" class="more" data-dismiss="${esc(x.id + "|" + k)}">${T.hintDone}</a>` : "") + `</td></tr>`; }).join("")}</table>`;
+  }
+  function dismissedHtml() {                         // hints marked "Done" whose condition still applies (#24)
+    const rows = [];
+    for (const n of Object.values(nodeById)) {
+      if (powerCutOf(n) && isDismissed(n, "power")) rows.push([n.id, "power"]);
+      if (unstableOf(n) && isDismissed(n, "unstable")) rows.push([n.id, "unstable"]);
+    }
+    if (!rows.length) return "";
+    return `<h4>${T.dismissedHead(rows.length)}</h4><table>` + rows.map(([id, k]) => `<tr><td style="white-space:nowrap">${devLink(id)}</td>` +
+      `<td>${esc(T.dismissKinds[k])}</td><td><a href="#" data-undismiss="${esc(id + "|" + k)}">${T.hintShowAgain}</a></td></tr>`).join("") + `</table>` +
+      muted(T.dismissedNote);
   }
   function overviewHtml(hints) {
     const hl = computeHealth(); let h = "";
@@ -56,7 +69,7 @@
     return h + `<div class="tnote" style="margin-top:12px">${T.foot(listData.count)}</div>`;
   }
   function hintsHtml(hints) {
-    return (hints.length ? hintTable(hints) : `<div>${T.noHints}</div>`) + muted(T.hintsNote);
+    return (hints.length ? hintTable(hints) : `<div>${T.noHints}</div>`) + muted(T.hintsNote + " " + T.stabNote(HINT_DAYS)) + dismissedHtml();
   }
   // one row per device: role, parent (or the router links of a router), signal, firmware
   function deviceRows() {

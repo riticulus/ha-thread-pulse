@@ -155,6 +155,7 @@ const TP_CSS = `
   #panel .trend .tdot { fill: var(--fg); }
   #panel .trend .tread { font-size: 11px; color: var(--muted); min-height: 1.3em; }
   #panel .ident .btn { margin-top: 0; }
+  #panel .btn.small { margin-top: 6px; padding: 2px 10px; font-size: 12px; }
   #panel .btn:disabled { opacity: .55; cursor: default; }
   #panel .btn { display: inline-block; margin-top: 12px; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 10px; cursor: pointer; font: inherit; }
 `;
@@ -182,6 +183,18 @@ const TP_HTML = `
 `;
 // ---------- texts (one file per language in src/i18n/) ----------
 const TEXT_EN = {
+  hPowerCutRecent: (n, days, kids) => `Restarted ${n} times in the last ${days} day${days === 1 ? "" : "s"} – it probably loses power from time to time (e.g. a bulb on a wall switch, or a plug that gets unplugged). While it is off, it cannot forward messages${kids.length ? `; ${kids.join(", ")} then ${kids.length === 1 ? "has" : "have"} to find a new parent` : ""}. Tip: leave it powered and switch it via Home Assistant.`,
+  warnAttachRecent: (n, days) => `${n} attach attempts in the last ${days} day${days === 1 ? "" : "s"} – the connection is unstable`,
+  warnDetachedRecent: (n, days) => `Dropped off the network ${n} times in the last ${days} day${days === 1 ? "" : "s"}`,
+  trendUnknown: "(total so far – the trend is known after one day)",
+  hintDone: "Done",
+  hintShowAgain: "Show again",
+  dismissedHead: n => `Marked as done (${n})`,
+  dismissKinds: { power: "Router loses power", unstable: "Unstable connection" },
+  dismissedNote: "A hint marked as done comes back by itself when the counter increases again.",
+  stabWindow: days => `Last ${days} day${days === 1 ? "" : "s"}`,
+  stabWindowVal: (r, a, d) => `+${r} restarts · +${a} attach attempts · +${d} drop-offs`,
+  stabNote: days => `Hints about restarts and unstable connections only count what happened in the last ${days} days.`,
   chatHead: "Most messages in the last hour",
   chatNone: "No messages counted yet.",
   thMsgs: "Msgs/h",
@@ -335,6 +348,18 @@ const TEXT_EN = {
   hEdge: r => `Only weak links to other routers (best: ${r} dBm) – it sits at the edge of the mesh. Another router in between would strengthen it.`,
 };
 const TEXT_DE = {
+  hPowerCutRecent: (n, days, kids) => `In den letzten ${days} Tag${days === 1 ? "" : "en"} ${n}× neu gestartet – wird wahrscheinlich ab und zu stromlos (z. B. Lampe am Wandschalter oder ausgesteckte Steckdose). Solange er aus ist, kann er keine Nachrichten weiterleiten${kids.length ? `; ${kids.join(", ")} ${kids.length === 1 ? "muss" : "müssen"} sich dann einen neuen Parent suchen` : ""}. Tipp: am Strom lassen und über Home Assistant schalten.`,
+  warnAttachRecent: (n, days) => `${n} Verbindungsversuche in den letzten ${days} Tag${days === 1 ? "" : "en"} – Verbindung instabil`,
+  warnDetachedRecent: (n, days) => `${n}× Netz verloren in den letzten ${days} Tag${days === 1 ? "" : "en"}`,
+  trendUnknown: "(Summe bisher – den Verlauf kennt Thread Pulse nach einem Tag)",
+  hintDone: "Erledigt",
+  hintShowAgain: "Wieder anzeigen",
+  dismissedHead: n => `Als erledigt markiert (${n})`,
+  dismissKinds: { power: "Router wird stromlos", unstable: "Instabile Verbindung" },
+  dismissedNote: "Ein erledigter Hinweis erscheint von selbst wieder, wenn der Zähler erneut steigt.",
+  stabWindow: days => `Letzte ${days} Tag${days === 1 ? "" : "e"}`,
+  stabWindowVal: (r, a, d) => `+${r} Neustarts · +${a} Verbindungsversuche · +${d}× Netz verloren`,
+  stabNote: days => `Hinweise zu Neustarts und instabiler Verbindung zählen nur, was in den letzten ${days} Tagen passiert ist.`,
   chatHead: "Meiste Nachrichten in der letzten Stunde",
   chatNone: "Noch keine Nachrichten gezählt.",
   thMsgs: "Nachr./h",
@@ -494,6 +519,18 @@ const NAMES_DE = [["Effective current", "Strom (effektiv)"], ["Effective voltage
   ["Occupancy", "Anwesenheit"], ["Door", "Kontakt"], ["Opening", "Kontakt"], ["Temperature", "Temperatur"], ["Humidity", "Luftfeuchte"],
   ["Identify", "Identifizieren"], ["Button", "Taste"], ["Light", "Licht"], ["Switch", "Schalter"], ["Motion", "Bewegung"]];
 const TEXT_ES = {
+  hPowerCutRecent: (n, days, kids) => `Reiniciado ${n} veces en los últimos ${days} días – probablemente se queda sin corriente de vez en cuando (p. ej. bombilla en un interruptor de pared o enchufe desconectado). Apagado no puede reenviar mensajes${kids.length ? `; ${kids.join(", ")} ${kids.length === 1 ? "tiene" : "tienen"} entonces que buscar un nuevo parent` : ""}. Consejo: dejarlo con corriente y controlarlo desde Home Assistant.`,
+  warnAttachRecent: (n, days) => `${n} intentos de conexión en los últimos ${days} días – conexión inestable`,
+  warnDetachedRecent: (n, days) => `Salió de la red ${n} veces en los últimos ${days} días`,
+  trendUnknown: "(total hasta ahora – la tendencia se conoce tras un día)",
+  hintDone: "Hecho",
+  hintShowAgain: "Mostrar de nuevo",
+  dismissedHead: n => `Marcados como hechos (${n})`,
+  dismissKinds: { power: "El router se queda sin corriente", unstable: "Conexión inestable" },
+  dismissedNote: "Un consejo marcado como hecho vuelve solo cuando el contador sube de nuevo.",
+  stabWindow: days => `Últimos ${days} días`,
+  stabWindowVal: (r, a, d) => `+${r} reinicios · +${a} intentos de conexión · +${d} salidas de la red`,
+  stabNote: days => `Los consejos sobre reinicios y conexiones inestables solo cuentan lo ocurrido en los últimos ${days} días.`,
   chatHead: "Más mensajes en la última hora",
   chatNone: "Aún no se han contado mensajes.",
   thMsgs: "Msj/h",
@@ -653,6 +690,18 @@ const NAMES_ES = [["Effective current", "Corriente (eficaz)"], ["Effective volta
   ["Occupancy", "Presencia"], ["Door", "Contacto"], ["Opening", "Contacto"], ["Temperature", "Temperatura"], ["Humidity", "Humedad"],
   ["Identify", "Identificar"], ["Button", "Botón"], ["Light", "Luz"], ["Switch", "Interruptor"], ["Motion", "Movimiento"]];
 const TEXT_FR = {
+  hPowerCutRecent: (n, days, kids) => `Redémarré ${n} fois ces ${days} derniers jours – il perd probablement son alimentation de temps en temps (p. ex. ampoule sur un interrupteur mural ou prise débranchée). Éteint, il ne peut pas transmettre de messages${kids.length ? ` ; ${kids.join(", ")} ${kids.length === 1 ? "doit" : "doivent"} alors trouver un nouveau parent` : ""}. Conseil : le laisser alimenté et le commander via Home Assistant.`,
+  warnAttachRecent: (n, days) => `${n} tentatives de connexion ces ${days} derniers jours – connexion instable`,
+  warnDetachedRecent: (n, days) => `A quitté le réseau ${n} fois ces ${days} derniers jours`,
+  trendUnknown: "(total jusqu'ici – la tendance est connue après un jour)",
+  hintDone: "Terminé",
+  hintShowAgain: "Afficher à nouveau",
+  dismissedHead: n => `Marqués comme terminés (${n})`,
+  dismissKinds: { power: "Le routeur perd son alimentation", unstable: "Connexion instable" },
+  dismissedNote: "Un conseil marqué comme terminé revient de lui-même si le compteur augmente à nouveau.",
+  stabWindow: days => `${days} derniers jours`,
+  stabWindowVal: (r, a, d) => `+${r} redémarrages · +${a} tentatives de connexion · +${d} pertes du réseau`,
+  stabNote: days => `Les conseils sur les redémarrages et les connexions instables ne comptent que ce qui s'est passé ces ${days} derniers jours.`,
   chatHead: "Le plus de messages dans la dernière heure",
   chatNone: "Aucun message compté pour l'instant.",
   thMsgs: "Msg/h",
@@ -812,6 +861,18 @@ const NAMES_FR = [["Effective current", "Courant (efficace)"], ["Effective volta
   ["Occupancy", "Présence"], ["Door", "Contact"], ["Opening", "Contact"], ["Temperature", "Température"], ["Humidity", "Humidité"],
   ["Identify", "Identifier"], ["Button", "Bouton"], ["Light", "Lumière"], ["Switch", "Interrupteur"], ["Motion", "Mouvement"]];
 const TEXT_IT = {
+  hPowerCutRecent: (n, days, kids) => `Riavviato ${n} volte negli ultimi ${days} giorni – probabilmente perde alimentazione di tanto in tanto (ad es. lampadina su interruttore a muro o presa scollegata). Da spento non può inoltrare messaggi${kids.length ? `; ${kids.join(", ")} ${kids.length === 1 ? "deve" : "devono"} allora trovare un nuovo parent` : ""}. Suggerimento: lasciarlo alimentato e comandarlo tramite Home Assistant.`,
+  warnAttachRecent: (n, days) => `${n} tentativi di connessione negli ultimi ${days} giorni – connessione instabile`,
+  warnDetachedRecent: (n, days) => `Uscito dalla rete ${n} volte negli ultimi ${days} giorni`,
+  trendUnknown: "(totale finora – l'andamento è noto dopo un giorno)",
+  hintDone: "Fatto",
+  hintShowAgain: "Mostra di nuovo",
+  dismissedHead: n => `Segnati come fatti (${n})`,
+  dismissKinds: { power: "Il router perde alimentazione", unstable: "Connessione instabile" },
+  dismissedNote: "Un suggerimento segnato come fatto ricompare da solo se il contatore aumenta di nuovo.",
+  stabWindow: days => `Ultimi ${days} giorni`,
+  stabWindowVal: (r, a, d) => `+${r} riavvii · +${a} tentativi di connessione · +${d} uscite dalla rete`,
+  stabNote: days => `I suggerimenti su riavvii e connessioni instabili contano solo ciò che è successo negli ultimi ${days} giorni.`,
   chatHead: "Più messaggi nell'ultima ora",
   chatNone: "Ancora nessun messaggio contato.",
   thMsgs: "Msg/h",
@@ -971,6 +1032,18 @@ const NAMES_IT = [["Effective current", "Corrente (efficace)"], ["Effective volt
   ["Occupancy", "Presenza"], ["Door", "Contatto"], ["Opening", "Contatto"], ["Temperature", "Temperatura"], ["Humidity", "Umidità"],
   ["Identify", "Identifica"], ["Button", "Pulsante"], ["Light", "Luce"], ["Switch", "Interruttore"], ["Motion", "Movimento"]];
 const TEXT_NL = {
+  hPowerCutRecent: (n, days, kids) => `${n}× herstart in de afgelopen ${days} dagen – verliest waarschijnlijk af en toe stroom (bijv. lamp op een wandschakelaar of stekker eruit). Zolang hij uit is, kan hij geen berichten doorsturen${kids.length ? `; ${kids.join(", ")} ${kids.length === 1 ? "moet" : "moeten"} dan een nieuwe parent zoeken` : ""}. Tip: laat hem aan de stroom en schakel hem via Home Assistant.`,
+  warnAttachRecent: (n, days) => `${n} verbindingspogingen in de afgelopen ${days} dagen – verbinding instabiel`,
+  warnDetachedRecent: (n, days) => `${n}× uit het netwerk gevallen in de afgelopen ${days} dagen`,
+  trendUnknown: "(totaal tot nu toe – het verloop is na een dag bekend)",
+  hintDone: "Gedaan",
+  hintShowAgain: "Weer tonen",
+  dismissedHead: n => `Als gedaan gemarkeerd (${n})`,
+  dismissKinds: { power: "Router verliest stroom", unstable: "Instabiele verbinding" },
+  dismissedNote: "Een als gedaan gemarkeerde tip komt vanzelf terug als de teller weer stijgt.",
+  stabWindow: days => `Afgelopen ${days} dagen`,
+  stabWindowVal: (r, a, d) => `+${r} herstarts · +${a} verbindingspogingen · +${d}× uit het netwerk`,
+  stabNote: days => `Tips over herstarts en instabiele verbindingen tellen alleen wat er in de afgelopen ${days} dagen gebeurde.`,
   chatHead: "Meeste berichten in het afgelopen uur",
   chatNone: "Nog geen berichten geteld.",
   thMsgs: "Ber./u",
@@ -1187,6 +1260,7 @@ function createThreadPulse(root, opts, host) {
     changesSeen: { key: "threadPulseChangesSeen", type: "number", def: null },   // change log last viewed – counter on its tab
     signal:  { key: "threadPulseSignal", type: "json", def: null },     // signal trend – only when Home Assistant refuses to store it (#38)
     resp:    { key: "threadPulseResp", type: "bool", def: false },      // response times on the map (#89)
+    counters: { key: "threadPulseCounters", type: "json", def: null },   // stability counters – only when Home Assistant refuses to store them (#24)
     changes: { key: "threadPulseChanges", type: "json", def: [] },      // change log – only until it is moved to Home Assistant (#86)
   };
   const prefs = {
@@ -1528,6 +1602,7 @@ function createThreadPulse(root, opts, host) {
                  weak: Object.values(edges).filter(e => !e.parent && ids.has(e.b)).map(e => ({ a: e.a, b: e.b, r: avg(e) })).filter(e => e.r < -80).sort((p, q) => p.r - q.r) };
     refreshFirmware(model.hass);
     recordSignal();                          // signal trend (issue #38)
+    recordCounters();                        // stability counters over a time window (issue #24)
     renderList();
     const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
     if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
@@ -1950,8 +2025,10 @@ function createThreadPulse(root, opts, host) {
   }
   function warningsOf(n) {
     const w = [], i = n.info || {};
-    if (i.attach >= 5) w.push(T.warnAttach(i.attach));            // thresholds from real networks: normal is 0–2 attempts, 1–2 drop-offs
-    if (i.detached >= 3) w.push(T.warnDetached(i.detached));
+    // thresholds from real networks: normal is 0–2 attempts, 1–2 drop-offs; counted within the time window (#24)
+    const s = stabilityOf(n), off = isDismissed(n, "unstable");
+    if (s.attach >= 5 && !off) w.push(s.known ? T.warnAttachRecent(s.attach, s.days) : T.warnAttach(s.attach));
+    if (s.detached >= 3 && !off) w.push(s.known ? T.warnDetachedRecent(s.detached, s.days) : T.warnDetached(s.detached));
     if (battOf[n.id] !== undefined && battOf[n.id] < 20) w.push(T.warnBattery(battOf[n.id]));
     return w;
   }
@@ -2075,7 +2152,8 @@ function createThreadPulse(root, opts, host) {
             `<button class="x" title="×" data-act="close">×</button></div>`;
     for (const w of warningsOf(n)) h += `<div class="warn">⚠ ${esc(w)}</div>`;
     const hs = (hintsOf[n.id] || []).concat(slowHint(n) || [], batteryHint(n) || []);
-    if (hs.length) h += `<h4>${T.secHints}</h4>` + hs.map(t => `<div class="hint">💡 ${esc(t)}</div>`).join("") + `<div class="note">${T.hintsNote}</div>`;
+    if (hs.length) h += `<h4>${T.secHints}</h4>` + hs.map(t => { const k = hintKind(n.id, t);
+      return `<div class="hint">💡 ${esc(t)}${k ? `<div><button class="btn small" data-dismiss="${esc(n.id + "|" + k)}">${T.hintDone}</button></div>` : ""}</div>`; }).join("") + `<div class="note">${T.hintsNote}</div>`;
     // live
     const now = Date.now();
     h += `<h4>${T.secLive}</h4><dl>` + liveRows(n.id);
@@ -2119,7 +2197,9 @@ function createThreadPulse(root, opts, host) {
     // stability
     if ([i.reboots, i.detached, i.attach, i.parentChanges].some(x => x !== undefined && x !== null)) {
       h += `<h4>${T.secStability}</h4><dl>` + row(T.reboots, i.reboots) + row(T.bootReason, i.bootReason !== undefined && i.bootReason !== null ? esc(T.bootReasons[i.bootReason] || i.bootReason) : "") +
-           row(T.detached, i.detached) + row(T.attach, i.attach) + row(T.parentChanges, i.parentChanges) + `</dl><div class="note">${T.sinceRestart}</div>`;
+           row(T.detached, i.detached) + row(T.attach, i.attach) + row(T.parentChanges, i.parentChanges) +
+           (st => row(T.stabWindow(st.days), st.known ? esc(T.stabWindowVal(st.reboots, st.attach, st.detached)) : `<span style="color:var(--muted)">${T.trendUnknown}</span>`))(stabilityOf(n)) +
+           `</dl><div class="note">${T.sinceRestart} ${T.stabNote(HINT_DAYS)}</div>`;
     }
     // device
     h += `<h4>${T.secDevice}</h4><dl>` + row(T.manufacturer, esc(i.vendor || "")) + row(T.model, esc(i.product || "")) +
@@ -2173,8 +2253,12 @@ function createThreadPulse(root, opts, host) {
   // ≥ 5 attach attempts / ≥ 3 drop-offs as for the warnings; ≥ 50 restarts in total for a router suggests it loses power regularly.
   // Note: switching a smart plug off does NOT stop it from routing – only its socket is switched – so that is not a hint.
   // nm: id → name shown in the hint (the anonymised text report passes its own, issue #85)
+  // kinds of hints that can be dismissed ("Done", #24) – only for the UI (the anonymised report passes another nm)
+  let hintKinds = {};
+  const hintKind = (id, text) => hintKinds[id + "|" + text] || null;
   function computeHints(parents, nm = nameOf) {
-    const out = {}, add = (id, t) => (out[id] = out[id] || []).push(t);
+    const kinds = {};
+    const out = {}, add = (id, t, kind) => { (out[id] = out[id] || []).push(t); if (kind) kinds[id + "|" + t] = kind; };
     const isRouterId = id => (nodeById[id] && nodeById[id].type === "routing_end_device") || id === brExt;
     for (const n of Object.values(nodeById)) {
       const i = n.info || {}, links = linksOf[n.id] || [];
@@ -2183,18 +2267,132 @@ function createThreadPulse(root, opts, host) {
         const pinfo = parents.find(p => p.childId === n.id);
         if (par && par.rssi < -80) add(n.id, T.hWeakParent(nm(par.id), par.rssi, pinfo && pinfo.src === "device"));
       } else {
-        if (i.reboots >= 50) {
-          const kids = links.filter(l => l.kind === "child").map(l => nm(l.id));
-          add(n.id, T.hPowerCut(i.reboots, kids));
+        if (powerCutOf(n) && !isDismissed(n, "power")) {          // restarts within the time window (#24)
+          const kids = links.filter(l => l.kind === "child").map(l => nm(l.id)), s = stabilityOf(n);
+          add(n.id, s.known ? T.hPowerCutRecent(s.reboots, s.days, kids) : T.hPowerCut(i.reboots, kids) + " " + T.trendUnknown, "power");
         }
         const rl = links.filter(l => l.kind === "neighbour" && isRouterId(l.id));
         if (rl.length) { const best = Math.max(...rl.map(l => l.rssi)); if (best < -80) add(n.id, T.hEdge(best)); }
       }
-      if (i.attach >= 5 || i.detached >= 3) add(n.id, T.hUnstable);
+      if (unstableOf(n) && !isDismissed(n, "unstable")) add(n.id, T.hUnstable, "unstable");
       if (n.dupWith) add(n.id, T.hDupAddr(n.dupWith.map(nm).join(", ")));
       const ch = chattyHint(n); if (ch) add(n.id, ch);                  // reports unusually often (#80)
     }
+    if (nm === nameOf) hintKinds = kinds;
     return out;
+  }
+  // ---------- stability over a time window (issue #24) ----------
+  // The devices report restarts (lifetime), attach attempts and drop-offs (both since the device's last restart). Taken as
+  // totals, a hint about them never goes away. Thread Pulse therefore keeps a history of the counter values (a sample only
+  // when a value changes) and judges the INCREASE within the last N days (card option hint_window_days, default 7).
+  // A counter that went down (device restarted, attach/drop-off counters reset) counts its new value as increase.
+  // Until one day of history exists, the old behaviour (totals) applies, with a note that the trend is not known yet.
+  // Stored in Home Assistant per user like the change log (#86), read-merge-write at most every 15 minutes; dismissed
+  // hints ("Done") are stored there too and stay hidden until their counter increases again.
+  const STAB_KEY = "thread_pulse_counters", STAB_KEEP_DAYS = 31, DAY_MS = 86400000, STAB_SAVE_MS = 15 * 60000;
+  const HINT_DAYS = Math.max(1, Math.min(30, Math.round(Number(opts.hintDays) || 7)));
+  let stabHist = {}, stabDismissed = {}, stabStore = null, stabDirty = false, stabLoading = null;   // id → [[t, reboots, attach, detached], …]
+  const counterVals = n => { const i = n.info || {}; return [i.reboots, i.attach, i.detached].map(v => (typeof v === "number" ? v : null)); };
+  function pruneStab(now = Date.now()) {
+    const cut = now - STAB_KEEP_DAYS * DAY_MS;
+    for (const id of Object.keys(stabHist)) {
+      const l = stabHist[id], keepFrom = Math.max(0, l.findIndex(s => s[0] > cut) - 1);        // keep one sample before the cut as baseline
+      stabHist[id] = l.findIndex(s => s[0] > cut) < 0 ? l.slice(-1) : l.slice(keepFrom);
+    }
+  }
+  function mergeStab(a, b) {
+    const out = {};
+    for (const src of [a, b]) for (const [id, l] of Object.entries(src || {})) out[id] = (out[id] || []).concat((l || []).filter(s => Array.isArray(s) && s.length === 4));
+    for (const id of Object.keys(out)) {
+      const l = out[id].sort((x, y) => x[0] - y[0]), dedup = [];
+      for (const s of l) { const p = dedup[dedup.length - 1]; if (!p || p[1] !== s[1] || p[2] !== s[2] || p[3] !== s[3]) dedup.push(s); }
+      out[id] = dedup;
+    }
+    return out;
+  }
+  function mergeDismissed(a, b) {                    // id → { kind: time }; the later dismissal wins
+    const out = JSON.parse(JSON.stringify(a || {}));
+    for (const [id, kinds] of Object.entries(b || {})) for (const [k, t] of Object.entries(kinds || {})) {
+      out[id] = out[id] || {};
+      if (t === null) delete out[id][k]; else if (!out[id][k] || out[id][k] < t) out[id][k] = t;
+    }
+    return out;
+  }
+  function recordCounters() {                        // after every render (load and refresh)
+    if (DEMO) return;
+    const now = Date.now();
+    for (const n of Object.values(nodeById)) {
+      const v = counterVals(n); if (v.every(x => x === null)) continue;
+      const l = stabHist[n.id] = stabHist[n.id] || [], last = l[l.length - 1];
+      if (!last || last[1] !== v[0] || last[2] !== v[1] || last[3] !== v[2]) { l.push([now, ...v]); stabDirty = true; }
+    }
+    pruneStab(now);
+    if (!stabLoading) stabLoading = loadStabStore();
+  }
+  async function loadStabStore() {
+    const hass = freshHass(), conn = hass && hass.connection;
+    try {
+      if (!conn) throw new Error("no connection");
+      const r = await conn.sendMessagePromise({ type: "frontend/get_user_data", key: STAB_KEY });
+      const v = (r && r.value) || {};
+      stabHist = mergeStab(stabHist, v.h); stabDismissed = mergeDismissed(stabDismissed, v.dismissed); stabStore = conn;
+    } catch (e) {
+      const v = prefs.get("counters") || {};
+      stabHist = mergeStab(stabHist, v.h); stabDismissed = mergeDismissed(stabDismissed, v.dismissed); stabStore = null;
+    }
+    pruneStab(); renderList(); if (panelNode) renderPanel(); if (network) network.redraw();
+  }
+  async function saveStab(force = false) {
+    if (DEMO || destroyed || (!stabDirty && !force)) return;
+    stabDirty = false;
+    const value = () => ({ version: 1, h: stabHist, dismissed: stabDismissed });
+    if (!stabStore) { prefs.set("counters", value()); return; }
+    try {
+      const r = await stabStore.sendMessagePromise({ type: "frontend/get_user_data", key: STAB_KEY });
+      const v = (r && r.value) || {};
+      stabHist = mergeStab(stabHist, v.h); stabDismissed = mergeDismissed(v.dismissed, stabDismissed); pruneStab();
+      await stabStore.sendMessagePromise({ type: "frontend/set_user_data", key: STAB_KEY, value: value() });
+    } catch (e) { prefs.set("counters", value()); }
+  }
+  every(saveStab, STAB_SAVE_MS);
+  window.addEventListener("pagehide", () => { saveStab(); });
+
+  // increase of the counters since a point in time; samples plus the current value of the device
+  function counterIncrease(n, since) {
+    const now = counterVals(n), l = (DEMO ? n.demoCounters : stabHist[n.id]) || [];
+    const pts = l.concat([[Date.now(), ...now]]);
+    let bi = -1; pts.forEach((s, k) => { if (s[0] <= since) bi = k; });
+    const start = Math.max(0, bi), covered = Date.now() - pts[0][0];
+    const inc = [0, 0, 0];
+    for (let k = start + 1; k < pts.length; k++) for (let f = 0; f < 3; f++) {
+      const a = pts[k - 1][f + 1], b = pts[k][f + 1];
+      if (a === null || b === null) continue;
+      inc[f] += b > a ? b - a : b < a ? (f === 0 ? 0 : b) : 0;   // restarts never reset; attach/drop-offs restart from 0
+    }
+    return { reboots: inc[0], attach: inc[1], detached: inc[2], coveredMs: covered };
+  }
+  // stability of a device as used by warnings, hints and the mesh health
+  //   known: at least one day of history → values are increases within the window (or the shorter covered time)
+  function stabilityOf(n) {
+    const i = n.info || {}, w = counterIncrease(n, Date.now() - HINT_DAYS * DAY_MS);
+    if (w.coveredMs < DAY_MS) return { known: false, days: HINT_DAYS, reboots: i.reboots, attach: i.attach, detached: i.detached };
+    return { known: true, days: Math.min(HINT_DAYS, Math.max(1, Math.floor(w.coveredMs / DAY_MS))), reboots: w.reboots, attach: w.attach, detached: w.detached };
+  }
+  // thresholds: within the window 5 attach attempts / 3 drop-offs (as before since restart), 3 restarts of a router
+  // (before: 50 in the whole lifetime); with unknown trend the old totals apply
+  function unstableOf(n) { const s = stabilityOf(n); return s.attach >= 5 || s.detached >= 3; }
+  function powerCutOf(n) { const s = stabilityOf(n); return n.type === "routing_end_device" && (s.known ? s.reboots >= 3 : s.reboots >= 50); }
+  // "Done": hidden until the counter of that kind increases again
+  const DISMISS_KINDS = { power: f => f.reboots, unstable: f => f.attach + f.detached };
+  function isDismissed(n, kind) {
+    const t = (stabDismissed[n.id] || {})[kind]; if (!t) return false;
+    return DISMISS_KINDS[kind](counterIncrease(n, t)) === 0;
+  }
+  function setDismissed(id, kind, on) {
+    stabDismissed[id] = stabDismissed[id] || {};
+    if (on) stabDismissed[id][kind] = Date.now(); else stabDismissed[id][kind] = null;
+    saveStab(true).then(() => { if (stabDismissed[id] && stabDismissed[id][kind] === null) delete stabDismissed[id][kind]; });
+    renderList(); if (panelNode) renderPanel(); if (network) network.redraw();
   }
   // ---------- mesh health (issue #84) ----------
   // A rule of thumb, not a measurement: six factors from the same data as the map, each "ok", "check" or "problem".
@@ -2250,8 +2448,8 @@ function createThreadPulse(root, opts, host) {
         topId && crowded !== "ok" ? [topId, ...kids.filter(p => p.parentId === topId).map(p => p.childId)] : []);
 
     // 6. stability: unstable connection, not reachable, router that loses power regularly
-    const shaky = nodes.filter(n => { const i = n.info || {};
-      return !n.available || i.attach >= 5 || i.detached >= 3 || (n.type === "routing_end_device" && i.reboots >= 50); }).map(n => n.id);
+    const shaky = nodes.filter(n => {
+      return !n.available || unstableOf(n) || powerCutOf(n); }).map(n => n.id);         // within the time window (#24)
     add("stability", !shaky.length ? "ok" : shaky.length <= 2 ? "warn" : "bad", T.hvOf(shaky.length, nodes.length),
         shaky.length ? T.htStabilityBad(list(shaky)) : T.htStabilityOk, shaky);
 
@@ -3202,8 +3400,21 @@ function createThreadPulse(root, opts, host) {
   const muted = t => `<div class="tnote">${t}</div>`;
   const devLink = id => nodeById[id] || wifiById[id] ? `<a href="#" data-open="${esc(id)}">${esc(nameOf(id))}</a>` : esc(nameOf(id));
   function hintTable(list) {
-    return `<table class="hints">${list.map(x => `<tr><td class="${x.warn ? "r" : "b"}" style="width:1.2em;vertical-align:top">${x.warn ? "⚠" : "ℹ"}</td>` +
-      `<td style="white-space:nowrap;vertical-align:top">${devLink(x.id)}</td><td>${esc(x.text)}</td></tr>`).join("")}</table>`;
+    return `<table class="hints">${list.map(x => { const k = x.warn ? null : hintKind(x.id, x.text);
+      return `<tr><td class="${x.warn ? "r" : "b"}" style="width:1.2em;vertical-align:top">${x.warn ? "⚠" : "ℹ"}</td>` +
+      `<td style="white-space:nowrap;vertical-align:top">${devLink(x.id)}</td><td>${esc(x.text)}` +
+      (k ? ` <a href="#" class="more" data-dismiss="${esc(x.id + "|" + k)}">${T.hintDone}</a>` : "") + `</td></tr>`; }).join("")}</table>`;
+  }
+  function dismissedHtml() {                         // hints marked "Done" whose condition still applies (#24)
+    const rows = [];
+    for (const n of Object.values(nodeById)) {
+      if (powerCutOf(n) && isDismissed(n, "power")) rows.push([n.id, "power"]);
+      if (unstableOf(n) && isDismissed(n, "unstable")) rows.push([n.id, "unstable"]);
+    }
+    if (!rows.length) return "";
+    return `<h4>${T.dismissedHead(rows.length)}</h4><table>` + rows.map(([id, k]) => `<tr><td style="white-space:nowrap">${devLink(id)}</td>` +
+      `<td>${esc(T.dismissKinds[k])}</td><td><a href="#" data-undismiss="${esc(id + "|" + k)}">${T.hintShowAgain}</a></td></tr>`).join("") + `</table>` +
+      muted(T.dismissedNote);
   }
   function overviewHtml(hints) {
     const hl = computeHealth(); let h = "";
@@ -3224,7 +3435,7 @@ function createThreadPulse(root, opts, host) {
     return h + `<div class="tnote" style="margin-top:12px">${T.foot(listData.count)}</div>`;
   }
   function hintsHtml(hints) {
-    return (hints.length ? hintTable(hints) : `<div>${T.noHints}</div>`) + muted(T.hintsNote);
+    return (hints.length ? hintTable(hints) : `<div>${T.noHints}</div>`) + muted(T.hintsNote + " " + T.stabNote(HINT_DAYS)) + dismissedHtml();
   }
   // one row per device: role, parent (or the router links of a router), signal, firmware
   function deviceRows() {
@@ -3353,6 +3564,13 @@ function createThreadPulse(root, opts, host) {
     sleepy[5].demoUpdate = { installed: sleepy[5].info.sw, latest: "2.1.0", available: true, skipped: false, progress: 40 };
     sleepy[1].info.attach = 9; sleepy[1].info.detached = 3;
     routers[2].info.reboots = 140;   // a bulb on a wall switch
+    // counter history (#24): the bulb keeps restarting, the front door reconnects often; routers[3] restarted 60 times
+    // long ago but is stable now – before #24 it had a hint forever, now it has none
+    routers[3].info.reboots = 60;
+    { const D = 86400000, now = Date.now(), c = (n, t, r, a, d) => (n.demoCounters = n.demoCounters || []).push([now - t * D, r, a, d]);
+      c(routers[2], 20, 130, 1, 1); c(routers[2], 5, 136, 1, 1); c(routers[2], 1, 140, 1, 1);
+      c(sleepy[1], 10, sleepy[1].info.reboots, 1, 0); c(sleepy[1], 6, sleepy[1].info.reboots, 2, 0); c(sleepy[1], 1, sleepy[1].info.reboots, 9, 3);
+      c(routers[3], 25, 60, 1, 1); }
     sleepy[2].neigh[0]["6"] = -86;   // weak parent link (as seen by the device and by its parent router)
     for (const r of routers) for (const x of r.neigh) if (x["0"] === dec(sleepy[2].id)) x["6"] = -86;
     for (const n of all2) { n.info.leader = rid[routers[2].id]; n.info.net = { name: "demo-thread", channel: 15, panId: 4660, extPanId: "dead00beef00cafe" }; }
@@ -3492,6 +3710,8 @@ function createThreadPulse(root, opts, host) {
   root.addEventListener("pointerdown", e => { if (!e.target.closest || !e.target.closest("#morebox")) setMoreMenu(false); });
 
   root.addEventListener("click", e => {
+    const d = e.target.closest && e.target.closest("[data-dismiss],[data-undismiss]");
+    if (d) { e.preventDefault(); const [id, k] = (d.dataset.dismiss || d.dataset.undismiss).split("|"); setDismissed(id, k, !!d.dataset.dismiss); return; }   // #24
     const t = e.target.closest && e.target.closest("[data-open],[data-act],[data-device],[data-identify]"); if (!t) return;
     e.preventDefault();
     if (t.dataset.open) openPanel(t.dataset.open);
@@ -3616,7 +3836,7 @@ class ThreadPulseCard extends HTMLElement {
     catch (e) { root.querySelector("#status").textContent = e.message; this._starting = false; return; }
     if (!this._starting) return;            // removed while loading
     this._dark = this._hass.themes && this._hass.themes.darkMode;
-    this._tp = createThreadPulse(root, { demo: !!this._config.demo, lang: this._config.language || "", ambient: !!this._config.ambient, showWifi: this._config.show_wifi !== false, ambientMotion: this._config.ambient_motion !== false }, {
+    this._tp = createThreadPulse(root, { demo: !!this._config.demo, lang: this._config.language || "", ambient: !!this._config.ambient, showWifi: this._config.show_wifi !== false, ambientMotion: this._config.ambient_motion !== false, hintDays: this._config.hint_window_days }, {
       embedded: true,
       hass: () => this._hass,
       themeSource: () => this,
@@ -3640,9 +3860,10 @@ class ThreadPulseCard extends HTMLElement {
         { name: "show_wifi", selector: { boolean: {} } },
         { name: "ambient", selector: { boolean: {} } },
         { name: "ambient_motion", selector: { boolean: {} } },
+        { name: "hint_window_days", selector: { number: { min: 1, max: 30, mode: "box", unit_of_measurement: "days" } } },
         { name: "demo", selector: { boolean: {} } },
       ],
-      computeLabel: s => ({ height: "Height (e.g. 600px or calc(100vh - 120px); empty = fill the space)", language: "Language", show_wifi: "Show Matter devices on Wi-Fi / Ethernet (default on)", ambient: "Ambient mode for wall tablets (only the mesh, dark)", ambient_motion: "Ambient mode: slow automatic zoom (default on)", demo: "Demo mode (invented devices)" })[s.name],
+      computeLabel: s => ({ height: "Height (e.g. 600px or calc(100vh - 120px); empty = fill the space)", language: "Language", show_wifi: "Show Matter devices on Wi-Fi / Ethernet (default on)", ambient: "Ambient mode for wall tablets (only the mesh, dark)", ambient_motion: "Ambient mode: slow automatic zoom (default on)", hint_window_days: "Hints about restarts and unstable connections: time window in days (default 7)", demo: "Demo mode (invented devices)" })[s.name],
     };
   }
 }
