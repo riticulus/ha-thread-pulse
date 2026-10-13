@@ -1,6 +1,18 @@
 //# German texts. Defines TEXT_DE and NAMES_DE (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_DE = {
+  hPowerCutRecent: (n, days, kids) => `In den letzten ${days} Tag${days === 1 ? "" : "en"} ${n}× neu gestartet – wird wahrscheinlich ab und zu stromlos (z. B. Lampe am Wandschalter oder ausgesteckte Steckdose). Solange er aus ist, kann er keine Nachrichten weiterleiten${kids.length ? `; ${kids.join(", ")} ${kids.length === 1 ? "muss" : "müssen"} sich dann einen neuen Parent suchen` : ""}. Tipp: am Strom lassen und über Home Assistant schalten.`,
+  warnAttachRecent: (n, days) => `${n} Verbindungsversuche in den letzten ${days} Tag${days === 1 ? "" : "en"} – Verbindung instabil`,
+  warnDetachedRecent: (n, days) => `${n}× Netz verloren in den letzten ${days} Tag${days === 1 ? "" : "en"}`,
+  trendUnknown: "(Summe bisher – den Verlauf kennt Thread Pulse nach einem Tag)",
+  hintDone: "Erledigt",
+  hintShowAgain: "Wieder anzeigen",
+  dismissedHead: n => `Als erledigt markiert (${n})`,
+  dismissKinds: { power: "Router wird stromlos", unstable: "Instabile Verbindung" },
+  dismissedNote: "Ein erledigter Hinweis erscheint von selbst wieder, wenn der Zähler erneut steigt.",
+  stabWindow: days => `Letzte ${days} Tag${days === 1 ? "" : "e"}`,
+  stabWindowVal: (r, a, d) => `+${r} Neustarts · +${a} Verbindungsversuche · +${d}× Netz verloren`,
+  stabNote: days => `Hinweise zu Neustarts und instabiler Verbindung zählen nur, was in den letzten ${days} Tagen passiert ist.`,
   chatHead: "Meiste Nachrichten in der letzten Stunde",
   chatNone: "Noch keine Nachrichten gezählt.",
   thMsgs: "Nachr./h",

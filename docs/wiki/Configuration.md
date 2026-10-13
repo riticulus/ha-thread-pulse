@@ -13,6 +13,7 @@ All options are optional. They can be set in the visual card editor or in YAML.
 | `show_wifi` | `true` | Show Matter devices on Wi-Fi / Ethernet as a separate group *(from version 1.4.0)* |
 | `ambient` | `false` | [Ambient mode](Ambient-Mode) for wall tablets: only the mesh, dark *(from version 1.4.0)* |
 | `ambient_motion` | `true` | In ambient mode: slow automatic zoom on or off *(from version 1.4.0)* |
+| `hint_window_days` | `7` | Time window in days (1–30) for warnings and hints about restarts and unstable connections – see [Hints and warnings](Hints-and-Warnings#counted-over-a-time-window) *(after version 1.6.0)* |
 | `demo` | `false` | Show invented devices and simulated traffic instead of your network |
 
 ### Minimal card
@@ -58,6 +59,7 @@ The standalone page (installation option C) is configured with URL parameters:
 | `ambient` | `/local/thread-pulse.html?ambient` | [Ambient mode](Ambient-Mode) *(from version 1.4.0)* |
 | `still` | `/local/thread-pulse.html?ambient&still` | Ambient mode without the automatic zoom *(from version 1.4.0)* |
 | `nowifi` | `/local/thread-pulse.html?nowifi` | Hide Matter devices on Wi-Fi / Ethernet *(from version 1.4.0)* |
+| `hintdays` | `/local/thread-pulse.html?hintdays=14` | Time window for hints about restarts and unstable connections, in days *(after version 1.6.0)* |
 | `v` | `/local/thread-pulse.html?v=3` | No function – raise it after an update so browsers load the new version |
 
 Parameters can be combined: `/local/thread-pulse.html?v=3&lang=en`.
@@ -74,7 +76,8 @@ Some choices are remembered per browser (and per Home Assistant address), not pe
 | Room view on or off | ⌂ Rooms |
 | Sound on or off, volume | **⋯** → 🔇 Sound (up to version 1.5.2: in the toolbar) |
 | Response times on the map | **⋯** → ⏱ Response times on the map *(after version 1.6.0)* |
-| Change log entries | – |
+| Change log entries | – (stored in Home Assistant) |
+| Counter history and hints marked as done | – (stored in Home Assistant, *after version 1.6.0*) |
 
 The legend starts hidden *(from version 1.6.0; before, it started shown on screens wider than 700 px)*. Whether a device was opened once is also remembered: until then the status line shows *Tap a device for details*.
 

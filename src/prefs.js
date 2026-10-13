@@ -16,6 +16,7 @@
     changesSeen: { key: "threadPulseChangesSeen", type: "number", def: null },   // change log last viewed – counter on its tab
     signal:  { key: "threadPulseSignal", type: "json", def: null },     // signal trend – only when Home Assistant refuses to store it (#38)
     resp:    { key: "threadPulseResp", type: "bool", def: false },      // response times on the map (#89)
+    counters: { key: "threadPulseCounters", type: "json", def: null },   // stability counters – only when Home Assistant refuses to store them (#24)
     changes: { key: "threadPulseChanges", type: "json", def: [] },      // change log – only until it is moved to Home Assistant (#86)
   };
   const prefs = {

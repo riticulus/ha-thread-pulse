@@ -58,6 +58,13 @@
     sleepy[5].demoUpdate = { installed: sleepy[5].info.sw, latest: "2.1.0", available: true, skipped: false, progress: 40 };
     sleepy[1].info.attach = 9; sleepy[1].info.detached = 3;
     routers[2].info.reboots = 140;   // a bulb on a wall switch
+    // counter history (#24): the bulb keeps restarting, the front door reconnects often; routers[3] restarted 60 times
+    // long ago but is stable now – before #24 it had a hint forever, now it has none
+    routers[3].info.reboots = 60;
+    { const D = 86400000, now = Date.now(), c = (n, t, r, a, d) => (n.demoCounters = n.demoCounters || []).push([now - t * D, r, a, d]);
+      c(routers[2], 20, 130, 1, 1); c(routers[2], 5, 136, 1, 1); c(routers[2], 1, 140, 1, 1);
+      c(sleepy[1], 10, sleepy[1].info.reboots, 1, 0); c(sleepy[1], 6, sleepy[1].info.reboots, 2, 0); c(sleepy[1], 1, sleepy[1].info.reboots, 9, 3);
+      c(routers[3], 25, 60, 1, 1); }
     sleepy[2].neigh[0]["6"] = -86;   // weak parent link (as seen by the device and by its parent router)
     for (const r of routers) for (const x of r.neigh) if (x["0"] === dec(sleepy[2].id)) x["6"] = -86;
     for (const n of all2) { n.info.leader = rid[routers[2].id]; n.info.net = { name: "demo-thread", channel: 15, panId: 4660, extPanId: "dead00beef00cafe" }; }

@@ -15,11 +15,26 @@ A device shows the **i** badge only if it has no warning. All warnings and hints
 
 | Warning | Condition |
 |---|---|
-| Unstable connection | **5 or more attach attempts** since the device's last restart |
-| Dropped off the network | **3 or more** times since the device's last restart |
+| Unstable connection | **5 or more attach attempts** in the last 7 days *(after version 1.6.0; before: since the device's last restart)* |
+| Dropped off the network | **3 or more** times in the last 7 days *(after version 1.6.0; before: since the device's last restart)* |
 | Battery low | Battery level **below 20 %** |
 
 The thresholds come from a real network of about 20 devices, where healthy devices showed 0–2 attach attempts and 1–2 drop-offs.
+
+### Counted over a time window
+
+*After version 1.6.0.* The devices report restarts over their whole lifetime and attach attempts and drop-offs since their last restart. Taken as totals, a warning or hint about them would never go away – a bulb with 376 restarts would keep its hint forever, even if it has not lost power for months.
+
+Thread Pulse therefore keeps a **history of these counters** and only counts what happened **in the last 7 days** (the time window can be changed, see [Configuration](Configuration)):
+
+- If the counters stay the same, the warning or hint **disappears by itself**.
+- A device restart resets the attach and drop-off counters; that is not read as a change in the wrong direction.
+- The history is stored **in Home Assistant, per user** (like the [change log](Change-Log)), so it is the same on every device. It starts when you install this version: during the **first day**, the totals are used as before, with the note *(total so far – the trend is known after one day)*.
+- The [detail panel](Detail-Panel) shows the changes of the window in the section *Stability*, e.g. *Last 7 days: +2 restarts · +5 attach attempts · +1 drop-offs*.
+
+### Marking a hint as done
+
+The hints *Router probably loses power* and *Unstable connection* have a **Done** button (in the detail panel and in the tab *Hints* of the [network panel](The-List)). A hint marked as done stays hidden – together with the related warnings – **until its counter increases again**; then it comes back by itself. The tab *Hints* lists the hints marked as done with **Show again**.
 
 ## Hints
 
@@ -37,7 +52,7 @@ The thresholds come from a real network of about 20 devices, where healthy devic
 
 ### Router probably loses power
 
-**When:** a router has restarted **50 times or more** in total.
+**When:** a router has restarted **3 times or more in the last 7 days** *(after version 1.6.0; before: 50 times or more in total)*.
 
 **Meaning:** it probably loses power from time to time – typically a bulb on a wall switch, or a plug that gets unplugged. While it is off, it cannot forward messages, and battery devices using it as their parent (named in the hint) have to find a new one.
 

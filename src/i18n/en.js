@@ -1,6 +1,18 @@
 //# English texts. Defines TEXT_EN; build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_EN = {
+  hPowerCutRecent: (n, days, kids) => `Restarted ${n} times in the last ${days} day${days === 1 ? "" : "s"} – it probably loses power from time to time (e.g. a bulb on a wall switch, or a plug that gets unplugged). While it is off, it cannot forward messages${kids.length ? `; ${kids.join(", ")} then ${kids.length === 1 ? "has" : "have"} to find a new parent` : ""}. Tip: leave it powered and switch it via Home Assistant.`,
+  warnAttachRecent: (n, days) => `${n} attach attempts in the last ${days} day${days === 1 ? "" : "s"} – the connection is unstable`,
+  warnDetachedRecent: (n, days) => `Dropped off the network ${n} times in the last ${days} day${days === 1 ? "" : "s"}`,
+  trendUnknown: "(total so far – the trend is known after one day)",
+  hintDone: "Done",
+  hintShowAgain: "Show again",
+  dismissedHead: n => `Marked as done (${n})`,
+  dismissKinds: { power: "Router loses power", unstable: "Unstable connection" },
+  dismissedNote: "A hint marked as done comes back by itself when the counter increases again.",
+  stabWindow: days => `Last ${days} day${days === 1 ? "" : "s"}`,
+  stabWindowVal: (r, a, d) => `+${r} restarts · +${a} attach attempts · +${d} drop-offs`,
+  stabNote: days => `Hints about restarts and unstable connections only count what happened in the last ${days} days.`,
   chatHead: "Most messages in the last hour",
   chatNone: "No messages counted yet.",
   thMsgs: "Msgs/h",

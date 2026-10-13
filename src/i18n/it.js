@@ -1,6 +1,18 @@
 //# Italian texts. Defines TEXT_IT and NAMES_IT (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
 //# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
 const TEXT_IT = {
+  hPowerCutRecent: (n, days, kids) => `Riavviato ${n} volte negli ultimi ${days} giorni – probabilmente perde alimentazione di tanto in tanto (ad es. lampadina su interruttore a muro o presa scollegata). Da spento non può inoltrare messaggi${kids.length ? `; ${kids.join(", ")} ${kids.length === 1 ? "deve" : "devono"} allora trovare un nuovo parent` : ""}. Suggerimento: lasciarlo alimentato e comandarlo tramite Home Assistant.`,
+  warnAttachRecent: (n, days) => `${n} tentativi di connessione negli ultimi ${days} giorni – connessione instabile`,
+  warnDetachedRecent: (n, days) => `Uscito dalla rete ${n} volte negli ultimi ${days} giorni`,
+  trendUnknown: "(totale finora – l'andamento è noto dopo un giorno)",
+  hintDone: "Fatto",
+  hintShowAgain: "Mostra di nuovo",
+  dismissedHead: n => `Segnati come fatti (${n})`,
+  dismissKinds: { power: "Il router perde alimentazione", unstable: "Connessione instabile" },
+  dismissedNote: "Un suggerimento segnato come fatto ricompare da solo se il contatore aumenta di nuovo.",
+  stabWindow: days => `Ultimi ${days} giorni`,
+  stabWindowVal: (r, a, d) => `+${r} riavvii · +${a} tentativi di connessione · +${d} uscite dalla rete`,
+  stabNote: days => `I suggerimenti su riavvii e connessioni instabili contano solo ciò che è successo negli ultimi ${days} giorni.`,
   chatHead: "Più messaggi nell'ultima ora",
   chatNone: "Ancora nessun messaggio contato.",
   thMsgs: "Msg/h",

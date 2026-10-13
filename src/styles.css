@@ -147,5 +147,6 @@
   #panel .trend .tdot { fill: var(--fg); }
   #panel .trend .tread { font-size: 11px; color: var(--muted); min-height: 1.3em; }
   #panel .ident .btn { margin-top: 0; }
+  #panel .btn.small { margin-top: 6px; padding: 2px 10px; font-size: 12px; }
   #panel .btn:disabled { opacity: .55; cursor: default; }
   #panel .btn { display: inline-block; margin-top: 12px; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 10px; cursor: pointer; font: inherit; }

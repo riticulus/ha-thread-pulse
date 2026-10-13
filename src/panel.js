@@ -16,8 +16,10 @@
   }
   function warningsOf(n) {
     const w = [], i = n.info || {};
-    if (i.attach >= 5) w.push(T.warnAttach(i.attach));            // thresholds from real networks: normal is 0–2 attempts, 1–2 drop-offs
-    if (i.detached >= 3) w.push(T.warnDetached(i.detached));
+    // thresholds from real networks: normal is 0–2 attempts, 1–2 drop-offs; counted within the time window (#24)
+    const s = stabilityOf(n), off = isDismissed(n, "unstable");
+    if (s.attach >= 5 && !off) w.push(s.known ? T.warnAttachRecent(s.attach, s.days) : T.warnAttach(s.attach));
+    if (s.detached >= 3 && !off) w.push(s.known ? T.warnDetachedRecent(s.detached, s.days) : T.warnDetached(s.detached));
     if (battOf[n.id] !== undefined && battOf[n.id] < 20) w.push(T.warnBattery(battOf[n.id]));
     return w;
   }
@@ -141,7 +143,8 @@
             `<button class="x" title="×" data-act="close">×</button></div>`;
     for (const w of warningsOf(n)) h += `<div class="warn">⚠ ${esc(w)}</div>`;
     const hs = (hintsOf[n.id] || []).concat(slowHint(n) || [], batteryHint(n) || []);
-    if (hs.length) h += `<h4>${T.secHints}</h4>` + hs.map(t => `<div class="hint">💡 ${esc(t)}</div>`).join("") + `<div class="note">${T.hintsNote}</div>`;
+    if (hs.length) h += `<h4>${T.secHints}</h4>` + hs.map(t => { const k = hintKind(n.id, t);
+      return `<div class="hint">💡 ${esc(t)}${k ? `<div><button class="btn small" data-dismiss="${esc(n.id + "|" + k)}">${T.hintDone}</button></div>` : ""}</div>`; }).join("") + `<div class="note">${T.hintsNote}</div>`;
     // live
     const now = Date.now();
     h += `<h4>${T.secLive}</h4><dl>` + liveRows(n.id);
@@ -185,7 +188,9 @@
     // stability
     if ([i.reboots, i.detached, i.attach, i.parentChanges].some(x => x !== undefined && x !== null)) {
       h += `<h4>${T.secStability}</h4><dl>` + row(T.reboots, i.reboots) + row(T.bootReason, i.bootReason !== undefined && i.bootReason !== null ? esc(T.bootReasons[i.bootReason] || i.bootReason) : "") +
-           row(T.detached, i.detached) + row(T.attach, i.attach) + row(T.parentChanges, i.parentChanges) + `</dl><div class="note">${T.sinceRestart}</div>`;
+           row(T.detached, i.detached) + row(T.attach, i.attach) + row(T.parentChanges, i.parentChanges) +
+           (st => row(T.stabWindow(st.days), st.known ? esc(T.stabWindowVal(st.reboots, st.attach, st.detached)) : `<span style="color:var(--muted)">${T.trendUnknown}</span>`))(stabilityOf(n)) +
+           `</dl><div class="note">${T.sinceRestart} ${T.stabNote(HINT_DAYS)}</div>`;
     }
     // device
     h += `<h4>${T.secDevice}</h4><dl>` + row(T.manufacturer, esc(i.vendor || "")) + row(T.model, esc(i.product || "")) +

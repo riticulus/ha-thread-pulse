@@ -54,8 +54,8 @@
         topId && crowded !== "ok" ? [topId, ...kids.filter(p => p.parentId === topId).map(p => p.childId)] : []);
 
     // 6. stability: unstable connection, not reachable, router that loses power regularly
-    const shaky = nodes.filter(n => { const i = n.info || {};
-      return !n.available || i.attach >= 5 || i.detached >= 3 || (n.type === "routing_end_device" && i.reboots >= 50); }).map(n => n.id);
+    const shaky = nodes.filter(n => {
+      return !n.available || unstableOf(n) || powerCutOf(n); }).map(n => n.id);         // within the time window (#24)
     add("stability", !shaky.length ? "ok" : shaky.length <= 2 ? "warn" : "bad", T.hvOf(shaky.length, nodes.length),
         shaky.length ? T.htStabilityBad(list(shaky)) : T.htStabilityOk, shaky);
 
