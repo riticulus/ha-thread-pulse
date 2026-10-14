@@ -1,5 +1,12 @@
-//# Colours, signal quality, icon images, theme, connection to Home Assistant, language switching.
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Colours, signal quality, icon images, theme, connection to Home Assistant, language switching.
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+import { MDI } from "./icons.js";
+import { VERSION } from "./version.js";
+import { textFor } from "./i18n/index.js";
+
+export default function install(tp) {
+  const { $, AMBIENT, host, opts, root } = tp;
+  Object.assign(tp, { applyColorVars, diag, getHass, iconFor, iconImg, setBtn, setLanguage, theme });
   // ---------- helpers ----------
   // All colours used by the map, badges and boxes. The CSS gets the semantic ones as variables (--c-<name>), see applyColorVars().
   const COLORS = {
@@ -22,17 +29,20 @@
     update: "#00897b",
     zigbee: "#c0ca33",
   };
+  tp.COLORS = COLORS;
   const QUAL = rssi =>
     rssi >= -65
-      ? [COLORS.good, "g", T.good]
+      ? [COLORS.good, "g", tp.T.good]
       : rssi >= -80
-        ? [COLORS.medium, "o", T.medium]
-        : [COLORS.weak, "r", T.weak];
+        ? [COLORS.medium, "o", tp.T.medium]
+        : [COLORS.weak, "r", tp.T.weak];
+  tp.QUAL = QUAL;
   function applyColorVars() {
     for (const k of ["good", "medium", "weak", "warn", "hint"])
       host.styleTarget.style.setProperty("--c-" + k, COLORS[k]);
   }
   const hex16 = s => BigInt(s).toString(16).padStart(16, "0");
+  tp.hex16 = hex16;
   // toolbar button (issue #107): icon and label apart – narrow cards show only the icon, the label is the tooltip;
   // pressed: the feature is on (the icon alone does not show the state); badge: a number shown next to it
   function setBtn(el, text, pressed = null, badge = 0, extra = "") {
@@ -48,6 +58,7 @@
     if (pressed !== null) el.setAttribute("aria-pressed", String(pressed));
   }
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  tp.esc = esc;
   function iconImg(icon, bg, size) {
     const svg =
       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 32 32" width="${size}" height="${size}">` +
@@ -95,7 +106,7 @@
     for (const [test, icon] of rules) if (test()) return icon;
     return "chip";
   }
-  let network = null;
+  tp.network = null;
 
   function theme() {
     if (AMBIENT) {
@@ -123,7 +134,7 @@
   }
 
   async function getHass() {
-    if (!host.embedded) throw Object.assign(new Error(T.noHa), { fatal: true }); // not inside a Home Assistant dashboard
+    if (!host.embedded) throw Object.assign(new Error(tp.T.noHa), { fatal: true }); // not inside a Home Assistant dashboard
     for (let i = 0; i < 50; i++) {
       try {
         const h = host.hass();
@@ -131,7 +142,7 @@
       } catch (e) {}
       await new Promise(r => setTimeout(r, 200));
     }
-    throw new Error(T.noHa);
+    throw new Error(tp.T.noHa);
   }
   async function token(hass) {
     if (hass.auth.expired) await hass.auth.refreshAccessToken();
@@ -141,7 +152,7 @@
     const r = await fetch(`/api/diagnostics/config_entry/${entry}/device/${devId}`, {
       headers: { Authorization: "Bearer " + (await token(hass)) },
     });
-    if (r.status === 401 || r.status === 403) throw Object.assign(new Error(T.notAdmin), { fatal: true });
+    if (r.status === 401 || r.status === 403) throw Object.assign(new Error(tp.T.notAdmin), { fatal: true });
     if (!r.ok) throw new Error("diagnostics " + r.status);
     // Thread addresses are 64-bit numbers: keep them exact by turning them into strings before parsing
     const txt = (await r.text())
@@ -150,49 +161,50 @@
     return JSON.parse(txt).data.node;
   }
   function setLanguage(l) {
-    lang = (opts.lang || l || "en").slice(0, 2);
-    T = textFor(lang);
-    host.styleTarget.lang = lang;
-    $("reload").textContent = T.reload;
-    setBtn($("roombtn"), roomOn ? T.roomsOff : T.roomsOn, roomOn);
-    $("search").placeholder = T.searchPh;
-    setBtn($("livebtn"), liveOn ? T.pause : T.resume, liveOn);
-    setBtn($("heatbtn"), heatOn ? T.heatOff : T.heatOn, heatOn);
-    $("soundbtn").textContent = soundOn ? T.soundOff : T.soundOn;
-    $("volume").title = T.volume;
-    $("morebtn").title = T.moreBtn;
-    $("morebtn").setAttribute("aria-label", T.moreBtn);
-    $("exporthead").textContent = T.exportHead;
+    tp.lang = (opts.lang || l || "en").slice(0, 2);
+    tp.T = textFor(tp.lang);
+    host.styleTarget.lang = tp.lang;
+    $("reload").textContent = tp.T.reload;
+    setBtn($("roombtn"), tp.roomOn ? tp.T.roomsOff : tp.T.roomsOn, tp.roomOn);
+    $("search").placeholder = tp.T.searchPh;
+    setBtn($("livebtn"), tp.liveOn ? tp.T.pause : tp.T.resume, tp.liveOn);
+    setBtn($("heatbtn"), tp.heatOn ? tp.T.heatOff : tp.T.heatOn, tp.heatOn);
+    $("soundbtn").textContent = tp.soundOn ? tp.T.soundOff : tp.T.soundOn;
+    $("volume").title = tp.T.volume;
+    $("morebtn").title = tp.T.moreBtn;
+    $("morebtn").setAttribute("aria-label", tp.T.moreBtn);
+    $("exporthead").textContent = tp.T.exportHead;
     $("version").textContent = "Thread Pulse " + VERSION;
-    $("status").title = T.statusReload;
-    root.querySelector("[data-act=export]").textContent = T.exportPlain;
-    root.querySelector("[data-act=exportanon]").textContent = T.exportAnon;
-    root.querySelector("[data-act=report]").textContent = T.reportMenu;
+    $("status").title = tp.T.statusReload;
+    root.querySelector("[data-act=export]").textContent = tp.T.exportPlain;
+    root.querySelector("[data-act=exportanon]").textContent = tp.T.exportAnon;
+    root.querySelector("[data-act=report]").textContent = tp.T.reportMenu;
     const lg = (cls, color, text) =>
       `<span class="lg"><span class="${cls}" style="background:${color}"></span>${text}</span>`;
     $("legend").innerHTML =
-      lg("dot", COLORS.br, T.lgBr) +
-      lg("dot", COLORS.router, T.lgRouter) +
-      lg("dot", COLORS.end, T.lgEnd) +
-      lg("dot", COLORS.sleepy, T.lgSleepy) +
-      lg("ln", COLORS.good, T.good) +
-      lg("ln", COLORS.medium, T.medium) +
-      lg("ln", COLORS.weak, T.weak) +
-      lg("dot", COLORS.up, T.lgUp) +
-      lg("dot", COLORS.down, T.lgDown) +
-      lg("ln heatln", COLORS.heat, T.lgHeat) +
-      `<span class="lg" id="lgwifi" hidden><span class="dot" style="background:${COLORS.wifi}"></span>${T.lgWifi}</span>` +
+      lg("dot", COLORS.br, tp.T.lgBr) +
+      lg("dot", COLORS.router, tp.T.lgRouter) +
+      lg("dot", COLORS.end, tp.T.lgEnd) +
+      lg("dot", COLORS.sleepy, tp.T.lgSleepy) +
+      lg("ln", COLORS.good, tp.T.good) +
+      lg("ln", COLORS.medium, tp.T.medium) +
+      lg("ln", COLORS.weak, tp.T.weak) +
+      lg("dot", COLORS.up, tp.T.lgUp) +
+      lg("dot", COLORS.down, tp.T.lgDown) +
+      lg("ln heatln", COLORS.heat, tp.T.lgHeat) +
+      `<span class="lg" id="lgwifi" hidden><span class="dot" style="background:${COLORS.wifi}"></span>${tp.T.lgWifi}</span>` +
       [
-        [COLORS.good, T.lgRespFast],
-        [COLORS.medium, T.lgRespMid],
-        [COLORS.weak, T.lgRespSlow],
+        [COLORS.good, tp.T.lgRespFast],
+        [COLORS.medium, tp.T.lgRespMid],
+        [COLORS.weak, tp.T.lgRespSlow],
       ]
         .map(
           ([c, t]) =>
-            `<span class="lg lgresp"${respView ? "" : " hidden"}><span class="dot" style="background:transparent;border:2.5px solid ${c};box-sizing:border-box"></span>${t}</span>`,
+            `<span class="lg lgresp"${tp.respView ? "" : " hidden"}><span class="dot" style="background:transparent;border:2.5px solid ${c};box-sizing:border-box"></span>${t}</span>`,
         )
         .join("");
-    $("respbtn").textContent = respView ? T.respViewOff : T.respViewOn;
-    setSheet($("wrap").classList.contains("sheet-tall"));
-    setLegend(!$("legend").classList.contains("hidden"), false);
+    $("respbtn").textContent = tp.respView ? tp.T.respViewOff : tp.T.respViewOn;
+    tp.setSheet($("wrap").classList.contains("sheet-tall"));
+    tp.setLegend(!$("legend").classList.contains("hidden"), false);
   }
+}

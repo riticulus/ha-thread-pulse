@@ -1,5 +1,18 @@
-//# Change log (issue #7).
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Change log (issue #7).
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+
+export default function install(tp) {
+  const { $, COLORS, DEMO, QUAL, esc, every, extraName, loadHa, prefs, render, trackGrade } = tp;
+  Object.assign(tp, {
+    clearChanges,
+    diffSnaps,
+    drawFlashes,
+    initChangeStore,
+    liveAvailability,
+    logChange,
+    renderChanges,
+    snapshotOf,
+  });
   // ---------- change log (issue #7) ----------
   // Every 5 minutes the data is loaded again (map positions kept) and compared with the previous state. Reachability
   // changes are logged live from Home Assistant. The list is stored in Home Assistant per user (issue #86), so it is
@@ -9,16 +22,16 @@
   const STORE_KEY = "thread_pulse_changes",
     MAX_CHANGES = 200,
     SAME_MS = 10 * 60000;
-  let lastSnap = null,
-    changes = [],
-    flashes = [],
-    flashing = false,
-    refreshing = false;
-  let store = null,
-    saveTimer = null,
-    clearedAt = 0; // store: { conn, unsub } once Home Assistant's user data is used
+  tp.lastSnap = null;
+  tp.changes = [];
+  let flashes = [];
+  let flashing = false;
+  let refreshing = false;
+  tp.store = null;
+  tp.saveTimer = null;
+  let clearedAt = 0; // store: { conn, unsub } once Home Assistant's user data is used
   const availNow = {};
-  changes = DEMO ? [] : prefs.get("changes");
+  tp.changes = DEMO ? [] : prefs.get("changes");
   // Several open pages (phone, tablet, desktop) see the same change – keep it once: an entry is a duplicate when the
   // next newer entry of the same device says the same within 10 minutes (so a device going offline, online and
   // offline again still shows all three).
@@ -44,23 +57,23 @@
     return Array.isArray(value.entries) ? value.entries : [];
   }
   async function initChangeStore(hass) {
-    if (DEMO || store || !hass || !hass.connection) return;
+    if (DEMO || tp.store || !hass || !hass.connection) return;
     const conn = hass.connection;
     try {
       const r = await conn.sendMessagePromise({ type: "frontend/get_user_data", key: STORE_KEY });
       const remote = fromStore(r && r.value),
         local = prefs.get("changes");
-      changes = mergeChanges(changes, remote, local);
-      store = { conn, unsub: null };
-      if (local.length || changes.length !== remote.length) saveChanges(true); // migrate the entries of this browser once
+      tp.changes = mergeChanges(tp.changes, remote, local);
+      tp.store = { conn, unsub: null };
+      if (local.length || tp.changes.length !== remote.length) saveChanges(true); // migrate the entries of this browser once
       prefs.remove("changes");
-      store.unsub = await conn.subscribeMessage(
+      tp.store.unsub = await conn.subscribeMessage(
         ev => {
           // changes logged or cleared on another device
           const remote2 = fromStore(ev && ev.value);
-          const merged = mergeChanges(changes, remote2);
-          if (JSON.stringify(merged) !== JSON.stringify(changes)) {
-            changes = merged;
+          const merged = mergeChanges(tp.changes, remote2);
+          if (JSON.stringify(merged) !== JSON.stringify(tp.changes)) {
+            tp.changes = merged;
             renderChanges();
           }
         },
@@ -68,38 +81,38 @@
       );
       renderChanges();
     } catch (e) {
-      store = null;
+      tp.store = null;
     } // older Home Assistant or no permission: keep using the browser
   }
   function saveChanges(now = false) {
     if (DEMO) return;
-    if (!store) {
-      prefs.set("changes", changes.slice(0, MAX_CHANGES));
+    if (!tp.store) {
+      prefs.set("changes", tp.changes.slice(0, MAX_CHANGES));
       return;
     }
-    clearTimeout(saveTimer);
+    clearTimeout(tp.saveTimer);
     const write = async () => {
       try {
         // read first: another device may have added entries since the last sync
-        const r = await store.conn.sendMessagePromise({ type: "frontend/get_user_data", key: STORE_KEY });
-        const before = changes.length;
-        changes = mergeChanges(changes, fromStore(r && r.value));
-        if (changes.length !== before) renderChanges();
-        await store.conn.sendMessagePromise({
+        const r = await tp.store.conn.sendMessagePromise({ type: "frontend/get_user_data", key: STORE_KEY });
+        const before = tp.changes.length;
+        tp.changes = mergeChanges(tp.changes, fromStore(r && r.value));
+        if (tp.changes.length !== before) renderChanges();
+        await tp.store.conn.sendMessagePromise({
           type: "frontend/set_user_data",
           key: STORE_KEY,
-          value: { version: 1, entries: changes, cleared: clearedAt },
+          value: { version: 1, entries: tp.changes, cleared: clearedAt },
         });
       } catch (e) {
-        prefs.set("changes", changes);
+        prefs.set("changes", tp.changes);
       } // keep them in the browser if Home Assistant refuses
     };
     if (now) write();
-    else saveTimer = setTimeout(write, 2000);
+    else tp.saveTimer = setTimeout(write, 2000);
   }
   function clearChanges() {
     clearedAt = Date.now();
-    changes = [];
+    tp.changes = [];
     prefs.remove("changes");
     saveChanges(true);
     renderChanges();
@@ -126,34 +139,34 @@
   function diffSnaps(a, b) {
     if (b) trackGrade(b.grade);
     if (!a || !b) return;
-    for (const id in b.nodes) if (!a.nodes[id]) logChange(id, b.nodes[id].name, T.chNew, "new");
-    for (const id in a.nodes) if (!b.nodes[id]) logChange(id, a.nodes[id].name, T.chGone, "gone");
+    for (const id in b.nodes) if (!a.nodes[id]) logChange(id, b.nodes[id].name, tp.T.chNew, "new");
+    for (const id in a.nodes) if (!b.nodes[id]) logChange(id, a.nodes[id].name, tp.T.chGone, "gone");
     for (const id in b.nodes) {
       const x = a.nodes[id],
         y = b.nodes[id];
       if (!x) continue;
       if (x.available !== y.available && availNow[id] !== y.available) {
         availNow[id] = y.available;
-        logChange(id, y.name, y.available ? T.chOnline : T.chOffline, y.available ? "online" : "offline");
+        logChange(id, y.name, y.available ? tp.T.chOnline : tp.T.chOffline, y.available ? "online" : "offline");
       }
       if (x.role !== y.role && x.role !== undefined && y.role !== undefined)
-        logChange(id, y.name, T.chRole(T.roles[x.role] || x.role, T.roles[y.role] || y.role), "role");
+        logChange(id, y.name, tp.T.chRole(tp.T.roles[x.role] || x.role, tp.T.roles[y.role] || y.role), "role");
       const p = a.parent[id],
         q = b.parent[id];
       if (p && q && p.id !== q.id)
-        logChange(id, y.name, T.chParent(nameIn(a, p.id), nameIn(b, q.id), q.rssi), "parent");
+        logChange(id, y.name, tp.T.chParent(nameIn(a, p.id), nameIn(b, q.id), q.rssi), "parent");
       else if (p && q && QUAL(p.rssi)[2] !== QUAL(q.rssi)[2])
-        logChange(id, y.name, T.chSignal(nameIn(b, q.id), QUAL(p.rssi)[2], QUAL(q.rssi)[2], q.rssi), "signal");
+        logChange(id, y.name, tp.T.chSignal(nameIn(b, q.id), QUAL(p.rssi)[2], QUAL(q.rssi)[2], q.rssi), "signal");
     }
     for (const k in b.links)
       if (!(k in a.links)) {
         const [u, v] = k.split("|");
-        logChange(u, nameIn(b, u), T.chLinkNew(nameIn(b, v)), "link");
+        logChange(u, nameIn(b, u), tp.T.chLinkNew(nameIn(b, v)), "link");
       }
     for (const k in a.links)
       if (!(k in b.links) && b.nodes[k.split("|")[0]] && b.nodes[k.split("|")[1]]) {
         const [u, v] = k.split("|");
-        logChange(u, nameIn(b, u), T.chLinkGone(nameIn(b, v)), "link");
+        logChange(u, nameIn(b, u), tp.T.chLinkGone(nameIn(b, v)), "link");
       }
   }
   const CH_COLOR = {
@@ -169,7 +182,7 @@
     gradeDown: COLORS.weak,
   };
   function logChange(id, name, text, kind) {
-    changes = mergeChanges([{ t: Date.now(), id, name, text, kind }], changes);
+    tp.changes = mergeChanges([{ t: Date.now(), id, name, text, kind }], tp.changes);
     saveChanges();
     flashes.push({ id, t0: performance.now(), color: CH_COLOR[kind] || COLORS.change });
     if (!flashing) {
@@ -181,13 +194,13 @@
   function flashTick() {
     const now = performance.now();
     flashes = flashes.filter(f => now - f.t0 < 3000);
-    if (network) network.redraw();
-    if (flashes.length && !destroyed) requestAnimationFrame(flashTick);
+    if (tp.network) tp.network.redraw();
+    if (flashes.length && !tp.destroyed) requestAnimationFrame(flashTick);
     else flashing = false;
   }
   function drawFlashes(ctx) {
     if (!flashes.length) return;
-    const pos = network.getPositions(),
+    const pos = tp.network.getPositions(),
       now = performance.now();
     for (const f of flashes) {
       const p = pos[f.id];
@@ -207,35 +220,35 @@
     const el = $("changes");
     if (!el) return;
     const fmt = t =>
-      new Date(t).toLocaleString(lang, { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+      new Date(t).toLocaleString(tp.lang, { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
     el.innerHTML =
-      `<b>${T.changesHead}</b>` +
-      (changes.length
-        ? ` <a href="#" data-act="clearchanges" style="font-size:12px;margin-left:8px">${T.changesClear}</a><table>` +
-          changes
+      `<b>${tp.T.changesHead}</b>` +
+      (tp.changes.length
+        ? ` <a href="#" data-act="clearchanges" style="font-size:12px;margin-left:8px">${tp.T.changesClear}</a><table>` +
+          tp.changes
             .slice(0, 30)
             .map(
               c =>
                 `<tr><td style="white-space:nowrap;color:var(--muted);vertical-align:top">${fmt(c.t)}</td><td style="white-space:nowrap;vertical-align:top"><span style="color:${CH_COLOR[c.kind] || "inherit"}">●</span> ` +
-                (nodeById[c.id] ? `<a href="#" data-open="${c.id}">${esc(c.name)}</a>` : esc(c.name)) +
+                (tp.nodeById[c.id] ? `<a href="#" data-open="${c.id}">${esc(c.name)}</a>` : esc(c.name)) +
                 `</td><td>${esc(c.text)}</td></tr>`,
             )
             .join("") +
           `</table>`
-        : `<div>${T.changesNone}</div>`) +
-      `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${T.changesNote}</div>`;
-    renderTabBar(); // counter of new entries on the tab (#108)
+        : `<div>${tp.T.changesNone}</div>`) +
+      `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${tp.T.changesNote}</div>`;
+    tp.renderTabBar(); // counter of new entries on the tab (#108)
   }
   async function refresh() {
-    if (refreshing || destroyed || !network) return;
+    if (refreshing || tp.destroyed || !tp.network) return;
     refreshing = true;
     try {
-      const keep = network.getPositions();
-      keep.__view = { position: network.getViewPosition(), scale: network.getScale() };
-      const prev = lastSnap;
-      const m = DEMO ? demoMutate() : await loadHa();
+      const keep = tp.network.getPositions();
+      keep.__view = { position: tp.network.getViewPosition(), scale: tp.network.getScale() };
+      const prev = tp.lastSnap;
+      const m = DEMO ? tp.demoMutate() : await loadHa();
       render(m, keep);
-      diffSnaps(prev, lastSnap);
+      diffSnaps(prev, tp.lastSnap);
     } catch (e) {
       console.warn("Thread Pulse refresh:", e);
     }
@@ -244,8 +257,9 @@
   every(refresh, REFRESH_MS);
   // live reachability from Home Assistant (called by the state_changed handler)
   function liveAvailability(nodeId, available) {
-    if (availNow[nodeId] === available || !nodeById[nodeId]) return;
+    if (availNow[nodeId] === available || !tp.nodeById[nodeId]) return;
     availNow[nodeId] = available;
-    const n = nodeById[nodeId];
-    logChange(nodeId, n.name, available ? T.chOnline : T.chOffline, available ? "online" : "offline");
+    const n = tp.nodeById[nodeId];
+    logChange(nodeId, n.name, available ? tp.T.chOnline : tp.T.chOffline, available ? "online" : "offline");
   }
+}

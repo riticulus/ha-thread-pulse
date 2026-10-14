@@ -1,26 +1,30 @@
-//# Building and drawing the map, the list below it.
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Building and drawing the map, the list below it.
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+
+export default function install(tp) {
+  const { $, COLORS, DEMO, QUAL, SHOW_WIFI, VIS, hex16, host, iconImg, prefs } = tp;
+  Object.assign(tp, { render });
   // ---------- graph ----------
-  let searchHits = [],
-    searchActive = false;
-  let extraIds = new Set(),
-    threadInfo = null,
-    wifiById = {},
-    parentOf = {},
-    listData = null;
-  let hintsOf = {},
-    nodeById = {},
-    linksOf = {},
-    battOf = {},
-    brExt = null,
-    devToNode = {},
-    entToNode = {},
-    nodeName = {},
-    onMap = new Set(),
-    ridToId = {},
-    routeOf = {},
-    parentRid = {},
-    ownRid = {};
+  tp.searchHits = [];
+  tp.searchActive = false;
+  tp.extraIds = new Set();
+  tp.threadInfo = null;
+  tp.wifiById = {};
+  tp.parentOf = {};
+  tp.listData = null;
+  tp.hintsOf = {};
+  tp.nodeById = {};
+  tp.linksOf = {};
+  tp.battOf = {};
+  tp.brExt = null;
+  tp.devToNode = {};
+  tp.entToNode = {};
+  tp.nodeName = {};
+  tp.onMap = new Set();
+  tp.ridToId = {};
+  tp.routeOf = {};
+  tp.parentRid = {};
+  tp.ownRid = {};
 
   // Some devices report the same hardware address (e.g. two Aqara P2 motion sensors, issue #98). The map needs unique
   // ids: such devices get "<address>-<device id>" and a hint; the reported address is kept for the panel.
@@ -42,7 +46,7 @@
     // keep: positions of the previous map (refresh without layout jump)
     const { nodes } = model;
     uniqueIds(nodes);
-    brExt = model.brExt;
+    tp.brExt = model.brExt;
     const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
     const isRouter = n => n.type === "routing_end_device";
     const visNodes = [],
@@ -65,7 +69,7 @@
         size: isRouter(n) ? 20 : 14,
         ...(keep && keep[n.id] ? { x: keep[n.id].x, y: keep[n.id].y } : {}),
         shapeProperties: { useBorderWithImage: false },
-        title: `${n.name}\n${T.types[n.type] || n.type}${n.available ? "" : T.unreachable}`,
+        title: `${n.name}\n${tp.T.types[n.type] || n.type}${n.available ? "" : tp.T.unreachable}`,
       });
     }
     // router <-> router links (from the routers' neighbour tables, both directions averaged)
@@ -81,35 +85,35 @@
       }
     }
     let extras = Object.keys(extra);
-    threadInfo = model.thread || null;
-    zigbeeInfo = model.zigbee || null;
-    if (!brExt && extras.length === 1) brExt = extras[0]; // no OTBR info: a single unknown router is most likely the border router
+    tp.threadInfo = model.thread || null;
+    tp.zigbeeInfo = model.zigbee || null;
+    if (!tp.brExt && extras.length === 1) tp.brExt = extras[0]; // no OTBR info: a single unknown router is most likely the border router
     // the parent of a device that is not a Matter device of HA (e.g. an Apple TV / HomePod) is not in any neighbour table of
     // a Matter router when the mesh has no Matter routers: add it from the device's own neighbour table (issue #71)
-    parentOf = {};
+    tp.parentOf = {};
     const bestOf = n => [...n.neigh].sort((p, q) => q["6"] - p["6"])[0];
     for (const n of nodes.filter(n => !isRouter(n))) {
       const best = bestOf(n);
       if (!best) continue;
       const pid = hex16(best["0"]);
-      parentOf[n.id] = pid;
+      tp.parentOf[n.id] = pid;
       if (!byId[pid]) extra[pid] = true;
     }
     extras = Object.keys(extra);
-    extraIds = new Set(extras);
+    tp.extraIds = new Set(extras);
     for (const id of extras) {
-      const isBr = id === brExt;
+      const isBr = id === tp.brExt;
       visNodes.push({
         id,
-        label: extraLabel(id),
+        label: tp.extraLabel(id),
         shape: "image",
         image: iconImg(
-          isBr || brInfo[id] ? "access-point-network" : "router-wireless",
+          isBr || tp.brInfo[id] ? "access-point-network" : "router-wireless",
           isBr ? COLORS.br : COLORS.off,
           64,
         ),
         size: isBr ? 24 : 16,
-        title: extraTitle(id),
+        title: tp.extraTitle(id),
       });
     }
     // child signal as measured by the parent router (sleepy devices report their own RSSI unreliably)
@@ -144,16 +148,16 @@
         type: n.type,
         parentId: pid,
         get parent() {
-          return nameOf(this.parentId);
+          return tp.nameOf(this.parentId);
         },
         rssi,
         src,
       }); // name resolved when shown (#71)
     }
-    wifiById = {};
+    tp.wifiById = {};
     if (SHOW_WIFI)
       for (const w of model.wifi || []) {
-        wifiById[w.id] = w;
+        tp.wifiById[w.id] = w;
         visNodes.push({
           id: w.id,
           label: w.name,
@@ -165,7 +169,7 @@
           x: 0,
           y: 0,
           ...(keep && keep[w.id] ? { x: keep[w.id].x, y: keep[w.id].y } : {}),
-          title: `${w.name}\n${w.kind === "ethernet" ? T.ethSub : T.wifiSub}${w.available ? "" : T.unreachable}`,
+          title: `${w.name}\n${w.kind === "ethernet" ? tp.T.ethSub : tp.T.wifiSub}${w.available ? "" : tp.T.unreachable}`,
         });
       }
     const ids = new Set(visNodes.map(v => v.id));
@@ -174,7 +178,7 @@
     const visEdges = Object.values(edges)
       .filter(e => ids.has(e.b))
       .filter(e => {
-        const k = linkKey(e.a, e.b);
+        const k = tp.linkKey(e.a, e.b);
         if (seenEdge.has(k)) return false;
         seenEdge.add(k);
         return true;
@@ -183,7 +187,7 @@
         const r = avg(e),
           [c] = QUAL(r);
         return {
-          id: linkKey(e.a, e.b),
+          id: tp.linkKey(e.a, e.b),
           rssiTitle: `${r} dBm`,
           from: e.a,
           to: e.b,
@@ -216,36 +220,36 @@
       },
       interaction: { hover: true, tooltipDelay: 120 },
     };
-    if (network) network.destroy();
-    network = new VIS.Network($("net"), data, opts);
+    if (tp.network) tp.network.destroy();
+    tp.network = new VIS.Network($("net"), data, opts);
     if (keep) {
-      placeWifi();
+      tp.placeWifi();
       const view = keep.__view;
-      if (view) network.moveTo({ position: view.position, scale: view.scale, animation: false });
+      if (view) tp.network.moveTo({ position: view.position, scale: view.scale, animation: false });
     } else {
-      network.once("stabilizationIterationsDone", placeWifi); // before the fit below
-      network.once("stabilizationIterationsDone", () => network.fit({ animation: false }));
-      network.once("stabilized", () => network.fit({ animation: { duration: 300 } }));
+      tp.network.once("stabilizationIterationsDone", tp.placeWifi); // before the fit below
+      tp.network.once("stabilizationIterationsDone", () => tp.network.fit({ animation: false }));
+      tp.network.once("stabilized", () => tp.network.fit({ animation: { duration: 300 } }));
     }
-    network.on("beforeDrawing", ctx => {
-      drawRooms(ctx);
-      drawHeat(ctx);
-      drawWifiLabel(ctx);
+    tp.network.on("beforeDrawing", ctx => {
+      tp.drawRooms(ctx);
+      tp.drawHeat(ctx);
+      tp.drawWifiLabel(ctx);
     });
-    if (roomOn) applyRooms(true, false);
-    network.on("afterDrawing", ctx => {
-      drawBadges(ctx);
-      drawResponseRings(ctx);
-      drawFlashes(ctx);
-      drawPackets(ctx);
+    if (tp.roomOn) tp.applyRooms(true, false);
+    tp.network.on("afterDrawing", ctx => {
+      tp.drawBadges(ctx);
+      tp.drawResponseRings(ctx);
+      tp.drawFlashes(ctx);
+      tp.drawPackets(ctx);
     });
-    network.on("click", p => {
-      if (p.nodes.length && (nodeById[p.nodes[0]] || extraIds.has(p.nodes[0]) || wifiById[p.nodes[0]]))
-        openPanel(p.nodes[0]);
-      else closePanel();
+    tp.network.on("click", p => {
+      if (p.nodes.length && (tp.nodeById[p.nodes[0]] || tp.extraIds.has(p.nodes[0]) || tp.wifiById[p.nodes[0]]))
+        tp.openPanel(p.nodes[0]);
+      else tp.closePanel();
     });
     // double click / double tap (issue #23): on empty space center and fit the whole mesh, on a device zoom to it
-    network.on("doubleClick", p => {
+    tp.network.on("doubleClick", p => {
       if (p.nodes.length && !String(p.nodes[0]).startsWith("room:")) {
         // center the device in the part of the map that the detail panel does not cover
         const pn = $("panel"),
@@ -256,56 +260,60 @@
           : r.width < st.width * 0.8
             ? { x: -(r.width + 8) / 2, y: 0 }
             : { x: 0, y: -r.height / 2 };
-        network.focus(p.nodes[0], { scale: Math.max(1.2, network.getScale()), offset, animation: { duration: 400 } });
-      } else network.fit({ animation: { duration: 400 } });
+        tp.network.focus(p.nodes[0], {
+          scale: Math.max(1.2, tp.network.getScale()),
+          offset,
+          animation: { duration: 400 },
+        });
+      } else tp.network.fit({ animation: { duration: 400 } });
     });
-    network.on("hoverNode", () => {
+    tp.network.on("hoverNode", () => {
       $("net").style.cursor = "pointer";
     });
-    network.on("blurNode", () => {
+    tp.network.on("blurNode", () => {
       $("net").style.cursor = "";
     });
-    nodeById = byId;
-    linksOf = {};
+    tp.nodeById = byId;
+    tp.linksOf = {};
     // names are resolved when shown: border router names from the discovery arrive after the map is drawn (#71)
     for (const e of Object.values(edges)) {
       if (!ids.has(e.b)) continue;
       const r = avg(e);
-      (linksOf[e.a] = linksOf[e.a] || []).push({
+      (tp.linksOf[e.a] = tp.linksOf[e.a] || []).push({
         id: e.b,
         get name() {
-          return nameOf(this.id);
+          return tp.nameOf(this.id);
         },
         rssi: r,
         kind: e.parent ? "parent" : "neighbour",
       });
-      (linksOf[e.b] = linksOf[e.b] || []).push({
+      (tp.linksOf[e.b] = tp.linksOf[e.b] || []).push({
         id: e.a,
         get name() {
-          return nameOf(this.id);
+          return tp.nameOf(this.id);
         },
         rssi: r,
         kind: e.parent ? "child" : "neighbour",
       });
     }
-    refreshBattery(model.hass);
-    onMap = ids;
-    buildRouting(nodes);
-    devToNode = Object.fromEntries(nodes.filter(n => n.devId).map(n => [n.devId, n.id]));
-    entToNode = {};
-    for (const n of nodes) for (const e of n.entities || []) entToNode[e] = n.id;
-    nodeName = Object.fromEntries(nodes.map(n => [n.id, n.name]));
-    for (const w of Object.values(wifiById)) {
-      devToNode[w.devId] = w.id;
-      for (const e of w.entities) entToNode[e] = w.id;
-      nodeName[w.id] = w.name;
+    tp.refreshBattery(model.hass);
+    tp.onMap = ids;
+    tp.buildRouting(nodes);
+    tp.devToNode = Object.fromEntries(nodes.filter(n => n.devId).map(n => [n.devId, n.id]));
+    tp.entToNode = {};
+    for (const n of nodes) for (const e of n.entities || []) tp.entToNode[e] = n.id;
+    tp.nodeName = Object.fromEntries(nodes.map(n => [n.id, n.name]));
+    for (const w of Object.values(tp.wifiById)) {
+      tp.devToNode[w.devId] = w.id;
+      for (const e of w.entities) tp.entToNode[e] = w.id;
+      tp.nodeName[w.id] = w.name;
     }
     {
       const lw = $("lgwifi");
-      if (lw) lw.hidden = !Object.keys(wifiById).length;
+      if (lw) lw.hidden = !Object.keys(tp.wifiById).length;
     }
     parents.sort((p, q) => p.rssi - q.rssi);
-    listData = {
+    tp.listData = {
       parents,
       count: nodes.length,
       weak: Object.values(edges)
@@ -314,25 +322,29 @@
         .filter(e => e.r < -80)
         .sort((p, q) => p.r - q.r),
     };
-    refreshFirmware(model.hass);
-    recordSignal(); // signal trend (issue #38)
-    recordCounters(); // stability counters over a time window (issue #24)
-    renderList();
-    const time = new Date().toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
-    if ($("search").value.trim()) network.once("stabilizationIterationsDone", () => setTimeout(applySearch, 50));
-    else if (markedIds) {
+    tp.refreshFirmware(model.hass);
+    tp.recordSignal(); // signal trend (issue #38)
+    tp.recordCounters(); // stability counters over a time window (issue #24)
+    tp.renderList();
+    const time = new Date().toLocaleTimeString(tp.lang, { hour: "2-digit", minute: "2-digit" });
+    if ($("search").value.trim()) tp.network.once("stabilizationIterationsDone", () => setTimeout(tp.applySearch, 50));
+    else if (tp.markedIds) {
       // devices marked from the panel below the map (#108) stay marked after a refresh
-      const keepIds = markedIds.filter(id => onMap.has(id));
-      markedIds = null;
-      if (keepIds.length) setTimeout(() => markDevices(keepIds, false), 50);
-      else clearMarks();
+      const keepIds = tp.markedIds.filter(id => tp.onMap.has(id));
+      tp.markedIds = null;
+      if (keepIds.length) setTimeout(() => tp.markDevices(keepIds, false), 50);
+      else tp.clearMarks();
     }
-    renderChanges();
-    if (panelNode && (nodeById[panelNode] || extraIds.has(panelNode) || wifiById[panelNode])) renderPanel();
-    else if (panelNode) closePanel();
-    lastSnap = snapshotOf(nodes, edges, byId);
-    lastSnap.grade = (computeHealth() || {}).grade; // grade changes go to the change log (issue #84)
+    tp.renderChanges();
+    if (tp.panelNode && (tp.nodeById[tp.panelNode] || tp.extraIds.has(tp.panelNode) || tp.wifiById[tp.panelNode]))
+      tp.renderPanel();
+    else if (tp.panelNode) tp.closePanel();
+    tp.lastSnap = tp.snapshotOf(nodes, edges, byId);
+    tp.lastSnap.grade = (tp.computeHealth() || {}).grade; // grade changes go to the change log (issue #84)
     // short (issue #107): the version is in the ⋯ menu; the tap hint only until a device was opened once
     $("status").textContent =
-      (DEMO ? T.demo + " · " : "") + T.asOf(time, nodes.length) + (prefs.get("tapped") ? "" : " · " + T.tapHint);
+      (DEMO ? tp.T.demo + " · " : "") +
+      tp.T.asOf(time, nodes.length) +
+      (prefs.get("tapped") ? "" : " · " + tp.T.tapHint);
   }
+}

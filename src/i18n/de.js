@@ -1,6 +1,6 @@
-//# German texts. Defines TEXT_DE and NAMES_DE (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
-//# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
-const TEXT_DE = {
+// German texts. Defines TEXT_DE and NAMES_DE (translations of common English entity names); listed in src/i18n/index.js.
+// Keys missing here fall back to English – tests/check-i18n.js lists them.
+export const TEXT_DE = {
   hPowerCutRecent: (n, days, kids) =>
     `In den letzten ${days} Tag${days === 1 ? "" : "en"} ${n}× neu gestartet – wird wahrscheinlich ab und zu stromlos (z. B. Lampe am Wandschalter oder ausgesteckte Steckdose). Solange er aus ist, kann er keine Nachrichten weiterleiten${kids.length ? `; ${kids.join(", ")} ${kids.length === 1 ? "muss" : "müssen"} sich dann einen neuen Parent suchen` : ""}. Tipp: am Strom lassen und über Home Assistant schalten.`,
   warnAttachRecent: (n, days) =>
@@ -419,7 +419,7 @@ const TEXT_DE = {
 };
 
 // Translations of common English entity names (ticker and detail panel); prefix match, first hit wins
-const NAMES_DE = [
+export const NAMES_DE = [
   ["Effective current", "Strom (effektiv)"],
   ["Effective voltage", "Spannung (effektiv)"],
   ["Active current", "Strom"],

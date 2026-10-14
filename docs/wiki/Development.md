@@ -2,16 +2,16 @@
 
 ## Code layout
 
-All source code is in `src/`, one file per topic. `build.py` assembles the files in a fixed order – there is no bundler; building needs only Python (Node is used for formatting, lint and the translation check). A short introduction for new contributors: [CONTRIBUTING.md](https://github.com/riticulus/ha-thread-pulse/blob/main/CONTRIBUTING.md).
+All source code is in `src/`, one ES module per topic. [esbuild](https://esbuild.github.io/) bundles them into the two files in `dist/` (`npm run build`). A short introduction for new contributors: [CONTRIBUTING.md](https://github.com/riticulus/ha-thread-pulse/blob/main/CONTRIBUTING.md).
 
 | File | Content |
 |---|---|
 | `src/version.js` | Version number (`VERSION`) |
-| `src/i18n/<lang>.js` | Texts, one file per language (`TEXT_XX`, and `NAMES_XX` for translations of common English entity names); `build.py` collects all files and builds `TEXT` and `LOCAL_NAMES` |
-| `src/icons.js` | Device icons: path data of Material Design Icons (top level) |
-| `src/styles.css` | Styles – becomes the constant `TP_CSS`; semantic colours come from `COLORS` as CSS variables (`--c-good`, `--c-medium`, `--c-weak`, `--c-warn`, `--c-hint`) |
-| `src/markup.html` | HTML skeleton – becomes the constant `TP_HTML` |
-| `src/core.js` | Start of `createThreadPulse(root, opts, host)` and the state shared by all parts |
+| `src/i18n/<lang>.js` | Texts, one file per language (`TEXT_XX`, and `NAMES_XX` for translations of common English entity names); `i18n/index.js` lists them as `TEXT` and `LOCAL_NAMES` and has `textFor()` (missing keys fall back to English) |
+| `src/icons.js` | Device icons: path data of Material Design Icons (`MDI`) |
+| `src/styles.css` | Styles – imported as text (`TP_CSS`); semantic colours come from `COLORS` as CSS variables (`--c-good`, `--c-medium`, `--c-weak`, `--c-warn`, `--c-hint`) |
+| `src/markup.html` | HTML skeleton – imported as text (`TP_HTML`) |
+| `src/core.js` | `createThreadPulse(root, opts, host)`: creates the instance object `tp` and installs the parts in the order of `PARTS` |
 | `src/prefs.js` | Settings remembered by the browser: one table of keys, types and defaults; `prefs.get / set / remove` (first of the parts) |
 | `src/helpers.js` | `COLORS` (all colours in one place), signal quality, icon images, theme, connection to Home Assistant, language |
 | `src/data.js` | Loading the data from Home Assistant (registries, cached Matter diagnostics, border router) |
@@ -45,16 +45,27 @@ All source code is in `src/`, one file per topic. `build.py` assembles the files
 | `src/ui.js` | List and legend, errors, loading, keyboard and click handling |
 | `src/ambient.js` | Ambient mode |
 | `src/start.js` | Start-up and the public API (`destroy`, `theme`) |
-| `src/standalone.html` | Shell of the standalone page (iframe): reads URL parameters |
+| `src/standalone.js`, `src/standalone.html` | Shell of the standalone page (iframe): reads URL parameters; the HTML is the template the bundle is placed in |
 | `src/card.js` | Shell of the dashboard card `custom:thread-pulse-card`: options, visual editor, loading the graph library |
 
 ### How the parts fit together
 
-- `version.js`, the language files in `i18n/` and `icons.js` are top-level code.
-- `core.js` opens the function `createThreadPulse()`. The files from `prefs.js` to `ambient.js` and finally `start.js` are placed **inside** this function, in the order listed in `build.py`; `build.py` adds the closing brace. That is why the feature files are not valid JavaScript on their own – they use the shared state (`network`, `nodeById`, `T` …) declared in `core.js` and the other parts.
-- Function declarations can be anywhere in these files. Code that runs immediately during start-up (not inside a function) must only use variables declared in an earlier file.
-- Lines starting with `//#` at the top of a file are notes for developers and are not copied into the output.
-- The shells (`standalone.html`, `card.js`) call `createThreadPulse()` with a *host* object that tells the core how to reach Home Assistant, where the theme colours come from and how to open a page in Home Assistant.
+- `version.js`, the language files in `i18n/` and `icons.js` export constants that are the same for every card.
+- Everything else belongs to one **card instance** – a dashboard can show several cards, so there is no global state. `createThreadPulse()` in `core.js` creates the object **`tp`** for the instance and calls the `install(tp)` function of every part, in the order of `PARTS`. Each part file looks like this:
+
+  ```js
+  export default function install(tp) {
+    const { esc, nameOf } = tp;                 // functions and constants of earlier parts
+    Object.assign(tp, { whatIfHtml });          // what this part offers to the others
+    function whatIfHtml(id) { … tp.nodeById[id] … tp.renderPanel() … }
+  }
+  ```
+
+  - **State that changes** (`tp.nodeById`, `tp.network`, `tp.T` for the texts, `tp.panelNode` …) is always used as `tp.name`, so it is clear that it is shared.
+  - **Functions and constants of an earlier part** are taken at the top with `const { … } = tp`.
+  - **Functions of a later part** are called as `tp.name()` – they exist once all parts are installed. Code that runs immediately during `install` must only use what earlier parts provide.
+  - Everything else in a file is private to it.
+- The shells (`standalone.js`, `card.js`) call `createThreadPulse()` with a *host* object that tells the core how to reach Home Assistant, where the theme colours come from and how to open a page in Home Assistant.
 
 ### Generated files
 
@@ -69,7 +80,8 @@ Never edit the generated files by hand.
 ## Building
 
 ```bash
-python3 build.py
+npm install            # once: esbuild, Prettier, ESLint (only for development – the card has no npm dependencies)
+npm run build          # or: python3 build.py
 ```
 
 Edit only the files in `src/`; never edit the generated files by hand.
@@ -84,19 +96,18 @@ Edit only the files in `src/`; never edit the generated files by hand.
 The JavaScript in `src/` is formatted with [Prettier](https://prettier.io/) (line length 120, settings in `.prettierrc.json`) and checked with [ESLint](https://eslint.org/) (`eslint.config.mjs`). Both only need Node; the card itself has no npm dependencies.
 
 ```bash
-npm install            # once: Prettier and ESLint (devDependencies in package.json)
 npm run format         # format src/ in place
-npm run lint           # build, then ESLint – every message points to the file and line in src/
+npm run lint           # ESLint on src/ and tools/
 ```
 
-Most files in `src/` are parts of one function and not valid JavaScript on their own: `tools/format.mjs` wraps them for Prettier, and `tools/lint.mjs` lints the assembled card and maps each message back to `src/`. `.editorconfig` sets the basics (UTF-8, LF, 2 spaces) for any editor.
+`.editorconfig` sets the basics (UTF-8, LF, 2 spaces) for any editor.
 
 ## Tests
 
 Browser tests run against the demo mode in headless Chrome – no Home Assistant needed. Details in [`tests/README.md`](https://github.com/riticulus/ha-thread-pulse/blob/main/tests/README.md).
 
 ```bash
-python3 build.py
+npm run build
 pip install -r tests/requirements.txt      # websockets, Pillow
 node tests/check-i18n.js                   # translations (missing ones are listed, English is used)
 python3 tests/smoke_test.py                # every feature, fails on JavaScript errors (~2 min, --quick ~1 min)
@@ -110,7 +121,7 @@ Changes to loading real data (`src/data.js`, the live subscription, border route
 A GitHub action runs on every pull request:
 
 - **HACS validation** of the repository
-- **Build check:** `build.py` is run and the generated files must match `src/`
+- **Build check:** `npm run build` is run and the generated files must match `src/`
 - **Translations:** `node tests/check-i18n.js` – no unknown keys, matching types, every text function works. Keys missing in a language only give a warning: they fall back to English at runtime, so a pull request may add its texts in English only. Releases run the check with `--strict`, then every language must be complete
 - **Syntax check** of the card and the page
 - **Formatting and lint:** `npm run format:check` and `npm run lint`
@@ -161,8 +172,8 @@ Do not open a pull request from `release/X.Y.x` into `main` – the changes are 
 
 1. Copy `src/i18n/en.js` to `src/i18n/<code>.js` (two-letter code, e.g. `pt.js`) and rename `TEXT_EN` to `TEXT_PT`.
 2. Translate the values – keys you leave out fall back to English and are listed by the check; optionally add `NAMES_PT` with translations of common English entity names (see `de.js`).
-3. Run `node tests/check-i18n.js` and `python3 build.py`.
-4. Add the language to the list in `src/card.js` (visual editor).
+3. Add it to `src/i18n/index.js` and to the list in `src/card.js` (visual editor).
+4. Run `node tests/check-i18n.js` and `npm run build`.
 
 ## Contributing
 

@@ -1,5 +1,9 @@
-//# Loading the data from Home Assistant (registries, cached Matter diagnostics, border router).
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Loading the data from Home Assistant (registries, cached Matter diagnostics, border router).
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+
+export default function install(tp) {
+  const { $, diag, getHass, iconFor, setLanguage } = tp;
+  Object.assign(tp, { loadHa });
   // ---------- data from Home Assistant ----------
   // Everything comes from data Home Assistant already has cached (diagnostics, entity registry):
   // no device is queried live, so battery devices are not woken up.
@@ -10,9 +14,9 @@
     try {
       entries = await hass.callWS({ type: "config_entries/get", domain: "matter" });
     } catch (e) {
-      throw Object.assign(new Error(T.notAdmin), { fatal: true });
+      throw Object.assign(new Error(tp.T.notAdmin), { fatal: true });
     }
-    if (!entries.length) throw Object.assign(new Error(T.noMatter), { fatal: true });
+    if (!entries.length) throw Object.assign(new Error(tp.T.noMatter), { fatal: true });
     const entry = entries[0].entry_id;
     const [devReg, entReg, areaReg] = await Promise.all([
       hass.callWS({ type: "config/device_registry/list" }),
@@ -117,10 +121,10 @@
           if (e.fatal) throw e;
           console.warn("Thread Pulse:", d.name, e);
         }
-        st.textContent = `${T.loading} ${++done}/${devs.length}`;
+        st.textContent = `${tp.T.loading} ${++done}/${devs.length}`;
       }),
     );
-    if (!nodes.length) throw Object.assign(new Error(T.noDevices), { fatal: true });
+    if (!nodes.length) throw Object.assign(new Error(tp.T.noDevices), { fatal: true });
     let brExt = null,
       otbr = null,
       datasets = [];
@@ -157,3 +161,4 @@
     };
     return { nodes, wifi, brExt, hass, thread, zigbee };
   }
+}

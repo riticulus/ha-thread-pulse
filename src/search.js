@@ -1,5 +1,9 @@
-//# Search (issue #9).
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Search (issue #9).
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+
+export default function install(tp) {
+  const { $, esc, host, openPanel } = tp;
+  Object.assign(tp, { applySearch, clearMarks, markDevices });
   // ---------- search (issue #9) ----------
   // Matches device name and area (case and accents ignored). Matches stay bright and are selected, the rest fades out,
   // the map zooms to the matches. Enter opens the first match, Esc clears the search.
@@ -11,69 +15,69 @@
   function dimExcept(ids) {
     // ids: devices that stay bright; null: all bright
     const fg = getComputedStyle(host.styleTarget).getPropertyValue("--fg").trim() || "#1f2733";
-    searchActive = !!ids;
-    searchHits = ids || [];
-    const hit = new Set(searchHits),
+    tp.searchActive = !!ids;
+    tp.searchHits = ids || [];
+    const hit = new Set(tp.searchHits),
       upd = [];
-    network.body.data.nodes.forEach(v => {
+    tp.network.body.data.nodes.forEach(v => {
       const on = !ids || hit.has(v.id);
       upd.push({ id: v.id, opacity: on ? 1 : 0.18, font: { color: on ? fg : "rgba(128,128,128,.35)" } });
     });
-    network.body.data.nodes.update(upd);
+    tp.network.body.data.nodes.update(upd);
   }
   function fitTo(ids) {
     if (ids.length === 1) {
-      network.selectNodes(ids);
-      network.focus(ids[0], { scale: 1.3, animation: { duration: 400 } });
+      tp.network.selectNodes(ids);
+      tp.network.focus(ids[0], { scale: 1.3, animation: { duration: 400 } });
     } else if (ids.length) {
-      network.selectNodes(ids);
-      network.fit({ nodes: ids, animation: { duration: 400 } });
+      tp.network.selectNodes(ids);
+      tp.network.fit({ nodes: ids, animation: { duration: 400 } });
     }
   }
   function applySearch() {
-    if (!network) return;
+    if (!tp.network) return;
     const q = norm($("search").value.trim());
     if (q) {
-      markedIds = null;
+      tp.markedIds = null;
       $("markchip").hidden = true;
     }
     dimExcept(
       q
-        ? Object.values(nodeById)
-            .concat(Object.values(wifiById))
+        ? Object.values(tp.nodeById)
+            .concat(Object.values(tp.wifiById))
             .filter(n => norm(n.name).includes(q) || norm(n.area).includes(q))
             .map(n => n.id)
         : null,
     );
-    $("hits").textContent = q ? T.hits(searchHits.length) : "";
-    if (q) fitTo(searchHits);
+    $("hits").textContent = q ? tp.T.hits(tp.searchHits.length) : "";
+    if (q) fitTo(tp.searchHits);
     else {
-      network.unselectAll();
-      network.fit({ animation: { duration: 400 } });
+      tp.network.unselectAll();
+      tp.network.fit({ animation: { duration: 400 } });
     }
   }
   // devices marked from the panel below the map (issue #108): a factor of the mesh health, a weak link …
   // shown like search results; "Show all" (or Esc) ends it
-  let markedIds = null;
+  tp.markedIds = null;
   function markDevices(ids, fit = true) {
-    if (!network || !ids.length) return;
+    if (!tp.network || !ids.length) return;
     $("search").value = "";
-    markedIds = ids.slice();
-    dimExcept(markedIds);
+    tp.markedIds = ids.slice();
+    dimExcept(tp.markedIds);
     $("hits").textContent = "";
     const c = $("markchip");
     c.hidden = false; // on the map, not in the toolbar – the toolbar must stay one row on phones
-    c.innerHTML = `${esc(T.marked(markedIds.length))} · <a href="#" data-act="unmark">${esc(T.unmark)}</a>`;
-    if (fit) fitTo(markedIds);
+    c.innerHTML = `${esc(tp.T.marked(tp.markedIds.length))} · <a href="#" data-act="unmark">${esc(tp.T.unmark)}</a>`;
+    if (fit) fitTo(tp.markedIds);
   }
   function clearMarks() {
-    if (!markedIds && $("markchip").hidden) return;
-    markedIds = null;
+    if (!tp.markedIds && $("markchip").hidden) return;
+    tp.markedIds = null;
     $("markchip").hidden = true;
-    if (network) {
+    if (tp.network) {
       dimExcept(null);
-      network.unselectAll();
-      network.fit({ animation: { duration: 400 } });
+      tp.network.unselectAll();
+      tp.network.fit({ animation: { duration: 400 } });
     }
   }
   let searchTimer = null;
@@ -82,15 +86,16 @@
     searchTimer = setTimeout(applySearch, 150);
   });
   $("search").addEventListener("keydown", e => {
-    if (e.key === "Enter" && searchHits.length) {
+    if (e.key === "Enter" && tp.searchHits.length) {
       e.preventDefault();
-      openPanel(searchHits[0]);
+      openPanel(tp.searchHits[0]);
     } else if (e.key === "Escape") {
       e.preventDefault();
       $("search").value = "";
-      markedIds = null;
+      tp.markedIds = null;
       $("markchip").hidden = true;
       applySearch();
       $("search").blur();
     }
   });
+}

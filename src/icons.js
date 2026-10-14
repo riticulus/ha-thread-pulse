@@ -1,6 +1,6 @@
-//# Device icons: SVG path data of Material Design Icons. Top level (outside createThreadPulse), shared by all instances.
+// Device icons: SVG path data of Material Design Icons, shared by all card instances..
 // Icons: Material Design Icons (Pictogrammers), Apache License 2.0 – https://pictogrammers.com/library/mdi/
-const MDI = {
+export const MDI = {
   "power-plug": "M16,7V3H14V7H10V3H8V7H8C7,7 6,8 6,9V14.5L9.5,18V21H14.5V18L18,14.5V9C18,8 17,7 16,7Z",
   "toggle-switch-variant":
     "M18.4 1.6C18 1.2 17.5 1 17 1H7C6.5 1 6 1.2 5.6 1.6C5.2 2 5 2.5 5 3V21C5 21.5 5.2 22 5.6 22.4C6 22.8 6.5 23 7 23H17C17.5 23 18 22.8 18.4 22.4C18.8 22 19 21.5 19 21V3C19 2.5 18.8 2 18.4 1.6M16 7C16 7.6 15.6 8 15 8H9C8.4 8 8 7.6 8 7V5C8 4.4 8.4 4 9 4H15C15.6 4 16 4.4 16 5V7Z",

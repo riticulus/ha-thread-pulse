@@ -103,7 +103,7 @@ def check(version):
     build()
     diff = subprocess.run(["git", "status", "--porcelain", "--", "dist"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
     if diff:
-        problems.append("generated files in dist/ are not up to date – run python3 build.py and commit:\n" + diff)
+        problems.append("generated files in dist/ are not up to date – run `npm run build` and commit:\n" + diff)
     for p in problems:
         print("ERROR: " + p)
     if problems:

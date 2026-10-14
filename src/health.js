@@ -1,5 +1,9 @@
-//# Mesh health: one grade (A–E) with the factors behind it (issue #84).
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Mesh health: one grade (A–E) with the factors behind it (issue #84).
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+
+export default function install(tp) {
+  const { esc, nameOf, pathToBr, powerCutOf, unstableOf } = tp;
+  Object.assign(tp, { computeHealth, healthHtml, trackGrade });
   // ---------- mesh health (issue #84) ----------
   // A rule of thumb, not a measurement: six factors from the same data as the map, each "ok", "check" or "problem".
   // check = 1 point, problem = 2; 0 → A, 1 → B, 2–3 → C, 4–5 → D, 6+ → E. The factors are always shown next to the
@@ -7,16 +11,18 @@
   // judged for routers. Thresholds: weak = below −80 dBm (as the link colours); unstable as for the warnings.
   const HEALTH_POINTS = { ok: 0, warn: 1, bad: 2, na: 0 };
   const HEALTH_COLOR = { ok: "#2e7d32", warn: "#ef6c00", bad: "#c62828", na: "var(--muted)" };
+  tp.HEALTH_COLOR = HEALTH_COLOR;
   // routers in the mesh: from the routing tables (also routers Home Assistant has no device for), else what the map shows
   const routerCount = () =>
-    Object.keys(ridToId).length ||
-    Object.values(nodeById).filter(n => n.type === "routing_end_device").length + extraIds.size;
+    Object.keys(tp.ridToId).length ||
+    Object.values(tp.nodeById).filter(n => n.type === "routing_end_device").length + tp.extraIds.size;
+  tp.routerCount = routerCount;
   const gradeOf = p => (p === 0 ? "A" : p === 1 ? "B" : p <= 3 ? "C" : p <= 5 ? "D" : "E");
   function computeHealth(nm = nameOf) {
-    if (!listData) return null;
-    const nodes = Object.values(nodeById),
+    if (!tp.listData) return null;
+    const nodes = Object.values(tp.nodeById),
       routers = nodes.filter(n => n.type === "routing_end_device");
-    const isRouterId = id => (nodeById[id] && nodeById[id].type === "routing_end_device") || extraIds.has(id);
+    const isRouterId = id => (tp.nodeById[id] && tp.nodeById[id].type === "routing_end_device") || tp.extraIds.has(id);
     const list = ids => ids.map(nm).join(", ");
     const factors = [];
     const add = (key, level, value, text, ids = []) => factors.push({ key, level, value, text, ids }); // ids: shown on the map (#108)
@@ -26,43 +32,44 @@
     add(
       "routers",
       nR <= 1 ? "bad" : nR === 2 ? "warn" : "ok",
-      T.hvRouters(nR),
-      nR <= 1 ? T.htRoutersOne : nR === 2 ? T.htRoutersTwo : T.htRoutersOk,
+      tp.T.hvRouters(nR),
+      nR <= 1 ? tp.T.htRoutersOne : nR === 2 ? tp.T.htRoutersTwo : tp.T.htRoutersOk,
     );
 
     // 2. redundancy: routers with fewer than two good links to other routers lose their part of the mesh with one router
     if (!routers.length)
-      add("redundancy", "na", "–", T.htRedundancyNoData); // e.g. only Apple border routers: their links are not reported
-    else if (nR < 3) add("redundancy", "na", "–", T.htRedundancyNa);
+      add("redundancy", "na", "–", tp.T.htRedundancyNoData); // e.g. only Apple border routers: their links are not reported
+    else if (nR < 3) add("redundancy", "na", "–", tp.T.htRedundancyNa);
     else {
       const single = routers
         .filter(
           r =>
-            (linksOf[r.id] || []).filter(l => l.kind === "neighbour" && isRouterId(l.id) && l.rssi >= -80).length < 2,
+            (tp.linksOf[r.id] || []).filter(l => l.kind === "neighbour" && isRouterId(l.id) && l.rssi >= -80).length <
+            2,
         )
         .map(r => r.id);
       add(
         "redundancy",
         !single.length ? "ok" : single.length === 1 || single.length / routers.length <= 0.25 ? "warn" : "bad",
-        T.hvOf(routers.length - single.length, routers.length),
-        single.length ? T.htRedundancyBad(list(single)) : T.htRedundancyOk,
+        tp.T.hvOf(routers.length - single.length, routers.length),
+        single.length ? tp.T.htRedundancyBad(list(single)) : tp.T.htRedundancyOk,
         single,
       );
     }
 
     // 3. weak parent signal
-    const kids = listData.parents.filter(p => nodeById[p.childId]);
+    const kids = tp.listData.parents.filter(p => tp.nodeById[p.childId]);
     const weak = kids.filter(p => p.rssi < -80).map(p => p.childId);
     add(
       "weak",
       !weak.length ? "ok" : weak.length <= 2 || weak.length / Math.max(kids.length, 1) <= 0.15 ? "warn" : "bad",
-      T.hvOf(weak.length, kids.length),
-      weak.length ? T.htWeakBad(list(weak)) : T.htWeakOk,
+      tp.T.hvOf(weak.length, kids.length),
+      weak.length ? tp.T.htWeakBad(list(weak)) : tp.T.htWeakOk,
       weak,
     );
 
     // 4. hops to the border router (only when the border router is known)
-    if (!brExt) add("depth", "na", "–", T.htDepthNa);
+    if (!tp.brExt) add("depth", "na", "–", tp.T.htDepthNa);
     else {
       const hops = nodes
         .map(n => {
@@ -75,8 +82,8 @@
       add(
         "depth",
         max <= 3 ? "ok" : max === 4 ? "warn" : "bad",
-        T.hvHops(max),
-        deep.length ? T.htDepthBad(list(deep)) : T.htDepthOk,
+        tp.T.hvHops(max),
+        deep.length ? tp.T.htDepthBad(list(deep)) : tp.T.htDepthOk,
         deep,
       );
     }
@@ -90,8 +97,8 @@
     add(
       "children",
       crowded,
-      T.hvMax(top),
-      topId && crowded !== "ok" ? T.htChildrenBad(nm(topId), top, kids.length) : T.htChildrenOk,
+      tp.T.hvMax(top),
+      topId && crowded !== "ok" ? tp.T.htChildrenBad(nm(topId), top, kids.length) : tp.T.htChildrenOk,
       topId && crowded !== "ok" ? [topId, ...kids.filter(p => p.parentId === topId).map(p => p.childId)] : [],
     );
 
@@ -104,8 +111,8 @@
     add(
       "stability",
       !shaky.length ? "ok" : shaky.length <= 2 ? "warn" : "bad",
-      T.hvOf(shaky.length, nodes.length),
-      shaky.length ? T.htStabilityBad(list(shaky)) : T.htStabilityOk,
+      tp.T.hvOf(shaky.length, nodes.length),
+      shaky.length ? tp.T.htStabilityBad(list(shaky)) : tp.T.htStabilityOk,
       shaky,
     );
 
@@ -113,6 +120,7 @@
     return { grade: gradeOf(points), points, factors, known: factors.filter(f => f.level !== "na").length };
   }
   const gradeColor = g => (g <= "B" ? HEALTH_COLOR.ok : g === "C" ? HEALTH_COLOR.warn : HEALTH_COLOR.bad);
+  tp.gradeColor = gradeColor;
   function healthHtml(inPanel = false) {
     // section in the list and in the border router panel
     const h = computeHealth();
@@ -121,19 +129,21 @@
     const grade =
       `<span class="grade" style="background:${gradeColor(h.grade)}">${h.grade}</span>` +
       (h.known < h.factors.length
-        ? ` <span style="color:var(--muted);font-weight:400;font-size:12px">${T.healthPartial(h.known, h.factors.length)}</span>`
+        ? ` <span style="color:var(--muted);font-weight:400;font-size:12px">${tp.T.healthPartial(h.known, h.factors.length)}</span>`
         : "");
     return (
       `<div class="health">` +
-      (inPanel ? `<h4>${T.healthHead}</h4><div>${T.healthGrade} ${grade}</div>` : `<b>${T.healthHead}: ${grade}</b>`) +
+      (inPanel
+        ? `<h4>${tp.T.healthHead}</h4><div>${tp.T.healthGrade} ${grade}</div>`
+        : `<b>${tp.T.healthHead}: ${grade}</b>`) +
       `<table>${h.factors
         .map(
           f =>
-            `<tr><td style="vertical-align:top;white-space:nowrap"><span style="color:${HEALTH_COLOR[f.level]}">●</span> ${T.hfTitle[f.key]}</td>` +
+            `<tr><td style="vertical-align:top;white-space:nowrap"><span style="color:${HEALTH_COLOR[f.level]}">●</span> ${tp.T.hfTitle[f.key]}</td>` +
             `<td>${f.level === "na" ? "" : `<b style="color:${HEALTH_COLOR[f.level]}">${esc(f.value)}</b> · `}${esc(f.text)}</td></tr>`,
         )
         .join("")}</table>` +
-      `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${T.healthNote}</div></div>`
+      `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${tp.T.healthNote}</div></div>`
     );
   }
   // grade changes in the change log – only when the new grade was seen on two refreshes in a row (no flapping)
@@ -153,7 +163,8 @@
       gradePending = g;
       return;
     }
-    logChange("mesh", T.meshName, T.chGrade(gradeLogged, g), g < gradeLogged ? "gradeUp" : "gradeDown");
+    tp.logChange("mesh", tp.T.meshName, tp.T.chGrade(gradeLogged, g), g < gradeLogged ? "gradeUp" : "gradeDown");
     gradeLogged = g;
     gradePending = null;
   }
+}

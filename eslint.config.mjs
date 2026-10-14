@@ -1,11 +1,10 @@
-// ESLint checks the assembled card (dist/ha-thread-pulse.js): the files in src/ are parts of one function and cannot
-// be checked alone. Run it with `npm run lint` – tools/lint.mjs maps every message back to the file in src/.
+// ESLint for the sources (ES modules, run in the browser) and the Node tools. Run `npm run lint`.
 import js from "@eslint/js";
 import globals from "globals";
 
 export default [
   {
-    files: ["dist/ha-thread-pulse.js"],
+    files: ["src/**/*.js"],
     ...js.configs.recommended,
     languageOptions: { ecmaVersion: 2024, sourceType: "module", globals: { ...globals.browser } },
     rules: {

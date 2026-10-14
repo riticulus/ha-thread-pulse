@@ -16,7 +16,7 @@ Home Assistant.
 ## Run
 
 ```bash
-python3 build.py                       # the tests use the generated files in dist/
+npm install && npm run build           # the tests use the generated files in dist/
 pip install -r tests/requirements.txt  # websockets, Pillow
 node tests/check-i18n.js
 python3 tests/smoke_test.py            # about 2 minutes; --quick skips the change-log check (45 s)

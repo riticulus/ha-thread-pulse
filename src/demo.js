@@ -1,9 +1,13 @@
-//# Demo mode with invented devices.
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Demo mode with invented devices.
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+
+export default function install(tp) {
+  const { esc, every, launch, localName, opts, recordResponse, showTicker } = tp;
+  Object.assign(tp, { demoModel, demoMutate, demoTraffic });
   // ---------- demo (invented devices, works without Home Assistant) ----------
   function demoModel() {
     if (opts.demo === "apple") return demoModelApple();
-    const de = lang === "de";
+    const de = tp.lang === "de";
     let seq = 0x1000;
     const mk = (name, icon, role, extra = {}) => ({
       id: "f2a0c0de0000" + (seq++).toString(16),
@@ -95,13 +99,13 @@
       n.demoValues =
         n.icon === "power-plug"
           ? [
-              [localName("Switch"), T.states.on, 26 * 3600],
+              [localName("Switch"), tp.T.states.on, 26 * 3600],
               [localName("Power"), "42.7 W", 4 * m],
               [localName("Energy"), "18.304 kWh", 6 * m],
             ]
           : n.icon === "door" || n.icon === "window-closed-variant"
             ? [
-                [localName("Contact"), T.states.closed, 12 * m],
+                [localName("Contact"), tp.T.states.closed, 12 * m],
                 [localName("Battery"), n.demoBattery + " %", 3 * 3600],
               ]
             : n.icon === "thermometer"
@@ -110,8 +114,8 @@
                   [localName("Humidity"), "48 %", 5 * m],
                 ]
               : n.icon === "lightbulb"
-                ? [[localName("Light"), T.states.on, 40 * m]]
-                : [[T.state, T.states.off, 90 * m]];
+                ? [[localName("Light"), tp.T.states.on, 40 * m]]
+                : [[tp.T.state, tp.T.states.off, 90 * m]];
     });
     for (const n of all2) n.demoIdentify = true;
     // connected systems (issue #79): most devices were added with an iPhone, one is also in Google Home
@@ -228,7 +232,7 @@
         area: de ? "Wohnzimmer" : "Living room",
         entities: [],
         mainEntities: [],
-        demoValues: [[T.state, T.states.on, 40 * 60]],
+        demoValues: [[tp.T.state, tp.T.states.on, 40 * 60]],
         info: { vendor: "Demo Inc.", product: "Smart TV", sw: "7.2", hw: "2", reboots: 41, bootReason: 1 },
       },
     ];
@@ -269,7 +273,7 @@
   }
   // demo: one invented change per refresh – a battery device moves to another parent, or a device drops out / comes back
   function demoMutate() {
-    const m = demoState,
+    const m = tp.demoState,
       { routers, sleepy, dec, rid } = m.demo;
     if (m.demo.apple) {
       // Apple demo: a battery device moves to another Apple router
@@ -299,7 +303,7 @@
   // Apple-only network (issue #71): Thread network from an iPhone, three Apple border routers (not Matter devices of HA),
   // only battery devices, no OpenThread add-on – the border router is unknown, messages go device → parent router only.
   function demoModelApple() {
-    const de = lang === "de";
+    const de = tp.lang === "de";
     let seq = 0x2000;
     const mk = (name, icon) => ({
       id: "f2a0c0de0000" + (seq++).toString(16),
@@ -346,7 +350,7 @@
               [localName("Temperature"), "14.2 °C", 120],
               [localName("Humidity"), "71 %", 300],
             ]
-          : [[localName("Contact"), T.states.closed, 3600]];
+          : [[localName("Contact"), tp.T.states.closed, 3600]];
     });
     const wifi = [
       {
@@ -413,13 +417,13 @@
         : n.icon === "thermometer" || n.icon === "thermostat"
           ? [localName("Temperature"), `${(19 + Math.random() * 4).toFixed(1)} °C`]
           : n.icon === "window-closed-variant" || n.icon === "door"
-            ? [localName("Contact"), Math.random() < 0.5 ? T.states.open : T.states.closed]
+            ? [localName("Contact"), Math.random() < 0.5 ? tp.T.states.open : tp.T.states.closed]
             : n.icon === "motion-sensor"
-              ? [localName("Motion"), Math.random() < 0.5 ? T.states.on : T.states.off]
-              : [T.state, Math.random() < 0.5 ? T.states.on : T.states.off];
+              ? [localName("Motion"), Math.random() < 0.5 ? tp.T.states.on : tp.T.states.off]
+              : [tp.T.state, Math.random() < 0.5 ? tp.T.states.on : tp.T.states.off];
     const live = model.nodes.filter(n => n.available);
     const step = () => {
-      if (destroyed) return;
+      if (tp.destroyed) return;
       const n = live[Math.floor(Math.random() * live.length)];
       if (Math.random() < 0.35 && ["lightbulb", "power-plug", "blinds"].includes(n.icon)) {
         launch(
@@ -429,9 +433,9 @@
         );
         const ms = n.icon === "blinds" ? 900 + Math.random() * 900 : 120 + Math.random() * 380; // the demo blinds are slow
         setTimeout(() => {
-          if (destroyed) return;
+          if (tp.destroyed) return;
           recordResponse(n.id, ms);
-          launch(n.id, false, `<b>${esc(n.name)}</b> → HA: ${T.state} ${T.states.on} · ${Math.round(ms)} ms`);
+          launch(n.id, false, `<b>${esc(n.name)}</b> → HA: ${tp.T.state} ${tp.T.states.on} · ${Math.round(ms)} ms`);
         }, ms);
       } else {
         const [what, val] = msgs(n);
@@ -442,3 +446,4 @@
     setTimeout(step, 1500);
     every(showTicker, 10000);
   }
+}

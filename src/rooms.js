@@ -1,12 +1,16 @@
-//# Room view (issue #8).
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Room view (issue #8).
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+
+export default function install(tp) {
+  const { $ } = tp;
+  Object.assign(tp, { applyRooms, drawRooms });
   // ---------- room view (issue #8) ----------
   // Calculated layout: every Home Assistant area gets its own spot on a grid, its devices sit in a ring around it,
   // and a coloured area with the room name is drawn behind them. Devices without an area and the border router share
   // one extra spot (top left). Physics is paused while the room view is on; the mesh links are still drawn.
-  let roomOn = false,
-    roomTween = null,
-    preRoomPos = null;
+  tp.roomOn = false;
+  tp.roomTween = null;
+  let preRoomPos = null;
   const ROOM_COLORS = [
     "#42a5f5",
     "#66bb6a",
@@ -21,45 +25,46 @@
   ];
   const roomsOf = () => {
     const m = {};
-    for (const n of Object.values(nodeById)) if (n.area) (m[n.area] = m[n.area] || []).push(n.id);
+    for (const n of Object.values(tp.nodeById)) if (n.area) (m[n.area] = m[n.area] || []).push(n.id);
     return m;
   };
+  tp.roomsOf = roomsOf;
   function applyRooms(on, animate = true) {
-    if (!network) return;
-    if (roomTween) {
-      cancelAnimationFrame(roomTween);
-      roomTween = null;
+    if (!tp.network) return;
+    if (tp.roomTween) {
+      cancelAnimationFrame(tp.roomTween);
+      tp.roomTween = null;
     }
     if (!on) {
       // Back to the mesh layout (issue #22): glide back to the positions from before the room view, then fit.
       // Without saved positions (room view was already on when the page loaded), let the physics finish the layout
       // first (stabilize runs the iterations before the map is shown again) and fit only afterwards.
-      const ids = network.body.data.nodes.getIds();
+      const ids = tp.network.body.data.nodes.getIds();
       const saved = preRoomPos && ids.filter(id => preRoomPos[id]).length >= ids.length * 0.8 ? preRoomPos : null;
       preRoomPos = null;
       const done = () => {
-        if (!network || destroyed) return;
-        network.setOptions({ physics: { enabled: true } });
-        network.fit({ animation: { duration: 400 } });
+        if (!tp.network || tp.destroyed) return;
+        tp.network.setOptions({ physics: { enabled: true } });
+        tp.network.fit({ animation: { duration: 400 } });
       };
       if (saved) {
         tweenTo(Object.fromEntries(ids.filter(id => saved[id]).map(id => [id, saved[id]])), animate ? 600 : 0, done);
         return;
       }
-      network.setOptions({ physics: { enabled: true } });
-      network.once("stabilizationIterationsDone", () => {
-        placeWifi();
-        network.fit({ animation: { duration: 400 } });
+      tp.network.setOptions({ physics: { enabled: true } });
+      tp.network.once("stabilizationIterationsDone", () => {
+        tp.placeWifi();
+        tp.network.fit({ animation: { duration: 400 } });
       });
-      network.stabilize(600);
+      tp.network.stabilize(600);
       return;
     }
-    if (animate && !preRoomPos) preRoomPos = network.getPositions();
+    if (animate && !preRoomPos) preRoomPos = tp.network.getPositions();
     const rooms = roomsOf(),
       names = Object.keys(rooms).sort();
     const grouped = new Set(names.flatMap(a => rooms[a]));
-    const rest = network.body.data.nodes.getIds().filter(id => !grouped.has(id) && !isWifiId(id));
-    const isR = id => nodeById[id] && nodeById[id].type === "routing_end_device";
+    const rest = tp.network.body.data.nodes.getIds().filter(id => !grouped.has(id) && !tp.isWifiId(id));
+    const isR = id => tp.nodeById[id] && tp.nodeById[id].type === "routing_end_device";
     const groups = names.map(a => rooms[a].slice().sort((a2, b2) => isR(b2) - isR(a2))); // routers first in the ring
     if (rest.length) groups.unshift(rest); // first (top left): the bottom left is covered by the live ticker
     const ring = k => (k <= 1 ? 0 : 40 + 22 * k);
@@ -77,28 +82,28 @@
         target[id] = { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
       });
     });
-    network.setOptions({ physics: { enabled: false } });
+    tp.network.setOptions({ physics: { enabled: false } });
     tweenTo(target, animate ? 600 : 0, () => {
-      placeWifi();
-      network.fit({ animation: animate ? { duration: 400 } : false });
+      tp.placeWifi();
+      tp.network.fit({ animation: animate ? { duration: 400 } : false });
     });
   }
   function tweenTo(target, D, done) {
     // move nodes smoothly to target positions (physics must be off)
-    network.setOptions({ physics: { enabled: false } });
-    const from = network.getPositions(),
+    tp.network.setOptions({ physics: { enabled: false } });
+    const from = tp.network.getPositions(),
       t0 = performance.now();
     const step = () => {
-      if (!network || destroyed) return;
+      if (!tp.network || tp.destroyed) return;
       const k = D ? Math.min(1, (performance.now() - t0) / D) : 1,
         e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
       for (const id in target) {
         const f = from[id] || target[id];
-        network.moveNode(id, f.x + (target[id].x - f.x) * e, f.y + (target[id].y - f.y) * e);
+        tp.network.moveNode(id, f.x + (target[id].x - f.x) * e, f.y + (target[id].y - f.y) * e);
       }
-      if (k < 1) roomTween = requestAnimationFrame(step);
+      if (k < 1) tp.roomTween = requestAnimationFrame(step);
       else {
-        roomTween = null;
+        tp.roomTween = null;
         done && done();
       }
     };
@@ -123,9 +128,9 @@
   }
   let roomCanvas = null;
   function drawRooms(ctx) {
-    if (!roomOn || !network) return;
+    if (!tp.roomOn || !tp.network) return;
     const rooms = roomsOf(),
-      pos = network.getPositions(),
+      pos = tp.network.getPositions(),
       PAD = 34;
     const cv = ctx.canvas;
     if (!roomCanvas) roomCanvas = document.createElement("canvas");
@@ -161,7 +166,7 @@
       ctx.restore();
       const top = pts.reduce((a, q) => (q.y < a.y ? q : a), pts[0]);
       labels.push({
-        text: roomLabel(area).toUpperCase(),
+        text: tp.roomLabel(area).toUpperCase(),
         x: pts.reduce((a, q) => a + q.x, 0) / pts.length,
         y: top.y - PAD - 8,
         color,
@@ -178,3 +183,4 @@
     }
     ctx.restore();
   }
+}
