@@ -101,6 +101,7 @@ A GitHub action runs on every pull request:
 - **Build check:** `build.py` is run and the generated files must match `src/`
 - **Translations:** `node tests/check-i18n.js` – no unknown keys, matching types, every text function works. Keys missing in a language only give a warning: they fall back to English at runtime, so a pull request may add its texts in English only. Releases run the check with `--strict`, then every language must be complete
 - **Syntax check** of the card and the page
+- **Browser tests:** `tests/smoke_test.py` and `tests/visual_test.py` in headless Chrome against the demo mode; when the visual test fails, its screenshots are attached to the run (*visual-test-screenshots*)
 - **User guide:** `python3 tools/wiki.py check` – every page link and image in `docs/wiki/` exists
 
 ## Workflow

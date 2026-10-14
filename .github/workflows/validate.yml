@@ -50,3 +50,30 @@ jobs:
           node --input-type=module --check < dist/ha-thread-pulse.js
           python3 -c "s=open('dist/thread-pulse.html').read(); open('/tmp/page.js','w').write(s.split('<script>')[-1].split('</script>')[0])"
           node --check /tmp/page.js
+
+  browser:
+    name: Browser tests (demo mode)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test dependencies
+        run: pip install -r tests/requirements.txt
+      - name: Build from src/
+        run: python3 build.py
+      # headless Chrome is preinstalled on the GitHub runners (google-chrome)
+      - name: Smoke test – clicks through every feature
+        run: python3 tests/smoke_test.py
+      - name: Visual test – pixel checks of the map
+        # one retry: the very first run on a fresh runner is sometimes slow (#95)
+        run: python3 tests/visual_test.py || (echo "retrying once" && python3 tests/visual_test.py)
+      - name: Screenshots of the visual test
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-test-screenshots
+          path: tests/output/
+          retention-days: 7
