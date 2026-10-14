@@ -22,6 +22,7 @@ createThreadPulse(
     showWifi: !params.has("nowifi"),
     ambientMotion: !params.has("still"),
     hintDays: params.get("hintdays"),
+    focusDevice: params.get("device"),
   },
   {
     embedded: window.parent !== window,

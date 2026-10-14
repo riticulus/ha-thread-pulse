@@ -48,6 +48,8 @@ height: 650px
 language: de
 ```
 
+For a single device on a room dashboard there is a second card: [Device card](Device-Card).
+
 ## Standalone page options
 
 The standalone page (installation option C) is configured with URL parameters:
@@ -60,6 +62,7 @@ The standalone page (installation option C) is configured with URL parameters:
 | `still` | `/local/thread-pulse.html?ambient&still` | Ambient mode without the automatic zoom *(from version 1.4.0)* |
 | `nowifi` | `/local/thread-pulse.html?nowifi` | Hide Matter devices on Wi-Fi / Ethernet *(from version 1.4.0)* |
 | `hintdays` | `/local/thread-pulse.html?hintdays=14` | Time window for hints about restarts and unstable connections, in days *(after version 1.6.0)* |
+| `device` | `/local/thread-pulse.html?device=<device ID>` | Open this device when the map has loaded *(after version 1.6.0)* – the card does the same with `?tp_device=` in the dashboard address, see [Device card](Device-Card) |
 | `v` | `/local/thread-pulse.html?v=3` | No function – raise it after an update so browsers load the new version |
 
 Parameters can be combined: `/local/thread-pulse.html?v=3&lang=en`.

@@ -81,6 +81,17 @@
     spNoWifi: "No Matter device on 2.4 GHz Wi-Fi, so no Wi-Fi channel is known.",
     spNoZigbee: "No Zigbee channel (ZHA not set up).",
     spNote: "Only the Wi-Fi channels of Matter devices on Wi-Fi are known – not your access point's other networks or the neighbours'. The channel of a Hue bridge is not available.",
+    // device card (#126)
+    dcNotFound: "This device is not part of the Matter integration – choose a Thread device in the card settings.",
+    dcNotThread: "This device uses Wi-Fi or Ethernet, not Thread.",
+    dcOffline: "not reachable",
+    dcOpen: (name) => `${name} – open on the map`,
+    dcLinks: "Links",
+    dcRouterLinks: (n) => `${n} router${n === 1 ? "" : "s"}`,
+    dcNone: "none reported",
+    dcTrendParent: "Signal to the parent · 7 days",
+    dcTrendRouter: "Best router link · 7 days",
+    dcNoTrend: "No signal history yet – Thread Pulse records it while its map is open.",
     backNet: "Network",
     devTabs: { status: "Status", link: "Connection", device: "Device" },
     kSignal: "Signal dBm",
@@ -438,6 +449,17 @@
     spNoWifi: "Kein Matter-Gerät im 2,4-GHz-WLAN, daher ist kein WLAN-Kanal bekannt.",
     spNoZigbee: "Kein Zigbee-Kanal (ZHA nicht eingerichtet).",
     spNote: "Bekannt sind nur die WLAN-Kanäle von Matter-Geräten im WLAN – nicht die weiteren Netze deines Access Points oder die der Nachbarn. Der Kanal einer Hue Bridge ist nicht verfügbar.",
+    // Gerätekarte (#126)
+    dcNotFound: "Dieses Gerät gehört nicht zur Matter-Integration – wähle in den Karteneinstellungen ein Thread-Gerät.",
+    dcNotThread: "Dieses Gerät nutzt WLAN oder Ethernet, nicht Thread.",
+    dcOffline: "nicht erreichbar",
+    dcOpen: (name) => `${name} – auf der Karte öffnen`,
+    dcLinks: "Verbindungen",
+    dcRouterLinks: (n) => `${n} Router`,
+    dcNone: "keine gemeldet",
+    dcTrendParent: "Signal zum Parent · 7 Tage",
+    dcTrendRouter: "Beste Router-Verbindung · 7 Tage",
+    dcNoTrend: "Noch kein Signalverlauf – Thread Pulse zeichnet ihn auf, solange seine Karte offen ist.",
     backNet: "Netzwerk",
     devTabs: { status: "Zustand", link: "Verbindung", device: "Gerät" },
     kSignal: "Signal dBm",
@@ -811,6 +833,17 @@
     spNoWifi: "Ningún dispositivo Matter en Wi-Fi de 2,4 GHz, así que no se conoce el canal Wi-Fi.",
     spNoZigbee: "Sin canal Zigbee (ZHA no configurado).",
     spNote: "Solo se conocen los canales Wi-Fi de los dispositivos Matter en Wi-Fi – no las otras redes de tu punto de acceso ni las de los vecinos. El canal de un puente Hue no está disponible.",
+    // tarjeta de dispositivo (#126)
+    dcNotFound: "Este dispositivo no forma parte de la integración Matter – elige un dispositivo Thread en la configuración de la tarjeta.",
+    dcNotThread: "Este dispositivo usa Wi-Fi o Ethernet, no Thread.",
+    dcOffline: "no accesible",
+    dcOpen: (name) => `${name} – abrir en el mapa`,
+    dcLinks: "Enlaces",
+    dcRouterLinks: (n) => `${n} router${n === 1 ? "" : "s"}`,
+    dcNone: "ninguno informado",
+    dcTrendParent: "Señal al parent · 7 días",
+    dcTrendRouter: "Mejor enlace con un router · 7 días",
+    dcNoTrend: "Aún no hay historial de señal – Thread Pulse lo registra mientras su mapa está abierto.",
     backNet: "Red",
     devTabs: { status: "Estado", link: "Conexión", device: "Dispositivo" },
     kSignal: "Señal dBm",
@@ -1188,6 +1221,17 @@
     spNoWifi: "Aucun appareil Matter en Wi-Fi 2,4 GHz, le canal Wi-Fi n'est donc pas connu.",
     spNoZigbee: "Pas de canal Zigbee (ZHA non configuré).",
     spNote: "Seuls les canaux Wi-Fi des appareils Matter en Wi-Fi sont connus – pas les autres réseaux de votre point d'accès ni ceux des voisins. Le canal d'un pont Hue n'est pas disponible.",
+    // carte d'appareil (#126)
+    dcNotFound: "Cet appareil ne fait pas partie de l'intégration Matter – choisissez un appareil Thread dans les paramètres de la carte.",
+    dcNotThread: "Cet appareil utilise le Wi-Fi ou l'Ethernet, pas Thread.",
+    dcOffline: "injoignable",
+    dcOpen: (name) => `${name} – ouvrir sur la carte`,
+    dcLinks: "Liaisons",
+    dcRouterLinks: (n) => `${n} routeur${n === 1 ? "" : "s"}`,
+    dcNone: "aucune signalée",
+    dcTrendParent: "Signal vers le parent · 7 jours",
+    dcTrendRouter: "Meilleure liaison routeur · 7 jours",
+    dcNoTrend: "Pas encore d'historique du signal – Thread Pulse l'enregistre tant que sa carte est ouverte.",
     backNet: "Réseau",
     devTabs: { status: "État", link: "Connexion", device: "Appareil" },
     kSignal: "Signal dBm",
@@ -1571,6 +1615,17 @@
     spNoWifi: "Nessun dispositivo Matter su Wi-Fi 2,4 GHz, quindi il canale Wi-Fi non è noto.",
     spNoZigbee: "Nessun canale Zigbee (ZHA non configurato).",
     spNote: "Sono noti solo i canali Wi-Fi dei dispositivi Matter su Wi-Fi – non le altre reti del tuo access point né quelle dei vicini. Il canale di un bridge Hue non è disponibile.",
+    // scheda dispositivo (#126)
+    dcNotFound: "Questo dispositivo non fa parte dell'integrazione Matter – scegli un dispositivo Thread nelle impostazioni della scheda.",
+    dcNotThread: "Questo dispositivo usa Wi-Fi o Ethernet, non Thread.",
+    dcOffline: "non raggiungibile",
+    dcOpen: (name) => `${name} – apri sulla mappa`,
+    dcLinks: "Collegamenti",
+    dcRouterLinks: (n) => `${n} router`,
+    dcNone: "nessuno segnalato",
+    dcTrendParent: "Segnale verso il parent · 7 giorni",
+    dcTrendRouter: "Miglior collegamento router · 7 giorni",
+    dcNoTrend: "Ancora nessuno storico del segnale – Thread Pulse lo registra mentre la sua mappa è aperta.",
     backNet: "Rete",
     devTabs: { status: "Stato", link: "Connessione", device: "Dispositivo" },
     kSignal: "Segnale dBm",
@@ -1954,6 +2009,17 @@
     spNoWifi: "Geen Matter-apparaat op 2,4 GHz-wifi, dus het wifi-kanaal is niet bekend.",
     spNoZigbee: "Geen Zigbee-kanaal (ZHA niet ingesteld).",
     spNote: "Alleen de wifi-kanalen van Matter-apparaten op wifi zijn bekend – niet de andere netwerken van je access point of die van de buren. Het kanaal van een Hue-bridge is niet beschikbaar.",
+    // apparaatkaart (#126)
+    dcNotFound: "Dit apparaat hoort niet bij de Matter-integratie – kies een Thread-apparaat in de kaartinstellingen.",
+    dcNotThread: "Dit apparaat gebruikt wifi of ethernet, geen Thread.",
+    dcOffline: "niet bereikbaar",
+    dcOpen: (name) => `${name} – op de kaart openen`,
+    dcLinks: "Verbindingen",
+    dcRouterLinks: (n) => `${n} router${n === 1 ? "" : "s"}`,
+    dcNone: "geen gemeld",
+    dcTrendParent: "Signaal naar de parent · 7 dagen",
+    dcTrendRouter: "Beste routerverbinding · 7 dagen",
+    dcNoTrend: "Nog geen signaalverloop – Thread Pulse legt het vast zolang de kaart open is.",
     backNet: "Netwerk",
     devTabs: { status: "Status", link: "Verbinding", device: "Apparaat" },
     kSignal: "Signaal dBm",
@@ -2373,6 +2439,27 @@
   // src/version.js
   var VERSION = "1.6.0+dev";
 
+  // src/matter.js
+  async function token(hass) {
+    if (hass.auth.expired) await hass.auth.refreshAccessToken();
+    return hass.auth.accessToken || hass.auth.data.access_token;
+  }
+  async function fetchDiagnostics(hass, entry, devId) {
+    const r = await fetch(`/api/diagnostics/config_entry/${entry}/device/${devId}`, {
+      headers: { Authorization: "Bearer " + await token(hass) }
+    });
+    if (!r.ok) throw Object.assign(new Error("diagnostics " + r.status), { status: r.status });
+    const txt = (await r.text()).replace(/"0":\s*(\d{15,})/g, '"0":"$1"').replace(/"0\/53\/4":\s*(\d+)/, '"0/53/4":"$1"');
+    return JSON.parse(txt).data.node;
+  }
+  var hex16 = (s) => BigInt(s).toString(16).padStart(16, "0");
+  function threadAddressOf(node) {
+    const iface = ((node.attributes || {})["0/51/0"] || []).find((x) => x["7"] === 4);
+    if (!iface || node.attributes["0/53/1"] === void 0) return null;
+    return [...atob(iface["4"])].map((c) => c.charCodeAt(0).toString(16).padStart(2, "0")).join("");
+  }
+  var typeOfRole = (role) => role >= 5 ? "routing_end_device" : role >= 3 ? "end_device" : "sleepy_end_device";
+
   // src/helpers.js
   function install2(tp) {
     const { $, AMBIENT, host, opts, root } = tp;
@@ -2404,7 +2491,6 @@
       for (const k of ["good", "medium", "weak", "warn", "hint"])
         host.styleTarget.style.setProperty("--c-" + k, COLORS[k]);
     }
-    const hex16 = (s) => BigInt(s).toString(16).padStart(16, "0");
     tp.hex16 = hex16;
     function setBtn(el, text, pressed = null, badge = 0, extra = "") {
       const i = text.indexOf(" "), ic = i > 0 ? text.slice(0, i) : "", lb = i > 0 ? text.slice(i + 1) : text;
@@ -2494,18 +2580,13 @@
       }
       throw new Error(tp.T.noHa);
     }
-    async function token(hass) {
-      if (hass.auth.expired) await hass.auth.refreshAccessToken();
-      return hass.auth.accessToken || hass.auth.data.access_token;
-    }
     async function diag(hass, entry, devId) {
-      const r = await fetch(`/api/diagnostics/config_entry/${entry}/device/${devId}`, {
-        headers: { Authorization: "Bearer " + await token(hass) }
-      });
-      if (r.status === 401 || r.status === 403) throw Object.assign(new Error(tp.T.notAdmin), { fatal: true });
-      if (!r.ok) throw new Error("diagnostics " + r.status);
-      const txt = (await r.text()).replace(/"0":\s*(\d{15,})/g, '"0":"$1"').replace(/"0\/53\/4":\s*(\d+)/, '"0/53/4":"$1"');
-      return JSON.parse(txt).data.node;
+      try {
+        return await fetchDiagnostics(hass, entry, devId);
+      } catch (e) {
+        if (e.status === 401 || e.status === 403) throw Object.assign(new Error(tp.T.notAdmin), { fatal: true });
+        throw e;
+      }
     }
     function setLanguage(l) {
       tp.lang = (opts.lang || l || "en").slice(0, 2);
@@ -2610,9 +2691,9 @@
               });
               return;
             }
-            const mac = [...atob(iface["4"])].map((c) => c.charCodeAt(0).toString(16).padStart(2, "0")).join("");
+            const mac = threadAddressOf(node);
             const role = a["0/53/1"];
-            const type = role >= 5 ? "routing_end_device" : role >= 3 ? "end_device" : "sleepy_end_device";
+            const type = typeOfRole(role);
             const ents = (entsByDev[d.id] || []).map((id) => ({
               domain: id.split(".")[0],
               dc: ((hass.states[id] || {}).attributes || {}).device_class
@@ -2693,8 +2774,12 @@
 
   // src/graph.js
   function install4(tp) {
-    const { $, COLORS, DEMO, QUAL, SHOW_WIFI, VIS, hex16, host, iconImg, prefs } = tp;
-    Object.assign(tp, { render });
+    const { $, COLORS, DEMO, QUAL, SHOW_WIFI, VIS, hex16: hex162, host, iconImg, prefs } = tp;
+    Object.assign(tp, { render, zoomTo });
+    function zoomTo(id) {
+      if (!tp.network) return;
+      tp.network.focus(id, { scale: Math.max(1.2, tp.network.getScale()), animation: { duration: 400 } });
+    }
     tp.searchHits = [];
     tp.searchActive = false;
     tp.extraIds = /* @__PURE__ */ new Set();
@@ -2753,7 +2838,7 @@ ${tp.T.types[n.type] || n.type}${n.available ? "" : tp.T.unreachable}`
       for (const n of nodes.filter(isRouter)) {
         for (const x of n.neigh) {
           if (x["13"]) continue;
-          const other = hex16(x["0"]);
+          const other = hex162(x["0"]);
           if (!byId[other] && x["11"]) extra[other] = true;
           if (!byId[other] && !extra[other]) continue;
           if (byId[other] && !isRouter(byId[other]) && byId[other].type !== "end_device") continue;
@@ -2770,7 +2855,7 @@ ${tp.T.types[n.type] || n.type}${n.available ? "" : tp.T.unreachable}`
       for (const n of nodes.filter((n2) => !isRouter(n2))) {
         const best = bestOf(n);
         if (!best) continue;
-        const pid = hex16(best["0"]);
+        const pid = hex162(best["0"]);
         tp.parentOf[n.id] = pid;
         if (!byId[pid]) extra[pid] = true;
       }
@@ -2793,11 +2878,11 @@ ${tp.T.types[n.type] || n.type}${n.available ? "" : tp.T.unreachable}`
       }
       const childRssi = {};
       for (const n of nodes.filter(isRouter))
-        for (const x of n.neigh) if (x["13"]) childRssi[n.id + "|" + hex16(x["0"])] = x["6"];
+        for (const x of n.neigh) if (x["13"]) childRssi[n.id + "|" + hex162(x["0"])] = x["6"];
       for (const n of nodes.filter((n2) => !isRouter(n2))) {
         const best = bestOf(n);
         if (!best) continue;
-        const pid = hex16(best["0"]);
+        const pid = hex162(best["0"]);
         let rssi = best["6"], src = "device";
         if (childRssi[pid + "|" + n.id] !== void 0) {
           rssi = childRssi[pid + "|" + n.id];
@@ -2805,7 +2890,7 @@ ${tp.T.types[n.type] || n.type}${n.available ? "" : tp.T.unreachable}`
         }
         if (n.type === "end_device") {
           for (const x of n.neigh) {
-            const o = hex16(x["0"]);
+            const o = hex162(x["0"]);
             if (!byId[o]) continue;
             const key = [n.id, o].sort().join("|");
             (edges[key] = edges[key] || { a: n.id, b: o, rssi: [] }).rssi.push(x["6"]);
@@ -2917,15 +3002,8 @@ ${w.kind === "ethernet" ? tp.T.ethSub : tp.T.wifiSub}${w.available ? "" : tp.T.u
         else tp.closePanel();
       });
       tp.network.on("doubleClick", (p) => {
-        if (p.nodes.length && !String(p.nodes[0]).startsWith("room:")) {
-          const pn = $("panel"), st = $("stage").getBoundingClientRect(), r = pn.hidden ? null : pn.getBoundingClientRect();
-          const offset = !r ? { x: 0, y: 0 } : r.width < st.width * 0.8 ? { x: -(r.width + 8) / 2, y: 0 } : { x: 0, y: -r.height / 2 };
-          tp.network.focus(p.nodes[0], {
-            scale: Math.max(1.2, tp.network.getScale()),
-            offset,
-            animation: { duration: 400 }
-          });
-        } else tp.network.fit({ animation: { duration: 400 } });
+        if (p.nodes.length && !String(p.nodes[0]).startsWith("room:")) zoomTo(p.nodes[0]);
+        else tp.network.fit({ animation: { duration: 400 } });
       });
       tp.network.on("hoverNode", () => {
         $("net").style.cursor = "pointer";
@@ -3080,7 +3158,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
 
   // src/live.js
   function install6(tp) {
-    const { $, COLORS, esc, every, hex16 } = tp;
+    const { $, COLORS, esc, every, hex16: hex162 } = tp;
     Object.assign(tp, { buildRouting, drawPackets, fmtState, launch, localName, pathToBr, showTicker, subscribeLive });
     tp.packets = [];
     tp.liveOn = true;
@@ -3094,7 +3172,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
       tp.routeOf = {};
       tp.parentRid = {};
       tp.ownRid = {};
-      for (const n of nodes) for (const x of n.routes) if (x["0"] && x["0"] !== "0") tp.ridToId[x["2"]] = hex16(x["0"]);
+      for (const n of nodes) for (const x of n.routes) if (x["0"] && x["0"] !== "0") tp.ridToId[x["2"]] = hex162(x["0"]);
       for (const n of nodes) {
         const own = n.routes.find((x) => x["3"] === 63 && x["4"] === 0);
         if (n.role >= 5 && own) {
@@ -4827,38 +4905,58 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
     }
   }
 
+  // src/forecast.js
+  var BF_DAYS = 120;
+  var BF_MIN_DAYS = 14;
+  var BF_MAX = 3 * 365;
+  function forecastFrom(points, current) {
+    let p = points.filter((x) => typeof x.v === "number" && !isNaN(x.v));
+    for (let i = p.length - 1; i > 0; i--)
+      if (p[i].v - p[i - 1].v >= 10) {
+        p = p.slice(i);
+        break;
+      }
+    if (!p.length) return { state: "nodata", days: 0 };
+    const span = (p[p.length - 1].t - p[0].t) / 864e5;
+    if (span < BF_MIN_DAYS || p.length < 5) return { state: "nodata", days: Math.max(1, Math.round(span) + 1) };
+    const t0 = p[0].t, xs = p.map((x) => (x.t - t0) / 864e5), ys = p.map((x) => x.v);
+    const mx = xs.reduce((a, b) => a + b, 0) / xs.length, my = ys.reduce((a, b) => a + b, 0) / ys.length;
+    const sxx = xs.reduce((a, x) => a + (x - mx) ** 2, 0), sxy = xs.reduce((a, x, i) => a + (x - mx) * (ys[i] - my), 0);
+    const slope = sxx ? sxy / sxx : 0;
+    const drop = ys[0] - ys[ys.length - 1];
+    const basis = Math.round(span);
+    if (slope > -0.02 || drop < 2) return { state: "nodrop", basis };
+    const now = typeof current === "number" ? current : ys[ys.length - 1];
+    const days = now / -slope;
+    return {
+      state: "ok",
+      days: days > BF_MAX ? Infinity : Math.max(1, Math.round(days)),
+      perMonth: Math.round(-slope * 30 * 10) / 10,
+      basis
+    };
+  }
+  async function batteryStatistics(hass, entityIds) {
+    const res = await hass.callWS({
+      type: "recorder/statistics_during_period",
+      start_time: new Date(Date.now() - BF_DAYS * 864e5).toISOString(),
+      statistic_ids: entityIds,
+      period: "day",
+      types: ["mean"]
+    });
+    return Object.fromEntries(
+      entityIds.map((id) => [
+        id,
+        (res[id] || []).map((r) => ({ t: typeof r.start === "number" ? r.start : Date.parse(r.start), v: r.mean }))
+      ])
+    );
+  }
+
   // src/battery.js
   function install20(tp) {
     const { DEMO, esc, every, freshHass, renderPanel } = tp;
     Object.assign(tp, { batteryHint, forecastText, loadBatteryForecasts });
-    const BF_DAYS = 120, BF_MIN_DAYS = 14, BF_SOON = 30, BF_MAX = 3 * 365;
+    const BF_SOON = 30;
     tp.battForecast = {};
-    function forecastFrom(points, current) {
-      let p = points.filter((x) => typeof x.v === "number" && !isNaN(x.v));
-      for (let i = p.length - 1; i > 0; i--)
-        if (p[i].v - p[i - 1].v >= 10) {
-          p = p.slice(i);
-          break;
-        }
-      if (!p.length) return { state: "nodata", days: 0 };
-      const span = (p[p.length - 1].t - p[0].t) / 864e5;
-      if (span < BF_MIN_DAYS || p.length < 5) return { state: "nodata", days: Math.max(1, Math.round(span) + 1) };
-      const t0 = p[0].t, xs = p.map((x) => (x.t - t0) / 864e5), ys = p.map((x) => x.v);
-      const mx = xs.reduce((a, b) => a + b, 0) / xs.length, my = ys.reduce((a, b) => a + b, 0) / ys.length;
-      const sxx = xs.reduce((a, x) => a + (x - mx) ** 2, 0), sxy = xs.reduce((a, x, i) => a + (x - mx) * (ys[i] - my), 0);
-      const slope = sxx ? sxy / sxx : 0;
-      const drop = ys[0] - ys[ys.length - 1];
-      const basis = Math.round(span);
-      if (slope > -0.02 || drop < 2) return { state: "nodrop", basis };
-      const now = typeof current === "number" ? current : ys[ys.length - 1];
-      const days = now / -slope;
-      return {
-        state: "ok",
-        days: days > BF_MAX ? Infinity : Math.max(1, Math.round(days)),
-        perMonth: Math.round(-slope * 30 * 10) / 10,
-        basis
-      };
-    }
     async function loadBatteryForecasts(hass) {
       tp.battForecast = {};
       if (DEMO) {
@@ -4885,24 +4983,15 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
         }
       const ids = Object.values(entOf);
       if (!ids.length) return;
-      let res = {};
+      let series = {};
       try {
-        res = await hass.callWS({
-          type: "recorder/statistics_during_period",
-          start_time: new Date(Date.now() - BF_DAYS * 864e5).toISOString(),
-          statistic_ids: ids,
-          period: "day",
-          types: ["mean"]
-        });
+        series = await batteryStatistics(hass, ids);
       } catch (e) {
         console.warn("Thread Pulse: battery statistics", e);
         return;
       }
-      for (const [nodeId, ent] of Object.entries(entOf)) {
-        const rows = res[ent] || [];
-        const pts = rows.map((r) => ({ t: typeof r.start === "number" ? r.start : Date.parse(r.start), v: r.mean }));
-        tp.battForecast[nodeId] = forecastFrom(pts, tp.battOf[nodeId]);
-      }
+      for (const [nodeId, ent] of Object.entries(entOf))
+        tp.battForecast[nodeId] = forecastFrom(series[ent], tp.battOf[nodeId]);
       if (tp.panelNode && tp.battForecast[tp.panelNode]) renderPanel();
       if (tp.network) tp.network.redraw();
     }
@@ -4924,15 +5013,23 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
     }
   }
 
+  // src/signalstore.js
+  var SIG_KEY = "thread_pulse_signal";
+  var TREND_H = 7 * 24;
+  var HOUR_MS = 36e5;
+  var hourNow = () => Math.floor(Date.now() / HOUR_MS);
+  var unpackSig = (v) => !v || !v.d ? {} : Object.fromEntries(
+    Object.entries(v.d).map(([id, l]) => [id, (l || []).map(([dh, x, n]) => [v.base + dh, x, n])])
+  );
+
   // src/trends.js
   function install21(tp) {
     const { DEMO, QUAL, esc, every, freshHass, prefs, renderPanel, root } = tp;
     Object.assign(tp, { batteryTrendHtml, recordSignal, signalTrendHtml });
-    const SIG_KEY = "thread_pulse_signal", TREND_H = 7 * 24, HOUR_MS = 36e5, SIG_SAVE_MS = 15 * 6e4;
+    const SIG_SAVE_MS = 15 * 6e4;
     let sigHist = {}, sigStore = null, sigDirty = false, sigLoading = null;
     let battHist = {};
     let trendHover = null;
-    const hourNow = () => Math.floor(Date.now() / HOUR_MS);
     function pruneSig(h = hourNow()) {
       for (const id of Object.keys(sigHist)) {
         sigHist[id] = sigHist[id].filter((e) => e[0] > h - TREND_H);
@@ -4957,9 +5054,6 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
         d: Object.fromEntries(Object.entries(sigHist).map(([id, l]) => [id, l.map(([h, v, n]) => [h - base, v, n])]))
       };
     };
-    const unpackSig = (v) => !v || !v.d ? {} : Object.fromEntries(
-      Object.entries(v.d).map(([id, l]) => [id, (l || []).map(([dh, x, n]) => [v.base + dh, x, n])])
-    );
     function signalNow() {
       const out = {};
       if (!tp.listData) return out;
@@ -6526,6 +6620,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
       applyRooms,
       demoTraffic,
       load,
+      opts,
       playTick,
       prefs,
       setBtn,
@@ -6583,8 +6678,23 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
       setBtn($("livebtn"), tp.liveOn ? tp.T.pause : tp.T.resume, tp.liveOn);
       if (!tp.liveOn) tp.packets = [];
     };
+    let focusWanted = opts.focusDevice || null;
+    function focusDevice(devId) {
+      focusWanted = devId || null;
+      applyFocus();
+    }
+    function applyFocus() {
+      if (!focusWanted || !tp.network) return;
+      const n = Object.values(tp.nodeById).concat(Object.values(tp.wifiById)).find((x) => x.devId === focusWanted || x.id === focusWanted);
+      if (!n) return;
+      focusWanted = null;
+      tp.openPanel(n.id);
+      tp.network.selectNodes([n.id]);
+      tp.zoomTo(n.id);
+    }
     load().then((m) => {
       if (DEMO) demoTraffic(m);
+      setTimeout(applyFocus, 600);
     }).catch(showErr);
     return {
       destroy() {
@@ -6616,7 +6726,8 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
           tp.network = null;
         }
       },
-      theme
+      theme,
+      focusDevice
     };
   }
 
@@ -6695,7 +6806,8 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
       ambient: params.has("ambient"),
       showWifi: !params.has("nowifi"),
       ambientMotion: !params.has("still"),
-      hintDays: params.get("hintdays")
+      hintDays: params.get("hintdays"),
+      focusDevice: params.get("device")
     },
     {
       embedded: window.parent !== window,

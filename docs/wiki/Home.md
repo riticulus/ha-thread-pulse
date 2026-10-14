@@ -38,6 +38,7 @@ Then explore the features:
 - [Room view](Room-View)
 - [Search](Search)
 - [Network panel](The-List)
+- [Device card for room dashboards](Device-Card)
 - [Ambient mode](Ambient-Mode)
 - [Demo mode](Demo-Mode)
 

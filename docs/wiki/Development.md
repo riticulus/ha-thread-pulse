@@ -29,6 +29,8 @@ All source code is in `src/`, one ES module per topic. [esbuild](https://esbuild
 | `src/stability.js` | Stability counters over a time window, hints marked as done |
 | `src/health.js` | Mesh health grade and its factors |
 | `src/whatif.js` | What if a router fails |
+| `src/devicecard.js` | The device card `custom:thread-pulse-device-card` (#126) – its own small loader, shares `matter.js`, `forecast.js`, `signalstore.js` with the map |
+| `src/matter.js`, `src/forecast.js`, `src/signalstore.js` | Shared by the map and the device card: Matter diagnostics, battery forecast, stored signal history |
 | `src/spectrum.js` | Radio channels: Thread, Zigbee and Wi-Fi on one frequency axis, overlaps |
 | `src/search.js` | Search |
 | `src/changes.js` | Change log |

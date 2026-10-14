@@ -1,6 +1,8 @@
 // Loading the data from Home Assistant (registries, cached Matter diagnostics, border router).
 // Installed by createThreadPulse() (core.js); shared state and functions are on tp.
 
+import { threadAddressOf, typeOfRole } from "./matter.js";
+
 export default function install(tp) {
   const { $, diag, getHass, iconFor, setLanguage } = tp;
   Object.assign(tp, { loadHa });
@@ -77,9 +79,9 @@ export default function install(tp) {
             });
             return;
           }
-          const mac = [...atob(iface["4"])].map(c => c.charCodeAt(0).toString(16).padStart(2, "0")).join("");
+          const mac = threadAddressOf(node);
           const role = a["0/53/1"]; // 2 sleepy, 3 end device, 4 REED, 5 router, 6 leader
-          const type = role >= 5 ? "routing_end_device" : role >= 3 ? "end_device" : "sleepy_end_device";
+          const type = typeOfRole(role);
           const ents = (entsByDev[d.id] || []).map(id => ({
             domain: id.split(".")[0],
             dc: ((hass.states[id] || {}).attributes || {}).device_class,

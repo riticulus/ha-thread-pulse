@@ -3,6 +3,7 @@ import TP_CSS from "./styles.css";
 import TP_HTML from "./markup.html";
 import { VERSION } from "./version.js";
 import { createThreadPulse } from "./core.js";
+import "./devicecard.js"; // <thread-pulse-device-card> (#126), in the same file
 
 // The graph library is loaded only when a card is actually shown, from the same folder as this file.
 const TP_BASE = new URL(".", import.meta.url).href;
@@ -23,6 +24,16 @@ function tpLoadVis() {
   return tpVisPromise;
 }
 
+// a device card (#126) links to the map with ?tp_device=<device id>; the map opens that device, then the parameter is
+// removed again so that a reload does not jump there once more
+const focusParam = () => new URLSearchParams(location.search).get("tp_device");
+function dropFocusParam() {
+  const u = new URL(location.href);
+  if (!u.searchParams.has("tp_device")) return;
+  u.searchParams.delete("tp_device");
+  history.replaceState(history.state, "", u.pathname + u.search + u.hash);
+}
+
 class ThreadPulseCard extends HTMLElement {
   setConfig(config) {
     this._config = { ...config };
@@ -39,8 +50,17 @@ class ThreadPulseCard extends HTMLElement {
   }
   connectedCallback() {
     if (this._hass && !this._tp) this._start();
+    this._onLocation = () => {
+      const d = focusParam();
+      if (d && this._tp) {
+        this._tp.focusDevice(d);
+        dropFocusParam();
+      }
+    };
+    window.addEventListener("location-changed", this._onLocation);
   }
   disconnectedCallback() {
+    window.removeEventListener("location-changed", this._onLocation);
     this._stop();
   }
   _restart() {
@@ -82,6 +102,7 @@ class ThreadPulseCard extends HTMLElement {
         showWifi: this._config.show_wifi !== false,
         ambientMotion: this._config.ambient_motion !== false,
         hintDays: this._config.hint_window_days,
+        focusDevice: focusParam(),
       },
       {
         embedded: true,
@@ -97,6 +118,7 @@ class ThreadPulseCard extends HTMLElement {
       },
     );
     this._starting = false;
+    dropFocusParam();
   }
   getCardSize() {
     return 10;

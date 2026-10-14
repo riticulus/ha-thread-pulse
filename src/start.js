@@ -8,6 +8,7 @@ export default function install(tp) {
     applyRooms,
     demoTraffic,
     load,
+    opts,
     playTick,
     prefs,
     setBtn,
@@ -65,9 +66,27 @@ export default function install(tp) {
     setBtn($("livebtn"), tp.liveOn ? tp.T.pause : tp.T.resume, tp.liveOn);
     if (!tp.liveOn) tp.packets = [];
   };
+  // open a device from outside – the device card (#126) links to the map with ?tp_device=<device id>
+  let focusWanted = opts.focusDevice || null;
+  function focusDevice(devId) {
+    focusWanted = devId || null;
+    applyFocus();
+  }
+  function applyFocus() {
+    if (!focusWanted || !tp.network) return;
+    const n = Object.values(tp.nodeById)
+      .concat(Object.values(tp.wifiById))
+      .find(x => x.devId === focusWanted || x.id === focusWanted);
+    if (!n) return;
+    focusWanted = null;
+    tp.openPanel(n.id);
+    tp.network.selectNodes([n.id]);
+    tp.zoomTo(n.id);
+  }
   load()
     .then(m => {
       if (DEMO) demoTraffic(m);
+      setTimeout(applyFocus, 600); // after the layout has settled
     })
     .catch(showErr);
 
@@ -99,5 +118,6 @@ export default function install(tp) {
       }
     },
     theme,
+    focusDevice,
   };
 }

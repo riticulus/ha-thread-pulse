@@ -8,6 +8,7 @@ export default [
     ...js.configs.recommended,
     languageOptions: { ecmaVersion: 2024, sourceType: "module", globals: { ...globals.browser } },
     rules: {
+      ...js.configs.recommended.rules,
       // "try { … } catch (e) {}" is used on purpose where a missing feature (no OTBR, no ZHA, blocked storage) is fine
       "no-empty": ["error", { allowEmptyCatch: true }],
       "no-unused-vars": ["error", { caughtErrors: "none" }],

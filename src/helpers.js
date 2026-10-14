@@ -3,6 +3,7 @@
 import { MDI } from "./icons.js";
 import { VERSION } from "./version.js";
 import { textFor } from "./i18n/index.js";
+import { fetchDiagnostics, hex16 } from "./matter.js";
 
 export default function install(tp) {
   const { $, AMBIENT, host, opts, root } = tp;
@@ -41,7 +42,6 @@ export default function install(tp) {
     for (const k of ["good", "medium", "weak", "warn", "hint"])
       host.styleTarget.style.setProperty("--c-" + k, COLORS[k]);
   }
-  const hex16 = s => BigInt(s).toString(16).padStart(16, "0");
   tp.hex16 = hex16;
   // toolbar button (issue #107): icon and label apart – narrow cards show only the icon, the label is the tooltip;
   // pressed: the feature is on (the icon alone does not show the state); badge: a number shown next to it
@@ -144,21 +144,13 @@ export default function install(tp) {
     }
     throw new Error(tp.T.noHa);
   }
-  async function token(hass) {
-    if (hass.auth.expired) await hass.auth.refreshAccessToken();
-    return hass.auth.accessToken || hass.auth.data.access_token;
-  }
   async function diag(hass, entry, devId) {
-    const r = await fetch(`/api/diagnostics/config_entry/${entry}/device/${devId}`, {
-      headers: { Authorization: "Bearer " + (await token(hass)) },
-    });
-    if (r.status === 401 || r.status === 403) throw Object.assign(new Error(tp.T.notAdmin), { fatal: true });
-    if (!r.ok) throw new Error("diagnostics " + r.status);
-    // Thread addresses are 64-bit numbers: keep them exact by turning them into strings before parsing
-    const txt = (await r.text())
-      .replace(/"0":\s*(\d{15,})/g, '"0":"$1"')
-      .replace(/"0\/53\/4":\s*(\d+)/, '"0/53/4":"$1"');
-    return JSON.parse(txt).data.node;
+    try {
+      return await fetchDiagnostics(hass, entry, devId);
+    } catch (e) {
+      if (e.status === 401 || e.status === 403) throw Object.assign(new Error(tp.T.notAdmin), { fatal: true });
+      throw e;
+    }
   }
   function setLanguage(l) {
     tp.lang = (opts.lang || l || "en").slice(0, 2);

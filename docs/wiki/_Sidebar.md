@@ -19,6 +19,7 @@
 - [Saving an image](Saving-an-Image)
 - [Text report](Text-Report)
 - [Network panel](The-List)
+- [Device card](Device-Card)
 - [Ambient mode](Ambient-Mode)
 - [Demo mode](Demo-Mode)
 

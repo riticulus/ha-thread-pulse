@@ -84,6 +84,17 @@ export const TEXT_NL = {
   spNoZigbee: "Geen Zigbee-kanaal (ZHA niet ingesteld).",
   spNote:
     "Alleen de wifi-kanalen van Matter-apparaten op wifi zijn bekend – niet de andere netwerken van je access point of die van de buren. Het kanaal van een Hue-bridge is niet beschikbaar.",
+  // apparaatkaart (#126)
+  dcNotFound: "Dit apparaat hoort niet bij de Matter-integratie – kies een Thread-apparaat in de kaartinstellingen.",
+  dcNotThread: "Dit apparaat gebruikt wifi of ethernet, geen Thread.",
+  dcOffline: "niet bereikbaar",
+  dcOpen: name => `${name} – op de kaart openen`,
+  dcLinks: "Verbindingen",
+  dcRouterLinks: n => `${n} router${n === 1 ? "" : "s"}`,
+  dcNone: "geen gemeld",
+  dcTrendParent: "Signaal naar de parent · 7 dagen",
+  dcTrendRouter: "Beste routerverbinding · 7 dagen",
+  dcNoTrend: "Nog geen signaalverloop – Thread Pulse legt het vast zolang de kaart open is.",
   backNet: "Netwerk",
   devTabs: { status: "Status", link: "Verbinding", device: "Apparaat" },
   kSignal: "Signaal dBm",

@@ -71,7 +71,7 @@ Hover a line (desktop) to see its signal strength and – with traffic heat on �
 - **Move the map:** drag the background
 - **Move a device:** drag it (the layout adjusts)
 - **Back to the full view:** double-click (or double-tap) on empty space – the whole mesh is centered and fitted to the screen *(from version 1.4.0; in older versions use ↻ Reload)*
-- **Zoom to a device:** double-click (or double-tap) it – it is centered on the map *(from version 1.4.0)*
+- **Zoom to a device:** double-click (or double-tap) it – it is centered on the map *(from version 1.4.0)*. A [device card](Device-Card) can also open the map at a device
 
 ## Live ticker
 
