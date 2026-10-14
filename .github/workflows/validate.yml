@@ -26,10 +26,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: "22"
+      - name: Install esbuild
+        run: npm ci --no-audit --no-fund
       - name: Rebuild from src/
-        run: python3 build.py
-      - name: Generated files must match src/ (run `python3 build.py` and commit)
+        run: npm run build
+      - name: Generated files must match src/ (run `npm run build` and commit)
         run: git diff --exit-code -- dist/
       - name: Translations complete
         run: node tests/check-i18n.js
@@ -63,7 +65,7 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Formatting (run `npm run format` to fix)
         run: npm run format:check
-      - name: Lint (messages point to the file in src/)
+      - name: Lint
         run: npm run lint
 
   browser:
@@ -75,10 +77,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
       - name: Install test dependencies
-        run: pip install -r tests/requirements.txt
+        run: |
+          npm ci --no-audit --no-fund
+          pip install -r tests/requirements.txt
       - name: Build from src/
-        run: python3 build.py
+        run: npm run build
       # headless Chrome is preinstalled on the GitHub runners (google-chrome)
       - name: Smoke test – clicks through every feature
         run: python3 tests/smoke_test.py

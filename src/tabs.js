@@ -1,5 +1,36 @@
-//# Panel below the map: tabs instead of one long list (issue #108).
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Panel below the map: tabs instead of one long list (issue #108).
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+
+export default function install(tp) {
+  const {
+    $,
+    HEALTH_COLOR,
+    HINT_DAYS,
+    QUAL,
+    batteryHint,
+    chattyHtml,
+    computeHealth,
+    computeHints,
+    dependHtml,
+    esc,
+    firmwareListHtml,
+    gradeColor,
+    hintKind,
+    isDismissed,
+    markDevices,
+    msgsLastHour,
+    nameOf,
+    powerCutOf,
+    prefs,
+    renderChanges,
+    root,
+    slowHint,
+    spectrumIssues,
+    spectrumSection,
+    unstableOf,
+    warningsOf,
+  } = tp;
+  Object.assign(tp, { renderList, renderTabBar });
   // ---------- network panel (issue #108) ----------
   // Overview (mesh health and the most important points), hints, devices (one sortable table), links, changes.
   // All tabs are rendered, only the chosen one is shown – the tab bar shows counters, the change log is updated live.
@@ -24,11 +55,11 @@
     if (!bar) return;
     if (tab === "changes" && $("panel").hidden) prefs.set("changesSeen", Date.now());
     const seen = prefs.get("changesSeen") || 0,
-      fresh = changes.filter(c => c.t > seen).length;
-    const count = { hints: hintCount, changes: fresh };
+      fresh = tp.changes.filter(c => c.t > seen).length;
+    const count = { hints: tp.hintCount, changes: fresh };
     bar.innerHTML = TABS.map(
       t =>
-        `<button role="tab" data-tab="${t}" aria-selected="${t === tab}"${t === tab ? ' class="on"' : ""}>${T.tabNames[t]}` +
+        `<button role="tab" data-tab="${t}" aria-selected="${t === tab}"${t === tab ? ' class="on"' : ""}>${tp.T.tabNames[t]}` +
         (count[t]
           ? `<span class="cnt${t === "changes" ? " new" : ""}">${count[t] > 99 ? "99+" : count[t]}</span>`
           : "") +
@@ -38,18 +69,18 @@
   // all warnings and hints, warnings first – the same as in the detail panels
   function allHints() {
     const out = [];
-    for (const n of Object.values(nodeById)) {
+    for (const n of Object.values(tp.nodeById)) {
       for (const w of warningsOf(n)) out.push({ id: n.id, text: w, warn: true });
-      for (const h of (hintsOf[n.id] || []).concat(slowHint(n) || [], batteryHint(n) || []))
+      for (const h of (tp.hintsOf[n.id] || []).concat(slowHint(n) || [], batteryHint(n) || []))
         out.push({ id: n.id, text: h, warn: false });
     }
-    for (const x of spectrumIssues()) out.push({ id: "spectrum", label: T.secSpectrum, text: x.text, warn: false }); // #78, #120
+    for (const x of spectrumIssues()) out.push({ id: "spectrum", label: tp.T.secSpectrum, text: x.text, warn: false }); // #78, #120
     const nm = x => x.label || nameOf(x.id);
-    return out.sort((a, b) => b.warn - a.warn || nm(a).localeCompare(nm(b), lang));
+    return out.sort((a, b) => b.warn - a.warn || nm(a).localeCompare(nm(b), tp.lang));
   }
   const muted = t => `<div class="tnote">${t}</div>`;
   const devLink = id =>
-    nodeById[id] || wifiById[id] ? `<a href="#" data-open="${esc(id)}">${esc(nameOf(id))}</a>` : esc(nameOf(id));
+    tp.nodeById[id] || tp.wifiById[id] ? `<a href="#" data-open="${esc(id)}">${esc(nameOf(id))}</a>` : esc(nameOf(id));
   function hintTable(list) {
     return `<table class="hints">${list
       .map(x => {
@@ -57,7 +88,7 @@
         return (
           `<tr><td class="${x.warn ? "r" : "b"}" style="width:1.2em;vertical-align:top">${x.warn ? "⚠" : "ℹ"}</td>` +
           `<td style="white-space:nowrap;vertical-align:top">${x.label ? `<a href="#" data-tab="links">${esc(x.label)}</a>` : devLink(x.id)}</td><td>${esc(x.text)}` +
-          (k ? ` <a href="#" class="more" data-dismiss="${esc(x.id + "|" + k)}">${T.hintDone}</a>` : "") +
+          (k ? ` <a href="#" class="more" data-dismiss="${esc(x.id + "|" + k)}">${tp.T.hintDone}</a>` : "") +
           `</td></tr>`
         );
       })
@@ -66,22 +97,22 @@
   function dismissedHtml() {
     // hints marked "Done" whose condition still applies (#24)
     const rows = [];
-    for (const n of Object.values(nodeById)) {
+    for (const n of Object.values(tp.nodeById)) {
       if (powerCutOf(n) && isDismissed(n, "power")) rows.push([n.id, "power"]);
       if (unstableOf(n) && isDismissed(n, "unstable")) rows.push([n.id, "unstable"]);
     }
     if (!rows.length) return "";
     return (
-      `<h4>${T.dismissedHead(rows.length)}</h4><table>` +
+      `<h4>${tp.T.dismissedHead(rows.length)}</h4><table>` +
       rows
         .map(
           ([id, k]) =>
             `<tr><td style="white-space:nowrap">${devLink(id)}</td>` +
-            `<td>${esc(T.dismissKinds[k])}</td><td><a href="#" data-undismiss="${esc(id + "|" + k)}">${T.hintShowAgain}</a></td></tr>`,
+            `<td>${esc(tp.T.dismissKinds[k])}</td><td><a href="#" data-undismiss="${esc(id + "|" + k)}">${tp.T.hintShowAgain}</a></td></tr>`,
         )
         .join("") +
       `</table>` +
-      muted(T.dismissedNote)
+      muted(tp.T.dismissedNote)
     );
   }
   function overviewHtml(hints) {
@@ -91,53 +122,53 @@
       const bad = hl.factors.filter(f => f.level === "warn" || f.level === "bad"),
         rest = hl.factors.filter(f => !bad.includes(f));
       const fRow = f =>
-        `<tr${f.ids.length ? ` class="mark" data-mark="${esc(f.ids.join(","))}" title="${esc(T.markHint)}"` : ""}>` +
-        `<td style="vertical-align:top;white-space:nowrap"><span style="color:${HEALTH_COLOR[f.level]}">●</span> ${T.hfTitle[f.key]}</td>` +
+        `<tr${f.ids.length ? ` class="mark" data-mark="${esc(f.ids.join(","))}" title="${esc(tp.T.markHint)}"` : ""}>` +
+        `<td style="vertical-align:top;white-space:nowrap"><span style="color:${HEALTH_COLOR[f.level]}">●</span> ${tp.T.hfTitle[f.key]}</td>` +
         `<td>${f.level === "na" ? "" : `<b style="color:${HEALTH_COLOR[f.level]}">${esc(f.value)}</b> · `}${esc(f.text)}</td></tr>`;
       h +=
-        `<div class="hcard"><div class="hgrade" style="background:${gradeColor(hl.grade)}">${hl.grade}</div><div><b>${T.healthHead}</b>` +
+        `<div class="hcard"><div class="hgrade" style="background:${gradeColor(hl.grade)}">${hl.grade}</div><div><b>${tp.T.healthHead}</b>` +
         (hl.known < hl.factors.length
-          ? `<div class="tnote" style="margin:0">${T.healthPartial(hl.known, hl.factors.length)}</div>`
+          ? `<div class="tnote" style="margin:0">${tp.T.healthPartial(hl.known, hl.factors.length)}</div>`
           : "") +
-        `<div>${bad.length ? T.factorsToCheck(bad.length) : T.factorsAllOk}</div></div></div>`;
+        `<div>${bad.length ? tp.T.factorsToCheck(bad.length) : tp.T.factorsAllOk}</div></div></div>`;
       if (bad.length) h += `<table class="factors">${bad.map(fRow).join("")}</table>`;
       if (rest.length)
-        h += `<details class="okf"><summary>${T.factorsOk(rest.filter(f => f.level === "ok").length, rest.length)}</summary><table class="factors">${rest.map(fRow).join("")}</table></details>`;
-      h += muted(T.healthNote);
+        h += `<details class="okf"><summary>${tp.T.factorsOk(rest.filter(f => f.level === "ok").length, rest.length)}</summary><table class="factors">${rest.map(fRow).join("")}</table></details>`;
+      h += muted(tp.T.healthNote);
     }
     h +=
-      `<h4>${T.topHints}</h4>` +
+      `<h4>${tp.T.topHints}</h4>` +
       (hints.length
         ? hintTable(hints.slice(0, 3)) +
-          (hints.length > 3 ? `<a href="#" data-tab="hints" class="more">${T.allHints(hints.length)}</a>` : "")
-        : `<div>${T.noHints}</div>`);
-    return h + `<div class="tnote" style="margin-top:12px">${T.foot(listData.count)}</div>`;
+          (hints.length > 3 ? `<a href="#" data-tab="hints" class="more">${tp.T.allHints(hints.length)}</a>` : "")
+        : `<div>${tp.T.noHints}</div>`);
+    return h + `<div class="tnote" style="margin-top:12px">${tp.T.foot(tp.listData.count)}</div>`;
   }
   function hintsHtml(hints) {
     return (
-      (hints.length ? hintTable(hints) : `<div>${T.noHints}</div>`) +
-      muted(T.hintsNote + " " + T.stabNote(HINT_DAYS)) +
+      (hints.length ? hintTable(hints) : `<div>${tp.T.noHints}</div>`) +
+      muted(tp.T.hintsNote + " " + tp.T.stabNote(HINT_DAYS)) +
       dismissedHtml()
     );
   }
   // one row per device: role, parent (or the router links of a router), signal, firmware
   function deviceRows() {
-    const isRouterId = id => (nodeById[id] && nodeById[id].type === "routing_end_device") || extraIds.has(id);
+    const isRouterId = id => (tp.nodeById[id] && tp.nodeById[id].type === "routing_end_device") || tp.extraIds.has(id);
     const order = { routing_end_device: 0, end_device: 1, sleepy_end_device: 2, wifi: 3 };
-    const rows = Object.values(nodeById).map(n => {
-      const p = n.type === "routing_end_device" ? null : listData.parents.find(x => x.childId === n.id);
-      const rl = (linksOf[n.id] || []).filter(l => l.kind === "neighbour" && isRouterId(l.id));
+    const rows = Object.values(tp.nodeById).map(n => {
+      const p = n.type === "routing_end_device" ? null : tp.listData.parents.find(x => x.childId === n.id);
+      const rl = (tp.linksOf[n.id] || []).filter(l => l.kind === "neighbour" && isRouterId(l.id));
       const best = rl.length ? Math.max(...rl.map(l => l.rssi)) : null;
       return {
         id: n.id,
         type: n.type,
         available: n.available,
-        role: T.types[n.type] || n.type,
+        role: tp.T.types[n.type] || n.type,
         filter: n.type === "routing_end_device" ? "routers" : n.type === "end_device" ? "mains" : "battery",
         conn: p
           ? devLink(p.parentId)
           : n.type !== "sleepy_end_device" && rl.length
-            ? esc(T.rLinksShort(rl.length))
+            ? esc(tp.T.rLinksShort(rl.length))
             : "–", // the best one is in the signal column
         connSort: p ? nameOf(p.parentId) : "",
         rssi: p ? p.rssi : n.type !== "sleepy_end_device" ? best : null,
@@ -146,12 +177,12 @@
         msgs: (m => m.up + m.down)(msgsLastHour(n.id)),
       };
     });
-    for (const w of Object.values(wifiById))
+    for (const w of Object.values(tp.wifiById))
       rows.push({
         id: w.id,
         type: "wifi",
         available: w.available,
-        role: w.kind === "ethernet" ? T.roleEth : T.roleWifi,
+        role: w.kind === "ethernet" ? tp.T.roleEth : tp.T.roleWifi,
         filter: "wifi",
         conn: "–",
         connSort: "",
@@ -180,8 +211,8 @@
       const x = val(a),
         y = val(b);
       return (
-        (typeof x === "number" ? x - y : String(x).localeCompare(String(y), lang, { numeric: true })) * d ||
-        nameOf(a.id).localeCompare(nameOf(b.id), lang)
+        (typeof x === "number" ? x - y : String(x).localeCompare(String(y), tp.lang, { numeric: true })) * d ||
+        nameOf(a.id).localeCompare(nameOf(b.id), tp.lang)
       );
     });
   }
@@ -192,15 +223,15 @@
     const shown = rows.filter(r => devFilter === "all" || r.filter === devFilter);
     const th = (key, label) =>
       `<th><a href="#" data-sort="${key}">${label}${devSort.key === key ? (devSort.dir > 0 ? " ▲" : " ▼") : ""}</a></th>`;
-    let h = `<div class="chips">${kinds.map(f => `<button data-filter="${f}"${f === devFilter ? ' class="on"' : ""}>${T.devFilters[f]} <span>${f === "all" ? rows.length : rows.filter(r => r.filter === f).length}</span></button>`).join("")}</div>`;
+    let h = `<div class="chips">${kinds.map(f => `<button data-filter="${f}"${f === devFilter ? ' class="on"' : ""}>${tp.T.devFilters[f]} <span>${f === "all" ? rows.length : rows.filter(r => r.filter === f).length}</span></button>`).join("")}</div>`;
     h +=
-      `<div class="tscroll"><table class="devs"><tr>${th("name", T.thDevice)}${th("role", T.rRole)}${th("conn", T.rConnection)}${th("rssi", T.thSignal)}${th("msgs", T.thMsgs)}${th("fw", T.firmware)}</tr>` +
+      `<div class="tscroll"><table class="devs"><tr>${th("name", tp.T.thDevice)}${th("role", tp.T.rRole)}${th("conn", tp.T.rConnection)}${th("rssi", tp.T.thSignal)}${th("msgs", tp.T.thMsgs)}${th("fw", tp.T.firmware)}</tr>` +
       shown
         .map(r => {
-          const u = fwOf[r.id],
+          const u = tp.fwOf[r.id],
             q = r.rssi !== null ? QUAL(r.rssi) : null;
           return (
-            `<tr><td>${devLink(r.id)}</td><td>${esc(r.role)}${r.available ? "" : ` <span class="r">${esc(T.unreachable.replace(/^\s*[–-]\s*/, ""))}</span>`}</td><td>${r.conn}</td>` +
+            `<tr><td>${devLink(r.id)}</td><td>${esc(r.role)}${r.available ? "" : ` <span class="r">${esc(tp.T.unreachable.replace(/^\s*[–-]\s*/, ""))}</span>`}</td><td>${r.conn}</td>` +
             `<td${q ? ` class="${q[1]}"` : ""} style="white-space:nowrap">${r.rssi !== null ? `${r.rssi} dBm` : "–"}${r.self ? ` <span class="tnote" style="display:inline">*</span>` : ""}</td>` +
             `<td style="text-align:right">${r.msgs || "–"}</td>` +
             `<td style="white-space:nowrap">${esc(r.sw || "–")}${u && (u.available || u.progress !== null) ? ` <span class="o">→ ${esc(u.latest)}</span>` : ""}</td></tr>`
@@ -208,27 +239,27 @@
         })
         .join("") +
       `</table></div>`;
-    if (rows.some(r => r.self)) h += muted("* " + T.selfMeasured.replace(/^\(|\)$/g, ""));
+    if (rows.some(r => r.self)) h += muted("* " + tp.T.selfMeasured.replace(/^\(|\)$/g, ""));
     return h + chattyHtml() + firmwareListHtml();
   }
   function linksHtml() {
-    const weakParents = listData.parents.filter(p => p.rssi < -80 && nodeById[p.childId]);
+    const weakParents = tp.listData.parents.filter(p => p.rssi < -80 && tp.nodeById[p.childId]);
     let h = "";
     const linkRow = (a, b, r, self) =>
-      `<tr class="mark" data-mark="${esc(a + "," + b)}" title="${esc(T.markHint)}"><td>${esc(nameOf(a))} ↔ ${esc(nameOf(b))}</td>` +
-      `<td class="${QUAL(r)[1]}" style="white-space:nowrap">${r} dBm${self ? ` <span class="tnote" style="display:inline">${T.selfMeasured}</span>` : ""}</td></tr>`;
-    if (listData.weak.length)
-      h += `<h4>${T.weakHead} ${T.weakSub}</h4><table class="lk">${listData.weak.map(w => linkRow(w.a, w.b, w.r)).join("")}</table>`;
+      `<tr class="mark" data-mark="${esc(a + "," + b)}" title="${esc(tp.T.markHint)}"><td>${esc(nameOf(a))} ↔ ${esc(nameOf(b))}</td>` +
+      `<td class="${QUAL(r)[1]}" style="white-space:nowrap">${r} dBm${self ? ` <span class="tnote" style="display:inline">${tp.T.selfMeasured}</span>` : ""}</td></tr>`;
+    if (tp.listData.weak.length)
+      h += `<h4>${tp.T.weakHead} ${tp.T.weakSub}</h4><table class="lk">${tp.listData.weak.map(w => linkRow(w.a, w.b, w.r)).join("")}</table>`;
     if (weakParents.length)
-      h += `<h4>${T.weakParentHead} ${T.weakSub}</h4><table class="lk">${weakParents.map(p => linkRow(p.childId, p.parentId, p.rssi, p.src === "device")).join("")}</table>`;
-    return spectrumSection() + (h || `<div>${T.noWeakLinks}</div>`) + muted(T.linksNote) + dependHtml();
+      h += `<h4>${tp.T.weakParentHead} ${tp.T.weakSub}</h4><table class="lk">${weakParents.map(p => linkRow(p.childId, p.parentId, p.rssi, p.src === "device")).join("")}</table>`;
+    return spectrumSection() + (h || `<div>${tp.T.noWeakLinks}</div>`) + muted(tp.T.linksNote) + dependHtml();
   }
   // the panel below the map – rebuilt when the data changes (refresh, border router names #71, firmware every minute)
   function renderList() {
-    if (!listData) return;
-    hintsOf = computeHints(listData.parents);
+    if (!tp.listData) return;
+    tp.hintsOf = computeHints(tp.listData.parents);
     const hints = allHints();
-    hintCount = hints.length;
+    tp.hintCount = hints.length;
     const body = {
       overview: () => overviewHtml(hints),
       hints: () => hintsHtml(hints),
@@ -238,7 +269,7 @@
     };
     const open = $("info").querySelector("details.okf[open]");
     $("info").innerHTML =
-      `<div id="tabbar" role="tablist" aria-label="${esc(T.netBtn.replace(/^\S+\s/, ""))}"></div>` +
+      `<div id="tabbar" role="tablist" aria-label="${esc(tp.T.netBtn.replace(/^\S+\s/, ""))}"></div>` +
       TABS.map(
         t => `<div class="tabp" id="tab-${t}" role="tabpanel"${t === tab ? "" : " hidden"}>${body[t]()}</div>`,
       ).join("");
@@ -263,3 +294,4 @@
       renderList();
     } else if (t.dataset.mark) markDevices(t.dataset.mark.split(","));
   });
+}

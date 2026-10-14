@@ -1,6 +1,6 @@
-//# Dutch texts. Defines TEXT_NL and NAMES_NL (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
-//# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
-const TEXT_NL = {
+// Dutch texts. Defines TEXT_NL and NAMES_NL (translations of common English entity names); listed in src/i18n/index.js.
+// Keys missing here fall back to English – tests/check-i18n.js lists them.
+export const TEXT_NL = {
   hPowerCutRecent: (n, days, kids) =>
     `${n}× herstart in de afgelopen ${days} dagen – verliest waarschijnlijk af en toe stroom (bijv. lamp op een wandschakelaar of stekker eruit). Zolang hij uit is, kan hij geen berichten doorsturen${kids.length ? `; ${kids.join(", ")} ${kids.length === 1 ? "moet" : "moeten"} dan een nieuwe parent zoeken` : ""}. Tip: laat hem aan de stroom en schakel hem via Home Assistant.`,
   warnAttachRecent: (n, days) => `${n} verbindingspogingen in de afgelopen ${days} dagen – verbinding instabiel`,
@@ -422,7 +422,7 @@ const TEXT_NL = {
 };
 
 // Translations of common English entity names (ticker and detail panel); prefix match, first hit wins
-const NAMES_NL = [
+export const NAMES_NL = [
   ["Effective current", "Stroom (effectief)"],
   ["Effective voltage", "Spanning (effectief)"],
   ["Active current", "Stroom"],

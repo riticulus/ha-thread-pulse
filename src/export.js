@@ -1,11 +1,17 @@
-//# Saving the map as a PNG image, optionally anonymised (issue #40).
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Saving the map as a PNG image, optionally anonymised (issue #40).
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+import { VERSION } from "./version.js";
+
+export default function install(tp) {
+  const { $, host, roomsOf, root, usefulModel } = tp;
+  Object.assign(tp, { anonLabels, anonRoomMap, exportImage, setMoreMenu });
   // ---------- image export (issue #40) ----------
   // The map canvas is copied as it is shown (zoom, links, colours, badges, room areas, traffic, messages in flight) onto
   // the page background, with a caption line. Anonymised: device names become "Device 1, 2 …", rooms "Room A, B …",
   // the address suffix of other Thread routers is removed; the labels are switched only for the moment of the copy.
   let anonRooms = null; // area → "Room A" while an anonymised image is drawn (used by drawRooms)
   const roomLabel = area => (anonRooms ? anonRooms[area] : area);
+  tp.roomLabel = roomLabel;
   function setMoreMenu(show) {
     // ⋯ menu of the toolbar (issue #107): reload, sound, export, version
     const m = $("moremenu");
@@ -20,24 +26,24 @@
     if (first) first.focus({ preventScroll: true });
   }
   function anonLabels() {
-    const nodes = network.body.data.nodes,
+    const nodes = tp.network.body.data.nodes,
       named = [];
     for (const id of nodes.getIds()) {
-      const n = nodeById[id] || wifiById[id];
+      const n = tp.nodeById[id] || tp.wifiById[id];
       if (n) named.push({ id, name: n.name });
-      else if (extraIds.has(id) && id !== brExt)
+      else if (tp.extraIds.has(id) && id !== tp.brExt)
         // model name only – the name of a border router can be personal
         named.push({
           id,
-          label: brInfo[id] ? usefulModel(brInfo[id]) || T.brLabel : T.foreignLabel(id).split("\n")[0],
+          label: tp.brInfo[id] ? usefulModel(tp.brInfo[id]) || tp.T.brLabel : tp.T.foreignLabel(id).split("\n")[0],
         });
     }
     // numbered by position (top left to bottom right), not by name – the order must not hint at the real names
-    const pos = network.getPositions(),
+    const pos = tp.network.getPositions(),
       row = id => Math.round(((pos[id] || {}).y || 0) / 40);
     named.sort((a, b) => row(a.id) - row(b.id) || ((pos[a.id] || {}).x || 0) - ((pos[b.id] || {}).x || 0));
     let i = 0;
-    return named.map(x => ({ id: x.id, label: x.label || T.anonDevice(++i) }));
+    return named.map(x => ({ id: x.id, label: x.label || tp.T.anonDevice(++i) }));
   }
   function anonRoomMap() {
     // area → "Room A, B …" in alphabetical order (image and text report)
@@ -45,7 +51,7 @@
     Object.keys(roomsOf())
       .sort()
       .forEach((a, i) => {
-        m[a] = T.anonRoom(i < 26 ? String.fromCharCode(65 + i) : String(i + 1));
+        m[a] = tp.T.anonRoom(i < 26 ? String.fromCharCode(65 + i) : String(i + 1));
       });
     return m;
   }
@@ -53,13 +59,13 @@
     const original = {};
     if (anon) {
       const labels = anonLabels(),
-        nodes = network.body.data.nodes;
+        nodes = tp.network.body.data.nodes;
       for (const l of labels) original[l.id] = nodes.get(l.id).label;
       anonRooms = anonRoomMap();
       nodes.update(labels);
     }
     try {
-      network.redraw(); // synchronous: the canvas now holds the (anonymised) picture
+      tp.network.redraw(); // synchronous: the canvas now holds the (anonymised) picture
       const src = $("net").querySelector("canvas"),
         ratio = src.width / src.clientWidth || 1;
       const foot = Math.round(26 * ratio),
@@ -74,10 +80,10 @@
       ctx.fillStyle = cs.getPropertyValue("--muted").trim() || "#6b7684";
       ctx.font = `${Math.round(12 * ratio)}px -apple-system, Segoe UI, Roboto, sans-serif`;
       ctx.textBaseline = "middle";
-      const when = new Date().toLocaleString(lang, { dateStyle: "medium", timeStyle: "short" });
+      const when = new Date().toLocaleString(tp.lang, { dateStyle: "medium", timeStyle: "short" });
       ctx.fillText(
-        `Thread Pulse ${VERSION} · ${when} · ${T.exportDevices(Object.keys(nodeById).length)}` +
-          (anon ? " · " + T.anonNote : ""),
+        `Thread Pulse ${VERSION} · ${when} · ${tp.T.exportDevices(Object.keys(tp.nodeById).length)}` +
+          (anon ? " · " + tp.T.anonNote : ""),
         Math.round(10 * ratio),
         src.height + foot / 2,
       );
@@ -85,19 +91,19 @@
     } finally {
       if (anon) {
         anonRooms = null;
-        network.body.data.nodes.update(Object.entries(original).map(([id, label]) => ({ id, label })));
-        network.redraw();
+        tp.network.body.data.nodes.update(Object.entries(original).map(([id, label]) => ({ id, label })));
+        tp.network.redraw();
       }
     }
   }
   function exportImage(anon) {
     setMoreMenu(false);
-    if (!network) return;
+    if (!tp.network) return;
     let canvas;
     try {
       canvas = snapshotCanvas(anon);
     } catch (e) {
-      $("status").textContent = T.exportFailed;
+      $("status").textContent = tp.T.exportFailed;
       return;
     }
     const d = new Date(),
@@ -105,7 +111,7 @@
     const name = `thread-pulse-${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}${anon ? "-anonymised" : ""}.png`;
     canvas.toBlob(async blob => {
       if (!blob) {
-        $("status").textContent = T.exportFailed;
+        $("status").textContent = tp.T.exportFailed;
         return;
       }
       // phones and tablets (and the Home Assistant app) cannot always download files – offer the share sheet there
@@ -134,3 +140,4 @@
       setTimeout(() => URL.revokeObjectURL(url), 10000);
     }, "image/png");
   }
+}

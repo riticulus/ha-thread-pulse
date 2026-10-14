@@ -1,4 +1,9 @@
 // ---------- dashboard card: <thread-pulse-card>, installed with HACS ----------
+import TP_CSS from "./styles.css";
+import TP_HTML from "./markup.html";
+import { VERSION } from "./version.js";
+import { createThreadPulse } from "./core.js";
+
 // The graph library is loaded only when a card is actually shown, from the same folder as this file.
 const TP_BASE = new URL(".", import.meta.url).href;
 let tpVisPromise = null;

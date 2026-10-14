@@ -1,55 +1,61 @@
-//# Live data flow: routing tables, path calculation, animated messages, ticker, subscription to Home Assistant events.
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Live data flow: routing tables, path calculation, animated messages, ticker, subscription to Home Assistant events.
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+import { LOCAL_NAMES } from "./i18n/index.js";
+
+export default function install(tp) {
+  const { $, COLORS, esc, every, hex16 } = tp;
+  Object.assign(tp, { buildRouting, drawPackets, fmtState, launch, localName, pathToBr, showTicker, subscribeLive });
   // ---------- live data flow ----------
   // Shown: every message a Matter device sends to Home Assistant (state report) and every command HA sends to a device.
   // Path: device -> its parent router -> (next hops from the routers' route tables) -> border router. Thread picks the
   // route itself; this is the most likely path according to the last route-table snapshot, not a radio capture.
-  let packets = [],
-    liveOn = true,
-    unsub = null,
-    recent = [],
-    lastPkt = {},
-    animating = false;
+  tp.packets = [];
+  tp.liveOn = true;
+  tp.unsub = null;
+  let recent = [];
+  let lastPkt = {};
+  tp.animating = false;
   const HOP_MS = 550;
 
   function buildRouting(nodes) {
-    ridToId = {};
-    routeOf = {};
-    parentRid = {};
-    ownRid = {};
-    for (const n of nodes) for (const x of n.routes) if (x["0"] && x["0"] !== "0") ridToId[x["2"]] = hex16(x["0"]);
+    tp.ridToId = {};
+    tp.routeOf = {};
+    tp.parentRid = {};
+    tp.ownRid = {};
+    for (const n of nodes) for (const x of n.routes) if (x["0"] && x["0"] !== "0") tp.ridToId[x["2"]] = hex16(x["0"]);
     for (const n of nodes) {
       const own = n.routes.find(x => x["3"] === 63 && x["4"] === 0); // own entry: no next hop, cost 0
       if (n.role >= 5 && own) {
-        ownRid[n.id] = own["2"];
-        routeOf[own["2"]] = Object.fromEntries(n.routes.map(x => [x["2"], x]));
-      } else if (n.routes.length) parentRid[n.id] = (own || n.routes.find(x => x["9"]) || n.routes[0])["2"];
+        tp.ownRid[n.id] = own["2"];
+        tp.routeOf[own["2"]] = Object.fromEntries(n.routes.map(x => [x["2"], x]));
+      } else if (n.routes.length) tp.parentRid[n.id] = (own || n.routes.find(x => x["9"]) || n.routes[0])["2"];
     }
   }
   function pathToBr(nodeId) {
-    if (isWifiId(nodeId)) return null; // Matter over Wi-Fi: counted, but no Thread path
-    if (!brExt) {
+    if (tp.isWifiId(nodeId)) return null; // Matter over Wi-Fi: counted, but no Thread path
+    if (!tp.brExt) {
       // border router unknown (no OpenThread add-on, several or no unknown routers – e.g. Apple border routers only):
       // only the first hop is known, from the device to its parent (issue #71)
-      const p = parentOf[nodeId];
-      return p && onMap.has(p) ? [nodeId, p] : null;
+      const p = tp.parentOf[nodeId];
+      return p && tp.onMap.has(p) ? [nodeId, p] : null;
     }
-    const br = Object.keys(ridToId).find(r => ridToId[r] === brExt);
+    const br = Object.keys(tp.ridToId).find(r => tp.ridToId[r] === tp.brExt);
     const ids = [nodeId];
-    let r = ownRid[nodeId] ?? parentRid[nodeId];
-    if (r === undefined || br === undefined) return onMap.has(brExt) ? [nodeId, brExt] : null;
-    if (ownRid[nodeId] === undefined) ids.push(ridToId[r]);
+    let r = tp.ownRid[nodeId] ?? tp.parentRid[nodeId];
+    if (r === undefined || br === undefined) return tp.onMap.has(tp.brExt) ? [nodeId, tp.brExt] : null;
+    if (tp.ownRid[nodeId] === undefined) ids.push(tp.ridToId[r]);
     for (let i = 0; i < 6 && String(r) !== br; i++) {
-      const e = (routeOf[r] || {})[br];
+      const e = (tp.routeOf[r] || {})[br];
       // direct link to the border router with usable quality -> one hop; otherwise follow the next hop
       if (!e || (e["9"] && Math.min(e["5"], e["6"]) >= 2) || e["3"] === 63) r = Number(br);
       else r = e["3"];
-      ids.push(ridToId[r]);
+      ids.push(tp.ridToId[r]);
     }
-    const p = ids.filter((id, i) => id && onMap.has(id) && id !== ids[i - 1]);
+    const p = ids.filter((id, i) => id && tp.onMap.has(id) && id !== ids[i - 1]);
     return p.length > 1 ? p : null;
   }
-  const counts = {}; // per device: timestamps of messages since the page was opened
+  const counts = {};
+  tp.counts = counts; // per device: timestamps of messages since the page was opened
 
   function launch(nodeId, down, html) {
     const now = performance.now(),
@@ -63,14 +69,14 @@
     c.up = c.up.filter(t => t > cut);
     c.down = c.down.filter(t => t > cut);
     c.total = (c.total || 0) + 1;
-    let path = network ? pathToBr(nodeId) : null;
+    let path = tp.network ? pathToBr(nodeId) : null;
     if (path) {
       if (down) path = path.slice().reverse();
-      recordTraffic(path);
+      tp.recordTraffic(path);
       const via =
-        brExt && path.includes(brExt)
-          ? brExt
-          : extraIds.has(path[down ? 0 : path.length - 1])
+        tp.brExt && path.includes(tp.brExt)
+          ? tp.brExt
+          : tp.extraIds.has(path[down ? 0 : path.length - 1])
             ? path[down ? 0 : path.length - 1]
             : null;
       if (via) {
@@ -83,13 +89,13 @@
         b.total = (b.total || 0) + 1;
       }
     }
-    if (panelNode === nodeId || (panelNode && extraIds.has(panelNode))) renderPanel();
-    if (!liveOn || !network || !path) return;
-    playTick(down);
+    if (tp.panelNode === nodeId || (tp.panelNode && tp.extraIds.has(tp.panelNode))) tp.renderPanel();
+    if (!tp.liveOn || !tp.network || !path) return;
+    tp.playTick(down);
     // response-time view (issue #89): a command travels as long as the device's median response time takes
-    const rt = down && respView ? respSummary(nodeId) : null;
+    const rt = down && tp.respView ? tp.respSummary(nodeId) : null;
     const hopMs = rt ? Math.min(3000, Math.max(250, rt.med)) / Math.max(1, path.length - 1) : HOP_MS;
-    packets.push({
+    tp.packets.push({
       path,
       t0: now,
       color: down ? COLORS.down : COLORS.up,
@@ -99,24 +105,24 @@
     recent.unshift({ t: new Date(), html, down });
     recent = recent.slice(0, 60);
     showTicker();
-    if (!animating) {
-      animating = true;
+    if (!tp.animating) {
+      tp.animating = true;
       requestAnimationFrame(tick);
     }
   }
   function tick() {
     const now = performance.now();
-    packets = packets.filter(p => now - p.t0 < (p.path.length - 1) * p.hopMs + 900);
-    if (network) network.redraw();
-    if (packets.length && !destroyed) requestAnimationFrame(tick);
-    else animating = false;
+    tp.packets = tp.packets.filter(p => now - p.t0 < (p.path.length - 1) * p.hopMs + 900);
+    if (tp.network) tp.network.redraw();
+    if (tp.packets.length && !tp.destroyed) requestAnimationFrame(tick);
+    else tp.animating = false;
   }
 
   function drawPackets(ctx) {
-    if (!packets.length) return;
+    if (!tp.packets.length) return;
     const now = performance.now(),
-      pos = network.getPositions();
-    for (const p of packets) {
+      pos = tp.network.getPositions();
+    for (const p of tp.packets) {
       const el = now - p.t0,
         hops = p.path.length - 1,
         f = Math.min(el / p.hopMs, hops);
@@ -171,41 +177,42 @@
     const now = Date.now(),
       perMin = recent.filter(r => now - r.t < 60000).length;
     $("live").innerHTML =
-      `<div><b>Live</b> · ${T.perMin(perMin)}</div>` +
+      `<div><b>Live</b> · ${tp.T.perMin(perMin)}</div>` +
       recent
         .slice(0, 3)
         .map(
           r =>
-            `<div><span style="color:${r.down ? COLORS.down : COLORS.up}">●</span> ${r.t.toLocaleTimeString(lang)} ${r.html}</div>`,
+            `<div><span style="color:${r.down ? COLORS.down : COLORS.up}">●</span> ${r.t.toLocaleTimeString(tp.lang)} ${r.html}</div>`,
         )
         .join("");
   }
   function localName(t) {
     // translate common English entity names into the dashboard language (LOCAL_NAMES)
-    const list = LOCAL_NAMES[lang];
+    const list = LOCAL_NAMES[tp.lang];
     if (!list) return t;
     for (const [en, tr] of list) if (t.toLowerCase().startsWith(en.toLowerCase())) return tr + t.slice(en.length);
     return t;
   }
   function fmtState(st) {
     const u = st.attributes && st.attributes.unit_of_measurement;
-    return (T.states[st.state] || st.state) + (u ? " " + u : "");
+    return (tp.T.states[st.state] || st.state) + (u ? " " + u : "");
   }
 
   async function subscribeLive(hass) {
-    if (unsub) return;
+    if (tp.unsub) return;
     const conn = hass.connection;
     const u1 = await conn.subscribeEvents(ev => {
       const d = ev.data,
-        n = entToNode[d.entity_id];
+        n = tp.entToNode[d.entity_id];
       if (
         n &&
         d.new_state &&
         d.old_state &&
         (d.new_state.state === "unavailable") !== (d.old_state.state === "unavailable")
       ) {
-        const mainIds = (nodeById[n] && nodeById[n].mainEntities) || [];
-        if (!mainIds.length || mainIds.includes(d.entity_id)) liveAvailability(n, d.new_state.state !== "unavailable");
+        const mainIds = (tp.nodeById[n] && tp.nodeById[n].mainEntities) || [];
+        if (!mainIds.length || mainIds.includes(d.entity_id))
+          tp.liveAvailability(n, d.new_state.state !== "unavailable");
       }
       if (
         !n ||
@@ -222,43 +229,45 @@
       )
         return;
       const what =
-        localName((d.new_state.attributes.friendly_name || d.entity_id).replace(nodeName[n], "").trim()) || T.state;
+        localName((d.new_state.attributes.friendly_name || d.entity_id).replace(tp.nodeName[n], "").trim()) ||
+        tp.T.state;
       let resp = "";
-      const p = pendingCmd[d.entity_id];
+      const p = tp.pendingCmd[d.entity_id];
       if (p) {
-        const tState = haTime(ev.time_fired),
+        const tState = tp.haTime(ev.time_fired),
           ctxMatch = p.ctx && d.new_state.context && d.new_state.context.id === p.ctx;
         const ms = tState - p.t;
-        if (ms >= 0 && (ctxMatch || ms <= RESP_WINDOW)) {
-          recordResponse(n, ms);
+        if (ms >= 0 && (ctxMatch || ms <= tp.RESP_WINDOW)) {
+          tp.recordResponse(n, ms);
           resp = ` · ${Math.round(ms)} ms`;
         }
-        if (ms >= 0) delete pendingCmd[d.entity_id];
+        if (ms >= 0) delete tp.pendingCmd[d.entity_id];
       }
-      launch(n, false, `<b>${esc(nodeName[n])}</b> → HA: ${esc(what)} ${esc(fmtState(d.new_state))}${resp}`);
+      launch(n, false, `<b>${esc(tp.nodeName[n])}</b> → HA: ${esc(what)} ${esc(fmtState(d.new_state))}${resp}`);
     }, "state_changed");
     const u2 = await conn.subscribeEvents(ev => {
       const sd = ev.data.service_data || {};
-      const t = haTime(ev.time_fired),
+      const t = tp.haTime(ev.time_fired),
         now = Date.now();
       for (const e of [].concat(sd.entity_id || []))
-        if (entToNode[e] && !isNaN(t) && !e.startsWith("button."))
-          pendingCmd[e] = { t, ctx: ev.context && ev.context.id, at: now };
-      for (const e in pendingCmd) if (now - pendingCmd[e].at > RESP_WINDOW) delete pendingCmd[e];
+        if (tp.entToNode[e] && !isNaN(t) && !e.startsWith("button."))
+          tp.pendingCmd[e] = { t, ctx: ev.context && ev.context.id, at: now };
+      for (const e in tp.pendingCmd) if (now - tp.pendingCmd[e].at > tp.RESP_WINDOW) delete tp.pendingCmd[e];
       const targets = new Set(
         []
           .concat(sd.entity_id || [])
-          .map(e => entToNode[e])
+          .map(e => tp.entToNode[e])
           .filter(Boolean),
       );
-      for (const dv of [].concat(sd.device_id || [])) if (devToNode[dv]) targets.add(devToNode[dv]);
+      for (const dv of [].concat(sd.device_id || [])) if (tp.devToNode[dv]) targets.add(tp.devToNode[dv]);
       for (const n of targets)
-        launch(n, true, `HA → <b>${esc(nodeName[n])}</b>: ${esc(ev.data.domain + "." + ev.data.service)}`);
+        launch(n, true, `HA → <b>${esc(tp.nodeName[n])}</b>: ${esc(ev.data.domain + "." + ev.data.service)}`);
     }, "call_service");
-    unsub = () => {
+    tp.unsub = () => {
       u1();
       u2();
     };
     showTicker();
     every(showTicker, 10000);
   }
+}

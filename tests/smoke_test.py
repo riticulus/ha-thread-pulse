@@ -3,7 +3,7 @@
     python3 tests/smoke_test.py            # all checks (about 2 minutes)
     python3 tests/smoke_test.py --quick    # without the change-log check (waits 45 s for a demo change)
 
-Builds nothing – run `python3 build.py` first. Exit code 1 if a check fails or a JavaScript error occurs.
+Builds nothing – run `npm run build` first. Exit code 1 if a check fails or a JavaScript error occurs.
 """
 import asyncio, re, json, sys
 from browser import Browser, Results, search_js
@@ -309,6 +309,12 @@ async def other_pages(r):
         tall = await b.js("document.getElementById('side').getBoundingClientRect().height")
         r.check("phone: sheet handle makes the panel taller", tall > side[1] + 150 and await b.js("document.getElementById('sheetbtn').getAttribute('aria-expanded') === 'true'"), f"{side[1]} → {tall:.0f}")
         r.errors("phone width", b.errors)
+    async with Browser() as b:                # the card file itself (what HACS installs), demo mode, in a shadow root
+        await b.open("tests/card.html", wait=8)
+        S = "document.getElementById('card').shadowRoot"
+        r.check("card file: loads as a module and draws the demo map", await b.js(f"!!{S} && !!{S}.querySelector('#net canvas') && {S}.getElementById('status').textContent.startsWith('DEMO')"))
+        r.check("card file: network panel in the column", "Mesh health" in await b.js(f"{S}.getElementById('info').textContent"))
+        r.errors("card file", b.errors)
     async with Browser() as b:
         await b.open("dist/thread-pulse.html?lang=en", wait=3)
         err = await b.js("document.getElementById('err') ? document.getElementById('err').textContent : ''")

@@ -1,6 +1,6 @@
-//# English texts. Defines TEXT_EN; build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
-//# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
-const TEXT_EN = {
+// English texts. Defines TEXT_EN; listed in src/i18n/index.js.
+// Keys missing here fall back to English – tests/check-i18n.js lists them.
+export const TEXT_EN = {
   hPowerCutRecent: (n, days, kids) =>
     `Restarted ${n} times in the last ${days} day${days === 1 ? "" : "s"} – it probably loses power from time to time (e.g. a bulb on a wall switch, or a plug that gets unplugged). While it is off, it cannot forward messages${kids.length ? `; ${kids.join(", ")} then ${kids.length === 1 ? "has" : "have"} to find a new parent` : ""}. Tip: leave it powered and switch it via Home Assistant.`,
   warnAttachRecent: (n, days) =>

@@ -1,0 +1,16 @@
+<!doctype html>
+<!-- Test page for the dashboard card file (dist/ha-thread-pulse.js) in demo mode, with a minimal stand-in for
+     Home Assistant's hass object – used by smoke_test.py. Open /tests/card.html from a local web server. -->
+<html lang="en">
+<head><meta charset="utf-8"><title>Thread Pulse card test</title></head>
+<body style="margin:0">
+<thread-pulse-card id="card" style="display:block;height:700px"></thread-pulse-card>
+<script type="module">
+  import "../dist/ha-thread-pulse.js";
+  const card = document.getElementById("card");
+  card.setConfig({ demo: true, language: "en" });
+  card.hass = { themes: { darkMode: false }, language: "en", states: {}, config: { version: "test" } };
+  window.__card = card;
+</script>
+</body>
+</html>

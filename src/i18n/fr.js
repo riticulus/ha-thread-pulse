@@ -1,6 +1,6 @@
-//# French texts. Defines TEXT_FR and NAMES_FR (translations of common English entity names); build.py collects every file in src/i18n/ into TEXT and LOCAL_NAMES.
-//# All languages must have the same keys as en.js – checked by tests/check-i18n.js.
-const TEXT_FR = {
+// French texts. Defines TEXT_FR and NAMES_FR (translations of common English entity names); listed in src/i18n/index.js.
+// Keys missing here fall back to English – tests/check-i18n.js lists them.
+export const TEXT_FR = {
   hPowerCutRecent: (n, days, kids) =>
     `Redémarré ${n} fois ces ${days} derniers jours – il perd probablement son alimentation de temps en temps (p. ex. ampoule sur un interrupteur mural ou prise débranchée). Éteint, il ne peut pas transmettre de messages${kids.length ? ` ; ${kids.join(", ")} ${kids.length === 1 ? "doit" : "doivent"} alors trouver un nouveau parent` : ""}. Conseil : le laisser alimenté et le commander via Home Assistant.`,
   warnAttachRecent: (n, days) => `${n} tentatives de connexion ces ${days} derniers jours – connexion instable`,
@@ -420,7 +420,7 @@ const TEXT_FR = {
 };
 
 // Translations of common English entity names (ticker and detail panel); prefix match, first hit wins
-const NAMES_FR = [
+export const NAMES_FR = [
   ["Effective current", "Courant (efficace)"],
   ["Effective voltage", "Tension (efficace)"],
   ["Active current", "Courant"],

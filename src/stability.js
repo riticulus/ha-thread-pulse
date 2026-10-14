@@ -1,5 +1,9 @@
-//# Stability counters over a time window, stored in Home Assistant (issue #24).
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Stability counters over a time window, stored in Home Assistant (issue #24).
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+
+export default function install(tp) {
+  const { DEMO, every, freshHass, opts, prefs, renderPanel } = tp;
+  Object.assign(tp, { isDismissed, powerCutOf, recordCounters, setDismissed, stabilityOf, unstableOf });
   // ---------- stability over a time window (issue #24) ----------
   // The devices report restarts (lifetime), attach attempts and drop-offs (both since the device's last restart). Taken as
   // totals, a hint about them never goes away. Thread Pulse therefore keeps a history of the counter values (a sample only
@@ -13,6 +17,7 @@
     DAY_MS = 86400000,
     STAB_SAVE_MS = 15 * 60000;
   const HINT_DAYS = Math.max(1, Math.min(30, Math.round(Number(opts.hintDays) || 7)));
+  tp.HINT_DAYS = HINT_DAYS;
   let stabHist = {},
     stabDismissed = {},
     stabStore = null,
@@ -61,7 +66,7 @@
     // after every render (load and refresh)
     if (DEMO) return;
     const now = Date.now();
-    for (const n of Object.values(nodeById)) {
+    for (const n of Object.values(tp.nodeById)) {
       const v = counterVals(n);
       if (v.every(x => x === null)) continue;
       const l = (stabHist[n.id] = stabHist[n.id] || []),
@@ -91,12 +96,12 @@
       stabStore = null;
     }
     pruneStab();
-    renderList();
-    if (panelNode) renderPanel();
-    if (network) network.redraw();
+    tp.renderList();
+    if (tp.panelNode) renderPanel();
+    if (tp.network) tp.network.redraw();
   }
   async function saveStab(force = false) {
-    if (DEMO || destroyed || (!stabDirty && !force)) return;
+    if (DEMO || tp.destroyed || (!stabDirty && !force)) return;
     stabDirty = false;
     const value = () => ({ version: 1, h: stabHist, dismissed: stabDismissed });
     if (!stabStore) {
@@ -179,7 +184,8 @@
     saveStab(true).then(() => {
       if (stabDismissed[id] && stabDismissed[id][kind] === null) delete stabDismissed[id][kind];
     });
-    renderList();
-    if (panelNode) renderPanel();
-    if (network) network.redraw();
+    tp.renderList();
+    if (tp.panelNode) renderPanel();
+    if (tp.network) tp.network.redraw();
   }
+}

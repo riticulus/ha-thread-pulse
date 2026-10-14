@@ -1,5 +1,9 @@
-//# Matter fabrics: which systems a device is connected to (issue #79).
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Matter fabrics: which systems a device is connected to (issue #79).
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+
+export default function install(tp) {
+  const { DEMO, esc, freshHass, renderPanel, row } = tp;
+  Object.assign(tp, { fabricsHtml });
   // ---------- connected systems (issue #79) ----------
   // A Matter device can be controlled by several systems at once (fabrics): Home Assistant, Apple, Google, Amazon …
   // The cached diagnostics only list Home Assistant's own fabric (the list is filtered per fabric), but they contain the
@@ -24,7 +28,7 @@
         fabricsOf[dev.id] = { state: "error" };
       })
       .finally(() => {
-        if (panelNode === dev.id) renderPanel();
+        if (tp.panelNode === dev.id) renderPanel();
       });
   }
   function fabricsHtml(dev) {
@@ -33,25 +37,27 @@
     if (count === undefined || count === null) return "";
     loadFabrics(dev);
     const f = fabricsOf[dev.id] || {};
-    const name = x => (x.vendor_name || T.fabricVendor(x.vendor_id)) + (x.fabric_label ? ` (${x.fabric_label})` : "");
+    const name = x =>
+      (x.vendor_name || tp.T.fabricVendor(x.vendor_id)) + (x.fabric_label ? ` (${x.fabric_label})` : "");
     const list =
       f.state === "ok" && f.list.length
         ? f.list
             .map(
               x =>
                 esc(name(x)) +
-                (x.fabric_index === f.own ? ` <span style="color:var(--muted)">· ${T.fabricThis}</span>` : ""),
+                (x.fabric_index === f.own ? ` <span style="color:var(--muted)">· ${tp.T.fabricThis}</span>` : ""),
             )
             .join("<br>")
         : f.state === "loading"
-          ? `<span style="color:var(--muted)">${T.fabricLoading}</span>`
+          ? `<span style="color:var(--muted)">${tp.T.fabricLoading}</span>`
           : f.state === "error"
-            ? `<span style="color:var(--muted)">${T.fabricError}</span>`
+            ? `<span style="color:var(--muted)">${tp.T.fabricError}</span>`
             : "";
     return (
-      `<h4>${T.secFabrics}</h4><dl>` +
-      row(T.fabricCount, String(count)) +
-      row(T.fabricList, list) +
-      `</dl><div class="note">${T.fabricNote}</div>`
+      `<h4>${tp.T.secFabrics}</h4><dl>` +
+      row(tp.T.fabricCount, String(count)) +
+      row(tp.T.fabricList, list) +
+      `</dl><div class="note">${tp.T.fabricNote}</div>`
     );
   }
+}

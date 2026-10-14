@@ -1,5 +1,9 @@
-//# Radio spectrum: Thread, Zigbee and Wi-Fi channels in the 2.4 GHz band and where they overlap (issues #78, #120).
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Radio spectrum: Thread, Zigbee and Wi-Fi channels in the 2.4 GHz band and where they overlap (issues #78, #120).
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+
+export default function install(tp) {
+  const { COLORS, esc, nameOf } = tp;
+  Object.assign(tp, { spectrumIssues, spectrumNets, spectrumSection, threadChannel });
   // ---------- radio spectrum (issues #78, #120) ----------
   // Thread and Zigbee (both IEEE 802.15.4) use 2 MHz wide channels 11–26 at 2405 + 5 × (n − 11) MHz; 2.4 GHz Wi-Fi
   // channels 1–13 are about 20 MHz wide around 2407 + 5 × k MHz (14: 2484 MHz). A Thread or Zigbee channel whose
@@ -13,15 +17,15 @@
     IN_WIFI = 11,
     CLEAR_WIFI = 12,
     COMMON_WIFI = [1, 6, 11];
-  let zigbeeInfo = null; // { channel } from ZHA, set by render()
+  tp.zigbeeInfo = null; // { channel } from ZHA, set by render()
   function threadChannel() {
     // OpenThread add-on, else the preferred dataset, else what most devices report
-    const ds = ((threadInfo && threadInfo.datasets) || []).find(d => d.preferred);
-    const chs = Object.values(nodeById)
+    const ds = ((tp.threadInfo && tp.threadInfo.datasets) || []).find(d => d.preferred);
+    const chs = Object.values(tp.nodeById)
       .map(n => ((n.info || {}).net || {}).channel)
       .filter(c => typeof c === "number");
     return (
-      (threadInfo && threadInfo.otbr && threadInfo.otbr.channel) ||
+      (tp.threadInfo && tp.threadInfo.otbr && tp.threadInfo.otbr.channel) ||
       (ds && ds.channel) ||
       chs.sort((a, b) => chs.filter(c => c === b).length - chs.filter(c => c === a).length)[0] ||
       null
@@ -30,11 +34,11 @@
   function spectrumNets() {
     const nets = [],
       t = threadChannel(),
-      z = zigbeeInfo && zigbeeInfo.channel;
+      z = tp.zigbeeInfo && tp.zigbeeInfo.channel;
     if (t >= 11 && t <= 26) nets.push({ kind: "thread", ch: t, f: f154(t) });
     if (z >= 11 && z <= 26) nets.push({ kind: "zigbee", ch: z, f: f154(z) });
     const wifi = {};
-    for (const w of Object.values(wifiById)) {
+    for (const w of Object.values(tp.wifiById)) {
       const k = (w.info || {}).channel;
       if (w.kind === "wifi" && k >= 1 && k <= 14) (wifi[k] = wifi[k] || []).push(w.id);
     }
@@ -43,7 +47,9 @@
     return nets;
   }
   const chTxt = n =>
-    n.kind === "wifi" ? T.spWifiCh(n.ch, n.f - WIFI_HALF, n.f + WIFI_HALF) : T.spCh(T.spNames[n.kind], n.ch, n.f);
+    n.kind === "wifi"
+      ? tp.T.spWifiCh(n.ch, n.f - WIFI_HALF, n.f + WIFI_HALF)
+      : tp.T.spCh(tp.T.spNames[n.kind], n.ch, n.f);
   function clearChannels(avoid, wifiKnown) {
     // 802.15.4 channels away from the known Wi-Fi (and from 1/6/11 if possible)
     const free = set =>
@@ -65,22 +71,28 @@
         if (Math.abs(n.f - w.f) < IN_WIFI) {
           const fix =
             n.kind === "zigbee"
-              ? T.spZigbeeFix(
+              ? tp.T.spZigbeeFix(
                   clearChannels(
                     th ? th.ch : null,
                     wifi.map(x => x.ch),
                   ).join(", "),
                 )
-              : T.spThreadFix(
+              : tp.T.spThreadFix(
                   COMMON_WIFI.filter(k =>
                     [th, zb].filter(Boolean).every(x => Math.abs(x.f - fWifi(k)) >= IN_WIFI),
                   ).join(", ") || "–",
                 );
-          const what = T.spInside(chTxt(n), chTxt(w), w.ids.map(nm).join(", "));
+          const what = tp.T.spInside(chTxt(n), chTxt(w), w.ids.map(nm).join(", "));
           out.push({ what, fix, text: what + " " + fix, kinds: [n.kind, "wifi"], ch: [n.ch, w.ch] });
         }
     if (th && zb && th.ch === zb.ch)
-      out.push({ what: T.spSame(th.ch), fix: "", text: T.spSame(th.ch), kinds: ["thread", "zigbee"], ch: [th.ch] });
+      out.push({
+        what: tp.T.spSame(th.ch),
+        fix: "",
+        text: tp.T.spSame(th.ch),
+        kinds: ["thread", "zigbee"],
+        ch: [th.ch],
+      });
     return out;
   }
   // diagram: frequency axis 2400–2485 MHz, one row per network, the overlapping ones in red
@@ -98,7 +110,7 @@
       top = 6,
       H = top + nets.length * rowH + 22;
     const color = { thread: COLORS.br, zigbee: COLORS.zigbee, wifi: COLORS.wifi };
-    let s = `<svg class="spec" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(T.secSpectrum)}">`;
+    let s = `<svg class="spec" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(tp.T.secSpectrum)}">`;
     for (let f = 2400; f <= 2480; f += 20)
       s += `<line class="sgrid" x1="${x(f)}" x2="${x(f)}" y1="${top}" y2="${H - 18}"/><text class="saxis" x="${x(f)}" y="${H - 5}">${f}</text>`;
     nets.forEach((n, i) => {
@@ -107,7 +119,7 @@
         hot = bad.has(n.kind + ":" + n.ch);
       const x0 = x(n.f - half),
         w = Math.max(4, x(n.f + half) - x0),
-        lbl = n.kind === "wifi" ? `${T.spNames.wifi} ${n.ch}` : `${T.spNames[n.kind]} ${n.ch}`;
+        lbl = n.kind === "wifi" ? `${tp.T.spNames.wifi} ${n.ch}` : `${tp.T.spNames[n.kind]} ${n.ch}`;
       s +=
         `<rect x="${x0}" y="${y + 3}" width="${w}" height="${rowH - 8}" rx="3" fill="${hot ? COLORS.weak : color[n.kind]}" fill-opacity="${n.kind === "wifi" ? 0.35 : 1}"` +
         `${hot && n.kind === "wifi" ? ` stroke="${COLORS.weak}"` : ""}/>`;
@@ -122,11 +134,12 @@
     if (!nets.find(n => n.kind !== "wifi")) return "";
     const issues = spectrumIssues();
     return (
-      `<h4>${T.secSpectrum}</h4>` +
+      `<h4>${tp.T.secSpectrum}</h4>` +
       spectrumHtml() +
       (issues.length
         ? issues.map(x => `<div class="spi"><span class="r">${esc(x.what)}</span> ${esc(x.fix)}</div>`).join("")
-        : `<div class="spi g">${T.spOk}</div>`) +
-      `<div class="tnote">${nets.some(n => n.kind === "wifi") ? "" : T.spNoWifi + " "}${zigbeeInfo ? "" : T.spNoZigbee + " "}${T.spNote}</div>`
+        : `<div class="spi g">${tp.T.spOk}</div>`) +
+      `<div class="tnote">${nets.some(n => n.kind === "wifi") ? "" : tp.T.spNoWifi + " "}${tp.zigbeeInfo ? "" : tp.T.spNoZigbee + " "}${tp.T.spNote}</div>`
     );
   }
+}

@@ -1,5 +1,7 @@
-//# Settings remembered by the browser (issue #50).
-//# Part of createThreadPulse() – placed inside that function by build.py (first of the parts, so all others can use it).
+// Settings remembered by the browser (issue #50).
+// Installed by createThreadPulse() (core.js) first, so all other parts can use it.
+
+export default function install(tp) {
   // ---------- settings remembered by the browser (issue #50) ----------
   // One place for every key, type and default. Values are stored in localStorage per browser and per Home Assistant
   // address; formats are unchanged from earlier versions ("1"/"0", numbers, JSON), so existing settings keep working.
@@ -51,3 +53,5 @@
       } catch (e) {}
     },
   };
+  tp.prefs = prefs;
+}

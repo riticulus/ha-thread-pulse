@@ -1,5 +1,9 @@
-//# Identify button in the detail panel (issue #4).
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Identify button in the detail panel (issue #4).
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+
+export default function install(tp) {
+  const { DEMO, esc, freshHass, launch, renderPanel } = tp;
+  Object.assign(tp, { identifyHtml, pressIdentify });
   // ---------- identify (issue #4) ----------
   // Matter devices with the Identify cluster get an "identify" button entity in Home Assistant (device class identify,
   // a config entity). Pressing it makes the device blink, beep or flash for a few seconds. This is a real command to the
@@ -26,13 +30,13 @@
     if (!ent) return "";
     const s = identifyState && identifyState.id === dev.id && Date.now() < identifyState.until ? identifyState : null;
     return (
-      `<div class="ident"><button class="btn" data-identify="${esc(dev.id)}"${s ? " disabled" : ""}>${T.identifyBtn}</button>` +
+      `<div class="ident"><button class="btn" data-identify="${esc(dev.id)}"${s ? " disabled" : ""}>${tp.T.identifyBtn}</button>` +
       (s ? ` <span class="${s.ok ? "g" : "r"}">${esc(s.text)}</span>` : "") +
-      `<div class="note">${T.identifyNote}${dev.type === "sleepy_end_device" ? " " + T.identifySleepy : ""}</div></div>`
+      `<div class="note">${tp.T.identifyNote}${dev.type === "sleepy_end_device" ? " " + tp.T.identifySleepy : ""}</div></div>`
     );
   }
   async function pressIdentify(id) {
-    const dev = nodeById[id] || wifiById[id];
+    const dev = tp.nodeById[id] || tp.wifiById[id];
     if (!dev) return;
     const hass = DEMO ? null : freshHass(),
       ent = identifyEntity(dev, hass);
@@ -40,22 +44,23 @@
     const done = (ok, text) => {
       const ms = ok ? IDENTIFY_LOCK : 8000;
       identifyState = { id, until: Date.now() + ms, text, ok };
-      if (panelNode === id) renderPanel();
+      if (tp.panelNode === id) renderPanel();
       setTimeout(() => {
-        if (!destroyed && panelNode === id) renderPanel();
+        if (!tp.destroyed && tp.panelNode === id) renderPanel();
       }, ms + 50); // unlock the button right away
     };
-    identifyState = { id, until: Date.now() + IDENTIFY_LOCK, text: T.identifySending, ok: true };
+    identifyState = { id, until: Date.now() + IDENTIFY_LOCK, text: tp.T.identifySending, ok: true };
     renderPanel();
     if (DEMO) {
       launch(id, true, `HA → <b>${esc(dev.name)}</b>: button.press`);
-      done(true, T.identifySent);
+      done(true, tp.T.identifySent);
       return;
     }
     try {
       await hass.callService("button", "press", { entity_id: ent });
-      done(true, T.identifySent);
+      done(true, tp.T.identifySent);
     } catch (e) {
-      done(false, T.identifyFailed + (e && e.message ? ": " + e.message : ""));
+      done(false, tp.T.identifyFailed + (e && e.message ? ": " + e.message : ""));
     }
   }
+}

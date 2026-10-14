@@ -1,5 +1,9 @@
-//# Trends per device: signal and battery over the last 7 days (issue #38).
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Trends per device: signal and battery over the last 7 days (issue #38).
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+
+export default function install(tp) {
+  const { DEMO, QUAL, esc, every, freshHass, prefs, renderPanel, root } = tp;
+  Object.assign(tp, { batteryTrendHtml, recordSignal, signalTrendHtml });
   // ---------- trends (issue #38) ----------
   // Battery: hourly mean from Home Assistant's long-term statistics – complete, also for times without an open page.
   // Signal: Thread Pulse's own samples (every load and refresh, i.e. every 5 minutes while a page is open), averaged per
@@ -52,14 +56,14 @@
   function signalNow() {
     // the value per device right now (same as the panel and the list)
     const out = {};
-    if (!listData) return out;
-    const isRouterId = id => (nodeById[id] && nodeById[id].type === "routing_end_device") || extraIds.has(id);
-    for (const n of Object.values(nodeById)) {
+    if (!tp.listData) return out;
+    const isRouterId = id => (tp.nodeById[id] && tp.nodeById[id].type === "routing_end_device") || tp.extraIds.has(id);
+    for (const n of Object.values(tp.nodeById)) {
       if (n.type === "routing_end_device") {
-        const rl = (linksOf[n.id] || []).filter(l => l.kind === "neighbour" && isRouterId(l.id));
+        const rl = (tp.linksOf[n.id] || []).filter(l => l.kind === "neighbour" && isRouterId(l.id));
         if (rl.length) out[n.id] = Math.max(...rl.map(l => l.rssi));
       } else {
-        const p = listData.parents.find(x => x.childId === n.id);
+        const p = tp.listData.parents.find(x => x.childId === n.id);
         if (p) out[n.id] = p.rssi;
       }
     }
@@ -95,10 +99,10 @@
       sigStore = null;
     } // fallback: this browser
     pruneSig();
-    if (panelNode && nodeById[panelNode]) renderPanel();
+    if (tp.panelNode && tp.nodeById[tp.panelNode]) renderPanel();
   }
   async function saveSignal() {
-    if (DEMO || !sigDirty || destroyed) return;
+    if (DEMO || !sigDirty || tp.destroyed) return;
     sigDirty = false;
     if (!sigStore) {
       prefs.set("signal", packSig());
@@ -122,7 +126,7 @@
     const c = battHist[n.id];
     if (c && (c.loading || Date.now() - c.t < 30 * 60000)) return;
     if (DEMO) {
-      const b = battOf[n.id] !== undefined ? battOf[n.id] : n.demoBattery;
+      const b = tp.battOf[n.id] !== undefined ? tp.battOf[n.id] : n.demoBattery;
       if (b === undefined) return;
       const h = hourNow(),
         drop = b < 50 ? 0.03 : 0.006;
@@ -160,7 +164,7 @@
     } catch (e) {
       battHist[n.id] = { t: Date.now(), pts: [] };
     }
-    if (panelNode === n.id) renderPanel();
+    if (tp.panelNode === n.id) renderPanel();
   }
   // demo: an invented week with gaps (no page open at night)
   function demoSignal(n) {
@@ -218,20 +222,20 @@
     );
   }
   const readout = (p, fmt) =>
-    new Date(p[0] * HOUR_MS).toLocaleString(lang, { weekday: "short", hour: "2-digit", minute: "2-digit" }) +
+    new Date(p[0] * HOUR_MS).toLocaleString(tp.lang, { weekday: "short", hour: "2-digit", minute: "2-digit" }) +
     " · " +
     fmt(p[1]);
   function signalTrendHtml(n) {
     const pts = DEMO ? demoSignal(n) : sigHist[n.id] || [];
     if (!pts.length)
-      return `<h4>${T.trendSignal(n.type === "routing_end_device")}</h4><div class="note">${T.trendNoSignal}</div>`;
+      return `<h4>${tp.T.trendSignal(n.type === "routing_end_device")}</h4><div class="note">${tp.T.trendNoSignal}</div>`;
     const vals = pts.map(p => p[1]),
       lo = Math.min(-90, ...vals) - 2,
       hi = Math.max(-50, ...vals) + 2;
     return (
-      `<h4>${T.trendSignal(n.type === "routing_end_device")}</h4>` +
+      `<h4>${tp.T.trendSignal(n.type === "routing_end_device")}</h4>` +
       sparkline("s:" + n.id, pts, lo, hi, v => `${Math.round(v)} dBm · ${QUAL(v)[2]}`, -80) +
-      `<div class="note">${T.trendSignalNote(pts.length, TREND_H)}</div>`
+      `<div class="note">${tp.T.trendSignalNote(pts.length, TREND_H)}</div>`
     );
   }
   function batteryTrendHtml(n) {
@@ -240,7 +244,7 @@
     if (!c || !c.pts.length) return "";
     return (
       sparkline("b:" + n.id, c.pts, 0, 100, v => `${Math.round(v)} %`, 20) +
-      `<div class="note">${T.trendBattNote}</div>`
+      `<div class="note">${tp.T.trendBattNote}</div>`
     );
   }
   // hover / tap: nearest hour of the chart
@@ -268,3 +272,4 @@
     dot.style.display = "";
     rd.textContent = readout(p, t.fmt);
   }
+}

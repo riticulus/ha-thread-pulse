@@ -6,11 +6,11 @@
 const fs = require("fs"), path = require("path");
 const dir = path.join(__dirname, "..", "src", "i18n");
 const load = code => {
-  const src = fs.readFileSync(path.join(dir, code + ".js"), "utf8");
+  const src = fs.readFileSync(path.join(dir, code + ".js"), "utf8").replace(/^export /gm, "");   // ES module → plain script
   const C = code.toUpperCase();
   return new Function(src + `; return { text: TEXT_${C}, names: typeof NAMES_${C} === "undefined" ? null : NAMES_${C} };`)();
 };
-const codes = fs.readdirSync(dir).filter(f => f.endsWith(".js")).map(f => f.slice(0, -3)).sort();
+const codes = fs.readdirSync(dir).filter(f => f.endsWith(".js") && f !== "index.js").map(f => f.slice(0, -3)).sort();
 const en = load("en").text, keys = Object.keys(en).sort();
 // sample arguments per function, so that every text function can be called
 const samples = { foreignLabel: ["f2a0c0de0000d212"], hPowerCut: [140, ["Lamp"]], hWeakParent: ["Plug", -85, true], chParent: ["A", "B", -70],

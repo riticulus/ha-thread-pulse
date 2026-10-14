@@ -1,5 +1,9 @@
-//# Chattiest devices: messages per device in the last hour (issue #80).
-//# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
+// Chattiest devices: messages per device in the last hour (issue #80).
+// Installed by createThreadPulse() (core.js); shared state and functions are on tp.
+
+export default function install(tp) {
+  const { DEMO, counts, esc, nameOf } = tp;
+  Object.assign(tp, { chattyHint, chattyHtml, loadMsgHistory, msgsLastHour });
   // ---------- chattiest devices (issue #80) ----------
   // Reports to Home Assistant: the hour before the page was opened from Home Assistant's history (each state change of
   // a device's entities; changes within 400 ms count as one radio message, like the live counter), afterwards live.
@@ -14,7 +18,7 @@
     histLoading = false; // node id → timestamps of reports before the page was opened
   async function loadMsgHistory(hass) {
     if (DEMO || !hass || histLoaded || histLoading) return;
-    const ents = Object.keys(entToNode).filter(e => !/^(button|update)\./.test(e));
+    const ents = Object.keys(tp.entToNode).filter(e => !/^(button|update)\./.test(e));
     if (!ents.length) return;
     histLoading = true;
     const start = PAGE_START - CHAT_H;
@@ -30,7 +34,7 @@
       });
       const per = {};
       for (const [e, list] of Object.entries(r || {})) {
-        const id = entToNode[e];
+        const id = tp.entToNode[e];
         if (!id) continue;
         for (const x of list || []) {
           const t = (x.lu || x.lc || 0) * 1000;
@@ -45,7 +49,7 @@
         msgHist[id] = out;
       }
       histLoaded = true;
-      renderList();
+      tp.renderList();
     } catch (e) {
       console.warn("Thread Pulse: message history", e);
     }
@@ -62,18 +66,18 @@
     // for computeHints: battery devices that report unusually often
     if (n.type !== "sleepy_end_device" || chatObservedMs() < CHATTY_MIN_OBS) return null;
     const up = Math.round((msgsLastHour(n.id).up * CHAT_H) / chatObservedMs());
-    return up >= CHATTY_BATT ? T.hChatty(up) : null;
+    return up >= CHATTY_BATT ? tp.T.hChatty(up) : null;
   }
   function chattyHtml() {
     // top 10 in the "Devices" tab of the network panel
-    const rows = [...Object.values(nodeById), ...Object.values(wifiById)]
+    const rows = [...Object.values(tp.nodeById), ...Object.values(tp.wifiById)]
       .map(n => ({ id: n.id, ...msgsLastHour(n.id) }))
       .filter(r => r.up + r.down)
       .sort((a, b) => b.up + b.down - (a.up + a.down))
       .slice(0, 10);
     const mins = Math.round(chatObservedMs() / 60000);
-    let h = `<h4>${T.chatHead}</h4>`;
-    if (!rows.length) return h + `<div class="tnote">${T.chatNone}</div>`;
+    let h = `<h4>${tp.T.chatHead}</h4>`;
+    if (!rows.length) return h + `<div class="tnote">${tp.T.chatNone}</div>`;
     const max = rows[0].up + rows[0].down;
     h +=
       `<table class="chat">` +
@@ -88,6 +92,7 @@
       `</table>`;
     return (
       h +
-      `<div class="tnote">${histLoaded ? T.chatNoteHist(Math.round((Date.now() - PAGE_START) / 60000)) : T.chatNoteLive(mins)}</div>`
+      `<div class="tnote">${histLoaded ? tp.T.chatNoteHist(Math.round((Date.now() - PAGE_START) / 60000)) : tp.T.chatNoteLive(mins)}</div>`
     );
   }
+}
