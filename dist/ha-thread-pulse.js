@@ -6891,7 +6891,7 @@ function demoData(kind) {
 }
 var STYLE = `
   :host { display: block; }
-  ha-card { height: 100%; overflow: hidden; }
+  ha-card { height: 100%; }
   button.tp { all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px; width: 100%; height: 100%;
               padding: 14px 16px; cursor: pointer; color: var(--primary-text-color); font-family: var(--ha-card-font-family, inherit); }
   button.tp:focus-visible { outline: 2px solid var(--primary-color); outline-offset: -2px; border-radius: var(--ha-card-border-radius, 12px); }
@@ -6975,11 +6975,21 @@ var ThreadPulseDeviceCard = class extends HTMLElement {
     }
   }
   _data() {
-    if (this._config.demo) return this._demo = this._demo || demoData(this._config.demo);
+    if (this._config.demo) {
+      this._demo = this._demo || demoData(this._config.demo);
+      return this._config.name ? { ...this._demo, name: this._config.name } : this._demo;
+    }
     const devId = this._deviceId(), dev = this._mesh.devs[devId];
     if (!dev) return null;
     const h = this._hass, area = dev.areaId && h.areas && h.areas[dev.areaId] ? h.areas[dev.areaId].name : "";
-    const out = { devId, name: dev.name, area, available: dev.available, type: dev.type, role: dev.role };
+    const out = {
+      devId,
+      name: this._config.name || dev.name,
+      area,
+      available: dev.available,
+      type: dev.type,
+      role: dev.role
+    };
     if (!dev.ext) return out;
     const c = connectionOf(dev, this._mesh);
     if (!c.router && c.parent)
@@ -7024,7 +7034,7 @@ var ThreadPulseDeviceCard = class extends HTMLElement {
       h += `<dt>${esc(T.parent)}</dt><dd>${d.conn.parentName ? `${esc(d.conn.parentName)} · ${sig(d.conn.rssi)}` : `<span class="muted">${esc(T.dcNone)}</span>`}</dd>`;
     if (typeof d.battery === "number" && !isNaN(d.battery)) {
       const f = d.forecast, cls = d.battery < 20 ? "weak" : d.battery < 40 ? "medium" : "good";
-      const ft = !f ? "" : f.state === "ok" ? T.bfEmpty(f.days) : f.state === "nodata" ? T.bfNoData(f.days) : T.bfNoDrop(f.basis);
+      const ft = f && f.state === "ok" ? T.bfEmpty(f.days) : "";
       h += `<dt>${esc(T.secBattery)}</dt><dd><span class="${cls}">${d.battery} %</span>${ft ? ` <span class="muted">· ${esc(ft)}</span>` : ""}</dd>`;
     }
     h += `</dl>`;
@@ -7044,7 +7054,7 @@ var ThreadPulseDeviceCard = class extends HTMLElement {
     return 3;
   }
   getGridOptions() {
-    return { columns: 6, rows: 3, min_columns: 4, min_rows: 2 };
+    return { columns: 12, min_columns: 6 };
   }
   static getStubConfig() {
     return { device: "" };
@@ -7053,6 +7063,7 @@ var ThreadPulseDeviceCard = class extends HTMLElement {
     return {
       schema: [
         { name: "device", required: true, selector: { device: { integration: "matter" } } },
+        { name: "name", selector: { text: {} } },
         { name: "map_path", selector: { text: {} } },
         {
           name: "language",
@@ -7074,6 +7085,7 @@ var ThreadPulseDeviceCard = class extends HTMLElement {
       ],
       computeLabel: (s) => ({
         device: "Thread device",
+        name: "Name (empty = the device name)",
         map_path: "Tap opens the map at (path of the view with the Thread Pulse card, e.g. /dashboard-network/thread; empty = device page)",
         language: "Language"
       })[s.name]
