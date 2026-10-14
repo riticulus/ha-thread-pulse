@@ -78,6 +78,18 @@ export const TEXT_FR = {
   spNoZigbee: "Pas de canal Zigbee (ZHA non configuré).",
   spNote:
     "Seuls les canaux Wi-Fi des appareils Matter en Wi-Fi sont connus – pas les autres réseaux de votre point d'accès ni ceux des voisins. Le canal d'un pont Hue n'est pas disponible.",
+  // carte d'appareil (#126)
+  dcNotFound:
+    "Cet appareil ne fait pas partie de l'intégration Matter – choisissez un appareil Thread dans les paramètres de la carte.",
+  dcNotThread: "Cet appareil utilise le Wi-Fi ou l'Ethernet, pas Thread.",
+  dcOffline: "injoignable",
+  dcOpen: name => `${name} – ouvrir sur la carte`,
+  dcLinks: "Liaisons",
+  dcRouterLinks: n => `${n} routeur${n === 1 ? "" : "s"}`,
+  dcNone: "aucune signalée",
+  dcTrendParent: "Signal vers le parent · 7 jours",
+  dcTrendRouter: "Meilleure liaison routeur · 7 jours",
+  dcNoTrend: "Pas encore d'historique du signal – Thread Pulse l'enregistre tant que sa carte est ouverte.",
   backNet: "Réseau",
   devTabs: { status: "État", link: "Connexion", device: "Appareil" },
   kSignal: "Signal dBm",

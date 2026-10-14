@@ -72,6 +72,17 @@ var TEXT_EN = {
   spNoWifi: "No Matter device on 2.4 GHz Wi-Fi, so no Wi-Fi channel is known.",
   spNoZigbee: "No Zigbee channel (ZHA not set up).",
   spNote: "Only the Wi-Fi channels of Matter devices on Wi-Fi are known – not your access point's other networks or the neighbours'. The channel of a Hue bridge is not available.",
+  // device card (#126)
+  dcNotFound: "This device is not part of the Matter integration – choose a Thread device in the card settings.",
+  dcNotThread: "This device uses Wi-Fi or Ethernet, not Thread.",
+  dcOffline: "not reachable",
+  dcOpen: (name) => `${name} – open on the map`,
+  dcLinks: "Links",
+  dcRouterLinks: (n) => `${n} router${n === 1 ? "" : "s"}`,
+  dcNone: "none reported",
+  dcTrendParent: "Signal to the parent · 7 days",
+  dcTrendRouter: "Best router link · 7 days",
+  dcNoTrend: "No signal history yet – Thread Pulse records it while its map is open.",
   backNet: "Network",
   devTabs: { status: "Status", link: "Connection", device: "Device" },
   kSignal: "Signal dBm",
@@ -429,6 +440,17 @@ var TEXT_DE = {
   spNoWifi: "Kein Matter-Gerät im 2,4-GHz-WLAN, daher ist kein WLAN-Kanal bekannt.",
   spNoZigbee: "Kein Zigbee-Kanal (ZHA nicht eingerichtet).",
   spNote: "Bekannt sind nur die WLAN-Kanäle von Matter-Geräten im WLAN – nicht die weiteren Netze deines Access Points oder die der Nachbarn. Der Kanal einer Hue Bridge ist nicht verfügbar.",
+  // Gerätekarte (#126)
+  dcNotFound: "Dieses Gerät gehört nicht zur Matter-Integration – wähle in den Karteneinstellungen ein Thread-Gerät.",
+  dcNotThread: "Dieses Gerät nutzt WLAN oder Ethernet, nicht Thread.",
+  dcOffline: "nicht erreichbar",
+  dcOpen: (name) => `${name} – auf der Karte öffnen`,
+  dcLinks: "Verbindungen",
+  dcRouterLinks: (n) => `${n} Router`,
+  dcNone: "keine gemeldet",
+  dcTrendParent: "Signal zum Parent · 7 Tage",
+  dcTrendRouter: "Beste Router-Verbindung · 7 Tage",
+  dcNoTrend: "Noch kein Signalverlauf – Thread Pulse zeichnet ihn auf, solange seine Karte offen ist.",
   backNet: "Netzwerk",
   devTabs: { status: "Zustand", link: "Verbindung", device: "Gerät" },
   kSignal: "Signal dBm",
@@ -802,6 +824,17 @@ var TEXT_ES = {
   spNoWifi: "Ningún dispositivo Matter en Wi-Fi de 2,4 GHz, así que no se conoce el canal Wi-Fi.",
   spNoZigbee: "Sin canal Zigbee (ZHA no configurado).",
   spNote: "Solo se conocen los canales Wi-Fi de los dispositivos Matter en Wi-Fi – no las otras redes de tu punto de acceso ni las de los vecinos. El canal de un puente Hue no está disponible.",
+  // tarjeta de dispositivo (#126)
+  dcNotFound: "Este dispositivo no forma parte de la integración Matter – elige un dispositivo Thread en la configuración de la tarjeta.",
+  dcNotThread: "Este dispositivo usa Wi-Fi o Ethernet, no Thread.",
+  dcOffline: "no accesible",
+  dcOpen: (name) => `${name} – abrir en el mapa`,
+  dcLinks: "Enlaces",
+  dcRouterLinks: (n) => `${n} router${n === 1 ? "" : "s"}`,
+  dcNone: "ninguno informado",
+  dcTrendParent: "Señal al parent · 7 días",
+  dcTrendRouter: "Mejor enlace con un router · 7 días",
+  dcNoTrend: "Aún no hay historial de señal – Thread Pulse lo registra mientras su mapa está abierto.",
   backNet: "Red",
   devTabs: { status: "Estado", link: "Conexión", device: "Dispositivo" },
   kSignal: "Señal dBm",
@@ -1179,6 +1212,17 @@ var TEXT_FR = {
   spNoWifi: "Aucun appareil Matter en Wi-Fi 2,4 GHz, le canal Wi-Fi n'est donc pas connu.",
   spNoZigbee: "Pas de canal Zigbee (ZHA non configuré).",
   spNote: "Seuls les canaux Wi-Fi des appareils Matter en Wi-Fi sont connus – pas les autres réseaux de votre point d'accès ni ceux des voisins. Le canal d'un pont Hue n'est pas disponible.",
+  // carte d'appareil (#126)
+  dcNotFound: "Cet appareil ne fait pas partie de l'intégration Matter – choisissez un appareil Thread dans les paramètres de la carte.",
+  dcNotThread: "Cet appareil utilise le Wi-Fi ou l'Ethernet, pas Thread.",
+  dcOffline: "injoignable",
+  dcOpen: (name) => `${name} – ouvrir sur la carte`,
+  dcLinks: "Liaisons",
+  dcRouterLinks: (n) => `${n} routeur${n === 1 ? "" : "s"}`,
+  dcNone: "aucune signalée",
+  dcTrendParent: "Signal vers le parent · 7 jours",
+  dcTrendRouter: "Meilleure liaison routeur · 7 jours",
+  dcNoTrend: "Pas encore d'historique du signal – Thread Pulse l'enregistre tant que sa carte est ouverte.",
   backNet: "Réseau",
   devTabs: { status: "État", link: "Connexion", device: "Appareil" },
   kSignal: "Signal dBm",
@@ -1562,6 +1606,17 @@ var TEXT_IT = {
   spNoWifi: "Nessun dispositivo Matter su Wi-Fi 2,4 GHz, quindi il canale Wi-Fi non è noto.",
   spNoZigbee: "Nessun canale Zigbee (ZHA non configurato).",
   spNote: "Sono noti solo i canali Wi-Fi dei dispositivi Matter su Wi-Fi – non le altre reti del tuo access point né quelle dei vicini. Il canale di un bridge Hue non è disponibile.",
+  // scheda dispositivo (#126)
+  dcNotFound: "Questo dispositivo non fa parte dell'integrazione Matter – scegli un dispositivo Thread nelle impostazioni della scheda.",
+  dcNotThread: "Questo dispositivo usa Wi-Fi o Ethernet, non Thread.",
+  dcOffline: "non raggiungibile",
+  dcOpen: (name) => `${name} – apri sulla mappa`,
+  dcLinks: "Collegamenti",
+  dcRouterLinks: (n) => `${n} router`,
+  dcNone: "nessuno segnalato",
+  dcTrendParent: "Segnale verso il parent · 7 giorni",
+  dcTrendRouter: "Miglior collegamento router · 7 giorni",
+  dcNoTrend: "Ancora nessuno storico del segnale – Thread Pulse lo registra mentre la sua mappa è aperta.",
   backNet: "Rete",
   devTabs: { status: "Stato", link: "Connessione", device: "Dispositivo" },
   kSignal: "Segnale dBm",
@@ -1945,6 +2000,17 @@ var TEXT_NL = {
   spNoWifi: "Geen Matter-apparaat op 2,4 GHz-wifi, dus het wifi-kanaal is niet bekend.",
   spNoZigbee: "Geen Zigbee-kanaal (ZHA niet ingesteld).",
   spNote: "Alleen de wifi-kanalen van Matter-apparaten op wifi zijn bekend – niet de andere netwerken van je access point of die van de buren. Het kanaal van een Hue-bridge is niet beschikbaar.",
+  // apparaatkaart (#126)
+  dcNotFound: "Dit apparaat hoort niet bij de Matter-integratie – kies een Thread-apparaat in de kaartinstellingen.",
+  dcNotThread: "Dit apparaat gebruikt wifi of ethernet, geen Thread.",
+  dcOffline: "niet bereikbaar",
+  dcOpen: (name) => `${name} – op de kaart openen`,
+  dcLinks: "Verbindingen",
+  dcRouterLinks: (n) => `${n} router${n === 1 ? "" : "s"}`,
+  dcNone: "geen gemeld",
+  dcTrendParent: "Signaal naar de parent · 7 dagen",
+  dcTrendRouter: "Beste routerverbinding · 7 dagen",
+  dcNoTrend: "Nog geen signaalverloop – Thread Pulse legt het vast zolang de kaart open is.",
   backNet: "Netwerk",
   devTabs: { status: "Status", link: "Verbinding", device: "Apparaat" },
   kSignal: "Signaal dBm",
@@ -2361,6 +2427,27 @@ var MDI = {
   battery: "M16.67,4H15V2H9V4H7.33A1.33,1.33 0 0,0 6,5.33V20.67C6,21.4 6.6,22 7.33,22H16.67A1.33,1.33 0 0,0 18,20.67V5.33C18,4.6 17.4,4 16.67,4Z"
 };
 
+// src/matter.js
+async function token(hass) {
+  if (hass.auth.expired) await hass.auth.refreshAccessToken();
+  return hass.auth.accessToken || hass.auth.data.access_token;
+}
+async function fetchDiagnostics(hass, entry, devId) {
+  const r = await fetch(`/api/diagnostics/config_entry/${entry}/device/${devId}`, {
+    headers: { Authorization: "Bearer " + await token(hass) }
+  });
+  if (!r.ok) throw Object.assign(new Error("diagnostics " + r.status), { status: r.status });
+  const txt = (await r.text()).replace(/"0":\s*(\d{15,})/g, '"0":"$1"').replace(/"0\/53\/4":\s*(\d+)/, '"0/53/4":"$1"');
+  return JSON.parse(txt).data.node;
+}
+var hex16 = (s) => BigInt(s).toString(16).padStart(16, "0");
+function threadAddressOf(node) {
+  const iface = ((node.attributes || {})["0/51/0"] || []).find((x) => x["7"] === 4);
+  if (!iface || node.attributes["0/53/1"] === void 0) return null;
+  return [...atob(iface["4"])].map((c) => c.charCodeAt(0).toString(16).padStart(2, "0")).join("");
+}
+var typeOfRole = (role) => role >= 5 ? "routing_end_device" : role >= 3 ? "end_device" : "sleepy_end_device";
+
 // src/helpers.js
 function install2(tp) {
   const { $, AMBIENT, host, opts, root } = tp;
@@ -2392,17 +2479,16 @@ function install2(tp) {
     for (const k of ["good", "medium", "weak", "warn", "hint"])
       host.styleTarget.style.setProperty("--c-" + k, COLORS[k]);
   }
-  const hex16 = (s) => BigInt(s).toString(16).padStart(16, "0");
   tp.hex16 = hex16;
   function setBtn(el, text, pressed = null, badge = 0, extra = "") {
     const i = text.indexOf(" "), ic = i > 0 ? text.slice(0, i) : "", lb = i > 0 ? text.slice(i + 1) : text;
-    el.innerHTML = (ic ? `<span class="ic">${esc(ic)}</span>` : "") + `<span class="lb">${esc(lb)}</span>` + (badge ? `<span class="badge">${badge}</span>` : "");
+    el.innerHTML = (ic ? `<span class="ic">${esc2(ic)}</span>` : "") + `<span class="lb">${esc2(lb)}</span>` + (badge ? `<span class="badge">${badge}</span>` : "");
     el.title = lb + extra;
     el.setAttribute("aria-label", text + extra);
     if (pressed !== null) el.setAttribute("aria-pressed", String(pressed));
   }
-  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-  tp.esc = esc;
+  const esc2 = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  tp.esc = esc2;
   function iconImg(icon, bg, size) {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 32 32" width="${size}" height="${size}"><circle cx="12" cy="12" r="15.5" fill="${bg}" stroke="white" stroke-width="1.2"/><path d="${MDI[icon] || MDI["help-circle-outline"]}" fill="white" transform="translate(3 3) scale(0.75)"/></svg>`;
     return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
@@ -2482,18 +2568,13 @@ function install2(tp) {
     }
     throw new Error(tp.T.noHa);
   }
-  async function token(hass) {
-    if (hass.auth.expired) await hass.auth.refreshAccessToken();
-    return hass.auth.accessToken || hass.auth.data.access_token;
-  }
   async function diag(hass, entry, devId) {
-    const r = await fetch(`/api/diagnostics/config_entry/${entry}/device/${devId}`, {
-      headers: { Authorization: "Bearer " + await token(hass) }
-    });
-    if (r.status === 401 || r.status === 403) throw Object.assign(new Error(tp.T.notAdmin), { fatal: true });
-    if (!r.ok) throw new Error("diagnostics " + r.status);
-    const txt = (await r.text()).replace(/"0":\s*(\d{15,})/g, '"0":"$1"').replace(/"0\/53\/4":\s*(\d+)/, '"0/53/4":"$1"');
-    return JSON.parse(txt).data.node;
+    try {
+      return await fetchDiagnostics(hass, entry, devId);
+    } catch (e) {
+      if (e.status === 401 || e.status === 403) throw Object.assign(new Error(tp.T.notAdmin), { fatal: true });
+      throw e;
+    }
   }
   function setLanguage(l) {
     tp.lang = (opts.lang || l || "en").slice(0, 2);
@@ -2598,9 +2679,9 @@ function install3(tp) {
             });
             return;
           }
-          const mac = [...atob(iface["4"])].map((c) => c.charCodeAt(0).toString(16).padStart(2, "0")).join("");
+          const mac = threadAddressOf(node);
           const role = a["0/53/1"];
-          const type = role >= 5 ? "routing_end_device" : role >= 3 ? "end_device" : "sleepy_end_device";
+          const type = typeOfRole(role);
           const ents = (entsByDev[d.id] || []).map((id) => ({
             domain: id.split(".")[0],
             dc: ((hass.states[id] || {}).attributes || {}).device_class
@@ -2681,8 +2762,12 @@ function install3(tp) {
 
 // src/graph.js
 function install4(tp) {
-  const { $, COLORS, DEMO, QUAL, SHOW_WIFI, VIS, hex16, host, iconImg, prefs } = tp;
-  Object.assign(tp, { render });
+  const { $, COLORS, DEMO, QUAL, SHOW_WIFI, VIS, hex16: hex162, host, iconImg, prefs } = tp;
+  Object.assign(tp, { render, zoomTo });
+  function zoomTo(id) {
+    if (!tp.network) return;
+    tp.network.focus(id, { scale: Math.max(1.2, tp.network.getScale()), animation: { duration: 400 } });
+  }
   tp.searchHits = [];
   tp.searchActive = false;
   tp.extraIds = /* @__PURE__ */ new Set();
@@ -2741,7 +2826,7 @@ ${tp.T.types[n.type] || n.type}${n.available ? "" : tp.T.unreachable}`
     for (const n of nodes.filter(isRouter)) {
       for (const x of n.neigh) {
         if (x["13"]) continue;
-        const other = hex16(x["0"]);
+        const other = hex162(x["0"]);
         if (!byId[other] && x["11"]) extra[other] = true;
         if (!byId[other] && !extra[other]) continue;
         if (byId[other] && !isRouter(byId[other]) && byId[other].type !== "end_device") continue;
@@ -2758,7 +2843,7 @@ ${tp.T.types[n.type] || n.type}${n.available ? "" : tp.T.unreachable}`
     for (const n of nodes.filter((n2) => !isRouter(n2))) {
       const best = bestOf(n);
       if (!best) continue;
-      const pid = hex16(best["0"]);
+      const pid = hex162(best["0"]);
       tp.parentOf[n.id] = pid;
       if (!byId[pid]) extra[pid] = true;
     }
@@ -2781,11 +2866,11 @@ ${tp.T.types[n.type] || n.type}${n.available ? "" : tp.T.unreachable}`
     }
     const childRssi = {};
     for (const n of nodes.filter(isRouter))
-      for (const x of n.neigh) if (x["13"]) childRssi[n.id + "|" + hex16(x["0"])] = x["6"];
+      for (const x of n.neigh) if (x["13"]) childRssi[n.id + "|" + hex162(x["0"])] = x["6"];
     for (const n of nodes.filter((n2) => !isRouter(n2))) {
       const best = bestOf(n);
       if (!best) continue;
-      const pid = hex16(best["0"]);
+      const pid = hex162(best["0"]);
       let rssi = best["6"], src = "device";
       if (childRssi[pid + "|" + n.id] !== void 0) {
         rssi = childRssi[pid + "|" + n.id];
@@ -2793,7 +2878,7 @@ ${tp.T.types[n.type] || n.type}${n.available ? "" : tp.T.unreachable}`
       }
       if (n.type === "end_device") {
         for (const x of n.neigh) {
-          const o = hex16(x["0"]);
+          const o = hex162(x["0"]);
           if (!byId[o]) continue;
           const key = [n.id, o].sort().join("|");
           (edges[key] = edges[key] || { a: n.id, b: o, rssi: [] }).rssi.push(x["6"]);
@@ -2905,15 +2990,8 @@ ${w.kind === "ethernet" ? tp.T.ethSub : tp.T.wifiSub}${w.available ? "" : tp.T.u
       else tp.closePanel();
     });
     tp.network.on("doubleClick", (p) => {
-      if (p.nodes.length && !String(p.nodes[0]).startsWith("room:")) {
-        const pn = $("panel"), st = $("stage").getBoundingClientRect(), r = pn.hidden ? null : pn.getBoundingClientRect();
-        const offset = !r ? { x: 0, y: 0 } : r.width < st.width * 0.8 ? { x: -(r.width + 8) / 2, y: 0 } : { x: 0, y: -r.height / 2 };
-        tp.network.focus(p.nodes[0], {
-          scale: Math.max(1.2, tp.network.getScale()),
-          offset,
-          animation: { duration: 400 }
-        });
-      } else tp.network.fit({ animation: { duration: 400 } });
+      if (p.nodes.length && !String(p.nodes[0]).startsWith("room:")) zoomTo(p.nodes[0]);
+      else tp.network.fit({ animation: { duration: 400 } });
     });
     tp.network.on("hoverNode", () => {
       $("net").style.cursor = "pointer";
@@ -3068,7 +3146,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
 
 // src/live.js
 function install6(tp) {
-  const { $, COLORS, esc, every, hex16 } = tp;
+  const { $, COLORS, esc: esc2, every, hex16: hex162 } = tp;
   Object.assign(tp, { buildRouting, drawPackets, fmtState, launch, localName, pathToBr, showTicker, subscribeLive });
   tp.packets = [];
   tp.liveOn = true;
@@ -3082,7 +3160,7 @@ function install6(tp) {
     tp.routeOf = {};
     tp.parentRid = {};
     tp.ownRid = {};
-    for (const n of nodes) for (const x of n.routes) if (x["0"] && x["0"] !== "0") tp.ridToId[x["2"]] = hex16(x["0"]);
+    for (const n of nodes) for (const x of n.routes) if (x["0"] && x["0"] !== "0") tp.ridToId[x["2"]] = hex162(x["0"]);
     for (const n of nodes) {
       const own = n.routes.find((x) => x["3"] === 63 && x["4"] === 0);
       if (n.role >= 5 && own) {
@@ -3252,7 +3330,7 @@ function install6(tp) {
         }
         if (ms >= 0) delete tp.pendingCmd[d.entity_id];
       }
-      launch(n, false, `<b>${esc(tp.nodeName[n])}</b> → HA: ${esc(what)} ${esc(fmtState(d.new_state))}${resp}`);
+      launch(n, false, `<b>${esc2(tp.nodeName[n])}</b> → HA: ${esc2(what)} ${esc2(fmtState(d.new_state))}${resp}`);
     }, "state_changed");
     const u2 = await conn.subscribeEvents((ev) => {
       const sd = ev.data.service_data || {};
@@ -3266,7 +3344,7 @@ function install6(tp) {
       );
       for (const dv of [].concat(sd.device_id || [])) if (tp.devToNode[dv]) targets.add(tp.devToNode[dv]);
       for (const n of targets)
-        launch(n, true, `HA → <b>${esc(tp.nodeName[n])}</b>: ${esc(ev.data.domain + "." + ev.data.service)}`);
+        launch(n, true, `HA → <b>${esc2(tp.nodeName[n])}</b>: ${esc2(ev.data.domain + "." + ev.data.service)}`);
     }, "call_service");
     tp.unsub = () => {
       u1();
@@ -3350,7 +3428,7 @@ function install7(tp) {
 
 // src/chatty.js
 function install8(tp) {
-  const { DEMO, counts, esc, nameOf } = tp;
+  const { DEMO, counts, esc: esc2, nameOf } = tp;
   Object.assign(tp, { chattyHint, chattyHtml, loadMsgHistory, msgsLastHour });
   const CHAT_H = 36e5, CHATTY_BATT = 60, CHATTY_MIN_OBS = 30 * 6e4, PAGE_START = Date.now();
   let msgHist = {}, histLoaded = false, histLoading = false;
@@ -3411,7 +3489,7 @@ function install8(tp) {
     if (!rows.length) return h + `<div class="tnote">${tp.T.chatNone}</div>`;
     const max = rows[0].up + rows[0].down;
     h += `<table class="chat">` + rows.map(
-      (r) => `<tr><td style="white-space:nowrap"><a href="#" data-open="${esc(r.id)}">${esc(nameOf(r.id))}</a></td><td style="width:40%"><span class="cbar"><span style="width:${Math.max(2, Math.round((r.up + r.down) / max * 100))}%"></span></span></td><td style="white-space:nowrap;text-align:right"><b>${r.up + r.down}</b> <span class="tnote" style="display:inline">↑ ${r.up} · ↓ ${r.down}</span></td></tr>`
+      (r) => `<tr><td style="white-space:nowrap"><a href="#" data-open="${esc2(r.id)}">${esc2(nameOf(r.id))}</a></td><td style="width:40%"><span class="cbar"><span style="width:${Math.max(2, Math.round((r.up + r.down) / max * 100))}%"></span></span></td><td style="white-space:nowrap;text-align:right"><b>${r.up + r.down}</b> <span class="tnote" style="display:inline">↑ ${r.up} · ↓ ${r.down}</span></td></tr>`
     ).join("") + `</table>`;
     return h + `<div class="tnote">${histLoaded ? tp.T.chatNoteHist(Math.round((Date.now() - PAGE_START) / 6e4)) : tp.T.chatNoteLive(mins)}</div>`;
   }
@@ -3592,7 +3670,7 @@ function install10(tp) {
     HEAT_MS,
     QUAL,
     counts,
-    esc,
+    esc: esc2,
     every,
     extraLabel,
     extraName,
@@ -3737,7 +3815,7 @@ function install10(tp) {
     if (tp.network) tp.network.unselectAll();
   }
   function row(k, v) {
-    return v === void 0 || v === null || v === "" ? "" : `<dt>${esc(k)}</dt><dd>${v}</dd>`;
+    return v === void 0 || v === null || v === "" ? "" : `<dt>${esc2(k)}</dt><dd>${v}</dd>`;
   }
   function rssiTxt(r) {
     const [, cls, txt] = QUAL(r);
@@ -3750,12 +3828,12 @@ function install10(tp) {
   }
   function discRows(d, withNetwork = true) {
     if (!d) return "";
-    return row(tp.T.manufacturer, esc(d.vendor)) + row(tp.T.model, esc(d.model)) + row(tp.T.brName, esc(d.name)) + row(tp.T.threadVersion, esc(d.version)) + (withNetwork ? row(tp.T.networkName, esc(d.network)) : "");
+    return row(tp.T.manufacturer, esc2(d.vendor)) + row(tp.T.model, esc2(d.model)) + row(tp.T.brName, esc2(d.name)) + row(tp.T.threadVersion, esc2(d.version)) + (withNetwork ? row(tp.T.networkName, esc2(d.network)) : "");
   }
   function renderRouterPanel(id) {
     const isBr = id === tp.brExt, nodes = Object.values(tp.nodeById);
     const disc = tp.brInfo[id];
-    let h = tp.backHtml() + `<div class="hd"><img src="${iconImg(isBr || disc ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 80)}" alt=""><div><div class="t">${esc(extraLabel(id).replaceAll("\n", " "))}</div><div class="s">${esc(isBr ? tp.T.brSub : tp.brInfo[id] ? tp.T.brOtherSub : tp.T.foreignSub)}</div></div><button class="x" title="×" data-act="close">×</button></div>`;
+    let h = tp.backHtml() + `<div class="hd"><img src="${iconImg(isBr || disc ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 80)}" alt=""><div><div class="t">${esc2(extraLabel(id).replaceAll("\n", " "))}</div><div class="s">${esc2(isBr ? tp.T.brSub : tp.brInfo[id] ? tp.T.brOtherSub : tp.T.foreignSub)}</div></div><button class="x" title="×" data-act="close">×</button></div>`;
     if (isBr || counts[id])
       h += `<h4>${tp.T.secLive} · ${tp.T.msgsThrough}</h4><dl>` + liveRows(id) + `</dl>` + (isBr ? "" : `<div class="note">${tp.T.parentHopNote}</div>`);
     if (isBr) {
@@ -3773,40 +3851,40 @@ function install10(tp) {
       const leaderId = leaderRid !== void 0 ? tp.ridToId[leaderRid] : null;
       const leaderName = !leaderId ? "" : tp.nodeById[leaderId] ? tp.nodeById[leaderId].name : extraName(leaderId);
       const routers = tp.routerCount();
-      h += `<h4>${tp.T.secNetwork}</h4><dl>` + row(tp.T.networkName, esc(ds && ds.name || net.name || "")) + row(
+      h += `<h4>${tp.T.secNetwork}</h4><dl>` + row(tp.T.networkName, esc2(ds && ds.name || net.name || "")) + row(
         tp.T.channel,
-        esc(
+        esc2(
           String(
             tp.threadInfo && tp.threadInfo.otbr && tp.threadInfo.otbr.channel || ds && ds.channel || net.channel || ""
           )
         )
-      ) + row(tp.T.panId, panId ? `<span style="font-family:monospace">0x${esc(panId)}</span>` : "") + row(tp.T.extPanId, extPanId ? `<span style="font-family:monospace">${esc(extPanId)}</span>` : "") + row(tp.T.routersInMesh, tp.T.ofMax(routers)) + row(tp.T.devicesInMesh, String(nodes.length + tp.extraIds.size)) + row(tp.T.leader, esc(leaderName)) + `</dl>` + tp.healthHtml(true) + tp.spectrumSection();
+      ) + row(tp.T.panId, panId ? `<span style="font-family:monospace">0x${esc2(panId)}</span>` : "") + row(tp.T.extPanId, extPanId ? `<span style="font-family:monospace">${esc2(extPanId)}</span>` : "") + row(tp.T.routersInMesh, tp.T.ofMax(routers)) + row(tp.T.devicesInMesh, String(nodes.length + tp.extraIds.size)) + row(tp.T.leader, esc2(leaderName)) + `</dl>` + tp.healthHtml(true) + tp.spectrumSection();
       const o = tp.threadInfo && tp.threadInfo.otbr && tp.threadInfo.otbr.extAddr && tp.threadInfo.otbr.extAddr.toLowerCase() === id ? tp.threadInfo.otbr : null;
-      h += `<h4>${tp.T.secBorderRouter}</h4><dl>` + row(tp.T.brKind, o ? esc(tp.T.brOtbr) : "") + discRows(disc, false) + row(tp.T.address, `<span style="font-family:monospace">${esc(id)}</span>`) + row(
+      h += `<h4>${tp.T.secBorderRouter}</h4><dl>` + row(tp.T.brKind, o ? esc2(tp.T.brOtbr) : "") + discRows(disc, false) + row(tp.T.address, `<span style="font-family:monospace">${esc2(id)}</span>`) + row(
         tp.T.borderAgent,
-        o && o.borderAgentId ? `<span style="font-family:monospace">${esc(o.borderAgentId)}</span>` : ""
+        o && o.borderAgentId ? `<span style="font-family:monospace">${esc2(o.borderAgentId)}</span>` : ""
       );
       const dsl = tp.threadInfo && tp.threadInfo.datasets || [];
       if (dsl.length)
         h += row(
           tp.T.datasets,
           dsl.map(
-            (d) => `${esc(d.name)} · ${esc(tp.T.channel)} ${esc(String(d.channel))}${d.preferred ? ` · <b>${tp.T.preferred}</b>` : ""}`
+            (d) => `${esc2(d.name)} · ${esc2(tp.T.channel)} ${esc2(String(d.channel))}${d.preferred ? ` · <b>${tp.T.preferred}</b>` : ""}`
           ).join("<br>")
         );
       h += `</dl>`;
     }
     if (!isBr && disc)
-      h += `<h4>${tp.T.secBorderRouter}</h4><dl>` + discRows(disc) + (tp.brExt ? row(tp.T.usedByHa, esc(tp.T.usedByHaNo)) : "") + `</dl><div class="note">${tp.T.brOtherNote}</div>`;
+      h += `<h4>${tp.T.secBorderRouter}</h4><dl>` + discRows(disc) + (tp.brExt ? row(tp.T.usedByHa, esc2(tp.T.usedByHaNo)) : "") + `</dl><div class="note">${tp.T.brOtherNote}</div>`;
     if (!isBr) h += tp.whatIfHtml(id);
     const links = (tp.linksOf[id] || []).slice().sort((p, q) => q.rssi - p.rssi);
     const nb = links.filter((l) => l.kind === "neighbour"), kids = links.filter((l) => l.kind === "child");
     h += `<h4>${tp.T.secThread}</h4><dl>`;
     if (nb.length)
-      h += row(`${tp.T.neighbours} (${nb.length})`, nb.map((l) => `${esc(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
+      h += row(`${tp.T.neighbours} (${nb.length})`, nb.map((l) => `${esc2(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
     if (kids.length)
-      h += row(`${tp.T.children} (${kids.length})`, kids.map((l) => `${esc(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
-    if (!isBr) h += row(tp.T.address, `<span style="font-family:monospace">${esc(id)}</span>`);
+      h += row(`${tp.T.children} (${kids.length})`, kids.map((l) => `${esc2(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
+    if (!isBr) h += row(tp.T.address, `<span style="font-family:monospace">${esc2(id)}</span>`);
     h += `</dl><div class="note">${isBr ? tp.T.stale : tp.T.foreignNote}</div>`;
     $("panel").innerHTML = h;
   }
@@ -3821,15 +3899,15 @@ function install10(tp) {
     const sec = [], add = (g, x) => {
       if (x) sec.push([g, x]);
     };
-    let h = `<div class="hd"><img src="${iconImg(n.icon, color, 80)}" alt=""><div><div class="t">${esc(n.name)}</div><div class="s">${esc(tp.T.roles[n.role] || tp.T.types[n.type] || "")}${n.area ? " · " + esc(n.area) : ""}${n.available ? "" : esc(tp.T.unreachable)}</div></div><button class="x" title="×" data-act="close">×</button></div>`;
-    for (const w of warningsOf(n)) h += `<div class="warn">⚠ ${esc(w)}</div>`;
+    let h = `<div class="hd"><img src="${iconImg(n.icon, color, 80)}" alt=""><div><div class="t">${esc2(n.name)}</div><div class="s">${esc2(tp.T.roles[n.role] || tp.T.types[n.type] || "")}${n.area ? " · " + esc2(n.area) : ""}${n.available ? "" : esc2(tp.T.unreachable)}</div></div><button class="x" title="×" data-act="close">×</button></div>`;
+    for (const w of warningsOf(n)) h += `<div class="warn">⚠ ${esc2(w)}</div>`;
     add("top", h);
     h = "";
     const hs = (tp.hintsOf[n.id] || []).concat(tp.slowHint(n) || [], tp.batteryHint(n) || []);
     if (hs.length)
       h += `<h4>${tp.T.secHints}</h4>` + hs.map((t) => {
         const k = tp.hintKind(n.id, t);
-        return `<div class="hint">💡 ${esc(t)}${k ? `<div><button class="btn small" data-dismiss="${esc(n.id + "|" + k)}">${tp.T.hintDone}</button></div>` : ""}</div>`;
+        return `<div class="hint">💡 ${esc2(t)}${k ? `<div><button class="btn small" data-dismiss="${esc2(n.id + "|" + k)}">${tp.T.hintDone}</button></div>` : ""}</div>`;
       }).join("") + `<div class="note">${tp.T.hintsNote}</div>`;
     add("status", h);
     h = "";
@@ -3854,28 +3932,28 @@ function install10(tp) {
         const name = localName((st.attributes.friendly_name || id).replace(n.name, "").trim()) || tp.T.state;
         v += row(
           name,
-          `${esc(fmtState(st))} <span style="color:var(--muted)">· ${tp.T.ago(Math.max(0, Math.round((now - new Date(st.last_changed)) / 1e3)))}</span>`
+          `${esc2(fmtState(st))} <span style="color:var(--muted)">· ${tp.T.ago(Math.max(0, Math.round((now - new Date(st.last_changed)) / 1e3)))}</span>`
         );
       }
       if (v) h += `<h4>${tp.T.secValues}</h4><dl>${v}</dl>`;
     } else if (DEMO && n.demoValues) {
-      h += `<h4>${tp.T.secValues}</h4><dl>` + n.demoValues.map(([k, v, ago]) => row(k, `${esc(v)} <span style="color:var(--muted)">· ${tp.T.ago(ago)}</span>`)).join("") + `</dl>`;
+      h += `<h4>${tp.T.secValues}</h4><dl>` + n.demoValues.map(([k, v, ago]) => row(k, `${esc2(v)} <span style="color:var(--muted)">· ${tp.T.ago(ago)}</span>`)).join("") + `</dl>`;
     }
     if (tp.battOf[n.id] !== void 0 || i.batType) {
       const b = tp.battOf[n.id];
-      h += `<h4>${tp.T.secBattery}</h4><dl>` + row(tp.T.level, b !== void 0 ? `<span class="${b < 20 ? "r" : b < 40 ? "o" : "g"}">${b} %</span>` : "") + row(tp.T.type, esc(i.batType)) + row(tp.T.bfLabel, tp.forecastText(tp.battForecast[n.id])) + `</dl>` + (tp.battForecast[n.id] && tp.battForecast[n.id].state === "ok" ? `<div class="note">${tp.T.bfNote}</div>` : "") + tp.batteryTrendHtml(n);
+      h += `<h4>${tp.T.secBattery}</h4><dl>` + row(tp.T.level, b !== void 0 ? `<span class="${b < 20 ? "r" : b < 40 ? "o" : "g"}">${b} %</span>` : "") + row(tp.T.type, esc2(i.batType)) + row(tp.T.bfLabel, tp.forecastText(tp.battForecast[n.id])) + `</dl>` + (tp.battForecast[n.id] && tp.battForecast[n.id].state === "ok" ? `<div class="note">${tp.T.bfNote}</div>` : "") + tp.batteryTrendHtml(n);
     }
     add("status", h);
     h = "";
     const links = (tp.linksOf[n.id] || []).slice().sort((p, q) => q.rssi - p.rssi);
     const par = links.filter((l) => l.kind === "parent"), kids = links.filter((l) => l.kind === "child"), nb = links.filter((l) => l.kind === "neighbour");
-    h += `<h4>${tp.T.secThread}</h4><dl>` + row(tp.T.role, esc(tp.T.roles[n.role] || tp.T.types[n.type] || ""));
-    for (const l of par) h += row(tp.T.parent, `${esc(l.name)} · ${rssiTxt(l.rssi)}`);
+    h += `<h4>${tp.T.secThread}</h4><dl>` + row(tp.T.role, esc2(tp.T.roles[n.role] || tp.T.types[n.type] || ""));
+    for (const l of par) h += row(tp.T.parent, `${esc2(l.name)} · ${rssiTxt(l.rssi)}`);
     if (nb.length)
-      h += row(`${tp.T.neighbours} (${nb.length})`, nb.map((l) => `${esc(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
+      h += row(`${tp.T.neighbours} (${nb.length})`, nb.map((l) => `${esc2(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
     if (kids.length)
-      h += row(`${tp.T.children} (${kids.length})`, kids.map((l) => `${esc(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
-    h += row(tp.T.address, `<span style="font-family:monospace">${esc(n.hwAddr || n.id)}</span>`) + `</dl><div class="note">${tp.T.stale}</div>`;
+      h += row(`${tp.T.children} (${kids.length})`, kids.map((l) => `${esc2(l.name)} · ${rssiTxt(l.rssi)}`).join("<br>"));
+    h += row(tp.T.address, `<span style="font-family:monospace">${esc2(n.hwAddr || n.id)}</span>`) + `</dl><div class="note">${tp.T.stale}</div>`;
     h += tp.signalTrendHtml(n);
     if (n.type === "routing_end_device") h += tp.whatIfHtml(n.id);
     add("link", h);
@@ -3883,18 +3961,18 @@ function install10(tp) {
     if ([i.reboots, i.detached, i.attach, i.parentChanges].some((x) => x !== void 0 && x !== null)) {
       h += `<h4>${tp.T.secStability}</h4><dl>` + row(tp.T.reboots, i.reboots) + row(
         tp.T.bootReason,
-        i.bootReason !== void 0 && i.bootReason !== null ? esc(tp.T.bootReasons[i.bootReason] || i.bootReason) : ""
+        i.bootReason !== void 0 && i.bootReason !== null ? esc2(tp.T.bootReasons[i.bootReason] || i.bootReason) : ""
       ) + row(tp.T.detached, i.detached) + row(tp.T.attach, i.attach) + row(tp.T.parentChanges, i.parentChanges) + ((st) => row(
         tp.T.stabWindow(st.days),
-        st.known ? esc(tp.T.stabWindowVal(st.reboots, st.attach, st.detached)) : `<span style="color:var(--muted)">${tp.T.trendUnknown}</span>`
+        st.known ? esc2(tp.T.stabWindowVal(st.reboots, st.attach, st.detached)) : `<span style="color:var(--muted)">${tp.T.trendUnknown}</span>`
       ))(tp.stabilityOf(n)) + `</dl><div class="note">${tp.T.sinceRestart} ${tp.T.stabNote(tp.HINT_DAYS)}</div>`;
     }
     add("status", h);
     h = "";
-    h += `<h4>${tp.T.secDevice}</h4><dl>` + row(tp.T.manufacturer, esc(i.vendor || "")) + row(tp.T.model, esc(i.product || "")) + row(tp.T.firmware, esc(i.sw || "")) + row(tp.T.fwUpdate, tp.updateText(tp.updateOf(n, hass))) + row(tp.T.hardware, esc(i.hw || "")) + row(tp.T.area, esc(n.area || "")) + `</dl>`;
+    h += `<h4>${tp.T.secDevice}</h4><dl>` + row(tp.T.manufacturer, esc2(i.vendor || "")) + row(tp.T.model, esc2(i.product || "")) + row(tp.T.firmware, esc2(i.sw || "")) + row(tp.T.fwUpdate, tp.updateText(tp.updateOf(n, hass))) + row(tp.T.hardware, esc2(i.hw || "")) + row(tp.T.area, esc2(n.area || "")) + `</dl>`;
     h += tp.fabricsHtml(n);
     h += tp.identifyHtml(n, hass);
-    if (n.devId && !DEMO) h += `<button class="btn" data-device="${esc(n.devId)}">${tp.T.openDevice} ↗</button>`;
+    if (n.devId && !DEMO) h += `<button class="btn" data-device="${esc2(n.devId)}">${tp.T.openDevice} ↗</button>`;
     add("device", h);
     $("panel").innerHTML = tp.panelLayout(n, sec);
   }
@@ -3908,7 +3986,7 @@ function install10(tp) {
 
 // src/identify.js
 function install11(tp) {
-  const { DEMO, esc, freshHass, launch, renderPanel } = tp;
+  const { DEMO, esc: esc2, freshHass, launch, renderPanel } = tp;
   Object.assign(tp, { identifyHtml, pressIdentify });
   const IDENTIFY_LOCK = 4e3;
   let identifyState = null;
@@ -3923,7 +4001,7 @@ function install11(tp) {
     const ent = identifyEntity(dev, hass);
     if (!ent) return "";
     const s = identifyState && identifyState.id === dev.id && Date.now() < identifyState.until ? identifyState : null;
-    return `<div class="ident"><button class="btn" data-identify="${esc(dev.id)}"${s ? " disabled" : ""}>${tp.T.identifyBtn}</button>` + (s ? ` <span class="${s.ok ? "g" : "r"}">${esc(s.text)}</span>` : "") + `<div class="note">${tp.T.identifyNote}${dev.type === "sleepy_end_device" ? " " + tp.T.identifySleepy : ""}</div></div>`;
+    return `<div class="ident"><button class="btn" data-identify="${esc2(dev.id)}"${s ? " disabled" : ""}>${tp.T.identifyBtn}</button>` + (s ? ` <span class="${s.ok ? "g" : "r"}">${esc2(s.text)}</span>` : "") + `<div class="note">${tp.T.identifyNote}${dev.type === "sleepy_end_device" ? " " + tp.T.identifySleepy : ""}</div></div>`;
   }
   async function pressIdentify(id) {
     const dev = tp.nodeById[id] || tp.wifiById[id];
@@ -3941,7 +4019,7 @@ function install11(tp) {
     identifyState = { id, until: Date.now() + IDENTIFY_LOCK, text: tp.T.identifySending, ok: true };
     renderPanel();
     if (DEMO) {
-      launch(id, true, `HA → <b>${esc(dev.name)}</b>: button.press`);
+      launch(id, true, `HA → <b>${esc2(dev.name)}</b>: button.press`);
       done(true, tp.T.identifySent);
       return;
     }
@@ -4159,7 +4237,7 @@ function install13(tp) {
 
 // src/health.js
 function install14(tp) {
-  const { esc, nameOf, pathToBr, powerCutOf, unstableOf } = tp;
+  const { esc: esc2, nameOf, pathToBr, powerCutOf, unstableOf } = tp;
   Object.assign(tp, { computeHealth, healthHtml, trackGrade });
   const HEALTH_POINTS = { ok: 0, warn: 1, bad: 2, na: 0 };
   const HEALTH_COLOR = { ok: "#2e7d32", warn: "#ef6c00", bad: "#c62828", na: "var(--muted)" };
@@ -4251,7 +4329,7 @@ function install14(tp) {
     if (!h) return "";
     const grade = `<span class="grade" style="background:${gradeColor(h.grade)}">${h.grade}</span>` + (h.known < h.factors.length ? ` <span style="color:var(--muted);font-weight:400;font-size:12px">${tp.T.healthPartial(h.known, h.factors.length)}</span>` : "");
     return `<div class="health">` + (inPanel ? `<h4>${tp.T.healthHead}</h4><div>${tp.T.healthGrade} ${grade}</div>` : `<b>${tp.T.healthHead}: ${grade}</b>`) + `<table>${h.factors.map(
-      (f) => `<tr><td style="vertical-align:top;white-space:nowrap"><span style="color:${HEALTH_COLOR[f.level]}">●</span> ${tp.T.hfTitle[f.key]}</td><td>${f.level === "na" ? "" : `<b style="color:${HEALTH_COLOR[f.level]}">${esc(f.value)}</b> · `}${esc(f.text)}</td></tr>`
+      (f) => `<tr><td style="vertical-align:top;white-space:nowrap"><span style="color:${HEALTH_COLOR[f.level]}">●</span> ${tp.T.hfTitle[f.key]}</td><td>${f.level === "na" ? "" : `<b style="color:${HEALTH_COLOR[f.level]}">${esc2(f.value)}</b> · `}${esc2(f.text)}</td></tr>`
     ).join("")}</table><div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${tp.T.healthNote}</div></div>`;
   }
   let gradeLogged, gradePending = null;
@@ -4277,7 +4355,7 @@ function install14(tp) {
 
 // src/whatif.js
 function install15(tp) {
-  const { esc, nameOf } = tp;
+  const { esc: esc2, nameOf } = tp;
   Object.assign(tp, { dependHtml, whatIfHtml });
   const ALT_MIN = -85;
   const isRouterNode = (id) => tp.nodeById[id] && tp.nodeById[id].type === "routing_end_device" || tp.extraIds.has(id);
@@ -4329,17 +4407,17 @@ function install15(tp) {
   }
   function whatIfHtml(id) {
     if (id === tp.brExt || !tp.listData) return "";
-    const w = whatIf(id), names = (ids) => ids.map((x) => esc(nameOf(x))).join(", ");
+    const w = whatIf(id), names = (ids) => ids.map((x) => esc2(nameOf(x))).join(", ");
     let h = `<h4>${tp.T.secWhatIf}</h4>`;
     if (!w.total) h += `<div>${tp.T.wiNone}</div>`;
     if (w.children.length)
       h += `<div>${tp.T.wiKids(w.children.length)}</div><ul class="wi">` + w.children.map(
-        (c) => `<li>${esc(nameOf(c.id))} – ` + (c.alt ? `<span class="g">${esc(tp.T.wiAlt(nameOf(c.alt.id), c.alt.rssi))}</span>` : `<span class="o">${esc(c.battery ? tp.T.wiBattUnknown : tp.T.wiNoAlt)}</span>`) + `</li>`
+        (c) => `<li>${esc2(nameOf(c.id))} – ` + (c.alt ? `<span class="g">${esc2(tp.T.wiAlt(nameOf(c.alt.id), c.alt.rssi))}</span>` : `<span class="o">${esc2(c.battery ? tp.T.wiBattUnknown : tp.T.wiNoAlt)}</span>`) + `</li>`
       ).join("") + `</ul>`;
     if (w.cut.length)
-      h += `<div><span class="r">${tp.T.wiCut(w.cut.length)}</span> ${names(w.cut)}` + (w.viaCut.length ? ` · ${esc(tp.T.wiViaCut(w.viaCut.length))}: ${names(w.viaCut)}` : "") + `</div>`;
+      h += `<div><span class="r">${tp.T.wiCut(w.cut.length)}</span> ${names(w.cut)}` + (w.viaCut.length ? ` · ${esc2(tp.T.wiViaCut(w.viaCut.length))}: ${names(w.viaCut)}` : "") + `</div>`;
     if (!w.brKnown) h += `<div class="note">${tp.T.wiBrUnknown}</div>`;
-    if (w.total) h += `<button class="btn" data-mark="${esc(w.ids.join(","))}">${tp.T.wiShow}</button>`;
+    if (w.total) h += `<button class="btn" data-mark="${esc2(w.ids.join(","))}">${tp.T.wiShow}</button>`;
     return h + `<div class="note">${tp.T.wiNote}</div>`;
   }
   function dependHtml() {
@@ -4347,14 +4425,14 @@ function install15(tp) {
     const rows = Object.keys(g).filter((id) => id !== tp.brExt).map((id) => whatIf(id, g)).filter((w) => w.total).sort((a, b) => b.noAlt - a.noAlt || b.total - a.total);
     if (!rows.length) return "";
     return `<h4>${tp.T.wiHead}</h4><table class="lk"><tr><th>${tp.T.thRouter}</th><th>${tp.T.thDepend}</th><th>${tp.T.thNoAlt}</th></tr>` + rows.map(
-      (w) => `<tr class="mark" data-mark="${esc(w.ids.join(","))}" title="${esc(tp.T.markHint)}"><td>${esc(nameOf(w.failId))}</td><td>${w.total}</td><td class="${w.noAlt ? "o" : "g"}">${w.noAlt}</td></tr>`
+      (w) => `<tr class="mark" data-mark="${esc2(w.ids.join(","))}" title="${esc2(tp.T.markHint)}"><td>${esc2(nameOf(w.failId))}</td><td>${w.total}</td><td class="${w.noAlt ? "o" : "g"}">${w.noAlt}</td></tr>`
     ).join("") + `</table><div class="tnote">${tp.T.wiTabNote}</div>`;
   }
 }
 
 // src/spectrum.js
 function install16(tp) {
-  const { COLORS, esc, nameOf } = tp;
+  const { COLORS, esc: esc2, nameOf } = tp;
   Object.assign(tp, { spectrumIssues, spectrumNets, spectrumSection, threadChannel });
   const f154 = (c) => 2405 + 5 * (c - 11);
   const fWifi = (k) => k === 14 ? 2484 : 2407 + 5 * k;
@@ -4421,7 +4499,7 @@ function install16(tp) {
     );
     const W = 340, L = 16, R = 324, x = (f) => L + (f - 2400) / 85 * (R - L), rowH = 22, top = 6, H = top + nets.length * rowH + 22;
     const color = { thread: COLORS.br, zigbee: COLORS.zigbee, wifi: COLORS.wifi };
-    let s = `<svg class="spec" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(tp.T.secSpectrum)}">`;
+    let s = `<svg class="spec" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc2(tp.T.secSpectrum)}">`;
     for (let f = 2400; f <= 2480; f += 20)
       s += `<line class="sgrid" x1="${x(f)}" x2="${x(f)}" y1="${top}" y2="${H - 18}"/><text class="saxis" x="${x(f)}" y="${H - 5}">${f}</text>`;
     nets.forEach((n, i) => {
@@ -4429,7 +4507,7 @@ function install16(tp) {
       const x0 = x(n.f - half), w = Math.max(4, x(n.f + half) - x0), lbl = n.kind === "wifi" ? `${tp.T.spNames.wifi} ${n.ch}` : `${tp.T.spNames[n.kind]} ${n.ch}`;
       s += `<rect x="${x0}" y="${y + 3}" width="${w}" height="${rowH - 8}" rx="3" fill="${hot ? COLORS.weak : color[n.kind]}" fill-opacity="${n.kind === "wifi" ? 0.35 : 1}"${hot && n.kind === "wifi" ? ` stroke="${COLORS.weak}"` : ""}/>`;
       const right = x0 + w + 4 + lbl.length * 6.2 < R;
-      s += `<text class="slbl${hot ? " hot" : ""}" x="${right ? x0 + w + 4 : x0 - 4}" y="${y + rowH / 2 + 2}" text-anchor="${right ? "start" : "end"}">${esc(lbl)}</text>`;
+      s += `<text class="slbl${hot ? " hot" : ""}" x="${right ? x0 + w + 4 : x0 - 4}" y="${y + rowH / 2 + 2}" text-anchor="${right ? "start" : "end"}">${esc2(lbl)}</text>`;
     });
     return s + `</svg>`;
   }
@@ -4437,13 +4515,13 @@ function install16(tp) {
     const nets = spectrumNets();
     if (!nets.find((n) => n.kind !== "wifi")) return "";
     const issues = spectrumIssues();
-    return `<h4>${tp.T.secSpectrum}</h4>` + spectrumHtml() + (issues.length ? issues.map((x) => `<div class="spi"><span class="r">${esc(x.what)}</span> ${esc(x.fix)}</div>`).join("") : `<div class="spi g">${tp.T.spOk}</div>`) + `<div class="tnote">${nets.some((n) => n.kind === "wifi") ? "" : tp.T.spNoWifi + " "}${tp.zigbeeInfo ? "" : tp.T.spNoZigbee + " "}${tp.T.spNote}</div>`;
+    return `<h4>${tp.T.secSpectrum}</h4>` + spectrumHtml() + (issues.length ? issues.map((x) => `<div class="spi"><span class="r">${esc2(x.what)}</span> ${esc2(x.fix)}</div>`).join("") : `<div class="spi g">${tp.T.spOk}</div>`) + `<div class="tnote">${nets.some((n) => n.kind === "wifi") ? "" : tp.T.spNoWifi + " "}${tp.zigbeeInfo ? "" : tp.T.spNoZigbee + " "}${tp.T.spNote}</div>`;
   }
 }
 
 // src/search.js
 function install17(tp) {
-  const { $, esc, host, openPanel } = tp;
+  const { $, esc: esc2, host, openPanel } = tp;
   Object.assign(tp, { applySearch, clearMarks, markDevices });
   const norm = (t) => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   function dimExcept(ids) {
@@ -4492,7 +4570,7 @@ function install17(tp) {
     $("hits").textContent = "";
     const c = $("markchip");
     c.hidden = false;
-    c.innerHTML = `${esc(tp.T.marked(tp.markedIds.length))} · <a href="#" data-act="unmark">${esc(tp.T.unmark)}</a>`;
+    c.innerHTML = `${esc2(tp.T.marked(tp.markedIds.length))} · <a href="#" data-act="unmark">${esc2(tp.T.unmark)}</a>`;
     if (fit) fitTo(tp.markedIds);
   }
   function clearMarks() {
@@ -4527,7 +4605,7 @@ function install17(tp) {
 
 // src/changes.js
 function install18(tp) {
-  const { $, COLORS, DEMO, QUAL, esc, every, extraName, loadHa, prefs, render, trackGrade } = tp;
+  const { $, COLORS, DEMO, QUAL, esc: esc2, every, extraName, loadHa, prefs, render, trackGrade } = tp;
   Object.assign(tp, {
     clearChanges,
     diffSnaps,
@@ -4719,7 +4797,7 @@ function install18(tp) {
     if (!el) return;
     const fmt = (t) => new Date(t).toLocaleString(tp.lang, { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
     el.innerHTML = `<b>${tp.T.changesHead}</b>` + (tp.changes.length ? ` <a href="#" data-act="clearchanges" style="font-size:12px;margin-left:8px">${tp.T.changesClear}</a><table>` + tp.changes.slice(0, 30).map(
-      (c) => `<tr><td style="white-space:nowrap;color:var(--muted);vertical-align:top">${fmt(c.t)}</td><td style="white-space:nowrap;vertical-align:top"><span style="color:${CH_COLOR[c.kind] || "inherit"}">●</span> ` + (tp.nodeById[c.id] ? `<a href="#" data-open="${c.id}">${esc(c.name)}</a>` : esc(c.name)) + `</td><td>${esc(c.text)}</td></tr>`
+      (c) => `<tr><td style="white-space:nowrap;color:var(--muted);vertical-align:top">${fmt(c.t)}</td><td style="white-space:nowrap;vertical-align:top"><span style="color:${CH_COLOR[c.kind] || "inherit"}">●</span> ` + (tp.nodeById[c.id] ? `<a href="#" data-open="${c.id}">${esc2(c.name)}</a>` : esc2(c.name)) + `</td><td>${esc2(c.text)}</td></tr>`
     ).join("") + `</table>` : `<div>${tp.T.changesNone}</div>`) + `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${tp.T.changesNote}</div>`;
     tp.renderTabBar();
   }
@@ -4815,38 +4893,58 @@ function install19(tp) {
   }
 }
 
+// src/forecast.js
+var BF_DAYS = 120;
+var BF_MIN_DAYS = 14;
+var BF_MAX = 3 * 365;
+function forecastFrom(points, current) {
+  let p = points.filter((x) => typeof x.v === "number" && !isNaN(x.v));
+  for (let i = p.length - 1; i > 0; i--)
+    if (p[i].v - p[i - 1].v >= 10) {
+      p = p.slice(i);
+      break;
+    }
+  if (!p.length) return { state: "nodata", days: 0 };
+  const span = (p[p.length - 1].t - p[0].t) / 864e5;
+  if (span < BF_MIN_DAYS || p.length < 5) return { state: "nodata", days: Math.max(1, Math.round(span) + 1) };
+  const t0 = p[0].t, xs = p.map((x) => (x.t - t0) / 864e5), ys = p.map((x) => x.v);
+  const mx = xs.reduce((a, b) => a + b, 0) / xs.length, my = ys.reduce((a, b) => a + b, 0) / ys.length;
+  const sxx = xs.reduce((a, x) => a + (x - mx) ** 2, 0), sxy = xs.reduce((a, x, i) => a + (x - mx) * (ys[i] - my), 0);
+  const slope = sxx ? sxy / sxx : 0;
+  const drop = ys[0] - ys[ys.length - 1];
+  const basis = Math.round(span);
+  if (slope > -0.02 || drop < 2) return { state: "nodrop", basis };
+  const now = typeof current === "number" ? current : ys[ys.length - 1];
+  const days = now / -slope;
+  return {
+    state: "ok",
+    days: days > BF_MAX ? Infinity : Math.max(1, Math.round(days)),
+    perMonth: Math.round(-slope * 30 * 10) / 10,
+    basis
+  };
+}
+async function batteryStatistics(hass, entityIds) {
+  const res = await hass.callWS({
+    type: "recorder/statistics_during_period",
+    start_time: new Date(Date.now() - BF_DAYS * 864e5).toISOString(),
+    statistic_ids: entityIds,
+    period: "day",
+    types: ["mean"]
+  });
+  return Object.fromEntries(
+    entityIds.map((id) => [
+      id,
+      (res[id] || []).map((r) => ({ t: typeof r.start === "number" ? r.start : Date.parse(r.start), v: r.mean }))
+    ])
+  );
+}
+
 // src/battery.js
 function install20(tp) {
-  const { DEMO, esc, every, freshHass, renderPanel } = tp;
+  const { DEMO, esc: esc2, every, freshHass, renderPanel } = tp;
   Object.assign(tp, { batteryHint, forecastText, loadBatteryForecasts });
-  const BF_DAYS = 120, BF_MIN_DAYS = 14, BF_SOON = 30, BF_MAX = 3 * 365;
+  const BF_SOON = 30;
   tp.battForecast = {};
-  function forecastFrom(points, current) {
-    let p = points.filter((x) => typeof x.v === "number" && !isNaN(x.v));
-    for (let i = p.length - 1; i > 0; i--)
-      if (p[i].v - p[i - 1].v >= 10) {
-        p = p.slice(i);
-        break;
-      }
-    if (!p.length) return { state: "nodata", days: 0 };
-    const span = (p[p.length - 1].t - p[0].t) / 864e5;
-    if (span < BF_MIN_DAYS || p.length < 5) return { state: "nodata", days: Math.max(1, Math.round(span) + 1) };
-    const t0 = p[0].t, xs = p.map((x) => (x.t - t0) / 864e5), ys = p.map((x) => x.v);
-    const mx = xs.reduce((a, b) => a + b, 0) / xs.length, my = ys.reduce((a, b) => a + b, 0) / ys.length;
-    const sxx = xs.reduce((a, x) => a + (x - mx) ** 2, 0), sxy = xs.reduce((a, x, i) => a + (x - mx) * (ys[i] - my), 0);
-    const slope = sxx ? sxy / sxx : 0;
-    const drop = ys[0] - ys[ys.length - 1];
-    const basis = Math.round(span);
-    if (slope > -0.02 || drop < 2) return { state: "nodrop", basis };
-    const now = typeof current === "number" ? current : ys[ys.length - 1];
-    const days = now / -slope;
-    return {
-      state: "ok",
-      days: days > BF_MAX ? Infinity : Math.max(1, Math.round(days)),
-      perMonth: Math.round(-slope * 30 * 10) / 10,
-      basis
-    };
-  }
   async function loadBatteryForecasts(hass) {
     tp.battForecast = {};
     if (DEMO) {
@@ -4873,24 +4971,15 @@ function install20(tp) {
       }
     const ids = Object.values(entOf);
     if (!ids.length) return;
-    let res = {};
+    let series = {};
     try {
-      res = await hass.callWS({
-        type: "recorder/statistics_during_period",
-        start_time: new Date(Date.now() - BF_DAYS * 864e5).toISOString(),
-        statistic_ids: ids,
-        period: "day",
-        types: ["mean"]
-      });
+      series = await batteryStatistics(hass, ids);
     } catch (e) {
       console.warn("Thread Pulse: battery statistics", e);
       return;
     }
-    for (const [nodeId, ent] of Object.entries(entOf)) {
-      const rows = res[ent] || [];
-      const pts = rows.map((r) => ({ t: typeof r.start === "number" ? r.start : Date.parse(r.start), v: r.mean }));
-      tp.battForecast[nodeId] = forecastFrom(pts, tp.battOf[nodeId]);
-    }
+    for (const [nodeId, ent] of Object.entries(entOf))
+      tp.battForecast[nodeId] = forecastFrom(series[ent], tp.battOf[nodeId]);
     if (tp.panelNode && tp.battForecast[tp.panelNode]) renderPanel();
     if (tp.network) tp.network.redraw();
   }
@@ -4904,7 +4993,7 @@ function install20(tp) {
     if (!f) return "";
     if (f.state === "nodata") return tp.T.bfNoData(f.days);
     if (f.state === "nodrop") return tp.T.bfNoDrop(f.basis);
-    return `${tp.T.bfEmpty(f.days)} <span style="color:var(--muted)">· ${esc(tp.T.bfBasis(f.basis, f.perMonth.toLocaleString(tp.lang)))}</span>`;
+    return `${tp.T.bfEmpty(f.days)} <span style="color:var(--muted)">· ${esc2(tp.T.bfBasis(f.basis, f.perMonth.toLocaleString(tp.lang)))}</span>`;
   }
   function batteryHint(n) {
     const f = tp.battForecast[n.id];
@@ -4912,15 +5001,23 @@ function install20(tp) {
   }
 }
 
+// src/signalstore.js
+var SIG_KEY = "thread_pulse_signal";
+var TREND_H = 7 * 24;
+var HOUR_MS = 36e5;
+var hourNow = () => Math.floor(Date.now() / HOUR_MS);
+var unpackSig = (v) => !v || !v.d ? {} : Object.fromEntries(
+  Object.entries(v.d).map(([id, l]) => [id, (l || []).map(([dh, x, n]) => [v.base + dh, x, n])])
+);
+
 // src/trends.js
 function install21(tp) {
-  const { DEMO, QUAL, esc, every, freshHass, prefs, renderPanel, root } = tp;
+  const { DEMO, QUAL, esc: esc2, every, freshHass, prefs, renderPanel, root } = tp;
   Object.assign(tp, { batteryTrendHtml, recordSignal, signalTrendHtml });
-  const SIG_KEY = "thread_pulse_signal", TREND_H = 7 * 24, HOUR_MS = 36e5, SIG_SAVE_MS = 15 * 6e4;
+  const SIG_SAVE_MS = 15 * 6e4;
   let sigHist = {}, sigStore = null, sigDirty = false, sigLoading = null;
   let battHist = {};
   let trendHover = null;
-  const hourNow = () => Math.floor(Date.now() / HOUR_MS);
   function pruneSig(h = hourNow()) {
     for (const id of Object.keys(sigHist)) {
       sigHist[id] = sigHist[id].filter((e) => e[0] > h - TREND_H);
@@ -4945,9 +5042,6 @@ function install21(tp) {
       d: Object.fromEntries(Object.entries(sigHist).map(([id, l]) => [id, l.map(([h, v, n]) => [h - base, v, n])]))
     };
   };
-  const unpackSig = (v) => !v || !v.d ? {} : Object.fromEntries(
-    Object.entries(v.d).map(([id, l]) => [id, (l || []).map(([dh, x, n]) => [v.base + dh, x, n])])
-  );
   function signalNow() {
     const out = {};
     if (!tp.listData) return out;
@@ -5064,7 +5158,7 @@ function install21(tp) {
     return out;
   }
   const trendPts = {};
-  function sparkline(key, pts, lo, hi, fmt, guide) {
+  function sparkline2(key, pts, lo, hi, fmt, guide) {
     if (!pts.length) return "";
     const W = 300, H = 56, h0 = hourNow() - TREND_H + 1, x = (hr) => 4 + (hr - h0) / (TREND_H - 1) * (W - 8);
     const y = (v) => H - 4 - (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * (H - 8);
@@ -5083,7 +5177,7 @@ function install21(tp) {
       t.setDate(t.getDate() - k);
       return Math.floor(t.getTime() / HOUR_MS);
     }).filter((hr) => hr > h0).map((hr) => `<line x1="${x(hr).toFixed(1)}" x2="${x(hr).toFixed(1)}" y1="0" y2="${H}" class="tday"/>`).join("");
-    return `<div class="trend"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" data-trend="${esc(key)}" role="img" aria-label="${esc(fmt(pts[pts.length - 1][1]))}">` + days + (guide !== void 0 ? `<line x1="0" x2="${W}" y1="${y(guide).toFixed(1)}" y2="${y(guide).toFixed(1)}" class="tguide"/>` : "") + `<path d="${d}" class="tline"/><path d="${dots}" class="tline dots"/><circle r="3" class="tdot"${hv ? ` cx="${x(hv[0]).toFixed(1)}" cy="${y(hv[1]).toFixed(1)}"` : ' style="display:none"'}/></svg><div class="tread">${esc(readout(hv || pts[pts.length - 1], fmt))}</div></div>`;
+    return `<div class="trend"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" data-trend="${esc2(key)}" role="img" aria-label="${esc2(fmt(pts[pts.length - 1][1]))}">` + days + (guide !== void 0 ? `<line x1="0" x2="${W}" y1="${y(guide).toFixed(1)}" y2="${y(guide).toFixed(1)}" class="tguide"/>` : "") + `<path d="${d}" class="tline"/><path d="${dots}" class="tline dots"/><circle r="3" class="tdot"${hv ? ` cx="${x(hv[0]).toFixed(1)}" cy="${y(hv[1]).toFixed(1)}"` : ' style="display:none"'}/></svg><div class="tread">${esc2(readout(hv || pts[pts.length - 1], fmt))}</div></div>`;
   }
   const readout = (p, fmt) => new Date(p[0] * HOUR_MS).toLocaleString(tp.lang, { weekday: "short", hour: "2-digit", minute: "2-digit" }) + " · " + fmt(p[1]);
   function signalTrendHtml(n) {
@@ -5091,13 +5185,13 @@ function install21(tp) {
     if (!pts.length)
       return `<h4>${tp.T.trendSignal(n.type === "routing_end_device")}</h4><div class="note">${tp.T.trendNoSignal}</div>`;
     const vals = pts.map((p) => p[1]), lo = Math.min(-90, ...vals) - 2, hi = Math.max(-50, ...vals) + 2;
-    return `<h4>${tp.T.trendSignal(n.type === "routing_end_device")}</h4>` + sparkline("s:" + n.id, pts, lo, hi, (v) => `${Math.round(v)} dBm · ${QUAL(v)[2]}`, -80) + `<div class="note">${tp.T.trendSignalNote(pts.length, TREND_H)}</div>`;
+    return `<h4>${tp.T.trendSignal(n.type === "routing_end_device")}</h4>` + sparkline2("s:" + n.id, pts, lo, hi, (v) => `${Math.round(v)} dBm · ${QUAL(v)[2]}`, -80) + `<div class="note">${tp.T.trendSignalNote(pts.length, TREND_H)}</div>`;
   }
   function batteryTrendHtml(n) {
     loadBatteryTrend(n);
     const c = battHist[n.id];
     if (!c || !c.pts.length) return "";
-    return sparkline("b:" + n.id, c.pts, 0, 100, (v) => `${Math.round(v)} %`, 20) + `<div class="note">${tp.T.trendBattNote}</div>`;
+    return sparkline2("b:" + n.id, c.pts, 0, 100, (v) => `${Math.round(v)} %`, 20) + `<div class="note">${tp.T.trendBattNote}</div>`;
   }
   root.addEventListener("pointermove", (e) => trendPointer(e));
   root.addEventListener("pointerdown", (e) => trendPointer(e));
@@ -5123,7 +5217,7 @@ function install21(tp) {
 
 // src/firmware.js
 function install22(tp) {
-  const { COLORS, DEMO, esc, every, freshHass, renderChanges } = tp;
+  const { COLORS, DEMO, esc: esc2, every, freshHass, renderChanges } = tp;
   Object.assign(tp, { drawUpdateBadge, firmwareListHtml, refreshFirmware, updateOf, updateText });
   tp.fwOf = {};
   function updateOf(dev, hass) {
@@ -5158,10 +5252,10 @@ function install22(tp) {
   function updateText(u) {
     if (!u) return "";
     if (u.progress !== null)
-      return esc(tp.T.fwInstalling(u.latest, typeof u.progress === "number" ? u.progress : null));
-    if (u.available) return `<span class="o">${esc(tp.T.fwAvailable(u.latest))}</span>`;
-    if (u.skipped) return esc(tp.T.fwSkipped(u.latest));
-    return `<span class="g">${esc(tp.T.fwCurrent)}</span>`;
+      return esc2(tp.T.fwInstalling(u.latest, typeof u.progress === "number" ? u.progress : null));
+    if (u.available) return `<span class="o">${esc2(tp.T.fwAvailable(u.latest))}</span>`;
+    if (u.skipped) return esc2(tp.T.fwSkipped(u.latest));
+    return `<span class="g">${esc2(tp.T.fwCurrent)}</span>`;
   }
   function drawUpdateBadge(ctx, p, r, id) {
     const u = tp.fwOf[id];
@@ -5197,11 +5291,11 @@ function install22(tp) {
     let h = `<br><b>${tp.T.fwHead}</b>`;
     if (pending.length)
       h += `<table>` + pending.map(
-        (d) => `<tr><td><a href="#" data-open="${esc(d.id)}">${esc(d.name)}</a></td><td>${esc(tp.fwOf[d.id].installed)} → ${esc(tp.fwOf[d.id].latest)}</td><td>${updateText(tp.fwOf[d.id])}</td></tr>`
+        (d) => `<tr><td><a href="#" data-open="${esc2(d.id)}">${esc2(d.name)}</a></td><td>${esc2(tp.fwOf[d.id].installed)} → ${esc2(tp.fwOf[d.id].latest)}</td><td>${updateText(tp.fwOf[d.id])}</td></tr>`
       ).join("") + `</table>`;
     if (mixed.length)
       h += `<div style="margin-top:6px">${tp.T.fwMixed}</div><table>` + mixed.map(
-        ([model, v]) => `<tr><td>${esc(model)}</td><td>` + Object.entries(v).sort((a, b) => b[1].length - a[1].length).map(([sw, names]) => `${esc(sw)} (${names.length <= 3 ? names.map(esc).join(", ") : names.length})`).join(" · ") + `</td></tr>`
+        ([model, v]) => `<tr><td>${esc2(model)}</td><td>` + Object.entries(v).sort((a, b) => b[1].length - a[1].length).map(([sw, names]) => `${esc2(sw)} (${names.length <= 3 ? names.map(esc2).join(", ") : names.length})`).join(" · ") + `</td></tr>`
       ).join("") + `</table>`;
     return h + `<div style="color:var(--muted);font-size:12px;margin:2px 0 10px">${tp.T.fwNote}</div>`;
   }
@@ -5209,7 +5303,7 @@ function install22(tp) {
 
 // src/fabrics.js
 function install23(tp) {
-  const { DEMO, esc, freshHass, renderPanel, row } = tp;
+  const { DEMO, esc: esc2, freshHass, renderPanel, row } = tp;
   Object.assign(tp, { fabricsHtml });
   const fabricsOf = {};
   function loadFabrics(dev) {
@@ -5236,7 +5330,7 @@ function install23(tp) {
     const f = fabricsOf[dev.id] || {};
     const name = (x) => (x.vendor_name || tp.T.fabricVendor(x.vendor_id)) + (x.fabric_label ? ` (${x.fabric_label})` : "");
     const list = f.state === "ok" && f.list.length ? f.list.map(
-      (x) => esc(name(x)) + (x.fabric_index === f.own ? ` <span style="color:var(--muted)">· ${tp.T.fabricThis}</span>` : "")
+      (x) => esc2(name(x)) + (x.fabric_index === f.own ? ` <span style="color:var(--muted)">· ${tp.T.fabricThis}</span>` : "")
     ).join("<br>") : f.state === "loading" ? `<span style="color:var(--muted)">${tp.T.fabricLoading}</span>` : f.state === "error" ? `<span style="color:var(--muted)">${tp.T.fabricError}</span>` : "";
     return `<h4>${tp.T.secFabrics}</h4><dl>` + row(tp.T.fabricCount, String(count)) + row(tp.T.fabricList, list) + `</dl><div class="note">${tp.T.fabricNote}</div>`;
   }
@@ -5248,7 +5342,7 @@ function install24(tp) {
     $,
     COLORS,
     DEMO,
-    esc,
+    esc: esc2,
     fabricsHtml,
     fmtState,
     freshHass,
@@ -5290,7 +5384,7 @@ function install24(tp) {
   const wifiQual = (r) => r >= -60 ? ["g", tp.T.good] : r >= -70 ? ["o", tp.T.medium] : ["r", tp.T.weak];
   function renderWifiPanel(id) {
     const w = tp.wifiById[id], i = w.info || {}, hass = DEMO ? null : freshHass(), now = Date.now();
-    let h = tp.backHtml() + `<div class="hd"><img src="${iconImg(w.icon, w.available ? COLORS.wifi : COLORS.off, 80)}" alt=""><div><div class="t">${esc(w.name)}</div><div class="s">${esc(w.kind === "ethernet" ? tp.T.ethSub : tp.T.wifiSub)}${w.area ? " · " + esc(w.area) : ""}${w.available ? "" : esc(tp.T.unreachable)}</div></div><button class="x" title="×" data-act="close">×</button></div>`;
+    let h = tp.backHtml() + `<div class="hd"><img src="${iconImg(w.icon, w.available ? COLORS.wifi : COLORS.off, 80)}" alt=""><div><div class="t">${esc2(w.name)}</div><div class="s">${esc2(w.kind === "ethernet" ? tp.T.ethSub : tp.T.wifiSub)}${w.area ? " · " + esc2(w.area) : ""}${w.available ? "" : esc2(tp.T.unreachable)}</div></div><button class="x" title="×" data-act="close">×</button></div>`;
     const rs = respSummary(id);
     h += `<h4>${tp.T.secLive}</h4><dl>` + liveRows(id) + (rs ? row(tp.T.respTime, tp.T.respVal(rs.last, rs.med, rs.n)) : "") + `</dl>`;
     let v = "";
@@ -5301,25 +5395,25 @@ function install24(tp) {
         const name = localName((st.attributes.friendly_name || e).replace(w.name, "").trim()) || tp.T.state;
         v += row(
           name,
-          `${esc(fmtState(st))} <span style="color:var(--muted)">· ${tp.T.ago(Math.max(0, Math.round((now - new Date(st.last_changed)) / 1e3)))}</span>`
+          `${esc2(fmtState(st))} <span style="color:var(--muted)">· ${tp.T.ago(Math.max(0, Math.round((now - new Date(st.last_changed)) / 1e3)))}</span>`
         );
       }
     else if (DEMO && w.demoValues)
-      v = w.demoValues.map(([k, val, ago]) => row(k, `${esc(val)} <span style="color:var(--muted)">· ${tp.T.ago(ago)}</span>`)).join("");
+      v = w.demoValues.map(([k, val, ago]) => row(k, `${esc2(val)} <span style="color:var(--muted)">· ${tp.T.ago(ago)}</span>`)).join("");
     if (v) h += `<h4>${tp.T.secValues}</h4><dl>${v}</dl>`;
     if (w.kind === "wifi" && (i.rssi !== void 0 || i.channel !== void 0)) {
       const q = typeof i.rssi === "number" ? wifiQual(i.rssi) : null;
-      h += `<h4>${tp.T.secWifi}</h4><dl>` + row(tp.T.thSignal, q ? `<span class="${q[0]}">${i.rssi} dBm · ${q[1]}</span>` : "") + row(tp.T.channel, i.channel !== void 0 && i.channel !== null ? esc(String(i.channel)) : "") + row(tp.T.wifiStd, esc(WIFI_STD[i.wifiVersion] || "")) + `</dl><div class="note">${tp.T.wifiNote}</div>`;
+      h += `<h4>${tp.T.secWifi}</h4><dl>` + row(tp.T.thSignal, q ? `<span class="${q[0]}">${i.rssi} dBm · ${q[1]}</span>` : "") + row(tp.T.channel, i.channel !== void 0 && i.channel !== null ? esc2(String(i.channel)) : "") + row(tp.T.wifiStd, esc2(WIFI_STD[i.wifiVersion] || "")) + `</dl><div class="note">${tp.T.wifiNote}</div>`;
     }
     if (i.reboots !== void 0 && i.reboots !== null)
       h += `<h4>${tp.T.secStability}</h4><dl>` + row(tp.T.reboots, i.reboots) + row(
         tp.T.bootReason,
-        i.bootReason !== void 0 && i.bootReason !== null ? esc(tp.T.bootReasons[i.bootReason] || i.bootReason) : ""
+        i.bootReason !== void 0 && i.bootReason !== null ? esc2(tp.T.bootReasons[i.bootReason] || i.bootReason) : ""
       ) + `</dl>`;
-    h += `<h4>${tp.T.secDevice}</h4><dl>` + row(tp.T.manufacturer, esc(i.vendor || "")) + row(tp.T.model, esc(i.product || "")) + row(tp.T.firmware, esc(i.sw || "")) + row(tp.T.fwUpdate, updateText(updateOf(w, hass))) + row(tp.T.hardware, esc(i.hw || "")) + row(tp.T.area, esc(w.area || "")) + `</dl>`;
+    h += `<h4>${tp.T.secDevice}</h4><dl>` + row(tp.T.manufacturer, esc2(i.vendor || "")) + row(tp.T.model, esc2(i.product || "")) + row(tp.T.firmware, esc2(i.sw || "")) + row(tp.T.fwUpdate, updateText(updateOf(w, hass))) + row(tp.T.hardware, esc2(i.hw || "")) + row(tp.T.area, esc2(w.area || "")) + `</dl>`;
     h += fabricsHtml(w);
     h += identifyHtml(w, hass);
-    if (w.devId && !DEMO) h += `<button class="btn" data-device="${esc(w.devId)}">${tp.T.openDevice} ↗</button>`;
+    if (w.devId && !DEMO) h += `<button class="btn" data-device="${esc2(w.devId)}">${tp.T.openDevice} ↗</button>`;
     $("panel").innerHTML = h;
   }
 }
@@ -5670,7 +5764,7 @@ function install28(tp) {
     computeHealth,
     computeHints,
     dependHtml,
-    esc,
+    esc: esc2,
     firmwareListHtml,
     gradeColor,
     hintKind,
@@ -5725,11 +5819,11 @@ function install28(tp) {
     return out.sort((a, b) => b.warn - a.warn || nm(a).localeCompare(nm(b), tp.lang));
   }
   const muted = (t) => `<div class="tnote">${t}</div>`;
-  const devLink = (id) => tp.nodeById[id] || tp.wifiById[id] ? `<a href="#" data-open="${esc(id)}">${esc(nameOf(id))}</a>` : esc(nameOf(id));
+  const devLink = (id) => tp.nodeById[id] || tp.wifiById[id] ? `<a href="#" data-open="${esc2(id)}">${esc2(nameOf(id))}</a>` : esc2(nameOf(id));
   function hintTable(list) {
     return `<table class="hints">${list.map((x) => {
       const k = x.warn ? null : hintKind(x.id, x.text);
-      return `<tr><td class="${x.warn ? "r" : "b"}" style="width:1.2em;vertical-align:top">${x.warn ? "⚠" : "ℹ"}</td><td style="white-space:nowrap;vertical-align:top">${x.label ? `<a href="#" data-tab="links">${esc(x.label)}</a>` : devLink(x.id)}</td><td>${esc(x.text)}` + (k ? ` <a href="#" class="more" data-dismiss="${esc(x.id + "|" + k)}">${tp.T.hintDone}</a>` : "") + `</td></tr>`;
+      return `<tr><td class="${x.warn ? "r" : "b"}" style="width:1.2em;vertical-align:top">${x.warn ? "⚠" : "ℹ"}</td><td style="white-space:nowrap;vertical-align:top">${x.label ? `<a href="#" data-tab="links">${esc2(x.label)}</a>` : devLink(x.id)}</td><td>${esc2(x.text)}` + (k ? ` <a href="#" class="more" data-dismiss="${esc2(x.id + "|" + k)}">${tp.T.hintDone}</a>` : "") + `</td></tr>`;
     }).join("")}</table>`;
   }
   function dismissedHtml() {
@@ -5740,7 +5834,7 @@ function install28(tp) {
     }
     if (!rows.length) return "";
     return `<h4>${tp.T.dismissedHead(rows.length)}</h4><table>` + rows.map(
-      ([id, k]) => `<tr><td style="white-space:nowrap">${devLink(id)}</td><td>${esc(tp.T.dismissKinds[k])}</td><td><a href="#" data-undismiss="${esc(id + "|" + k)}">${tp.T.hintShowAgain}</a></td></tr>`
+      ([id, k]) => `<tr><td style="white-space:nowrap">${devLink(id)}</td><td>${esc2(tp.T.dismissKinds[k])}</td><td><a href="#" data-undismiss="${esc2(id + "|" + k)}">${tp.T.hintShowAgain}</a></td></tr>`
     ).join("") + `</table>` + muted(tp.T.dismissedNote);
   }
   function overviewHtml(hints) {
@@ -5748,7 +5842,7 @@ function install28(tp) {
     let h = "";
     if (hl) {
       const bad = hl.factors.filter((f) => f.level === "warn" || f.level === "bad"), rest = hl.factors.filter((f) => !bad.includes(f));
-      const fRow = (f) => `<tr${f.ids.length ? ` class="mark" data-mark="${esc(f.ids.join(","))}" title="${esc(tp.T.markHint)}"` : ""}><td style="vertical-align:top;white-space:nowrap"><span style="color:${HEALTH_COLOR[f.level]}">●</span> ${tp.T.hfTitle[f.key]}</td><td>${f.level === "na" ? "" : `<b style="color:${HEALTH_COLOR[f.level]}">${esc(f.value)}</b> · `}${esc(f.text)}</td></tr>`;
+      const fRow = (f) => `<tr${f.ids.length ? ` class="mark" data-mark="${esc2(f.ids.join(","))}" title="${esc2(tp.T.markHint)}"` : ""}><td style="vertical-align:top;white-space:nowrap"><span style="color:${HEALTH_COLOR[f.level]}">●</span> ${tp.T.hfTitle[f.key]}</td><td>${f.level === "na" ? "" : `<b style="color:${HEALTH_COLOR[f.level]}">${esc2(f.value)}</b> · `}${esc2(f.text)}</td></tr>`;
       h += `<div class="hcard"><div class="hgrade" style="background:${gradeColor(hl.grade)}">${hl.grade}</div><div><b>${tp.T.healthHead}</b>` + (hl.known < hl.factors.length ? `<div class="tnote" style="margin:0">${tp.T.healthPartial(hl.known, hl.factors.length)}</div>` : "") + `<div>${bad.length ? tp.T.factorsToCheck(bad.length) : tp.T.factorsAllOk}</div></div></div>`;
       if (bad.length) h += `<table class="factors">${bad.map(fRow).join("")}</table>`;
       if (rest.length)
@@ -5774,7 +5868,7 @@ function install28(tp) {
         available: n.available,
         role: tp.T.types[n.type] || n.type,
         filter: n.type === "routing_end_device" ? "routers" : n.type === "end_device" ? "mains" : "battery",
-        conn: p ? devLink(p.parentId) : n.type !== "sleepy_end_device" && rl.length ? esc(tp.T.rLinksShort(rl.length)) : "–",
+        conn: p ? devLink(p.parentId) : n.type !== "sleepy_end_device" && rl.length ? esc2(tp.T.rLinksShort(rl.length)) : "–",
         // the best one is in the signal column
         connSort: p ? nameOf(p.parentId) : "",
         rssi: p ? p.rssi : n.type !== "sleepy_end_device" ? best : null,
@@ -5812,7 +5906,7 @@ function install28(tp) {
     let h = `<div class="chips">${kinds.map((f) => `<button data-filter="${f}"${f === devFilter ? ' class="on"' : ""}>${tp.T.devFilters[f]} <span>${f === "all" ? rows.length : rows.filter((r) => r.filter === f).length}</span></button>`).join("")}</div>`;
     h += `<div class="tscroll"><table class="devs"><tr>${th("name", tp.T.thDevice)}${th("role", tp.T.rRole)}${th("conn", tp.T.rConnection)}${th("rssi", tp.T.thSignal)}${th("msgs", tp.T.thMsgs)}${th("fw", tp.T.firmware)}</tr>` + shown.map((r) => {
       const u = tp.fwOf[r.id], q = r.rssi !== null ? QUAL(r.rssi) : null;
-      return `<tr><td>${devLink(r.id)}</td><td>${esc(r.role)}${r.available ? "" : ` <span class="r">${esc(tp.T.unreachable.replace(/^\s*[–-]\s*/, ""))}</span>`}</td><td>${r.conn}</td><td${q ? ` class="${q[1]}"` : ""} style="white-space:nowrap">${r.rssi !== null ? `${r.rssi} dBm` : "–"}${r.self ? ` <span class="tnote" style="display:inline">*</span>` : ""}</td><td style="text-align:right">${r.msgs || "–"}</td><td style="white-space:nowrap">${esc(r.sw || "–")}${u && (u.available || u.progress !== null) ? ` <span class="o">→ ${esc(u.latest)}</span>` : ""}</td></tr>`;
+      return `<tr><td>${devLink(r.id)}</td><td>${esc2(r.role)}${r.available ? "" : ` <span class="r">${esc2(tp.T.unreachable.replace(/^\s*[–-]\s*/, ""))}</span>`}</td><td>${r.conn}</td><td${q ? ` class="${q[1]}"` : ""} style="white-space:nowrap">${r.rssi !== null ? `${r.rssi} dBm` : "–"}${r.self ? ` <span class="tnote" style="display:inline">*</span>` : ""}</td><td style="text-align:right">${r.msgs || "–"}</td><td style="white-space:nowrap">${esc2(r.sw || "–")}${u && (u.available || u.progress !== null) ? ` <span class="o">→ ${esc2(u.latest)}</span>` : ""}</td></tr>`;
     }).join("") + `</table></div>`;
     if (rows.some((r) => r.self)) h += muted("* " + tp.T.selfMeasured.replace(/^\(|\)$/g, ""));
     return h + chattyHtml() + firmwareListHtml();
@@ -5820,7 +5914,7 @@ function install28(tp) {
   function linksHtml() {
     const weakParents = tp.listData.parents.filter((p) => p.rssi < -80 && tp.nodeById[p.childId]);
     let h = "";
-    const linkRow = (a, b, r, self) => `<tr class="mark" data-mark="${esc(a + "," + b)}" title="${esc(tp.T.markHint)}"><td>${esc(nameOf(a))} ↔ ${esc(nameOf(b))}</td><td class="${QUAL(r)[1]}" style="white-space:nowrap">${r} dBm${self ? ` <span class="tnote" style="display:inline">${tp.T.selfMeasured}</span>` : ""}</td></tr>`;
+    const linkRow = (a, b, r, self) => `<tr class="mark" data-mark="${esc2(a + "," + b)}" title="${esc2(tp.T.markHint)}"><td>${esc2(nameOf(a))} ↔ ${esc2(nameOf(b))}</td><td class="${QUAL(r)[1]}" style="white-space:nowrap">${r} dBm${self ? ` <span class="tnote" style="display:inline">${tp.T.selfMeasured}</span>` : ""}</td></tr>`;
     if (tp.listData.weak.length)
       h += `<h4>${tp.T.weakHead} ${tp.T.weakSub}</h4><table class="lk">${tp.listData.weak.map((w) => linkRow(w.a, w.b, w.r)).join("")}</table>`;
     if (weakParents.length)
@@ -5840,7 +5934,7 @@ function install28(tp) {
       changes: () => `<div id="changes"></div>`
     };
     const open = $("info").querySelector("details.okf[open]");
-    $("info").innerHTML = `<div id="tabbar" role="tablist" aria-label="${esc(tp.T.netBtn.replace(/^\S+\s/, ""))}"></div>` + TABS.map(
+    $("info").innerHTML = `<div id="tabbar" role="tablist" aria-label="${esc2(tp.T.netBtn.replace(/^\S+\s/, ""))}"></div>` + TABS.map(
       (t) => `<div class="tabp" id="tab-${t}" role="tabpanel"${t === tab ? "" : " hidden"}>${body[t]()}</div>`
     ).join("");
     if (open) {
@@ -5868,11 +5962,11 @@ function install28(tp) {
 
 // src/layout.js
 function install29(tp) {
-  const { $, QUAL, esc, msgsLastHour, powerCutOf, root, stabilityOf } = tp;
+  const { $, QUAL, esc: esc2, msgsLastHour, powerCutOf, root, stabilityOf } = tp;
   Object.assign(tp, { panelLayout, setSheet });
   const DEV_TABS = ["status", "link", "device"];
   let devTab = "status";
-  const backHtml = () => `<button class="back" data-act="close">‹ ${esc(tp.T.backNet)}</button>`;
+  const backHtml = () => `<button class="back" data-act="close">‹ ${esc2(tp.T.backNet)}</button>`;
   tp.backHtml = backHtml;
   function keyStats(n) {
     const l = tp.linksOf[n.id] || [], par = l.find((x) => x.kind === "parent"), rl = l.filter((x) => x.kind === "neighbour");
@@ -5886,14 +5980,14 @@ function install29(tp) {
     else if (typeof s.reboots === "number") cells.push([tp.T.kRestarts, String(s.reboots), powerCutOf(n) ? "o" : ""]);
     if (n.type === "routing_end_device")
       cells.push([tp.T.kChildren, String(l.filter((x) => x.kind === "child").length), ""]);
-    return `<div class="keys">` + cells.map(([k, v, c]) => `<div><span>${esc(k)}</span><b${c ? ` class="${c}"` : ""}>${esc(v)}</b></div>`).join("") + `</div>`;
+    return `<div class="keys">` + cells.map(([k, v, c]) => `<div><span>${esc2(k)}</span><b${c ? ` class="${c}"` : ""}>${esc2(v)}</b></div>`).join("") + `</div>`;
   }
   function panelLayout(n, sec) {
     const has = DEV_TABS.filter((g) => sec.some((s) => s[0] === g));
     if (!has.includes(devTab)) devTab = has[0];
     const top = sec.filter((s) => s[0] === "top").map((s) => s[1]).join("");
     return backHtml() + top + keyStats(n) + `<div class="dtabs" role="tablist">` + has.map(
-      (g) => `<button role="tab" data-devtab="${g}" aria-selected="${g === devTab}"${g === devTab ? ' class="on"' : ""}>${esc(tp.T.devTabs[g])}</button>`
+      (g) => `<button role="tab" data-devtab="${g}" aria-selected="${g === devTab}"${g === devTab ? ' class="on"' : ""}>${esc2(tp.T.devTabs[g])}</button>`
     ).join("") + `</div>` + has.map(
       (g) => `<div class="dtab" role="tabpanel" data-g="${g}"${g === devTab ? "" : " hidden"}>${sec.filter((s) => s[0] === g).map((s) => s[1]).join("")}</div>`
     ).join("");
@@ -5947,7 +6041,7 @@ function install29(tp) {
 
 // src/demo.js
 function install30(tp) {
-  const { esc, every, launch, localName, opts, recordResponse, showTicker } = tp;
+  const { esc: esc2, every, launch, localName, opts, recordResponse, showTicker } = tp;
   Object.assign(tp, { demoModel, demoMutate, demoTraffic });
   function demoModel() {
     if (opts.demo === "apple") return demoModelApple();
@@ -6334,17 +6428,17 @@ function install30(tp) {
         launch(
           n.id,
           true,
-          `HA → <b>${esc(n.name)}</b>: ${n.icon === "blinds" ? "cover.open_cover" : n.icon === "lightbulb" ? "light.toggle" : "switch.toggle"}`
+          `HA → <b>${esc2(n.name)}</b>: ${n.icon === "blinds" ? "cover.open_cover" : n.icon === "lightbulb" ? "light.toggle" : "switch.toggle"}`
         );
         const ms = n.icon === "blinds" ? 900 + Math.random() * 900 : 120 + Math.random() * 380;
         setTimeout(() => {
           if (tp.destroyed) return;
           recordResponse(n.id, ms);
-          launch(n.id, false, `<b>${esc(n.name)}</b> → HA: ${tp.T.state} ${tp.T.states.on} · ${Math.round(ms)} ms`);
+          launch(n.id, false, `<b>${esc2(n.name)}</b> → HA: ${tp.T.state} ${tp.T.states.on} · ${Math.round(ms)} ms`);
         }, ms);
       } else {
         const [what, val] = msgs(n);
-        launch(n.id, false, `<b>${esc(n.name)}</b> → HA: ${what} ${val}`);
+        launch(n.id, false, `<b>${esc2(n.name)}</b> → HA: ${what} ${val}`);
       }
       setTimeout(step, 600 + Math.random() * 1800);
     };
@@ -6368,7 +6462,7 @@ function install31(tp) {
     demoModel,
     diffSnaps,
     discoverRouters,
-    esc,
+    esc: esc2,
     exportImage,
     initChangeStore,
     loadBatteryForecasts,
@@ -6400,7 +6494,7 @@ function install31(tp) {
     closePanel();
     $("info").classList.add("errshown");
     $("status").textContent = tp.T.error;
-    $("info").innerHTML = `<div id="err">${esc(e.message || e)}</div>`;
+    $("info").innerHTML = `<div id="err">${esc2(e.message || e)}</div>`;
   }
   tp.demoState = null;
   async function load() {
@@ -6514,6 +6608,7 @@ function install33(tp) {
     applyRooms,
     demoTraffic,
     load,
+    opts,
     playTick,
     prefs,
     setBtn,
@@ -6571,8 +6666,23 @@ function install33(tp) {
     setBtn($("livebtn"), tp.liveOn ? tp.T.pause : tp.T.resume, tp.liveOn);
     if (!tp.liveOn) tp.packets = [];
   };
+  let focusWanted = opts.focusDevice || null;
+  function focusDevice(devId) {
+    focusWanted = devId || null;
+    applyFocus();
+  }
+  function applyFocus() {
+    if (!focusWanted || !tp.network) return;
+    const n = Object.values(tp.nodeById).concat(Object.values(tp.wifiById)).find((x) => x.devId === focusWanted || x.id === focusWanted);
+    if (!n) return;
+    focusWanted = null;
+    tp.openPanel(n.id);
+    tp.network.selectNodes([n.id]);
+    tp.zoomTo(n.id);
+  }
   load().then((m) => {
     if (DEMO) demoTraffic(m);
+    setTimeout(applyFocus, 600);
   }).catch(showErr);
   return {
     destroy() {
@@ -6604,7 +6714,8 @@ function install33(tp) {
         tp.network = null;
       }
     },
-    theme
+    theme,
+    focusDevice
   };
 }
 
@@ -6667,6 +6778,320 @@ function createThreadPulse(root, opts, host) {
   return install33(tp);
 }
 
+// src/devicecard.js
+var MESH_MS = 5 * 6e4;
+var BATT_MS = 6 * 36e5;
+var meshSlot = { v: null };
+var sigSlot = { v: null };
+async function loadMesh(hass) {
+  const entries = await hass.callWS({ type: "config_entries/get", domain: "matter" });
+  if (!entries.length) throw Object.assign(new Error("no matter"), { code: "noMatter" });
+  const entry = entries[0].entry_id;
+  const devReg = await hass.callWS({ type: "config/device_registry/list" });
+  const devs = {}, byExt = {};
+  await Promise.all(
+    devReg.filter((d) => d.config_entries.includes(entry)).map(async (d) => {
+      let node;
+      try {
+        node = await fetchDiagnostics(hass, entry, d.id);
+      } catch (e) {
+        if (e.status === 401 || e.status === 403) throw Object.assign(e, { code: "notAdmin" });
+        return;
+      }
+      const ext = threadAddressOf(node), a = node.attributes || {};
+      devs[d.id] = {
+        id: d.id,
+        name: d.name_by_user || d.name,
+        areaId: d.area_id,
+        available: node.available,
+        ext,
+        type: ext ? typeOfRole(a["0/53/1"]) : null,
+        role: a["0/53/1"],
+        neigh: a["0/53/7"] || []
+      };
+      if (ext) byExt[ext] = d.id;
+    })
+  );
+  let brExt = null;
+  try {
+    brExt = Object.values(await hass.callWS({ type: "otbr/info" }))[0].extended_address.toLowerCase();
+  } catch (e) {
+  }
+  return { devs, byExt, brExt };
+}
+function cached(slot, ms, load) {
+  if (!slot.v || Date.now() - slot.v.t > ms) {
+    slot.v = { t: Date.now(), promise: load() };
+    slot.v.promise.catch(() => slot.v = null);
+  }
+  return slot.v.promise;
+}
+async function loadSignal(hass) {
+  try {
+    const r = await hass.connection.sendMessagePromise({ type: "frontend/get_user_data", key: SIG_KEY });
+    return unpackSig(r && r.value);
+  } catch (e) {
+    return {};
+  }
+}
+function connectionOf(dev, mesh) {
+  if (dev.type === "routing_end_device") {
+    const links = dev.neigh.filter((x) => !x["13"]);
+    return { router: true, links: links.length, best: links.length ? Math.max(...links.map((x) => x["6"])) : null };
+  }
+  const best = [...dev.neigh].sort((p, q) => q["6"] - p["6"])[0];
+  if (!best) return { router: false, parent: null };
+  const pid = hex16(best["0"]), pdev = mesh.devs[mesh.byExt[pid]];
+  const fromRouter = pdev && pdev.neigh.find((x) => x["13"] && hex16(x["0"]) === dev.ext);
+  return { router: false, parent: pid, parentDev: pdev, rssi: fromRouter ? fromRouter["6"] : best["6"] };
+}
+var quality = (rssi) => rssi >= -65 ? "good" : rssi >= -80 ? "medium" : "weak";
+var esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+function sparkline(series) {
+  const W = 300, H = 44, lo = -95, hi = -40, h0 = hourNow() - TREND_H + 1;
+  const x = (h) => (h - h0) / (TREND_H - 1) * W, y = (v) => H - (Math.min(hi, Math.max(lo, v)) - lo) / (hi - lo) * H;
+  const segs = [];
+  let cur = [];
+  for (const [h, v] of series.filter((e) => e[0] >= h0)) {
+    if (cur.length && h - cur[cur.length - 1][0] > 1) segs.push(cur), cur = [];
+    cur.push([h, v]);
+  }
+  if (cur.length) segs.push(cur);
+  const lines = segs.filter((s) => s.length > 1).map((s) => "M" + s.map(([h, v]) => `${x(h)},${y(v)}`).join("L")).join(" ");
+  const dots = segs.filter((s) => s.length === 1).map((s) => `M${x(s[0][0])},${y(s[0][1])}h0.01`).join(" ");
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><line class="guide" x1="0" x2="${W}" y1="${y(-80)}" y2="${y(-80)}"/><path class="line" d="${lines}"/><path class="dots" d="${dots}"/></svg>`;
+}
+function demoData(kind) {
+  const h = hourNow(), series = [];
+  let v = kind === "router" ? -52 : -73;
+  for (let k = TREND_H - 1; k >= 0; k--) {
+    v = Math.max(-90, Math.min(-45, v + (Math.random() - 0.5) * 3));
+    if (k % 50 < 8) continue;
+    series.push([h - k, Math.round(v), 12]);
+  }
+  return kind === "router" ? {
+    name: "Kitchen plug",
+    area: "Kitchen",
+    available: true,
+    type: "routing_end_device",
+    role: 5,
+    conn: { router: true, links: 6, best: -50 },
+    series
+  } : {
+    name: "Front door",
+    area: "Office",
+    available: true,
+    type: "sleepy_end_device",
+    role: 2,
+    conn: { router: false, parentName: "Kitchen plug", rssi: -73 },
+    battery: 15,
+    forecast: { state: "ok", days: 22, perMonth: 20, basis: 60 },
+    series
+  };
+}
+var STYLE = `
+  :host { display: block; }
+  ha-card { height: 100%; overflow: hidden; }
+  button.tp { all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px; width: 100%; height: 100%;
+              padding: 14px 16px; cursor: pointer; color: var(--primary-text-color); font-family: var(--ha-card-font-family, inherit); }
+  button.tp:focus-visible { outline: 2px solid var(--primary-color); outline-offset: -2px; border-radius: var(--ha-card-border-radius, 12px); }
+  .hd { display: flex; align-items: center; gap: 10px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; background: var(--success-color, #43a047); }
+  .dot.off { background: var(--error-color, #db4437); }
+  .name { font-size: 16px; font-weight: 500; line-height: 1.25; }
+  .sub { color: var(--secondary-text-color); font-size: 12px; }
+  dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 0; font-size: 14px; }
+  dt { color: var(--secondary-text-color); }
+  dd { margin: 0; overflow-wrap: anywhere; }
+  .good { color: var(--success-color, #2e7d32); } .medium { color: var(--warning-color, #ef6c00); } .weak, .off-t { color: var(--error-color, #c62828); }
+  .muted { color: var(--secondary-text-color); }
+  svg { width: 100%; height: 44px; display: block; background: var(--secondary-background-color, rgba(127,127,127,.08)); border-radius: 6px; }
+  svg .line { fill: none; stroke: var(--primary-color, #1e88e5); stroke-width: 1.8; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; }
+  svg .dots { fill: none; stroke: var(--primary-color, #1e88e5); stroke-width: 5; vector-effect: non-scaling-stroke; stroke-linecap: round; }
+  svg .guide { stroke: var(--error-color, #e53935); stroke-dasharray: 3 3; stroke-width: 1; vector-effect: non-scaling-stroke; opacity: .6; }
+  .tl { color: var(--secondary-text-color); font-size: 11px; margin-top: 2px; }
+  .msg { padding: 14px 16px; color: var(--secondary-text-color); }`;
+var ThreadPulseDeviceCard = class extends HTMLElement {
+  setConfig(config) {
+    if (!config || !config.device && !config.demo) throw new Error("Choose a Thread device (option: device)");
+    this._config = { ...config };
+    this._battery = null;
+    this._render();
+    if (this._hass) this._refresh();
+  }
+  set hass(hass) {
+    const first = !this._hass;
+    this._hass = hass;
+    if (first) this._refresh();
+    else this._render();
+  }
+  connectedCallback() {
+    this._timer = setInterval(() => this._refresh(), MESH_MS);
+  }
+  disconnectedCallback() {
+    clearInterval(this._timer);
+  }
+  get _T() {
+    const l = this._config && this._config.language || this._hass && this._hass.language || "en";
+    return textFor(l.slice(0, 2));
+  }
+  _deviceId() {
+    const d = this._config.device || "";
+    if (d.includes(".") && this._hass && this._hass.entities && this._hass.entities[d])
+      return this._hass.entities[d].device_id;
+    return d;
+  }
+  async _refresh() {
+    if (!this._hass || !this._config || this._config.demo) return this._render();
+    try {
+      this._mesh = await cached(meshSlot, MESH_MS, () => loadMesh(this._hass));
+      this._sig = await cached(sigSlot, MESH_MS, () => loadSignal(this._hass));
+      this._error = null;
+      await this._loadBattery();
+    } catch (e) {
+      this._error = e.code || "error";
+      console.warn("Thread Pulse device card:", e);
+    }
+    this._render();
+  }
+  _batteryEntity(devId) {
+    const h = this._hass;
+    for (const e of Object.values(h.entities || {})) {
+      if (e.device_id !== devId) continue;
+      const st = h.states[e.entity_id];
+      if (st && st.attributes.device_class === "battery" && st.attributes.unit_of_measurement === "%") return st;
+    }
+    return null;
+  }
+  async _loadBattery() {
+    const st = this._batteryEntity(this._deviceId());
+    if (!st || this._battery && this._battery.entity === st.entity_id && Date.now() - this._battery.t < BATT_MS)
+      return;
+    try {
+      const series = await batteryStatistics(this._hass, [st.entity_id]);
+      this._battery = { entity: st.entity_id, t: Date.now(), points: series[st.entity_id] };
+    } catch (e) {
+      this._battery = { entity: st.entity_id, t: Date.now(), points: [] };
+    }
+  }
+  _data() {
+    if (this._config.demo) return this._demo = this._demo || demoData(this._config.demo);
+    const devId = this._deviceId(), dev = this._mesh.devs[devId];
+    if (!dev) return null;
+    const h = this._hass, area = dev.areaId && h.areas && h.areas[dev.areaId] ? h.areas[dev.areaId].name : "";
+    const out = { devId, name: dev.name, area, available: dev.available, type: dev.type, role: dev.role };
+    if (!dev.ext) return out;
+    const c = connectionOf(dev, this._mesh);
+    if (!c.router && c.parent)
+      c.parentName = c.parentDev ? c.parentDev.name : c.parent === this._mesh.brExt ? this._T.brLabel : "…" + c.parent.slice(-4);
+    out.conn = c;
+    out.series = this._sig && this._sig[dev.ext] || [];
+    const st = this._batteryEntity(devId);
+    if (st) {
+      out.battery = Math.round(parseFloat(st.state));
+      if (this._battery && this._battery.entity === st.entity_id)
+        out.forecast = forecastFrom(this._battery.points, out.battery);
+    }
+    return out;
+  }
+  _render() {
+    const root = this.shadowRoot || this.attachShadow({ mode: "open" });
+    if (!this._config) return;
+    const T = this._T;
+    let body;
+    if (this._error)
+      body = `<div class="msg">${esc(this._error === "notAdmin" ? T.notAdmin : this._error === "noMatter" ? T.noMatter : T.error)}</div>`;
+    else if (!this._config.demo && !this._mesh) body = `<div class="msg">${esc(T.loading)}</div>`;
+    else {
+      const d = this._data();
+      if (!d) body = `<div class="msg">${esc(T.dcNotFound)}</div>`;
+      else body = this._cardHtml(d, T);
+    }
+    root.innerHTML = `<style>${STYLE}</style><ha-card>${body}</ha-card>`;
+    const b = root.querySelector("button.tp");
+    if (b) b.onclick = () => this._open();
+  }
+  _cardHtml(d, T) {
+    const role = T.roles[d.role] || T.types[d.type] || "";
+    let h = `<div class="hd"><span class="dot${d.available ? "" : " off"}"></span><div><div class="name">${esc(d.name)}</div><div class="sub">${esc([role, d.area].filter(Boolean).join(" · "))}${d.available ? "" : ` · <span class="off-t">${esc(T.dcOffline)}</span>`}</div></div></div>`;
+    if (!d.conn)
+      return `<button class="tp" aria-label="${esc(T.dcOpen(d.name))}">${h}<div class="muted">${esc(T.dcNotThread)}</div></button>`;
+    const sig = (r) => `<span class="${quality(r)}">${r} dBm · ${esc(T[quality(r)])}</span>`;
+    h += `<dl>`;
+    if (d.conn.router)
+      h += `<dt>${esc(T.dcLinks)}</dt><dd>${d.conn.links ? `${esc(T.dcRouterLinks(d.conn.links))} · ${sig(d.conn.best)}` : `<span class="muted">${esc(T.dcNone)}</span>`}</dd>`;
+    else
+      h += `<dt>${esc(T.parent)}</dt><dd>${d.conn.parentName ? `${esc(d.conn.parentName)} · ${sig(d.conn.rssi)}` : `<span class="muted">${esc(T.dcNone)}</span>`}</dd>`;
+    if (typeof d.battery === "number" && !isNaN(d.battery)) {
+      const f = d.forecast, cls = d.battery < 20 ? "weak" : d.battery < 40 ? "medium" : "good";
+      const ft = !f ? "" : f.state === "ok" ? T.bfEmpty(f.days) : f.state === "nodata" ? T.bfNoData(f.days) : T.bfNoDrop(f.basis);
+      h += `<dt>${esc(T.secBattery)}</dt><dd><span class="${cls}">${d.battery} %</span>${ft ? ` <span class="muted">· ${esc(ft)}</span>` : ""}</dd>`;
+    }
+    h += `</dl>`;
+    h += d.series.length ? `<div>${sparkline(d.series)}<div class="tl">${esc(d.conn.router ? T.dcTrendRouter : T.dcTrendParent)}</div></div>` : `<div class="tl">${esc(T.dcNoTrend)}</div>`;
+    return `<button class="tp" aria-label="${esc(T.dcOpen(d.name))}">${h}</button>`;
+  }
+  _open() {
+    const devId = this._config.demo ? null : this._deviceId(), map = (this._config.map_path || "").trim();
+    let path;
+    if (map) path = devId ? `${map}${map.includes("?") ? "&" : "?"}tp_device=${encodeURIComponent(devId)}` : map;
+    else if (devId) path = `/config/devices/device/${devId}`;
+    if (!path) return;
+    history.pushState(null, "", path);
+    window.dispatchEvent(new CustomEvent("location-changed"));
+  }
+  getCardSize() {
+    return 3;
+  }
+  getGridOptions() {
+    return { columns: 6, rows: 3, min_columns: 4, min_rows: 2 };
+  }
+  static getStubConfig() {
+    return { device: "" };
+  }
+  static getConfigForm() {
+    return {
+      schema: [
+        { name: "device", required: true, selector: { device: { integration: "matter" } } },
+        { name: "map_path", selector: { text: {} } },
+        {
+          name: "language",
+          selector: {
+            select: {
+              mode: "dropdown",
+              options: [
+                { value: "", label: "Home Assistant language" },
+                { value: "en", label: "English" },
+                { value: "de", label: "Deutsch" },
+                { value: "fr", label: "Français" },
+                { value: "it", label: "Italiano" },
+                { value: "es", label: "Español" },
+                { value: "nl", label: "Nederlands" }
+              ]
+            }
+          }
+        }
+      ],
+      computeLabel: (s) => ({
+        device: "Thread device",
+        map_path: "Tap opens the map at (path of the view with the Thread Pulse card, e.g. /dashboard-network/thread; empty = device page)",
+        language: "Language"
+      })[s.name]
+    };
+  }
+};
+if (!customElements.get("thread-pulse-device-card"))
+  customElements.define("thread-pulse-device-card", ThreadPulseDeviceCard);
+window.customCards = window.customCards || [];
+if (!window.customCards.some((c) => c.type === "thread-pulse-device-card"))
+  window.customCards.push({
+    type: "thread-pulse-device-card",
+    name: "Thread Pulse – device",
+    preview: false,
+    description: "One Thread device: parent and signal, battery with forecast, signal of the last 7 days.",
+    documentationURL: "https://github.com/riticulus/ha-thread-pulse/wiki/Device-Card"
+  });
+
 // src/card.js
 var TP_BASE = new URL(".", import.meta.url).href;
 var tpVisPromise = null;
@@ -6685,6 +7110,13 @@ function tpLoadVis() {
     });
   return tpVisPromise;
 }
+var focusParam = () => new URLSearchParams(location.search).get("tp_device");
+function dropFocusParam() {
+  const u = new URL(location.href);
+  if (!u.searchParams.has("tp_device")) return;
+  u.searchParams.delete("tp_device");
+  history.replaceState(history.state, "", u.pathname + u.search + u.hash);
+}
 var ThreadPulseCard = class extends HTMLElement {
   setConfig(config) {
     this._config = { ...config };
@@ -6701,8 +7133,17 @@ var ThreadPulseCard = class extends HTMLElement {
   }
   connectedCallback() {
     if (this._hass && !this._tp) this._start();
+    this._onLocation = () => {
+      const d = focusParam();
+      if (d && this._tp) {
+        this._tp.focusDevice(d);
+        dropFocusParam();
+      }
+    };
+    window.addEventListener("location-changed", this._onLocation);
   }
   disconnectedCallback() {
+    window.removeEventListener("location-changed", this._onLocation);
     this._stop();
   }
   _restart() {
@@ -6743,7 +7184,8 @@ var ThreadPulseCard = class extends HTMLElement {
         ambient: !!this._config.ambient,
         showWifi: this._config.show_wifi !== false,
         ambientMotion: this._config.ambient_motion !== false,
-        hintDays: this._config.hint_window_days
+        hintDays: this._config.hint_window_days,
+        focusDevice: focusParam()
       },
       {
         embedded: true,
@@ -6759,6 +7201,7 @@ var ThreadPulseCard = class extends HTMLElement {
       }
     );
     this._starting = false;
+    dropFocusParam();
   }
   getCardSize() {
     return 10;

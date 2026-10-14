@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- Test page for the device card (<thread-pulse-device-card>, issue #126) in demo mode – used by smoke_test.py.
+     Open /tests/device-card.html from a local web server; add ?dark for dark colours. -->
+<html lang="en">
+<head><meta charset="utf-8"><title>Thread Pulse device card test</title>
+<style>
+  body { margin: 0; padding: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 360px)); gap: 16px;
+         font-family: -apple-system, "Segoe UI", Roboto, sans-serif; background: #f4f5f7;
+         --primary-text-color: #212121; --secondary-text-color: #6b7280; --primary-color: #03a9f4; --card-background-color: #fff; }
+  body.dark { background: #111; --primary-text-color: #e1e1e1; --secondary-text-color: #9aa0a6; --card-background-color: #1c1c1c; }
+  thread-pulse-device-card { height: 210px; }
+</style>
+<script>
+  // stand-in for Home Assistant's <ha-card>
+  customElements.define("ha-card", class extends HTMLElement {
+    connectedCallback() { this.style.cssText = "display:block;background:var(--card-background-color);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.15)"; }
+  });
+</script>
+</head>
+<body>
+<thread-pulse-device-card id="battery"></thread-pulse-device-card>
+<thread-pulse-device-card id="router"></thread-pulse-device-card>
+<script type="module">
+  import "../dist/ha-thread-pulse.js";
+  if (location.search.includes("dark")) document.body.classList.add("dark");
+  const lang = new URLSearchParams(location.search).get("lang") || "en";
+  const hass = { language: lang, states: {}, entities: {}, areas: {} };
+  for (const [id, demo] of [["battery", true], ["router", "router"]]) {
+    const c = document.getElementById(id);
+    c.setConfig({ demo, language: lang });
+    c.hass = hass;
+  }
+</script>
+</body>
+</html>

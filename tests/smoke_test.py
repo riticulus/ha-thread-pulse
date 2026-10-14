@@ -309,6 +309,20 @@ async def other_pages(r):
         tall = await b.js("document.getElementById('side').getBoundingClientRect().height")
         r.check("phone: sheet handle makes the panel taller", tall > side[1] + 150 and await b.js("document.getElementById('sheetbtn').getAttribute('aria-expanded') === 'true'"), f"{side[1]} → {tall:.0f}")
         r.errors("phone width", b.errors)
+    async with Browser() as b:                # device card (#126): demo battery device and router
+        await b.open("tests/device-card.html", wait=3)
+        bat = await b.js("document.getElementById('battery').shadowRoot.textContent")
+        rt = await b.js("document.getElementById('router').shadowRoot.textContent")
+        r.check("device card: battery device with parent, signal, battery forecast and 7-day chart", "Front door" in bat and "Kitchen plug · -73 dBm · medium" in bat
+                and "15 %" in bat and "empty in about 3 weeks" in bat and "Signal to the parent · 7 days" in bat
+                and await b.js("!!document.getElementById('battery').shadowRoot.querySelector('svg path.line')"), bat[-200:])
+        r.check("device card: router with its router links", "6 routers · -50 dBm · good" in rt and "Best router link" in rt, rt[-160:])
+        r.check("device card: the card is one button (keyboard, screen reader)", await b.js("document.getElementById('battery').shadowRoot.querySelector('button.tp').getAttribute('aria-label')") == "Front door – open on the map")
+        r.errors("device card", b.errors)
+    async with Browser() as b:                # link from a device card: ?device= opens the device on the map (#126)
+        await b.open("dist/thread-pulse.html?demo&lang=en&device=f2a0c0de00001001", wait=8)
+        r.check("map opens the device given in the link", await b.js(PANEL_TITLE) == "Kitchen plug", str(await b.js(PANEL_TITLE)))
+        r.errors("device link", b.errors)
     async with Browser() as b:                # the card file itself (what HACS installs), demo mode, in a shadow root
         await b.open("tests/card.html", wait=8)
         S = "document.getElementById('card').shadowRoot"

@@ -85,6 +85,17 @@ export const TEXT_DE = {
   spNoZigbee: "Kein Zigbee-Kanal (ZHA nicht eingerichtet).",
   spNote:
     "Bekannt sind nur die WLAN-Kanäle von Matter-Geräten im WLAN – nicht die weiteren Netze deines Access Points oder die der Nachbarn. Der Kanal einer Hue Bridge ist nicht verfügbar.",
+  // Gerätekarte (#126)
+  dcNotFound: "Dieses Gerät gehört nicht zur Matter-Integration – wähle in den Karteneinstellungen ein Thread-Gerät.",
+  dcNotThread: "Dieses Gerät nutzt WLAN oder Ethernet, nicht Thread.",
+  dcOffline: "nicht erreichbar",
+  dcOpen: name => `${name} – auf der Karte öffnen`,
+  dcLinks: "Verbindungen",
+  dcRouterLinks: n => `${n} Router`,
+  dcNone: "keine gemeldet",
+  dcTrendParent: "Signal zum Parent · 7 Tage",
+  dcTrendRouter: "Beste Router-Verbindung · 7 Tage",
+  dcNoTrend: "Noch kein Signalverlauf – Thread Pulse zeichnet ihn auf, solange seine Karte offen ist.",
   backNet: "Netzwerk",
   devTabs: { status: "Zustand", link: "Verbindung", device: "Gerät" },
   kSignal: "Signal dBm",

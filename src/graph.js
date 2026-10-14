@@ -3,7 +3,12 @@
 
 export default function install(tp) {
   const { $, COLORS, DEMO, QUAL, SHOW_WIFI, VIS, hex16, host, iconImg, prefs } = tp;
-  Object.assign(tp, { render });
+  Object.assign(tp, { render, zoomTo });
+  // zoom to a device (double-click, the device card's link #126) – the panel is next to the map, so the centre is free
+  function zoomTo(id) {
+    if (!tp.network) return;
+    tp.network.focus(id, { scale: Math.max(1.2, tp.network.getScale()), animation: { duration: 400 } });
+  }
   // ---------- graph ----------
   tp.searchHits = [];
   tp.searchActive = false;
@@ -250,22 +255,8 @@ export default function install(tp) {
     });
     // double click / double tap (issue #23): on empty space center and fit the whole mesh, on a device zoom to it
     tp.network.on("doubleClick", p => {
-      if (p.nodes.length && !String(p.nodes[0]).startsWith("room:")) {
-        // center the device in the part of the map that the detail panel does not cover
-        const pn = $("panel"),
-          st = $("stage").getBoundingClientRect(),
-          r = pn.hidden ? null : pn.getBoundingClientRect();
-        const offset = !r
-          ? { x: 0, y: 0 }
-          : r.width < st.width * 0.8
-            ? { x: -(r.width + 8) / 2, y: 0 }
-            : { x: 0, y: -r.height / 2 };
-        tp.network.focus(p.nodes[0], {
-          scale: Math.max(1.2, tp.network.getScale()),
-          offset,
-          animation: { duration: 400 },
-        });
-      } else tp.network.fit({ animation: { duration: 400 } });
+      if (p.nodes.length && !String(p.nodes[0]).startsWith("room:")) zoomTo(p.nodes[0]);
+      else tp.network.fit({ animation: { duration: 400 } });
     });
     tp.network.on("hoverNode", () => {
       $("net").style.cursor = "pointer";

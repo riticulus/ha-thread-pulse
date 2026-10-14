@@ -14,7 +14,7 @@ const codes = fs.readdirSync(dir).filter(f => f.endsWith(".js") && f !== "index.
 const en = load("en").text, keys = Object.keys(en).sort();
 // sample arguments per function, so that every text function can be called
 const samples = { foreignLabel: ["f2a0c0de0000d212"], hPowerCut: [140, ["Lamp"]], hWeakParent: ["Plug", -85, true], chParent: ["A", "B", -70],
-  chSignal: ["A", "good", "weak", -82], chRole: ["Router", "End device"], respVal: [96, 95, 6], forwardedVal: [3, 12], asOf: ["10:00", 19], htChildrenBad: ["Plug", 8, 12], chGrade: ["B", "C"], hvOf: [2, 8], factorsOk: [3, 4], trendSignalNote: [40, 168], wiAlt: ["Plug", -70], hPowerCutRecent: [5, 7, ["Lamp"]], warnAttachRecent: [6, 7], warnDetachedRecent: [3, 7], stabWindowVal: [1, 2, 3], spCh: ["Zigbee", 20, 2450], spWifiCh: [9, 2442, 2462], spInside: ["a", "b", "Plug"], spZigbeeFix: ["25, 26"], spThreadFix: ["1, 11"] };
+  chSignal: ["A", "good", "weak", -82], chRole: ["Router", "End device"], respVal: [96, 95, 6], forwardedVal: [3, 12], asOf: ["10:00", 19], htChildrenBad: ["Plug", 8, 12], chGrade: ["B", "C"], hvOf: [2, 8], factorsOk: [3, 4], trendSignalNote: [40, 168], wiAlt: ["Plug", -70], hPowerCutRecent: [5, 7, ["Lamp"]], warnAttachRecent: [6, 7], warnDetachedRecent: [3, 7], stabWindowVal: [1, 2, 3], spCh: ["Zigbee", 20, 2450], spWifiCh: [9, 2442, 2462], spInside: ["a", "b", "Plug"], spZigbeeFix: ["25, 26"], spThreadFix: ["1, 11"], dcOpen: ["Plug"] };
 const STRICT = process.argv.includes("--strict");
 let problems = 0, missingCount = 0;
 const fail = (code, msg) => { problems++; console.log(`  ${code}: ${msg}`); };

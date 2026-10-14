@@ -1,6 +1,8 @@
 // Trends per device: signal and battery over the last 7 days (issue #38).
 // Installed by createThreadPulse() (core.js); shared state and functions are on tp.
 
+import { HOUR_MS, SIG_KEY, TREND_H, hourNow, unpackSig } from "./signalstore.js";
+
 export default function install(tp) {
   const { DEMO, QUAL, esc, every, freshHass, prefs, renderPanel, root } = tp;
   Object.assign(tp, { batteryTrendHtml, recordSignal, signalTrendHtml });
@@ -10,17 +12,13 @@ export default function install(tp) {
   // hour – battery devices: signal to the parent; routers: best link to another router. Stored in Home Assistant per user
   // (like the change log, #86), so a wall tablet that is always open fills the history for every device; hours without
   // an open page are gaps in the line. Max. 7 days; written at most every 15 minutes (read-merge-write).
-  const SIG_KEY = "thread_pulse_signal",
-    TREND_H = 7 * 24,
-    HOUR_MS = 3600000,
-    SIG_SAVE_MS = 15 * 60000;
+  const SIG_SAVE_MS = 15 * 60000;
   let sigHist = {},
     sigStore = null,
     sigDirty = false,
     sigLoading = null; // id → [[hour, dBm, samples], …] oldest first
   let battHist = {}; // id → { t: loaded at, pts: [[hour, %], …] }
   let trendHover = null; // { key, i } – survives the panel refresh every 5 s
-  const hourNow = () => Math.floor(Date.now() / HOUR_MS);
   function pruneSig(h = hourNow()) {
     for (const id of Object.keys(sigHist)) {
       sigHist[id] = sigHist[id].filter(e => e[0] > h - TREND_H);
@@ -47,12 +45,6 @@ export default function install(tp) {
       d: Object.fromEntries(Object.entries(sigHist).map(([id, l]) => [id, l.map(([h, v, n]) => [h - base, v, n])])),
     };
   };
-  const unpackSig = v =>
-    !v || !v.d
-      ? {}
-      : Object.fromEntries(
-          Object.entries(v.d).map(([id, l]) => [id, (l || []).map(([dh, x, n]) => [v.base + dh, x, n])]),
-        );
   function signalNow() {
     // the value per device right now (same as the panel and the list)
     const out = {};
