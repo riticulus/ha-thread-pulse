@@ -86,7 +86,7 @@ Browser tests run against the demo mode in headless Chrome – no Home Assistant
 ```bash
 python3 build.py
 pip install -r tests/requirements.txt      # websockets, Pillow
-node tests/check-i18n.js                   # translations complete
+node tests/check-i18n.js                   # translations (missing ones are listed, English is used)
 python3 tests/smoke_test.py                # every feature, fails on JavaScript errors (~2 min, --quick ~1 min)
 python3 tests/visual_test.py               # centering after room view and double-click (pixel checks)
 ```
@@ -99,7 +99,7 @@ A GitHub action runs on every pull request:
 
 - **HACS validation** of the repository
 - **Build check:** `build.py` is run and the generated files must match `src/`
-- **Translations complete:** `node tests/check-i18n.js` – every language has the same keys as English
+- **Translations:** `node tests/check-i18n.js` – no unknown keys, matching types, every text function works. Keys missing in a language only give a warning: they fall back to English at runtime, so a pull request may add its texts in English only. Releases run the check with `--strict`, then every language must be complete
 - **Syntax check** of the card and the page
 - **User guide:** `python3 tools/wiki.py check` – every page link and image in `docs/wiki/` exists
 
@@ -126,7 +126,7 @@ This wiki is generated from the folder [`docs/wiki`](https://github.com/riticulu
 `tools/release.py` does the mechanical steps; the GitHub action *Release* creates the release.
 
 1. **Prepare:** on a branch `release/X.Y.Z` run `python3 tools/release.py prepare X.Y.Z` – sets `VERSION` in `src/version.js`, turns *Unreleased* into `[X.Y.Z] – <today>`, updates the compare links and builds. Open a pull request and merge it.
-2. **Tag:** `git tag -a vX.Y.Z <merge commit> -m "Thread Pulse X.Y.Z"` and `git push origin vX.Y.Z`. The action *Release* checks version, changelog and generated files (`tools/release.py check`) and the translations, then creates the GitHub release with the changelog section as notes (`tools/release.py notes`) – **never with attachments**, because HACS would download an attachment instead of `dist/`.
+2. **Tag:** `git tag -a vX.Y.Z <merge commit> -m "Thread Pulse X.Y.Z"` and `git push origin vX.Y.Z`. The action *Release* checks version, changelog and generated files (`tools/release.py check`) and that every language is complete (`check-i18n.js --strict`), then creates the GitHub release with the changelog section as notes (`tools/release.py notes`) – **never with attachments**, because HACS would download an attachment instead of `dist/`.
    After the release the action publishes the user guide from the tag to the wiki.
 3. **Back to development:** on a branch `chore/post-X.Y.Z` run `python3 tools/release.py dev` (`X.Y.Z+dev`), pull request, merge.
 
@@ -146,7 +146,7 @@ Do not open a pull request from `release/X.Y.x` into `main` – the changes are 
 ## Adding a language
 
 1. Copy `src/i18n/en.js` to `src/i18n/<code>.js` (two-letter code, e.g. `pt.js`) and rename `TEXT_EN` to `TEXT_PT`.
-2. Translate all values; optionally add `NAMES_PT` with translations of common English entity names (see `de.js`).
+2. Translate the values – keys you leave out fall back to English and are listed by the check; optionally add `NAMES_PT` with translations of common English entity names (see `de.js`).
 3. Run `node tests/check-i18n.js` and `python3 build.py`.
 4. Add the language to the list in `src/card.js` (visual editor).
 

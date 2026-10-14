@@ -7,6 +7,7 @@ body:
       value: |
         The French, Italian, Spanish and Dutch texts have not been checked by native speakers yet – thank you for helping!
         The texts are in [`src/i18n/`](https://github.com/riticulus/ha-thread-pulse/tree/main/src/i18n), one file per language. A pull request is welcome too.
+        Texts that are still missing in a language are shown in English; `node tests/check-i18n.js` lists them.
   - type: dropdown
     id: language
     attributes:
