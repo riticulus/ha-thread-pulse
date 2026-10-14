@@ -15,19 +15,16 @@ OUT = Path(__file__).resolve().parent / "output"
 PAGE = os.environ.get("TP_PAGE", "dist/thread-pulse.html") + "?demo&lang=en"   # TP_PAGE: test another build
 W, H, TOP = 1300, 800, 100                 # viewport and top of the map area (set in main() from the page)
 MW = W                                     # right edge of the map – the inspector column is to its right (#130), set in main()
-SKIP = []                                  # boxes of the live ticker and the ? button (measured in main(): fonts differ per system)
 
 
 def bbox(png):
-    """Center offset and filled share of the drawn mesh inside the map area (the live ticker is ignored)."""
+    """Center offset and filled share of the drawn mesh inside the map area (live ticker and ? button are hidden)."""
     im = Image.open(io.BytesIO(png)).convert("RGB")
     px = im.load(); w, h = im.size
     bg = px[5, TOP + 5]
     xs, ys = [], []
     for y in range(TOP, h, 2):
         for x in range(0, MW, 2):
-            if any(x0 <= x <= x1 and y0 <= y <= y1 for x0, y0, x1, y1 in SKIP):
-                continue
             p = px[x, y]
             if abs(p[0] - bg[0]) + abs(p[1] - bg[1]) + abs(p[2] - bg[2]) > 60:
                 xs.append(x); ys.append(y)
@@ -58,12 +55,12 @@ async def main():
     r = Results()
     async with Browser(width=W, height=H) as br:
         await br.open(PAGE, wait=12)
-        global MW, TOP, SKIP
+        global MW, TOP
         MW = int(await br.js("document.getElementById('stage').getBoundingClientRect().right")) - 2
         TOP = int(await br.js("document.getElementById('stage').getBoundingClientRect().top")) + 2
-        # the ticker grows upwards by a line or two while the test runs
-        SKIP = await br.js("(() => { const l = document.getElementById('live').getBoundingClientRect(), q = document.getElementById('legbtn').getBoundingClientRect();"
-                           f" return [[l.left - 4, l.top - 24, l.right + 24, {H}], [q.left - 4, q.top - 4, q.right + 4, q.bottom + 4]]; }})()")
+        # the live ticker and the ? button are over the map: hidden, so only the mesh is measured (the ticker's size
+        # depends on the fonts of the system and changes while the test runs)
+        await br.js("(() => { const s = document.createElement('style'); s.textContent = '#live, #legbtn { visibility: hidden !important; }'; document.head.appendChild(s); })()")
         base = bbox(await br.screenshot(OUT / "base.png"))
         r.check("normal load: mesh centered", abs(base["dx"]) < 40 and abs(base["dy"]) < 40, str(base))
 
