@@ -38,11 +38,10 @@ async def main_page(r, quick):
         r.check("legend shows Wi-Fi entry (demo has Wi-Fi devices)", await b.js(f"!{G}('lgwifi').hidden"))
 
         # list and hints
-        await b.js(f"{G}('toggle').click()")
-        r.check("list opens", await b.js(f"!{G}('info').classList.contains('hidden')"))
+        # layout (issue #130): network panel in the column next to the map
+        r.check("network panel shown in the column next to the map", await b.js(f"getComputedStyle({G}('info')).display !== 'none' && {G}('side').getBoundingClientRect().left > {G}('stage').getBoundingClientRect().right - 2"))
         hints = await b.js("document.querySelectorAll('#info table')[0] ? document.querySelectorAll('#info table')[0].rows.length : 0")
         r.check("hints listed", hints >= 2, f"{hints} hint rows")
-        r.check("list button shows hint count", "hint" in await b.js(f"{G}('toggle').getAttribute('aria-label')") and await b.js(f"!!{G}('toggle').querySelector('.badge')"))
         r.check("status line is short (version in the menu)", "1.5" not in status and "v1." not in status, status)
         await b.js(f"{G}('legbtn').click()")
         r.check("? on the map opens the legend", await b.js(f"!{G}('legend').classList.contains('hidden') && {G}('legbtn').getAttribute('aria-expanded') === 'true'"))
@@ -55,10 +54,10 @@ async def main_page(r, quick):
         # panel below the map: tabs (issue #108)
         tabs = await b.js("[...document.querySelectorAll('#tabbar [data-tab]')].map(t => t.dataset.tab)")
         r.check("five tabs", tabs == ["overview", "hints", "devices", "links", "changes"], str(tabs))
-        badge = await b.js(f"Number({G}('toggle').querySelector('.badge').textContent)")
+        badge = await b.js("Number(document.querySelector('#tabbar [data-tab=hints] .cnt').textContent)")
         await b.js("document.querySelector('[data-tab=hints]').click()")
         rows = await b.js("document.querySelectorAll('#tab-hints table.hints tr').length")
-        r.check("hints tab: one row per hint, same count as the button, warnings first", rows == badge and await b.js("!document.getElementById('tab-hints').hidden && document.getElementById('tab-overview').hidden")
+        r.check("hints tab: one row per hint, same count as the tab, warnings first", rows == badge and await b.js("!document.getElementById('tab-hints').hidden && document.getElementById('tab-overview').hidden")
                 and await b.js("document.querySelector('#tab-hints td').textContent === '⚠'"), f"{rows} rows, badge {badge}")
         await b.js("document.querySelector('[data-tab=devices]').click()")
         n_all = await b.js("document.querySelectorAll('#tab-devices table.devs tr').length - 1")
@@ -112,6 +111,13 @@ async def main_page(r, quick):
             r.check(f"device panel has section '{s}'", s in sections, str(sections))
         r.check("battery forecast row", await b.js("[...document.querySelectorAll('#panel dt')].some(d => d.textContent === 'Forecast')"))
         r.check("warning box shown (unstable demo device)", await b.js("!!document.querySelector('#panel .warn')"))
+        # device panel (issue #130): key numbers, three tabs, network panel hidden while a device is shown
+        r.check("device panel: key numbers on top", await b.js("document.querySelectorAll('#panel .keys > div').length") >= 3)
+        r.check("device panel: three tabs, Status shown first", await b.js("[...document.querySelectorAll('#panel [data-devtab]')].map(t => t.dataset.devtab).join()") == "status,link,device"
+                and await b.js("[...document.querySelectorAll('#panel .dtab')].filter(d => !d.hidden).map(d => d.dataset.g).join()") == "status")
+        r.check("device panel replaces the network panel in the column", await b.js(f"getComputedStyle({G}('info')).display === 'none'"))
+        await b.js("document.querySelector('[data-devtab=link]').click()")
+        r.check("device panel: tab switch shows the Thread section", await b.js("[...document.querySelectorAll('#panel .dtab:not([hidden]) h4')].map(h => h.textContent).includes('Thread')"))
         # trends (issue #38): battery and signal, 7 days, value on tap
         charts = await b.js("[...document.querySelectorAll('#panel svg[data-trend]')].map(x => x.dataset.trend.split(':')[0])")
         r.check("trends: battery and signal chart in the panel", sorted(charts) == ["b", "s"], str(charts))
@@ -123,7 +129,8 @@ async def main_page(r, quick):
         after = await b.js("document.querySelectorAll('#panel .tread')[1].textContent")
         r.check("trends: tapping the chart shows that hour", after != before and "dBm" in after, f"{before} → {after}")
         await b.js(CLOSE); await asyncio.sleep(0.3)
-        r.check("Esc / × close panel and clear search", await b.js(f"{G}('panel').hidden && {G}('search').value === ''"))
+        r.check("Esc / ‹ Network close panel and clear search", await b.js(f"{G}('panel').hidden && {G}('search').value === ''"))
+        r.check("network panel back after closing the device", await b.js(f"getComputedStyle({G}('info')).display !== 'none'"))
 
         # Wi-Fi device
         await b.js(search_js("Air quality")); await asyncio.sleep(1.2)
@@ -273,7 +280,7 @@ async def other_pages(r):
         r.errors("same hardware address", b.errors)
     async with Browser() as b:                # time window from the URL / card option (#24)
         await b.open("dist/thread-pulse.html?demo&lang=en&hintdays=3", wait=8)
-        await b.js(f"{G}('toggle').click(); document.querySelector('[data-tab=hints]').click()")
+        await b.js("document.querySelector('[data-tab=hints]').click()")
         r.check("hint time window configurable (3 days)", "Restarted 4 times in the last 3 days" in await b.js(f"{G}('tab-hints').textContent"))
         r.errors("time window", b.errors)
     async with Browser(width=390, height=760) as b:     # phone: toolbar in one row of icons (issue #107)
@@ -284,6 +291,13 @@ async def other_pages(r):
         r.check("phone: search collapsed to an icon", await b.js("document.getElementById('search').getBoundingClientRect().width < 50"))
         await b.js("document.getElementById('search').focus()")
         r.check("phone: search widens when used", await b.js("document.getElementById('search').getBoundingClientRect().width > 300"))
+        await b.js("document.getElementById('search').blur()")
+        # phone (issue #130): the column is a sheet below the map, the handle makes it tall or low
+        side = await b.js("(() => { const s = document.getElementById('side').getBoundingClientRect(), m = document.getElementById('stage').getBoundingClientRect(); return [s.top >= m.bottom - 2, Math.round(s.height)]; })()")
+        r.check("phone: network panel is a sheet below the map", side[0] and 200 < side[1] < 400, str(side))
+        await b.js("document.getElementById('sheetbtn').click()")
+        tall = await b.js("document.getElementById('side').getBoundingClientRect().height")
+        r.check("phone: sheet handle makes the panel taller", tall > side[1] + 150 and await b.js("document.getElementById('sheetbtn').getAttribute('aria-expanded') === 'true'"), f"{side[1]} → {tall:.0f}")
         r.errors("phone width", b.errors)
     async with Browser() as b:
         await b.open("dist/thread-pulse.html?lang=en", wait=3)

@@ -16,7 +16,8 @@ All source code is in `src/`, one file per topic. `build.py` assembles the files
 | `src/helpers.js` | `COLORS` (all colours in one place), signal quality, icon images, theme, connection to Home Assistant, language |
 | `src/data.js` | Loading the data from Home Assistant (registries, cached Matter diagnostics, border router) |
 | `src/graph.js` | Building and drawing the map |
-| `src/tabs.js` | Network panel below the map (tabs) |
+| `src/tabs.js` | Network panel (tabs) |
+| `src/layout.js` | Inspector column: tabbed device panel with key numbers, sheet below the map on narrow cards |
 | `src/routers.js` | Names of other border routers from Home Assistant's border router discovery |
 | `src/live.js` | Routing tables, path calculation, animated messages, ticker, subscription to Home Assistant events |
 | `src/heat.js` | Traffic heat |

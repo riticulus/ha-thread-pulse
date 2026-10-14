@@ -103,7 +103,7 @@
       [[COLORS.good, T.lgRespFast], [COLORS.medium, T.lgRespMid], [COLORS.weak, T.lgRespSlow]].map(([c, t]) =>
         `<span class="lg lgresp"${respView ? "" : " hidden"}><span class="dot" style="background:transparent;border:2.5px solid ${c};box-sizing:border-box"></span>${t}</span>`).join("");
     $("respbtn").textContent = respView ? T.respViewOff : T.respViewOn;
-    setList(!$("info").classList.contains("hidden"), false);
+    setSheet($("wrap").classList.contains("sheet-tall"));
     setLegend(!$("legend").classList.contains("hidden"), false);
   }
 

@@ -13,7 +13,8 @@ from browser import Browser, Results
 
 OUT = Path(__file__).resolve().parent / "output"
 PAGE = os.environ.get("TP_PAGE", "dist/thread-pulse.html") + "?demo&lang=en"   # TP_PAGE: test another build
-W, H, TOP = 1300, 800, 100                 # viewport and height of the toolbar area to ignore
+W, H, TOP = 1300, 800, 100                 # viewport and top of the map area (set in main() from the page)
+MW = W                                     # right edge of the map – the inspector column is to its right (#130), set in main()
 
 
 def bbox(png):
@@ -23,14 +24,14 @@ def bbox(png):
     bg = px[5, TOP + 5]
     xs, ys = [], []
     for y in range(TOP, h, 2):
-        for x in range(0, w, 2):
-            if y > h - 100 and x < 340:
+        for x in range(0, MW, 2):
+            if (y > h - 100 and x < 340) or (x < 50 and y < TOP + 50):    # live ticker, ? button
                 continue
             p = px[x, y]
             if abs(p[0] - bg[0]) + abs(p[1] - bg[1]) + abs(p[2] - bg[2]) > 60:
                 xs.append(x); ys.append(y)
-    mw, mh = w, h - TOP
-    return {"dx": (min(xs) + max(xs)) / 2 - w / 2, "dy": (min(ys) + max(ys)) / 2 - (TOP + mh / 2),
+    mw, mh = MW, h - TOP
+    return {"dx": (min(xs) + max(xs)) / 2 - MW / 2, "dy": (min(ys) + max(ys)) / 2 - (TOP + mh / 2),
             "fill_w": (max(xs) - min(xs)) / mw, "fill_h": (max(ys) - min(ys)) / mh}
 
 
@@ -39,7 +40,7 @@ def router_center(png):
     im = Image.open(io.BytesIO(png)).convert("RGB"); px = im.load(); w, h = im.size
     blue = lambda x, y: (lambda r, g, b: abs(r - 30) < 20 and abs(g - 136) < 20 and abs(b - 229) < 20)(*px[x, y])
     for y in range(TOP + 30, h - 140, 6):
-        for x in range(380, w - 440, 6):
+        for x in range(380, MW - 40, 6):
             if not blue(x, y):
                 continue
             pts = [(xx, yy) for yy in range(y - 4, y + 45) for xx in range(x - 25, x + 26) if 0 <= xx < w and 0 <= yy < h and blue(xx, yy)]
@@ -56,6 +57,9 @@ async def main():
     r = Results()
     async with Browser(width=W, height=H) as br:
         await br.open(PAGE, wait=12)
+        global MW, TOP
+        MW = int(await br.js("document.getElementById('stage').getBoundingClientRect().right")) - 2
+        TOP = int(await br.js("document.getElementById('stage').getBoundingClientRect().top")) + 2
         base = bbox(await br.screenshot(OUT / "base.png"))
         r.check("normal load: mesh centered", abs(base["dx"]) < 40 and abs(base["dy"]) < 40, str(base))
 
@@ -66,7 +70,7 @@ async def main():
 
         await br.wheel(500, 500, -300); await br.drag(700, 600, 350, 750); await asyncio.sleep(1)
         moved = bbox(await br.screenshot(OUT / "moved.png"))
-        await br.click(W - 40, TOP + 40, count=2); await asyncio.sleep(1.2)
+        await br.click(MW - 40, TOP + 40, count=2); await asyncio.sleep(1.2)
         fit = bbox(await br.screenshot(OUT / "dblclick-fit.png"))
         r.check("double-click on empty space: centered and fitted again (#23)", centered(fit, base), f"before {moved}, after {fit}")
 

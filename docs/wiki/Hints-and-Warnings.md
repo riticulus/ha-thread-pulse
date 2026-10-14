@@ -7,7 +7,7 @@ Thread Pulse points out devices that may need attention. There are two levels:
 | **Warning** | orange **⚠** | orange box | Something is not right at the moment |
 | **Hint** | blue **i** | blue box with 💡 | A possible weak spot, with a suggestion |
 
-A device shows the **i** badge only if it has no warning. All warnings and hints are also listed in the tab *Hints* of the [network panel](The-List) *(from version 1.6.0; before: at the top of the list)*; the **📊 Network** button shows how many there are.
+A device shows the **i** badge only if it has no warning. All warnings and hints are also listed in the tab *Hints* of the [network panel](The-List) *(from version 1.6.0; before: at the top of the list)*; the tab shows how many there are.
 
 > Hints are **rules of thumb** based on the data the devices report. They are suggestions, not measurements.
 

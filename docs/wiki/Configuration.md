@@ -70,7 +70,7 @@ Some choices are remembered per browser (and per Home Assistant address), not pe
 
 | Setting | Where |
 |---|---|
-| Network panel below the map shown or hidden, its tab | 📊 Network (up to version 1.5.2: ☰ Show list) |
+| Tab of the network panel | the tabs above it (version 1.6.0: also whether it is shown – 📊 Network; up to version 1.5.2: ☰ Show list) |
 | Legend shown or hidden | **?** on the map (up to version 1.5.2: ⓘ Legend in the toolbar) |
 | Traffic heat on or off | ≋ Traffic |
 | Room view on or off | ⌂ Rooms |

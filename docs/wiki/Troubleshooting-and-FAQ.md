@@ -74,7 +74,7 @@ No. It does not query devices; it only reads what Home Assistant already has and
 
 ## Can I use it on a phone?
 
-Yes. The card and the page adapt to narrow screens; the detail panel slides up from the bottom. The room view is cramped on small screens.
+Yes. The card and the page adapt to narrow screens; the network and detail panel are in a sheet below the map. The room view is cramped on small screens.
 
 ## Something else is wrong
 

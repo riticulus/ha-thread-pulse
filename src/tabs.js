@@ -16,7 +16,7 @@
   }
   function renderTabBar() {
     const bar = $("tabbar"); if (!bar) return;
-    if (tab === "changes" && !$("info").classList.contains("hidden")) prefs.set("changesSeen", Date.now());
+    if (tab === "changes" && $("panel").hidden) prefs.set("changesSeen", Date.now());
     const seen = prefs.get("changesSeen") || 0, fresh = changes.filter(c => c.t > seen).length;
     const count = { hints: hintCount, changes: fresh };
     bar.innerHTML = TABS.map(t => `<button role="tab" data-tab="${t}" aria-selected="${t === tab}"${t === tab ? ' class="on"' : ""}>${T.tabNames[t]}` +
@@ -122,7 +122,7 @@
     if (!listData) return;
     hintsOf = computeHints(listData.parents);
     const hints = allHints();
-    hintCount = hints.length; setList(!$("info").classList.contains("hidden"), false);
+    hintCount = hints.length;
     const body = { overview: () => overviewHtml(hints), hints: () => hintsHtml(hints), devices: devicesHtml, links: linksHtml, changes: () => `<div id="changes"></div>` };
     const open = $("info").querySelector("details.okf[open]");
     $("info").innerHTML = `<div id="tabbar" role="tablist" aria-label="${esc(T.netBtn.replace(/^\S+\s/, ""))}"></div>` +

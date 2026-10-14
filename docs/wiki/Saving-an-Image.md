@@ -11,7 +11,7 @@ The same menu also has a [text report](Text-Report) – a Markdown summary with 
 | **Save image (with names)** | The map exactly as shown, with device and room names – `thread-pulse-<date>.png` |
 | **Save anonymised image (no names)** | The same map, but devices are called *Device 1, 2, …* and rooms *Room A, B, …* – `thread-pulse-<date>-anonymised.png` |
 
-The image contains what the map shows at that moment: the current zoom and position, links and their colours, badges (battery, ℹ, ⚠), the room areas of the [room view](Room-View), the [traffic heat](Live-Data-Flow#traffic-heat) and messages in flight. A line at the bottom shows the version, date and time and the number of devices. The toolbar, legend, live ticker, detail panel and list are not part of the image.
+The image contains what the map shows at that moment: the current zoom and position, links and their colours, badges (battery, ℹ, ⚠), the room areas of the [room view](Room-View), the [traffic heat](Live-Data-Flow#traffic-heat) and messages in flight. A line at the bottom shows the version, date and time and the number of devices. The toolbar, legend, live ticker, detail panel and network panel are not part of the image.
 
 ## Anonymised images
 

@@ -60,6 +60,7 @@
 
   let ambientClose = null;
   function openPanel(id) {
+    if (id !== panelNode) $("panel").scrollTop = 0;
     panelNode = id; renderPanel(); $("panel").hidden = false;
     if (!prefs.get("tapped")) prefs.set("tapped", true);
     if (AMBIENT) { clearTimeout(ambientClose); ambientClose = setTimeout(closePanel, 15000); }    // ambient: close by itself
@@ -84,7 +85,7 @@
   function renderRouterPanel(id) {
     const isBr = id === brExt, nodes = Object.values(nodeById);
     const disc = brInfo[id];
-    let h = `<div class="hd"><img src="${iconImg(isBr || disc ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 80)}" alt=""><div>` +
+    let h = backHtml() + `<div class="hd"><img src="${iconImg(isBr || disc ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 80)}" alt=""><div>` +
             `<div class="t">${esc(extraLabel(id).replaceAll("\n", " "))}</div><div class="s">${esc(isBr ? T.brSub : brInfo[id] ? T.brOtherSub : T.foreignSub)}</div></div>` +
             `<button class="x" title="×" data-act="close">×</button></div>`;
     if (isBr || counts[id]) h += `<h4>${T.secLive} · ${T.msgsThrough}</h4><dl>` + liveRows(id) + `</dl>` + (isBr ? "" : `<div class="note">${T.parentHopNote}</div>`);
@@ -138,13 +139,16 @@
     const i = n.info || {}, hass = DEMO ? null : freshHass();
     if (hass) refreshBattery(hass);
     const color = !n.available ? COLORS.off : n.type === "routing_end_device" ? COLORS.router : n.type === "end_device" ? COLORS.end : COLORS.sleepy;
+    const sec = [], add = (g, x) => { if (x) sec.push([g, x]); };      // groups for the tabbed panel (layouts B and D)
     let h = `<div class="hd"><img src="${iconImg(n.icon, color, 80)}" alt=""><div><div class="t">${esc(n.name)}</div>` +
             `<div class="s">${esc(T.roles[n.role] || T.types[n.type] || "")}${n.area ? " · " + esc(n.area) : ""}${n.available ? "" : esc(T.unreachable)}</div></div>` +
             `<button class="x" title="×" data-act="close">×</button></div>`;
     for (const w of warningsOf(n)) h += `<div class="warn">⚠ ${esc(w)}</div>`;
+    add("top", h); h = "";
     const hs = (hintsOf[n.id] || []).concat(slowHint(n) || [], batteryHint(n) || []);
     if (hs.length) h += `<h4>${T.secHints}</h4>` + hs.map(t => { const k = hintKind(n.id, t);
       return `<div class="hint">💡 ${esc(t)}${k ? `<div><button class="btn small" data-dismiss="${esc(n.id + "|" + k)}">${T.hintDone}</button></div>` : ""}</div>`; }).join("") + `<div class="note">${T.hintsNote}</div>`;
+    add("status", h); h = "";
     // live
     const now = Date.now();
     h += `<h4>${T.secLive}</h4><dl>` + liveRows(n.id);
@@ -156,6 +160,7 @@
       h += row(T.forwarded, T.forwardedVal(f.filter(t => now - t < HEAT_MS).length, f.length));
     }
     h += `</dl>`;
+    add("link", h); h = "";
     // current values
     if (hass && (n.mainEntities || []).length) {
       let v = "";
@@ -175,6 +180,7 @@
            row(T.bfLabel, forecastText(battForecast[n.id])) + `</dl>` + (battForecast[n.id] && battForecast[n.id].state === "ok" ? `<div class="note">${T.bfNote}</div>` : "") +
            batteryTrendHtml(n);
     }
+    add("status", h); h = "";
     // thread
     const links = (linksOf[n.id] || []).slice().sort((p, q) => q.rssi - p.rssi);
     const par = links.filter(l => l.kind === "parent"), kids = links.filter(l => l.kind === "child"), nb = links.filter(l => l.kind === "neighbour");
@@ -185,6 +191,7 @@
     h += row(T.address, `<span style="font-family:monospace">${esc(n.hwAddr || n.id)}</span>`) + `</dl><div class="note">${T.stale}</div>`;
     h += signalTrendHtml(n);
     if (n.type === "routing_end_device") h += whatIfHtml(n.id);          // issue #77
+    add("link", h); h = "";
     // stability
     if ([i.reboots, i.detached, i.attach, i.parentChanges].some(x => x !== undefined && x !== null)) {
       h += `<h4>${T.secStability}</h4><dl>` + row(T.reboots, i.reboots) + row(T.bootReason, i.bootReason !== undefined && i.bootReason !== null ? esc(T.bootReasons[i.bootReason] || i.bootReason) : "") +
@@ -192,13 +199,15 @@
            (st => row(T.stabWindow(st.days), st.known ? esc(T.stabWindowVal(st.reboots, st.attach, st.detached)) : `<span style="color:var(--muted)">${T.trendUnknown}</span>`))(stabilityOf(n)) +
            `</dl><div class="note">${T.sinceRestart} ${T.stabNote(HINT_DAYS)}</div>`;
     }
+    add("status", h); h = "";
     // device
     h += `<h4>${T.secDevice}</h4><dl>` + row(T.manufacturer, esc(i.vendor || "")) + row(T.model, esc(i.product || "")) +
          row(T.firmware, esc(i.sw || "")) + row(T.fwUpdate, updateText(updateOf(n, hass))) + row(T.hardware, esc(i.hw || "")) + row(T.area, esc(n.area || "")) + `</dl>`;
     h += fabricsHtml(n);
     h += identifyHtml(n, hass);
     if (n.devId && !DEMO) h += `<button class="btn" data-device="${esc(n.devId)}">${T.openDevice} ↗</button>`;
-    $("panel").innerHTML = h;
+    add("device", h);
+    $("panel").innerHTML = panelLayout(n, sec);
   }
   function openDevice(devId) {
     host.navigate("/config/devices/device/" + devId);
