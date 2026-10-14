@@ -2,13 +2,6 @@
 //# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
   // ---------- UI ----------
   let hintCount = 0;
-  function setList(show, save = true) {
-    $("info").classList.toggle("hidden", !show);
-    setBtn($("toggle"), T.netBtn, show, hintCount, hintCount ? T.listHints(hintCount) : "");
-    if (show) renderTabBar();              // opening the change log tab marks its entries as seen
-    if (save) prefs.set("list", show);
-    if (network && save) setTimeout(() => { network.redraw(); network.fit({ animation: { duration: 300 } }); }, 50);
-  }
   function setLegend(show, save = true) {
     $("legend").classList.toggle("hidden", !show);
     const t = (show ? T.hideLegend : T.showLegend).replace(/^\S+\s/, "");       // the button shows "?", the text is its tooltip
@@ -16,7 +9,7 @@
     if (save) prefs.set("legend", show);
   }
   function showErr(e) {
-    setList(true, false);
+    closePanel();
     $("info").classList.add("errshown");
     $("status").textContent = T.error;
     $("info").innerHTML = `<div id="err">${esc(e.message || e)}</div>`;

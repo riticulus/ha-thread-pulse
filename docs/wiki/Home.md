@@ -36,7 +36,7 @@ Then explore the features:
 - [Change log](Change-Log)
 - [Room view](Room-View)
 - [Search](Search)
-- [Network panel below the map](The-List)
+- [Network panel](The-List)
 - [Ambient mode](Ambient-Mode)
 - [Demo mode](Demo-Mode)
 

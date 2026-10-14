@@ -1,10 +1,12 @@
   :root, :host { --bg: #ffffff; --fg: #1f2733; --muted: #6b7684; --card: #f6f8fb; --line: #d6dde6; }
   @media (prefers-color-scheme: dark) { :root, :host { --bg: #111418; --fg: #e3e7ec; --muted: #9aa4b1; --card: #1c2128; --line: #2e3540; } }
-  #wrap { display: flex; flex-direction: column; height: 100%; background: var(--bg); color: var(--fg);
+  /* layout (issue #130): toolbar and map on the left, one inspector column on the right (network panel or device panel) */
+  #wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto minmax(0, 1fr); grid-template-areas: "bar side" "stage side";
+          height: 100%; background: var(--bg); color: var(--fg);
           font: 14px/1.4 -apple-system, "Segoe UI", Roboto, sans-serif; }
   #wrap { container-type: inline-size; container-name: tp; }
   /* toolbar (issue #107): one row – search, the view toggles, the list, ⋯ menu for the rest, status */
-  #bar { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+  #bar { grid-area: bar; display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--line); }
   #bar button, #legbtn { border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 10px; cursor: pointer; font: inherit; }
   .tb { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
   .tb .badge { background: var(--c-hint, #1e88e5); color: white; border-radius: 9px; padding: 0 6px; font-size: 11px; font-weight: 600; line-height: 16px; }
@@ -49,21 +51,20 @@
   .ln { width: 18px; height: 3px; display: inline-block; border-radius: 2px; }
   .lg[hidden] { display: none; }
   .heatln { height: 7px; opacity: .6; filter: blur(.6px); }
-  #stage { flex: 1; min-height: 300px; position: relative; container-type: size; }
+  #stage { grid-area: stage; min-height: 120px; position: relative; container-type: size; }
   #net { position: absolute; inset: 0; touch-action: none; }   /* no browser page zoom on double tap inside the map */
   #live { position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px); font-size: 12px; color: var(--muted);
           background: color-mix(in srgb, var(--bg) 85%, transparent); border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; pointer-events: none; }
   #live:empty { display: none; }
   #live div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   #live b { color: var(--fg); font-weight: 600; }
-  #info { padding: 8px 12px 14px; border-top: 1px solid var(--line); font-size: 13px; max-height: 45%; overflow: auto; }
-  #info.hidden { display: none; }
-  /* panel below the map: tabs (issue #108) */
+  #info { flex: 1; min-height: 0; padding: 8px 12px 14px; font-size: 13px; overflow: auto; }
+  /* network panel: tabs (issue #108) */
   #info { padding-top: 0; }
   #tabbar { position: sticky; top: 0; z-index: 2; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; background: var(--bg);
             border-bottom: 1px solid var(--line); margin: 0 -12px 10px; padding: 0 8px; }
   #tabbar::-webkit-scrollbar { display: none; }
-  #tabbar button { border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font: inherit; font-size: 13px; padding: 8px 8px 7px;
+  #tabbar button { border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font: inherit; font-size: 13px; padding: 8px 6px 7px;
                    cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; }
   #tabbar button:hover { color: var(--fg); }
   #tabbar button.on { color: var(--fg); border-bottom-color: var(--c-hint, #1e88e5); font-weight: 600; }
@@ -95,6 +96,7 @@
   a.more { display: inline-block; margin-top: 6px; font-size: 12px; }
   /* ambient mode (issue #11): only the pulsing mesh, dark, for wall tablets */
   #wrap.ambient { background: #05070a !important; }
+  #wrap.ambient #side:not(:has(#panel:not([hidden]))):not(:has(#info.errshown)) { display: none; }
   #wrap.ambient #bar, #wrap.ambient #live, #wrap.ambient #legbtn, #wrap.ambient #legend, #wrap.ambient #info:not(.errshown) { display: none !important; }
   #wrap.ambient #info.errshown { display: block !important; }
   table { border-collapse: collapse; width: 100%; }
@@ -103,9 +105,29 @@
   /* text colours: darker variants of COLORS.good / medium / weak, readable on light and dark backgrounds */
   .g { color: #2e7d32; } .o { color: #ef6c00; } .r { color: #c62828; }
   #err { color: #c62828; padding: 12px; white-space: pre-wrap; }
-  #panel { position: absolute; top: 8px; right: 8px; bottom: 8px; width: 340px; max-width: calc(100% - 16px); overflow: auto; z-index: 5;
-           background: var(--bg); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.25); padding: 12px 14px; font-size: 13px; }
+  #side { grid-area: side; width: 410px; min-height: 0; display: flex; flex-direction: column; border-left: 1px solid var(--line); background: var(--bg); }
+  #side:has(#panel:not([hidden])) #info { display: none; }
+  #panel { flex: 1; min-height: 0; overflow: auto; padding: 10px 14px 14px; font-size: 13px; }
   #panel[hidden] { display: none; }
+  #panel .back { border: 0; background: none; color: var(--c-hint, #1e88e5); font: inherit; font-size: 12px; padding: 0 0 6px; cursor: pointer; }
+  #panel .keys { display: grid; grid-template-columns: repeat(auto-fit, minmax(64px, 1fr)); gap: 6px; margin: 8px 0 4px; }
+  #panel .keys div { background: var(--card); border-radius: 8px; padding: 6px 8px; display: flex; flex-direction: column; min-width: 0; }
+  #panel .keys span { color: var(--muted); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #panel .keys b { font-size: 16px; }
+  #panel .dtabs { display: flex; position: sticky; top: -10px; z-index: 1; background: var(--bg); border-bottom: 1px solid var(--line); margin: 6px -14px 4px; padding: 0 8px; }
+  #panel .dtabs button { flex: 1; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font: inherit; padding: 8px 4px 7px; cursor: pointer; }
+  #panel .dtabs button:hover { color: var(--fg); }
+  #panel .dtabs button.on { color: var(--fg); border-bottom-color: var(--c-hint, #1e88e5); font-weight: 600; }
+  #panel .dtab > h4:first-child { margin-top: 8px; }
+  /* narrow cards and phones: the column is a sheet below the map; the handle makes it tall or low */
+  #sheetbtn { display: none; }
+  #wrap.narrow { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) minmax(0, 42%); grid-template-areas: "bar" "stage" "side"; }
+  #wrap.narrow.sheet-tall { grid-template-rows: auto minmax(0, 1fr) minmax(0, 72%); }
+  #wrap.narrow.sheet-tall #live, #wrap.narrow.sheet-tall #legbtn, #wrap.narrow.sheet-tall #legend { display: none; }
+  #wrap.narrow #side { width: auto; border-left: 0; border-top: 1px solid var(--line); border-radius: 14px 14px 0 0; box-shadow: 0 -4px 16px rgba(0,0,0,.15); }
+  #wrap.narrow #sheetbtn { display: flex; justify-content: center; align-items: center; flex: none; height: 22px; border: 0; background: none; cursor: pointer; padding: 0; }
+  #wrap.narrow #sheetbtn::before { content: ""; width: 40px; height: 4px; border-radius: 2px; background: var(--line); }
+  #wrap.narrow #sheetbtn:hover::before { background: var(--muted); }
   /* text report (issue #85): over the map, above the detail panel */
   #report { position: absolute; inset: 8px; z-index: 6; display: flex; flex-direction: column; gap: 8px; max-width: 760px; margin: 0 auto;
             background: var(--bg); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.25); padding: 12px 14px; font-size: 13px; }
@@ -121,7 +143,6 @@
                      background: var(--card); color: var(--fg); padding: 8px; font: 12px/1.45 ui-monospace, Menlo, Consolas, monospace; white-space: pre; }
   #report .btn { border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 12px; cursor: pointer; font: inherit; }
   #report .note { color: var(--muted); font-size: 11px; }
-  @container (max-width: 600px) { #panel { top: auto; left: 0; right: 0; bottom: 0; width: auto; max-width: none; max-height: 62%; border-radius: 14px 14px 0 0; } }
   #panel .hd { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }
   #panel .hd img { width: 40px; height: 40px; flex: none; }
   #panel .hd .t { font-size: 16px; font-weight: 600; line-height: 1.2; }
@@ -150,3 +171,4 @@
   #panel .btn.small { margin-top: 6px; padding: 2px 10px; font-size: 12px; }
   #panel .btn:disabled { opacity: .55; cursor: default; }
   #panel .btn { display: inline-block; margin-top: 12px; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 10px; cursor: pointer; font: inherit; }
+  #panel .hd .x { display: none; }                                    /* "‹ Network" above the header closes the panel (#130) */

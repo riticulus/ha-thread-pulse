@@ -1,10 +1,22 @@
 # Detail panel
 
-Tap or click a device on the map to open its detail panel. On wide screens it opens on the right, on narrow screens it slides up from the bottom.
+Tap or click a device on the map to open its detail panel. It takes the place of the [network panel](The-List) in the column next to the map; on narrow screens (e.g. a phone) that column is below the map *(after version 1.6.0; before, the panel opened over the map)*.
 
 ![Detail panel](images/detail-panel.png)
 
-**Close it** with **×**, by tapping empty space on the map, or with the **Esc** key. You can also open it from the [network panel](The-List) (device names are links) and with **Enter** in the [search](Search).
+**Close it** with **‹ Network** above the name, by tapping empty space on the map, or with the **Esc** key – the network panel comes back. You can also open it from the [network panel](The-List) (device names are links) and with **Enter** in the [search](Search).
+
+## Layout *(after version 1.6.0)*
+
+At the top: the name, the [warnings](Hints-and-Warnings) and a row of **key numbers** – signal in dBm (to the parent, for routers the best link to another router), messages in the last hour, battery level (or restarts for devices without a battery) and, for routers, the number of children. Below them the sections are grouped in three **tabs**; the tab you chose stays selected when you open another device:
+
+| Tab | Sections |
+|---|---|
+| **Status** | Hints, current values, battery, stability |
+| **Connection** | Live counters, Thread, trends, *If this router fails* |
+| **Device** | Device data, connected systems, identify, open in Home Assistant |
+
+The border router, other Thread routers and Wi-Fi / Ethernet devices keep one list without tabs.
 
 The panel updates itself every 5 seconds while it is open.
 

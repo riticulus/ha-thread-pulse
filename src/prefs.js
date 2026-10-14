@@ -5,7 +5,6 @@
   // address; formats are unchanged from earlier versions ("1"/"0", numbers, JSON), so existing settings keep working.
   // All access is safe when storage is blocked (e.g. private mode): reads return the default, writes are skipped.
   const PREFS = {
-    list:    { key: "threadPulseList", type: "bool", def: false },      // list below the map shown
     legend:  { key: "threadPulseLegend", type: "bool", def: null },     // default depends on the width – passed by the caller
     heat:    { key: "threadPulseHeat", type: "bool", def: true },       // traffic heat
     rooms:   { key: "threadPulseRooms", type: "bool", def: false },     // room view

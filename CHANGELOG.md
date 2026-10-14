@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Chattiest devices: in the tab *Devices* of the network panel the ten devices with the most messages in the last hour, with ↑ reports / ↓ commands, and a sortable column *Msgs/h*. Reports of the hour before the page was opened come from Home Assistant's history (`history/history_during_period`, coalesced like the live counter); commands only count since the page was opened. New hint for battery devices that report 60 times an hour or more ([#80](https://github.com/riticulus/ha-thread-pulse/issues/80))
 - Response times on the map (**⋯ → ⏱ Response times on the map**): a ring around every device with measurements, coloured by the median (green < 0.5 s, orange < 1 s, red ≥ 1 s) with the value above it; devices without measurements stay unchanged. Commands to a device travel at its measured speed. The legend shows the scale; the choice is remembered ([#89](https://github.com/riticulus/ha-thread-pulse/issues/89))
 
+### Changed
+- New layout: the map with one column next to it. The column shows the network panel (tabs overview … changes) – no more **📊 Network** button and no panel below the map – or, while a device is selected, its detail panel; **‹ Network** goes back. The detail panel starts with the warnings and a row of key numbers (signal, messages per hour, battery or restarts, children of a router) and groups its sections in three tabs: *Status*, *Connection*, *Device*. On narrow cards and phones the column is a sheet below the map that can be made taller with its handle. In ambient mode the column only appears while a device is shown ([#130](https://github.com/riticulus/ha-thread-pulse/issues/130))
+
 ## [1.6.0] – 2026-10-12
 
 ### Added

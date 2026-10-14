@@ -1,18 +1,16 @@
 //# Start-up and the public API (destroy, theme) of createThreadPulse().
 //# Part of createThreadPulse() – placed inside that function by build.py, uses the shared state declared in core.js.
-  let startList = false, startLegend = false;     // the legend is an overlay on the map (issue #107): closed until opened
+  let startLegend = false;     // the legend is an overlay on the map (issue #107): closed until opened
   soundVolume = prefs.get("volume");
   $("volume").value = String(soundVolume);
   if (prefs.get("sound")) setSound(true, false);
   heatOn = prefs.get("heat"); roomOn = prefs.get("rooms");
-  startList = prefs.get("list"); startLegend = prefs.get("legend", startLegend);
-  $("info").classList.toggle("hidden", !startList);
+  startLegend = prefs.get("legend", startLegend);
   $("legend").classList.toggle("hidden", !startLegend);
   setLanguage(lang);
   $("reload").onclick = () => load().catch(showErr);
   $("status").onclick = () => { if (network) load().catch(showErr); };      // tap the status line to reload (issue #107)
   $("status").onkeydown = e => { if ((e.key === "Enter" || e.key === " ") && network) { e.preventDefault(); load().catch(showErr); } };
-  $("toggle").onclick = () => setList($("info").classList.contains("hidden"));
   $("roombtn").onclick = () => {
     roomOn = !roomOn; setBtn($("roombtn"), roomOn ? T.roomsOff : T.roomsOn, roomOn);
     prefs.set("rooms", roomOn);

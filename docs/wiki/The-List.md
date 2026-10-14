@@ -1,8 +1,8 @@
-# Network panel (below the map)
+# Network panel
 
-**📊 Network** in the toolbar opens a panel below the map with everything about the network, in **tabs**. The blue number on the button is the number of warnings and hints. The panel is hidden by default to leave more room for the map; whether it is open and which tab you chose is remembered by the browser.
+The column next to the map shows everything about the network, in **tabs**. The tab *Hints* shows the number of warnings and hints. Which tab you chose is remembered by the browser. While a device is selected, its [detail panel](Detail-Panel) takes the place of the network panel; **‹ Network** brings it back. On narrow screens (e.g. a phone) the column is below the map; the handle at its top makes it taller or lower again.
 
-*From version 1.6.0.* Up to version 1.5.2 the button is called **☰ Show list** and the panel is one long list with all sections below each other.
+*After version 1.6.0.* In version 1.6.0 the panel is below the map and opens with **📊 Network** in the toolbar; up to version 1.5.2 the button is called **☰ Show list** and the panel is one long list with all sections below each other.
 
 ![Network panel](images/list.png)
 

@@ -20,11 +20,13 @@ const VERSION = "1.6.0+dev";   // set to the release number when releasing, "<re
 const TP_CSS = `
   :root, :host { --bg: #ffffff; --fg: #1f2733; --muted: #6b7684; --card: #f6f8fb; --line: #d6dde6; }
   @media (prefers-color-scheme: dark) { :root, :host { --bg: #111418; --fg: #e3e7ec; --muted: #9aa4b1; --card: #1c2128; --line: #2e3540; } }
-  #wrap { display: flex; flex-direction: column; height: 100%; background: var(--bg); color: var(--fg);
+  /* layout (issue #130): toolbar and map on the left, one inspector column on the right (network panel or device panel) */
+  #wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto minmax(0, 1fr); grid-template-areas: "bar side" "stage side";
+          height: 100%; background: var(--bg); color: var(--fg);
           font: 14px/1.4 -apple-system, "Segoe UI", Roboto, sans-serif; }
   #wrap { container-type: inline-size; container-name: tp; }
   /* toolbar (issue #107): one row – search, the view toggles, the list, ⋯ menu for the rest, status */
-  #bar { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+  #bar { grid-area: bar; display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--line); }
   #bar button, #legbtn { border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 10px; cursor: pointer; font: inherit; }
   .tb { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
   .tb .badge { background: var(--c-hint, #1e88e5); color: white; border-radius: 9px; padding: 0 6px; font-size: 11px; font-weight: 600; line-height: 16px; }
@@ -69,21 +71,20 @@ const TP_CSS = `
   .ln { width: 18px; height: 3px; display: inline-block; border-radius: 2px; }
   .lg[hidden] { display: none; }
   .heatln { height: 7px; opacity: .6; filter: blur(.6px); }
-  #stage { flex: 1; min-height: 300px; position: relative; container-type: size; }
+  #stage { grid-area: stage; min-height: 120px; position: relative; container-type: size; }
   #net { position: absolute; inset: 0; touch-action: none; }   /* no browser page zoom on double tap inside the map */
   #live { position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px); font-size: 12px; color: var(--muted);
           background: color-mix(in srgb, var(--bg) 85%, transparent); border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; pointer-events: none; }
   #live:empty { display: none; }
   #live div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   #live b { color: var(--fg); font-weight: 600; }
-  #info { padding: 8px 12px 14px; border-top: 1px solid var(--line); font-size: 13px; max-height: 45%; overflow: auto; }
-  #info.hidden { display: none; }
-  /* panel below the map: tabs (issue #108) */
+  #info { flex: 1; min-height: 0; padding: 8px 12px 14px; font-size: 13px; overflow: auto; }
+  /* network panel: tabs (issue #108) */
   #info { padding-top: 0; }
   #tabbar { position: sticky; top: 0; z-index: 2; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; background: var(--bg);
             border-bottom: 1px solid var(--line); margin: 0 -12px 10px; padding: 0 8px; }
   #tabbar::-webkit-scrollbar { display: none; }
-  #tabbar button { border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font: inherit; font-size: 13px; padding: 8px 8px 7px;
+  #tabbar button { border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font: inherit; font-size: 13px; padding: 8px 6px 7px;
                    cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; }
   #tabbar button:hover { color: var(--fg); }
   #tabbar button.on { color: var(--fg); border-bottom-color: var(--c-hint, #1e88e5); font-weight: 600; }
@@ -115,6 +116,7 @@ const TP_CSS = `
   a.more { display: inline-block; margin-top: 6px; font-size: 12px; }
   /* ambient mode (issue #11): only the pulsing mesh, dark, for wall tablets */
   #wrap.ambient { background: #05070a !important; }
+  #wrap.ambient #side:not(:has(#panel:not([hidden]))):not(:has(#info.errshown)) { display: none; }
   #wrap.ambient #bar, #wrap.ambient #live, #wrap.ambient #legbtn, #wrap.ambient #legend, #wrap.ambient #info:not(.errshown) { display: none !important; }
   #wrap.ambient #info.errshown { display: block !important; }
   table { border-collapse: collapse; width: 100%; }
@@ -123,9 +125,29 @@ const TP_CSS = `
   /* text colours: darker variants of COLORS.good / medium / weak, readable on light and dark backgrounds */
   .g { color: #2e7d32; } .o { color: #ef6c00; } .r { color: #c62828; }
   #err { color: #c62828; padding: 12px; white-space: pre-wrap; }
-  #panel { position: absolute; top: 8px; right: 8px; bottom: 8px; width: 340px; max-width: calc(100% - 16px); overflow: auto; z-index: 5;
-           background: var(--bg); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.25); padding: 12px 14px; font-size: 13px; }
+  #side { grid-area: side; width: 410px; min-height: 0; display: flex; flex-direction: column; border-left: 1px solid var(--line); background: var(--bg); }
+  #side:has(#panel:not([hidden])) #info { display: none; }
+  #panel { flex: 1; min-height: 0; overflow: auto; padding: 10px 14px 14px; font-size: 13px; }
   #panel[hidden] { display: none; }
+  #panel .back { border: 0; background: none; color: var(--c-hint, #1e88e5); font: inherit; font-size: 12px; padding: 0 0 6px; cursor: pointer; }
+  #panel .keys { display: grid; grid-template-columns: repeat(auto-fit, minmax(64px, 1fr)); gap: 6px; margin: 8px 0 4px; }
+  #panel .keys div { background: var(--card); border-radius: 8px; padding: 6px 8px; display: flex; flex-direction: column; min-width: 0; }
+  #panel .keys span { color: var(--muted); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #panel .keys b { font-size: 16px; }
+  #panel .dtabs { display: flex; position: sticky; top: -10px; z-index: 1; background: var(--bg); border-bottom: 1px solid var(--line); margin: 6px -14px 4px; padding: 0 8px; }
+  #panel .dtabs button { flex: 1; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font: inherit; padding: 8px 4px 7px; cursor: pointer; }
+  #panel .dtabs button:hover { color: var(--fg); }
+  #panel .dtabs button.on { color: var(--fg); border-bottom-color: var(--c-hint, #1e88e5); font-weight: 600; }
+  #panel .dtab > h4:first-child { margin-top: 8px; }
+  /* narrow cards and phones: the column is a sheet below the map; the handle makes it tall or low */
+  #sheetbtn { display: none; }
+  #wrap.narrow { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) minmax(0, 42%); grid-template-areas: "bar" "stage" "side"; }
+  #wrap.narrow.sheet-tall { grid-template-rows: auto minmax(0, 1fr) minmax(0, 72%); }
+  #wrap.narrow.sheet-tall #live, #wrap.narrow.sheet-tall #legbtn, #wrap.narrow.sheet-tall #legend { display: none; }
+  #wrap.narrow #side { width: auto; border-left: 0; border-top: 1px solid var(--line); border-radius: 14px 14px 0 0; box-shadow: 0 -4px 16px rgba(0,0,0,.15); }
+  #wrap.narrow #sheetbtn { display: flex; justify-content: center; align-items: center; flex: none; height: 22px; border: 0; background: none; cursor: pointer; padding: 0; }
+  #wrap.narrow #sheetbtn::before { content: ""; width: 40px; height: 4px; border-radius: 2px; background: var(--line); }
+  #wrap.narrow #sheetbtn:hover::before { background: var(--muted); }
   /* text report (issue #85): over the map, above the detail panel */
   #report { position: absolute; inset: 8px; z-index: 6; display: flex; flex-direction: column; gap: 8px; max-width: 760px; margin: 0 auto;
             background: var(--bg); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.25); padding: 12px 14px; font-size: 13px; }
@@ -141,7 +163,6 @@ const TP_CSS = `
                      background: var(--card); color: var(--fg); padding: 8px; font: 12px/1.45 ui-monospace, Menlo, Consolas, monospace; white-space: pre; }
   #report .btn { border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 12px; cursor: pointer; font: inherit; }
   #report .note { color: var(--muted); font-size: 11px; }
-  @container (max-width: 600px) { #panel { top: auto; left: 0; right: 0; bottom: 0; width: auto; max-width: none; max-height: 62%; border-radius: 14px 14px 0 0; } }
   #panel .hd { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }
   #panel .hd img { width: 40px; height: 40px; flex: none; }
   #panel .hd .t { font-size: 16px; font-weight: 600; line-height: 1.2; }
@@ -170,6 +191,7 @@ const TP_CSS = `
   #panel .btn.small { margin-top: 6px; padding: 2px 10px; font-size: 12px; }
   #panel .btn:disabled { opacity: .55; cursor: default; }
   #panel .btn { display: inline-block; margin-top: 12px; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 10px; cursor: pointer; font: inherit; }
+  #panel .hd .x { display: none; }                                    /* "‹ Network" above the header closes the panel (#130) */
 `;
 const TP_HTML = `
 <div id="wrap">
@@ -178,7 +200,6 @@ const TP_HTML = `
     <button id="livebtn" class="tb"></button>
     <button id="heatbtn" class="tb"></button>
     <button id="roombtn" class="tb"></button>
-    <button id="toggle" class="tb"></button>
     <span id="morebox"><button id="morebtn" class="tb" aria-haspopup="true" aria-expanded="false">⋯</button><span id="moremenu" hidden>
       <button id="reload"></button>
       <span class="mrow"><button id="soundbtn"></button><input id="volume" type="range" min="0" max="1" step="0.05" hidden></span>
@@ -189,8 +210,8 @@ const TP_HTML = `
     </span></span>
     <span id="status" role="button" tabindex="0"></span>
   </div>
-  <div id="stage"><div id="net"></div><button id="legbtn" aria-expanded="false">?</button><div id="legend" class="hidden"></div><div id="markchip" hidden></div><div id="live"></div><div id="panel" hidden></div><div id="report" hidden></div></div>
-  <div id="info" class="hidden"></div>
+  <div id="stage"><div id="net"></div><button id="legbtn" aria-expanded="false">?</button><div id="legend" class="hidden"></div><div id="markchip" hidden></div><div id="live"></div><div id="report" hidden></div></div>
+  <div id="side"><button id="sheetbtn" aria-expanded="false"></button><div id="panel" hidden></div><div id="info"></div></div>
 </div>
 `;
 // ---------- texts (one file per language in src/i18n/) ----------
@@ -237,6 +258,9 @@ const TEXT_EN = {
   rLinksShort: n => `${n} router link${n === 1 ? "" : "s"}`,
   netBtn: "📊 Network",
   tabNames: { overview: "Overview", hints: "Hints", devices: "Devices", links: "Links", changes: "Changes" },
+  sheetTall: "Make the panel taller", sheetLow: "Make the panel lower",
+  backNet: "Network",
+  devTabs: { status: "Status", link: "Connection", device: "Device" }, kSignal: "Signal dBm", kMsgs: "Msgs/h", kBattery: "Battery", kRestarts: "Restarts", kChildren: "Children",
   devFilters: { all: "All", routers: "Routers", mains: "Mains", battery: "Battery", wifi: "Wi-Fi" },
   topHints: "Most important",
   allHints: n => `All ${n} hints →`,
@@ -351,7 +375,7 @@ const TEXT_EN = {
   hBattSoon: d => `The battery will probably be empty in about ${d} day${d === 1 ? "" : "s"} (estimate) – keep a replacement ready.`,
   lgWifi: "Matter on Wi-Fi", wifiSub: "Matter over Wi-Fi – not part of the Thread mesh", ethSub: "Matter over Ethernet – not part of the Thread mesh",
   secWifi: "Wi-Fi", wifiStd: "Standard", wifiNote: "Wi-Fi values as last reported by the device, may be outdated.",
-  secHints: "Hints", listHints: n => ` · ${n} hint${n === 1 ? "" : "s"}`,
+  secHints: "Hints",
   hintsNote: "Hints are rules of thumb based on the data the devices report – suggestions, not measurements.",
   noHints: "No weak spots found.",
   hWeakParent: (p, r, unsure) => `Weak signal to its parent ${p} (${r} dBm${unsure ? ", measured by the device itself – uncertain" : ""}). A mains-powered Thread device (plug or bulb) placed closer to this device could improve the connection.`,
@@ -402,6 +426,9 @@ const TEXT_DE = {
   rLinksShort: n => `${n} Router-Verbindung${n === 1 ? "" : "en"}`,
   netBtn: "📊 Netz",
   tabNames: { overview: "Übersicht", hints: "Hinweise", devices: "Geräte", links: "Verbindungen", changes: "Änderungen" },
+  sheetTall: "Bereich vergrössern", sheetLow: "Bereich verkleinern",
+  backNet: "Netzwerk",
+  devTabs: { status: "Zustand", link: "Verbindung", device: "Gerät" }, kSignal: "Signal dBm", kMsgs: "Nachr./h", kBattery: "Batterie", kRestarts: "Neustarts", kChildren: "Kinder",
   devFilters: { all: "Alle", routers: "Router", mains: "Netzstrom", battery: "Batterie", wifi: "WLAN" },
   topHints: "Am wichtigsten",
   allHints: n => `Alle ${n} Hinweise →`,
@@ -516,7 +543,7 @@ const TEXT_DE = {
   hBattSoon: d => `Die Batterie ist voraussichtlich in ca. ${d} Tag${d === 1 ? "" : "en"} leer (Schätzung) – Ersatz bereithalten.`,
   lgWifi: "Matter über WLAN", wifiSub: "Matter über WLAN – nicht Teil des Thread-Netzes", ethSub: "Matter über Ethernet – nicht Teil des Thread-Netzes",
   secWifi: "WLAN", wifiStd: "Standard", wifiNote: "WLAN-Werte: letzter Stand, den das Gerät gemeldet hat – kann veraltet sein.",
-  secHints: "Hinweise", listHints: n => ` · ${n} Hinweis${n === 1 ? "" : "e"}`,
+  secHints: "Hinweise",
   hintsNote: "Hinweise sind Faustregeln aus den Daten, die die Geräte melden – Vorschläge, keine Messungen.",
   noHints: "Keine Schwachstellen gefunden.",
   hWeakParent: (p, r, unsure) => `Schwaches Signal zum Parent ${p} (${r} dBm${unsure ? ", vom Gerät selbst gemessen – unsicher" : ""}). Ein Thread-Gerät mit Netzstrom (Steckdose oder Lampe) näher bei diesem Gerät könnte die Verbindung verbessern.`,
@@ -573,6 +600,9 @@ const TEXT_ES = {
   rLinksShort: n => `${n} enlace${n === 1 ? "" : "s"} con routers`,
   netBtn: "📊 Red",
   tabNames: { overview: "Resumen", hints: "Consejos", devices: "Dispositivos", links: "Enlaces", changes: "Cambios" },
+  sheetTall: "Ampliar el panel", sheetLow: "Reducir el panel",
+  backNet: "Red",
+  devTabs: { status: "Estado", link: "Conexión", device: "Dispositivo" }, kSignal: "Señal dBm", kMsgs: "Msj/h", kBattery: "Batería", kRestarts: "Reinicios", kChildren: "Hijos",
   devFilters: { all: "Todos", routers: "Routers", mains: "Corriente", battery: "Batería", wifi: "Wi-Fi" },
   topHints: "Lo más importante",
   allHints: n => `Los ${n} consejos →`,
@@ -687,7 +717,7 @@ const TEXT_ES = {
   hBattSoon: d => `La batería probablemente se agotará en unos ${d} día${d === 1 ? "" : "s"} (estimación) – ten una de repuesto a mano.`,
   lgWifi: "Matter por Wi-Fi", wifiSub: "Matter por Wi-Fi – no forma parte de la red Thread", ethSub: "Matter por Ethernet – no forma parte de la red Thread",
   secWifi: "Wi-Fi", wifiStd: "Estándar", wifiNote: "Valores Wi-Fi tal como los informó por última vez el dispositivo; pueden estar desactualizados.",
-  secHints: "Consejos", listHints: n => ` · ${n} consejo${n === 1 ? "" : "s"}`,
+  secHints: "Consejos",
   hintsNote: "Los consejos son reglas prácticas basadas en los datos que informan los dispositivos – sugerencias, no mediciones.",
   noHints: "No se encontraron puntos débiles.",
   hWeakParent: (p, r, unsure) => `Señal débil hacia su padre ${p} (${r} dBm${unsure ? ", medida por el propio dispositivo – incierta" : ""}). Un dispositivo Thread conectado a la red (enchufe o bombilla) más cerca podría mejorar la conexión.`,
@@ -744,6 +774,9 @@ const TEXT_FR = {
   rLinksShort: n => `${n} liaison${n === 1 ? "" : "s"} routeur`,
   netBtn: "📊 Réseau",
   tabNames: { overview: "Aperçu", hints: "Conseils", devices: "Appareils", links: "Liaisons", changes: "Changements" },
+  sheetTall: "Agrandir le panneau", sheetLow: "Réduire le panneau",
+  backNet: "Réseau",
+  devTabs: { status: "État", link: "Connexion", device: "Appareil" }, kSignal: "Signal dBm", kMsgs: "Msg/h", kBattery: "Batterie", kRestarts: "Redémarrages", kChildren: "Enfants",
   devFilters: { all: "Tous", routers: "Routeurs", mains: "Secteur", battery: "Pile", wifi: "Wi-Fi" },
   topHints: "Le plus important",
   allHints: n => `Les ${n} conseils →`,
@@ -858,7 +891,7 @@ const TEXT_FR = {
   hBattSoon: d => `La pile sera probablement vide dans environ ${d} jour${d === 1 ? "" : "s"} (estimation) – prévoyez une pile de rechange.`,
   lgWifi: "Matter en Wi-Fi", wifiSub: "Matter en Wi-Fi – ne fait pas partie du réseau Thread", ethSub: "Matter en Ethernet – ne fait pas partie du réseau Thread",
   secWifi: "Wi-Fi", wifiStd: "Norme", wifiNote: "Valeurs Wi-Fi telles que signalées en dernier par l'appareil, peuvent être obsolètes.",
-  secHints: "Conseils", listHints: n => ` · ${n} conseil${n === 1 ? "" : "s"}`,
+  secHints: "Conseils",
   hintsNote: "Les conseils sont des règles empiriques basées sur les données signalées par les appareils – des suggestions, pas des mesures.",
   noHints: "Aucun point faible trouvé.",
   hWeakParent: (p, r, unsure) => `Signal faible vers son parent ${p} (${r} dBm${unsure ? ", mesuré par l'appareil lui-même – incertain" : ""}). Un appareil Thread sur secteur (prise ou ampoule) placé plus près pourrait améliorer la connexion.`,
@@ -915,6 +948,9 @@ const TEXT_IT = {
   rLinksShort: n => `${n} collegament${n === 1 ? "o" : "i"} router`,
   netBtn: "📊 Rete",
   tabNames: { overview: "Panoramica", hints: "Suggerimenti", devices: "Dispositivi", links: "Collegamenti", changes: "Modifiche" },
+  sheetTall: "Ingrandisci il pannello", sheetLow: "Riduci il pannello",
+  backNet: "Rete",
+  devTabs: { status: "Stato", link: "Connessione", device: "Dispositivo" }, kSignal: "Segnale dBm", kMsgs: "Msg/h", kBattery: "Batteria", kRestarts: "Riavvii", kChildren: "Figli",
   devFilters: { all: "Tutti", routers: "Router", mains: "Rete elettrica", battery: "Batteria", wifi: "Wi-Fi" },
   topHints: "I più importanti",
   allHints: n => `Tutti i ${n} suggerimenti →`,
@@ -1029,7 +1065,7 @@ const TEXT_IT = {
   hBattSoon: d => `La batteria sarà probabilmente scarica tra circa ${d} giorn${d === 1 ? "o" : "i"} (stima) – tieni pronta una batteria di ricambio.`,
   lgWifi: "Matter su Wi-Fi", wifiSub: "Matter su Wi-Fi – non fa parte della rete Thread", ethSub: "Matter su Ethernet – non fa parte della rete Thread",
   secWifi: "Wi-Fi", wifiStd: "Standard", wifiNote: "Valori Wi-Fi come segnalati per ultimi dal dispositivo, potrebbero non essere aggiornati.",
-  secHints: "Suggerimenti", listHints: n => ` · ${n} suggeriment${n === 1 ? "o" : "i"}`,
+  secHints: "Suggerimenti",
   hintsNote: "I suggerimenti sono regole empiriche basate sui dati segnalati dai dispositivi – proposte, non misurazioni.",
   noHints: "Nessun punto debole trovato.",
   hWeakParent: (p, r, unsure) => `Segnale debole verso il parent ${p} (${r} dBm${unsure ? ", misurato dal dispositivo stesso – incerto" : ""}). Un dispositivo Thread alimentato a rete (presa o lampadina) più vicino potrebbe migliorare la connessione.`,
@@ -1086,6 +1122,9 @@ const TEXT_NL = {
   rLinksShort: n => `${n} routerverbinding${n === 1 ? "" : "en"}`,
   netBtn: "📊 Netwerk",
   tabNames: { overview: "Overzicht", hints: "Tips", devices: "Apparaten", links: "Verbindingen", changes: "Wijzigingen" },
+  sheetTall: "Paneel groter maken", sheetLow: "Paneel kleiner maken",
+  backNet: "Netwerk",
+  devTabs: { status: "Status", link: "Verbinding", device: "Apparaat" }, kSignal: "Signaal dBm", kMsgs: "Ber./u", kBattery: "Batterij", kRestarts: "Herstarts", kChildren: "Kinderen",
   devFilters: { all: "Alle", routers: "Routers", mains: "Netstroom", battery: "Batterij", wifi: "Wifi" },
   topHints: "Belangrijkste",
   allHints: n => `Alle ${n} tips →`,
@@ -1200,7 +1239,7 @@ const TEXT_NL = {
   hBattSoon: d => `De batterij is waarschijnlijk over ongeveer ${d} dag${d === 1 ? "" : "en"} leeg (schatting) – houd een reserve klaar.`,
   lgWifi: "Matter via wifi", wifiSub: "Matter via wifi – geen deel van het Thread-netwerk", ethSub: "Matter via ethernet – geen deel van het Thread-netwerk",
   secWifi: "Wifi", wifiStd: "Standaard", wifiNote: "Wifi-waarden zoals laatst gemeld door het apparaat, kunnen verouderd zijn.",
-  secHints: "Tips", listHints: n => ` · ${n} tip${n === 1 ? "" : "s"}`,
+  secHints: "Tips",
   hintsNote: "Tips zijn vuistregels op basis van de gegevens die de apparaten melden – suggesties, geen metingen.",
   noHints: "Geen zwakke plekken gevonden.",
   hWeakParent: (p, r, unsure) => `Zwak signaal naar de parent ${p} (${r} dBm${unsure ? ", door het apparaat zelf gemeten – onzeker" : ""}). Een Thread-apparaat op netstroom (stekker of lamp) dichterbij kan de verbinding verbeteren.`,
@@ -1261,7 +1300,6 @@ function createThreadPulse(root, opts, host) {
   // address; formats are unchanged from earlier versions ("1"/"0", numbers, JSON), so existing settings keep working.
   // All access is safe when storage is blocked (e.g. private mode): reads return the default, writes are skipped.
   const PREFS = {
-    list:    { key: "threadPulseList", type: "bool", def: false },      // list below the map shown
     legend:  { key: "threadPulseLegend", type: "bool", def: null },     // default depends on the width – passed by the caller
     heat:    { key: "threadPulseHeat", type: "bool", def: true },       // traffic heat
     rooms:   { key: "threadPulseRooms", type: "bool", def: false },     // room view
@@ -1395,7 +1433,7 @@ function createThreadPulse(root, opts, host) {
       [[COLORS.good, T.lgRespFast], [COLORS.medium, T.lgRespMid], [COLORS.weak, T.lgRespSlow]].map(([c, t]) =>
         `<span class="lg lgresp"${respView ? "" : " hidden"}><span class="dot" style="background:transparent;border:2.5px solid ${c};box-sizing:border-box"></span>${t}</span>`).join("");
     $("respbtn").textContent = respView ? T.respViewOff : T.respViewOn;
-    setList(!$("info").classList.contains("hidden"), false);
+    setSheet($("wrap").classList.contains("sheet-tall"));
     setLegend(!$("legend").classList.contains("hidden"), false);
   }
 
@@ -2081,6 +2119,7 @@ function createThreadPulse(root, opts, host) {
 
   let ambientClose = null;
   function openPanel(id) {
+    if (id !== panelNode) $("panel").scrollTop = 0;
     panelNode = id; renderPanel(); $("panel").hidden = false;
     if (!prefs.get("tapped")) prefs.set("tapped", true);
     if (AMBIENT) { clearTimeout(ambientClose); ambientClose = setTimeout(closePanel, 15000); }    // ambient: close by itself
@@ -2105,7 +2144,7 @@ function createThreadPulse(root, opts, host) {
   function renderRouterPanel(id) {
     const isBr = id === brExt, nodes = Object.values(nodeById);
     const disc = brInfo[id];
-    let h = `<div class="hd"><img src="${iconImg(isBr || disc ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 80)}" alt=""><div>` +
+    let h = backHtml() + `<div class="hd"><img src="${iconImg(isBr || disc ? "access-point-network" : "router-wireless", isBr ? COLORS.br : COLORS.off, 80)}" alt=""><div>` +
             `<div class="t">${esc(extraLabel(id).replaceAll("\n", " "))}</div><div class="s">${esc(isBr ? T.brSub : brInfo[id] ? T.brOtherSub : T.foreignSub)}</div></div>` +
             `<button class="x" title="×" data-act="close">×</button></div>`;
     if (isBr || counts[id]) h += `<h4>${T.secLive} · ${T.msgsThrough}</h4><dl>` + liveRows(id) + `</dl>` + (isBr ? "" : `<div class="note">${T.parentHopNote}</div>`);
@@ -2159,13 +2198,16 @@ function createThreadPulse(root, opts, host) {
     const i = n.info || {}, hass = DEMO ? null : freshHass();
     if (hass) refreshBattery(hass);
     const color = !n.available ? COLORS.off : n.type === "routing_end_device" ? COLORS.router : n.type === "end_device" ? COLORS.end : COLORS.sleepy;
+    const sec = [], add = (g, x) => { if (x) sec.push([g, x]); };      // groups for the tabbed panel (layouts B and D)
     let h = `<div class="hd"><img src="${iconImg(n.icon, color, 80)}" alt=""><div><div class="t">${esc(n.name)}</div>` +
             `<div class="s">${esc(T.roles[n.role] || T.types[n.type] || "")}${n.area ? " · " + esc(n.area) : ""}${n.available ? "" : esc(T.unreachable)}</div></div>` +
             `<button class="x" title="×" data-act="close">×</button></div>`;
     for (const w of warningsOf(n)) h += `<div class="warn">⚠ ${esc(w)}</div>`;
+    add("top", h); h = "";
     const hs = (hintsOf[n.id] || []).concat(slowHint(n) || [], batteryHint(n) || []);
     if (hs.length) h += `<h4>${T.secHints}</h4>` + hs.map(t => { const k = hintKind(n.id, t);
       return `<div class="hint">💡 ${esc(t)}${k ? `<div><button class="btn small" data-dismiss="${esc(n.id + "|" + k)}">${T.hintDone}</button></div>` : ""}</div>`; }).join("") + `<div class="note">${T.hintsNote}</div>`;
+    add("status", h); h = "";
     // live
     const now = Date.now();
     h += `<h4>${T.secLive}</h4><dl>` + liveRows(n.id);
@@ -2177,6 +2219,7 @@ function createThreadPulse(root, opts, host) {
       h += row(T.forwarded, T.forwardedVal(f.filter(t => now - t < HEAT_MS).length, f.length));
     }
     h += `</dl>`;
+    add("link", h); h = "";
     // current values
     if (hass && (n.mainEntities || []).length) {
       let v = "";
@@ -2196,6 +2239,7 @@ function createThreadPulse(root, opts, host) {
            row(T.bfLabel, forecastText(battForecast[n.id])) + `</dl>` + (battForecast[n.id] && battForecast[n.id].state === "ok" ? `<div class="note">${T.bfNote}</div>` : "") +
            batteryTrendHtml(n);
     }
+    add("status", h); h = "";
     // thread
     const links = (linksOf[n.id] || []).slice().sort((p, q) => q.rssi - p.rssi);
     const par = links.filter(l => l.kind === "parent"), kids = links.filter(l => l.kind === "child"), nb = links.filter(l => l.kind === "neighbour");
@@ -2206,6 +2250,7 @@ function createThreadPulse(root, opts, host) {
     h += row(T.address, `<span style="font-family:monospace">${esc(n.hwAddr || n.id)}</span>`) + `</dl><div class="note">${T.stale}</div>`;
     h += signalTrendHtml(n);
     if (n.type === "routing_end_device") h += whatIfHtml(n.id);          // issue #77
+    add("link", h); h = "";
     // stability
     if ([i.reboots, i.detached, i.attach, i.parentChanges].some(x => x !== undefined && x !== null)) {
       h += `<h4>${T.secStability}</h4><dl>` + row(T.reboots, i.reboots) + row(T.bootReason, i.bootReason !== undefined && i.bootReason !== null ? esc(T.bootReasons[i.bootReason] || i.bootReason) : "") +
@@ -2213,13 +2258,15 @@ function createThreadPulse(root, opts, host) {
            (st => row(T.stabWindow(st.days), st.known ? esc(T.stabWindowVal(st.reboots, st.attach, st.detached)) : `<span style="color:var(--muted)">${T.trendUnknown}</span>`))(stabilityOf(n)) +
            `</dl><div class="note">${T.sinceRestart} ${T.stabNote(HINT_DAYS)}</div>`;
     }
+    add("status", h); h = "";
     // device
     h += `<h4>${T.secDevice}</h4><dl>` + row(T.manufacturer, esc(i.vendor || "")) + row(T.model, esc(i.product || "")) +
          row(T.firmware, esc(i.sw || "")) + row(T.fwUpdate, updateText(updateOf(n, hass))) + row(T.hardware, esc(i.hw || "")) + row(T.area, esc(n.area || "")) + `</dl>`;
     h += fabricsHtml(n);
     h += identifyHtml(n, hass);
     if (n.devId && !DEMO) h += `<button class="btn" data-device="${esc(n.devId)}">${T.openDevice} ↗</button>`;
-    $("panel").innerHTML = h;
+    add("device", h);
+    $("panel").innerHTML = panelLayout(n, sec);
   }
   function openDevice(devId) {
     host.navigate("/config/devices/device/" + devId);
@@ -3129,7 +3176,7 @@ function createThreadPulse(root, opts, host) {
   const wifiQual = r => r >= -60 ? ["g", T.good] : r >= -70 ? ["o", T.medium] : ["r", T.weak];   // Wi-Fi uses other limits than Thread
   function renderWifiPanel(id) {
     const w = wifiById[id], i = w.info || {}, hass = DEMO ? null : freshHass(), now = Date.now();
-    let h = `<div class="hd"><img src="${iconImg(w.icon, w.available ? COLORS.wifi : COLORS.off, 80)}" alt=""><div><div class="t">${esc(w.name)}</div>` +
+    let h = backHtml() + `<div class="hd"><img src="${iconImg(w.icon, w.available ? COLORS.wifi : COLORS.off, 80)}" alt=""><div><div class="t">${esc(w.name)}</div>` +
             `<div class="s">${esc(w.kind === "ethernet" ? T.ethSub : T.wifiSub)}${w.area ? " · " + esc(w.area) : ""}${w.available ? "" : esc(T.unreachable)}</div></div>` +
             `<button class="x" title="×" data-act="close">×</button></div>`;
     const rs = respSummary(id);
@@ -3394,7 +3441,7 @@ function createThreadPulse(root, opts, host) {
   }
   function renderTabBar() {
     const bar = $("tabbar"); if (!bar) return;
-    if (tab === "changes" && !$("info").classList.contains("hidden")) prefs.set("changesSeen", Date.now());
+    if (tab === "changes" && $("panel").hidden) prefs.set("changesSeen", Date.now());
     const seen = prefs.get("changesSeen") || 0, fresh = changes.filter(c => c.t > seen).length;
     const count = { hints: hintCount, changes: fresh };
     bar.innerHTML = TABS.map(t => `<button role="tab" data-tab="${t}" aria-selected="${t === tab}"${t === tab ? ' class="on"' : ""}>${T.tabNames[t]}` +
@@ -3500,7 +3547,7 @@ function createThreadPulse(root, opts, host) {
     if (!listData) return;
     hintsOf = computeHints(listData.parents);
     const hints = allHints();
-    hintCount = hints.length; setList(!$("info").classList.contains("hidden"), false);
+    hintCount = hints.length;
     const body = { overview: () => overviewHtml(hints), hints: () => hintsHtml(hints), devices: devicesHtml, links: linksHtml, changes: () => `<div id="changes"></div>` };
     const open = $("info").querySelector("details.okf[open]");
     $("info").innerHTML = `<div id="tabbar" role="tablist" aria-label="${esc(T.netBtn.replace(/^\S+\s/, ""))}"></div>` +
@@ -3517,6 +3564,58 @@ function createThreadPulse(root, opts, host) {
     else if (t.dataset.sort) { devSort = { key: t.dataset.sort, dir: devSort.key === t.dataset.sort ? -devSort.dir : 1 }; renderList(); }
     else if (t.dataset.filter) { devFilter = t.dataset.filter; renderList(); }
     else if (t.dataset.mark) markDevices(t.dataset.mark.split(","));
+  });
+  // ---------- inspector column (issue #130) ----------
+  // One column next to the map: the network panel (tabs overview … changes), or the panel of the selected device.
+  // The device panel starts with its warnings and key numbers, the sections are grouped in three tabs. All tabs are
+  // rendered and only the chosen one is shown (the panel is rebuilt every 5 s; switching needs no rebuild).
+  // Narrow cards and phones (< 700 px): the column is a sheet below the map; the handle makes it tall or low again.
+  const DEV_TABS = ["status", "link", "device"];
+  let devTab = "status";
+  const backHtml = () => `<button class="back" data-act="close">‹ ${esc(T.backNet)}</button>`;
+  function keyStats(n) {                             // the key numbers at the top of the device panel
+    const l = linksOf[n.id] || [], par = l.find(x => x.kind === "parent"), rl = l.filter(x => x.kind === "neighbour");
+    const best = par ? par.rssi : rl.length ? Math.max(...rl.map(x => x.rssi)) : null;
+    const m = msgsLastHour(n.id), s = stabilityOf(n), b = battOf[n.id];
+    const cells = [[T.kSignal, best === null ? "–" : String(best), best === null ? "" : QUAL(best)[1]], [T.kMsgs, String(m.up + m.down), ""]];
+    if (b !== undefined) cells.push([T.kBattery, b + " %", b < 20 ? "r" : b < 40 ? "o" : ""]);
+    else if (typeof s.reboots === "number") cells.push([T.kRestarts, String(s.reboots), powerCutOf(n) ? "o" : ""]);
+    if (n.type === "routing_end_device") cells.push([T.kChildren, String(l.filter(x => x.kind === "child").length), ""]);
+    return `<div class="keys">` + cells.map(([k, v, c]) => `<div><span>${esc(k)}</span><b${c ? ` class="${c}"` : ""}>${esc(v)}</b></div>`).join("") + `</div>`;
+  }
+  function panelLayout(n, sec) {                     // sec: [[group, html], …] – group top (header, warnings), status, link, device
+    const has = DEV_TABS.filter(g => sec.some(s => s[0] === g));
+    if (!has.includes(devTab)) devTab = has[0];
+    const top = sec.filter(s => s[0] === "top").map(s => s[1]).join("");
+    return backHtml() + top + keyStats(n) +
+      `<div class="dtabs" role="tablist">` + has.map(g => `<button role="tab" data-devtab="${g}" aria-selected="${g === devTab}"${g === devTab ? ' class="on"' : ""}>${esc(T.devTabs[g])}</button>`).join("") + `</div>` +
+      has.map(g => `<div class="dtab" role="tabpanel" data-g="${g}"${g === devTab ? "" : " hidden"}>${sec.filter(s => s[0] === g).map(s => s[1]).join("")}</div>`).join("");
+  }
+  function setDevTab(g) {
+    devTab = g;
+    for (const b of root.querySelectorAll("#panel [data-devtab]")) { const on = b.dataset.devtab === g; b.classList.toggle("on", on); b.setAttribute("aria-selected", String(on)); }
+    for (const d of root.querySelectorAll("#panel .dtab")) d.hidden = d.dataset.g !== g;
+  }
+  function setSheet(tall) {                          // narrow cards: the column below the map, low or tall
+    $("wrap").classList.toggle("sheet-tall", tall);
+    $("sheetbtn").setAttribute("aria-expanded", String(tall));
+    const t = tall ? T.sheetLow : T.sheetTall; $("sheetbtn").title = t; $("sheetbtn").setAttribute("aria-label", t);
+    if (network) setTimeout(() => { if (network) network.redraw(); }, 50);
+  }
+  if (typeof ResizeObserver !== "undefined") {
+    let wasNarrow = null;
+    const ro = new ResizeObserver(() => {
+      if (destroyed) return ro.disconnect();
+      const narrow = $("wrap").clientWidth < 700; if (narrow === wasNarrow) return;
+      wasNarrow = narrow; $("wrap").classList.toggle("narrow", narrow);
+      if (network) setTimeout(() => { if (network) { network.redraw(); network.fit(); } }, 50);
+    });
+    ro.observe($("wrap"));
+  }
+  $("sheetbtn").onclick = () => setSheet(!$("wrap").classList.contains("sheet-tall"));
+  root.addEventListener("click", e => {
+    const t = e.target.closest && e.target.closest("[data-devtab]"); if (!t) return;
+    e.preventDefault(); setDevTab(t.dataset.devtab);
   });
   // ---------- demo (invented devices, works without Home Assistant) ----------
   function demoModel() {
@@ -3675,13 +3774,6 @@ function createThreadPulse(root, opts, host) {
 
   // ---------- UI ----------
   let hintCount = 0;
-  function setList(show, save = true) {
-    $("info").classList.toggle("hidden", !show);
-    setBtn($("toggle"), T.netBtn, show, hintCount, hintCount ? T.listHints(hintCount) : "");
-    if (show) renderTabBar();              // opening the change log tab marks its entries as seen
-    if (save) prefs.set("list", show);
-    if (network && save) setTimeout(() => { network.redraw(); network.fit({ animation: { duration: 300 } }); }, 50);
-  }
   function setLegend(show, save = true) {
     $("legend").classList.toggle("hidden", !show);
     const t = (show ? T.hideLegend : T.showLegend).replace(/^\S+\s/, "");       // the button shows "?", the text is its tooltip
@@ -3689,7 +3781,7 @@ function createThreadPulse(root, opts, host) {
     if (save) prefs.set("legend", show);
   }
   function showErr(e) {
-    setList(true, false);
+    closePanel();
     $("info").classList.add("errshown");
     $("status").textContent = T.error;
     $("info").innerHTML = `<div id="err">${esc(e.message || e)}</div>`;
@@ -3756,19 +3848,17 @@ function createThreadPulse(root, opts, host) {
     const wake = async () => { try { if (navigator.wakeLock && document.visibilityState === "visible") await navigator.wakeLock.request("screen"); } catch (e) {} };
     wake(); document.addEventListener("visibilitychange", wake);
   }
-  let startList = false, startLegend = false;     // the legend is an overlay on the map (issue #107): closed until opened
+  let startLegend = false;     // the legend is an overlay on the map (issue #107): closed until opened
   soundVolume = prefs.get("volume");
   $("volume").value = String(soundVolume);
   if (prefs.get("sound")) setSound(true, false);
   heatOn = prefs.get("heat"); roomOn = prefs.get("rooms");
-  startList = prefs.get("list"); startLegend = prefs.get("legend", startLegend);
-  $("info").classList.toggle("hidden", !startList);
+  startLegend = prefs.get("legend", startLegend);
   $("legend").classList.toggle("hidden", !startLegend);
   setLanguage(lang);
   $("reload").onclick = () => load().catch(showErr);
   $("status").onclick = () => { if (network) load().catch(showErr); };      // tap the status line to reload (issue #107)
   $("status").onkeydown = e => { if ((e.key === "Enter" || e.key === " ") && network) { e.preventDefault(); load().catch(showErr); } };
-  $("toggle").onclick = () => setList($("info").classList.contains("hidden"));
   $("roombtn").onclick = () => {
     roomOn = !roomOn; setBtn($("roombtn"), roomOn ? T.roomsOff : T.roomsOn, roomOn);
     prefs.set("rooms", roomOn);

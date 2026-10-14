@@ -23,7 +23,7 @@
   const wifiQual = r => r >= -60 ? ["g", T.good] : r >= -70 ? ["o", T.medium] : ["r", T.weak];   // Wi-Fi uses other limits than Thread
   function renderWifiPanel(id) {
     const w = wifiById[id], i = w.info || {}, hass = DEMO ? null : freshHass(), now = Date.now();
-    let h = `<div class="hd"><img src="${iconImg(w.icon, w.available ? COLORS.wifi : COLORS.off, 80)}" alt=""><div><div class="t">${esc(w.name)}</div>` +
+    let h = backHtml() + `<div class="hd"><img src="${iconImg(w.icon, w.available ? COLORS.wifi : COLORS.off, 80)}" alt=""><div><div class="t">${esc(w.name)}</div>` +
             `<div class="s">${esc(w.kind === "ethernet" ? T.ethSub : T.wifiSub)}${w.area ? " · " + esc(w.area) : ""}${w.available ? "" : esc(T.unreachable)}</div></div>` +
             `<button class="x" title="×" data-act="close">×</button></div>`;
     const rs = respSummary(id);
