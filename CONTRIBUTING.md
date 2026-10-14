@@ -68,6 +68,9 @@ pip install -r tests/requirements.txt              # once: websockets, Pillow
 python3 tests/smoke_test.py                        # ~2 min, needs Chrome or Chromium
 ```
 
+The files in `dist/` are generated – never edit them by hand. If they conflict when you update your branch, run
+`npm run build` and commit the result; GitHub folds them away in the pull request diff.
+
 Can't run Chrome locally? Open the pull request anyway – GitHub runs all checks, including the browser tests, on
 every pull request.
 
