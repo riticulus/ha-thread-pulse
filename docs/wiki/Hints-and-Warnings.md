@@ -106,3 +106,11 @@ The hints *unstable connection* and *router probably loses power* are based on c
 - restarts count over the device's **whole lifetime**.
 
 So these hints can stay visible after the problem is gone – until the device restarts (e.g. after a battery change) or, for the restart count, practically forever. Showing only recent increases and a *Done* button are planned: [issue #24](https://github.com/riticulus/ha-thread-pulse/issues/24).
+
+### Radio channels overlap
+
+*After version 1.6.0.*
+
+**When:** the Thread or Zigbee (ZHA) channel lies inside the Wi-Fi channel of a Matter device on Wi-Fi, or Thread and Zigbee use the same channel. Listed in the tab *Hints* as *Radio channels*, not tied to a device.
+
+**Suggestion:** for Zigbee the channels clear of the known Wi-Fi; for Thread moving the Wi-Fi, because changing the Thread channel is disruptive. Details: [Radio channels](Radio-Channels).

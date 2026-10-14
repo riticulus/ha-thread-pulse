@@ -39,6 +39,8 @@ One table with every device:
 
 ## Links
 
+**Radio channels** *(after version 1.6.0)*: Thread, Zigbee and Wi-Fi channels on one frequency axis, overlaps in red with a suggestion – see [Radio channels](Radio-Channels).
+
 - **Weak links between routers** (below −80 dBm), weakest first
 - **Weak signal to the parent** (below −80 dBm)
 

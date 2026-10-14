@@ -44,6 +44,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 - **Ambient mode** for wall tablets: only the pulsing mesh, dark, with a slow automatic zoom
 - **Save as image:** the map as a PNG – with names, or anonymised (*Device 1, 2 …*, *Room A, B …*) for a forum post
 - **Network panel** in a column next to the map (below it on phones), in tabs: overview (mesh health and the most important points), all hints, a sortable device table with role, parent, signal and firmware, weak links, change log – tap a factor or a link to show its devices on the map
+- **Radio channels:** Thread, Zigbee (ZHA) and the Wi-Fi channels of Matter devices on one 2.4 GHz axis – overlaps are marked, with clear channels to move to
 - **Mesh health:** one grade (A–E) for the whole mesh with the six factors behind it – routers, redundancy, weak signal, hops, devices per router, stability; grade changes go to the change log
 - **Text report:** a Markdown summary for forums and issues – devices, models, firmware, roles, signal, weak links and hints; anonymised by default, never addresses or network identifiers
 - **Search:** find a device by name or area; matches are highlighted and zoomed to, Enter opens the details

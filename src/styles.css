@@ -172,3 +172,10 @@
   #panel .btn:disabled { opacity: .55; cursor: default; }
   #panel .btn { display: inline-block; margin-top: 12px; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 10px; cursor: pointer; font: inherit; }
   #panel .hd .x { display: none; }                                    /* "‹ Network" above the header closes the panel (#130) */
+  /* radio channels (issues #78, #120) */
+  svg.spec { width: 100%; max-width: 440px; display: block; margin: 4px 0 6px; background: var(--card); border-radius: 6px; }
+  svg.spec .sgrid { stroke: var(--line); stroke-width: 1; }
+  svg.spec .saxis { fill: var(--muted); font-size: 9px; text-anchor: middle; }
+  svg.spec .slbl { fill: var(--fg); font-size: 10px; }
+  svg.spec .slbl.hot { fill: var(--c-weak, #e53935); font-weight: 600; }
+  .spi { margin: 4px 0; font-size: 12px; }

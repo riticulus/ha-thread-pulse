@@ -29,6 +29,7 @@ All source code is in `src/`, one file per topic. `build.py` assembles the files
 | `src/stability.js` | Stability counters over a time window, hints marked as done |
 | `src/health.js` | Mesh health grade and its factors |
 | `src/whatif.js` | What if a router fails |
+| `src/spectrum.js` | Radio channels: Thread, Zigbee and Wi-Fi on one frequency axis, overlaps |
 | `src/search.js` | Search |
 | `src/changes.js` | Change log |
 | `src/response.js` | Response time |

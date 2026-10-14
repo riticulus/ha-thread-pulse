@@ -41,11 +41,10 @@
     if (brList.length) row(T.rBorderRouters, brList.join(", "));
     if (others.length > brs.length) row(T.rOtherRouters, String(others.length - brs.length));
     // channel: from the OpenThread add-on, else the preferred dataset, else what most devices report
-    const ds = ((threadInfo && threadInfo.datasets) || []).find(d => d.preferred);
-    const chs = nodes.map(n => ((n.info || {}).net || {}).channel).filter(c => c !== undefined && c !== null);
-    const ch = (threadInfo && threadInfo.otbr && threadInfo.otbr.channel) || (ds && ds.channel) ||
-               chs.sort((a, b) => chs.filter(c => c === b).length - chs.filter(c => c === a).length)[0];
+    const ch = threadChannel();
     if (ch) row(T.channel, String(ch));
+    const sp = spectrumNets().filter(n => n.kind !== "thread");                       // #120
+    if (sp.length) row(T.rChannels, sp.map(n => `${T.spNames[n.kind]} ${n.ch}`).join(" · "));
     const wifi = Object.keys(wifiById).length;
     if (wifi) row(T.rWifi, String(wifi));
     const health = computeHealth(nm);
@@ -77,6 +76,7 @@
     }
     const hs = computeHints(listData.parents, nm);
     const items = sorted.flatMap(n => warningsOf(n).concat(hs[n.id] || [], slowHint(n) || [], batteryHint(n) || []).map(t => `- **${md(nm(n.id))}**: ${md(t)}`));
+    for (const x of spectrumIssues(nm)) items.push(`- **${md(T.secSpectrum)}**: ${md(x.text)}`);
     L.push("", `**${T.rWarnHead}**`, "", ...(items.length ? items : [T.noHints]));
     return L.join("\n") + "\n";
   }
