@@ -3,5 +3,4 @@
 // MIT License. https://github.com/riticulus/ha-thread-pulse
 // This file is assembled into both outputs by build.py – edit it here, then run `python3 build.py`.
 
-const VERSION = "1.6.0+dev";   // set to the release number when releasing, "<release>+dev" in between
-
+const VERSION = "1.6.0+dev"; // set to the release number when releasing, "<release>+dev" in between

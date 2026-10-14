@@ -1,0 +1,19 @@
+{
+  "name": "ha-thread-pulse",
+  "private": true,
+  "description": "Thread Pulse – development tools (formatting and linting). The card itself has no npm dependencies.",
+  "license": "MIT",
+  "scripts": {
+    "build": "python3 build.py",
+    "format": "node tools/format.mjs",
+    "format:check": "node tools/format.mjs --check",
+    "lint": "python3 build.py && node tools/lint.mjs",
+    "test": "node tests/check-i18n.js && python3 tests/smoke_test.py && python3 tests/visual_test.py"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.13.0",
+    "eslint": "9.13.0",
+    "globals": "15.11.0",
+    "prettier": "3.3.3"
+  }
+}
