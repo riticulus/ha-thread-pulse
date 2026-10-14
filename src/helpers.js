@@ -83,7 +83,7 @@
     return JSON.parse(txt).data.node;
   }
   function setLanguage(l) {
-    lang = (opts.lang || l || "en").slice(0, 2); T = TEXT[lang] || TEXT.en;
+    lang = (opts.lang || l || "en").slice(0, 2); T = textFor(lang);
     host.styleTarget.lang = lang;
     $("reload").textContent = T.reload;
     setBtn($("roombtn"), roomOn ? T.roomsOff : T.roomsOn, roomOn);

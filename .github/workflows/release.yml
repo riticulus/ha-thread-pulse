@@ -45,7 +45,7 @@ jobs:
         run: python3 tools/release.py check "${{ steps.v.outputs.version }}"
 
       - name: Translations complete
-        run: node tests/check-i18n.js
+        run: node tests/check-i18n.js --strict
 
       - name: User guide links and images
         run: python3 tools/wiki.py check
