@@ -18,15 +18,13 @@ MW = W                                     # right edge of the map – the inspe
 
 
 def bbox(png):
-    """Center offset and filled share of the drawn mesh inside the map area (the live ticker is ignored)."""
+    """Center offset and filled share of the drawn mesh inside the map area (live ticker and ? button are hidden)."""
     im = Image.open(io.BytesIO(png)).convert("RGB")
     px = im.load(); w, h = im.size
     bg = px[5, TOP + 5]
     xs, ys = [], []
     for y in range(TOP, h, 2):
         for x in range(0, MW, 2):
-            if (y > h - 100 and x < 340) or (x < 50 and y < TOP + 50):    # live ticker, ? button
-                continue
             p = px[x, y]
             if abs(p[0] - bg[0]) + abs(p[1] - bg[1]) + abs(p[2] - bg[2]) > 60:
                 xs.append(x); ys.append(y)
@@ -60,6 +58,9 @@ async def main():
         global MW, TOP
         MW = int(await br.js("document.getElementById('stage').getBoundingClientRect().right")) - 2
         TOP = int(await br.js("document.getElementById('stage').getBoundingClientRect().top")) + 2
+        # the live ticker and the ? button are over the map: hidden, so only the mesh is measured (the ticker's size
+        # depends on the fonts of the system and changes while the test runs)
+        await br.js("(() => { const s = document.createElement('style'); s.textContent = '#live, #legbtn { visibility: hidden !important; }'; document.head.appendChild(s); })()")
         base = bbox(await br.screenshot(OUT / "base.png"))
         r.check("normal load: mesh centered", abs(base["dx"]) < 40 and abs(base["dy"]) < 40, str(base))
 

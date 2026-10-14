@@ -1,5 +1,8 @@
 # Tests
 
+All of them also run on every pull request (GitHub action *Validate*), so you can rely on the results there if you
+cannot run Chrome locally.
+
 All tests run against the **demo mode** – no Home Assistant is needed. Changes that touch loading real data
 (`src/data.js`, the live subscription, the border router or Wi-Fi data) must still be tested by hand in a real
 Home Assistant.
