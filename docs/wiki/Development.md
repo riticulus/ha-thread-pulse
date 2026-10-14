@@ -2,7 +2,7 @@
 
 ## Code layout
 
-All source code is in `src/`, one file per topic. `build.py` assembles the files in a fixed order – there is no bundler and no dependency besides Python.
+All source code is in `src/`, one file per topic. `build.py` assembles the files in a fixed order – there is no bundler; building needs only Python (Node is used for formatting, lint and the translation check). A short introduction for new contributors: [CONTRIBUTING.md](https://github.com/riticulus/ha-thread-pulse/blob/main/CONTRIBUTING.md).
 
 | File | Content |
 |---|---|
@@ -166,7 +166,7 @@ Do not open a pull request from `release/X.Y.x` into `main` – the changes are 
 
 ## Contributing
 
-Issues and pull requests are welcome. GitHub offers forms that ask for the details needed:
+Issues and pull requests are welcome – start with [CONTRIBUTING.md](https://github.com/riticulus/ha-thread-pulse/blob/main/CONTRIBUTING.md). GitHub offers forms that ask for the details needed:
 
 | Form | Label | For |
 |---|---|---|

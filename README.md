@@ -201,6 +201,8 @@ Thread Pulse focuses on the live view of messages. For a detailed, static analys
 
 ## Contributing
 
+New here? [CONTRIBUTING.md](CONTRIBUTING.md) explains in a few minutes how to run the demo, how the code is organised and how to add a feature – no Thread network needed.
+
 - **Found a bug?** Open a [bug report](https://github.com/riticulus/ha-thread-pulse/issues/new?template=bug_report.yml) – the form asks for the details that are needed (versions, border router, number of devices, browser).
 - **Have an idea?** Open a [feature request](https://github.com/riticulus/ha-thread-pulse/issues/new?template=feature_request.yml).
 - **Better wording in your language?** Open a [translation correction](https://github.com/riticulus/ha-thread-pulse/issues/new?template=translation.yml) or a pull request against `src/i18n/`.
