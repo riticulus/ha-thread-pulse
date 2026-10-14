@@ -33,6 +33,7 @@ Then explore the features:
 - [Detail panel](Detail-Panel)
 - [Hints and warnings](Hints-and-Warnings)
 - [Response time](Response-Time)
+- [Radio channels](Radio-Channels)
 - [Change log](Change-Log)
 - [Room view](Room-View)
 - [Search](Search)

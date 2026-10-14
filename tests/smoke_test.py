@@ -67,6 +67,12 @@ async def main_page(r, quick):
         await b.js("document.querySelector('[data-filter=all]').click(); document.querySelector('[data-sort=rssi]').click()")
         sig = await b.js("[...document.querySelectorAll('#tab-devices table.devs tr td:nth-child(4)')].map(td => parseInt(td.textContent)).filter(x => !isNaN(x))")
         r.check("devices tab: sort by signal", sig == sorted(sig) and len(sig) >= 10, str(sig[:6]))
+        # radio channels (#78, #120): demo has Thread 15, ZHA 20 and a Matter device on Wi-Fi 9 – Zigbee lies inside that Wi-Fi
+        lk = await b.js(f"{G}('tab-links').textContent")
+        bars = await b.js("[...document.querySelectorAll('#tab-links svg.spec .slbl')].map(t => t.textContent + (t.classList.contains('hot') ? '!' : ''))")
+        r.check("links tab: radio channel diagram, overlapping networks marked", bars == ["Thread 15", "Zigbee 20!", "Wi-Fi 9!"], str(bars))
+        r.check("links tab: overlap explained with clear Zigbee channels", "Zigbee channel 20 (2450 MHz) lies within Wi-Fi channel 9 (2442–2462 MHz), used by Air quality monitor" in lk and "clear of this Wi-Fi: 25, 26" in lk, lk[:200])
+        r.check("hints tab: the overlap is listed as a hint", "Radio channels (2.4 GHz)" in await b.js(f"{G}('tab-hints').textContent"))
         # hints over a time window (#24)
         await b.js("document.querySelector('[data-tab=hints]').click()")
         ht = await b.js(f"{G}('tab-hints').textContent")
@@ -197,6 +203,8 @@ async def main_page(r, quick):
         r.check("report contains no addresses or network identifiers", not re.search(r"[0-9a-f]{12}|dead00beef|MyHome|PAN", anon, re.I))
         weak = await b.js("(document.getElementById('tab-links') || {}).textContent || ''")      # the demo draws random signals: weak links are not always there
         r.check("report lists hints and weak links", "Restarted 10 times in the last 7 days" in anon and (("Weak links between routers" in anon) == ("Weak links between routers" in weak)))
+        r.check("report: other radio channels and the overlap, Wi-Fi device anonymised (#120)", "| Other radio channels | Zigbee 20 · Wi-Fi 9 |" in anon
+                and "Zigbee channel 20 (2450 MHz) lies within Wi-Fi channel 9" in anon and "Air quality monitor" not in anon)
         r.check("report contains the mesh health with its factors", bool(re.search(r"\*\*Mesh health: [A-E]\*\*", anon)) and "· Stability:" in anon)
         await b.js(f"{G}('reportanon').click()")
         named = await b.js(f"{G}('reporttext').value")
@@ -264,6 +272,8 @@ async def other_pages(r):
                 str([t for t in labels if "router" in t.lower() or "Home" in t][:4]))
         r.check("names that arrive after the map is drawn also reach the list", "HomePod Living Room …7114" in await b.js(f"{G}('info').textContent"))
         r.check("Apple-only demo loads", "4 devices" in await b.js(f"{G}('status').textContent"))
+        sp = await b.js(f"{G}('tab-links').textContent")
+        r.check("radio channels without ZHA: no overlap, Zigbee unknown", "No overlaps between the known networks" in sp and "No Zigbee channel" in sp and "Radio channels" not in await b.js(f"{G}('tab-hints').textContent"))
         await b.js(f"{G}('morebtn').click(); document.querySelector('[data-act=report]').click()")
         rep = await b.js(f"{G}('reporttext').value")
         r.check("anonymised report hides the names of other border routers", "HomePod" not in rep and "AppleTV" not in rep and "Border router 1" in rep, rep[:200])

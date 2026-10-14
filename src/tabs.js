@@ -29,14 +29,16 @@
       for (const w of warningsOf(n)) out.push({ id: n.id, text: w, warn: true });
       for (const h of (hintsOf[n.id] || []).concat(slowHint(n) || [], batteryHint(n) || [])) out.push({ id: n.id, text: h, warn: false });
     }
-    return out.sort((a, b) => (b.warn - a.warn) || nameOf(a.id).localeCompare(nameOf(b.id), lang));
+    for (const x of spectrumIssues()) out.push({ id: "spectrum", label: T.secSpectrum, text: x.text, warn: false });   // #78, #120
+    const nm = x => x.label || nameOf(x.id);
+    return out.sort((a, b) => (b.warn - a.warn) || nm(a).localeCompare(nm(b), lang));
   }
   const muted = t => `<div class="tnote">${t}</div>`;
   const devLink = id => nodeById[id] || wifiById[id] ? `<a href="#" data-open="${esc(id)}">${esc(nameOf(id))}</a>` : esc(nameOf(id));
   function hintTable(list) {
     return `<table class="hints">${list.map(x => { const k = x.warn ? null : hintKind(x.id, x.text);
       return `<tr><td class="${x.warn ? "r" : "b"}" style="width:1.2em;vertical-align:top">${x.warn ? "⚠" : "ℹ"}</td>` +
-      `<td style="white-space:nowrap;vertical-align:top">${devLink(x.id)}</td><td>${esc(x.text)}` +
+      `<td style="white-space:nowrap;vertical-align:top">${x.label ? `<a href="#" data-tab="links">${esc(x.label)}</a>` : devLink(x.id)}</td><td>${esc(x.text)}` +
       (k ? ` <a href="#" class="more" data-dismiss="${esc(x.id + "|" + k)}">${T.hintDone}</a>` : "") + `</td></tr>`; }).join("")}</table>`;
   }
   function dismissedHtml() {                         // hints marked "Done" whose condition still applies (#24)
@@ -115,7 +117,7 @@
       `<td class="${QUAL(r)[1]}" style="white-space:nowrap">${r} dBm${self ? ` <span class="tnote" style="display:inline">${T.selfMeasured}</span>` : ""}</td></tr>`;
     if (listData.weak.length) h += `<h4>${T.weakHead} ${T.weakSub}</h4><table class="lk">${listData.weak.map(w => linkRow(w.a, w.b, w.r)).join("")}</table>`;
     if (weakParents.length) h += `<h4>${T.weakParentHead} ${T.weakSub}</h4><table class="lk">${weakParents.map(p => linkRow(p.childId, p.parentId, p.rssi, p.src === "device")).join("")}</table>`;
-    return (h || `<div>${T.noWeakLinks}</div>`) + muted(T.linksNote) + dependHtml();
+    return spectrumSection() + (h || `<div>${T.noWeakLinks}</div>`) + muted(T.linksNote) + dependHtml();
   }
   // the panel below the map – rebuilt when the data changes (refresh, border router names #71, firmware every minute)
   function renderList() {

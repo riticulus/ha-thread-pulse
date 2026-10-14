@@ -43,7 +43,7 @@
       }
     }
     let extras = Object.keys(extra);
-    threadInfo = model.thread || null;
+    threadInfo = model.thread || null; zigbeeInfo = model.zigbee || null;
     if (!brExt && extras.length === 1) brExt = extras[0];         // no OTBR info: a single unknown router is most likely the border router
     // the parent of a device that is not a Matter device of HA (e.g. an Apple TV / HomePod) is not in any neighbour table of
     // a Matter router when the mesh has no Matter routers: add it from the device's own neighbour table (issue #71)

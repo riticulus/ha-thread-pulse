@@ -180,6 +180,13 @@ const TP_CSS = `
   #panel .btn:disabled { opacity: .55; cursor: default; }
   #panel .btn { display: inline-block; margin-top: 12px; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 10px; cursor: pointer; font: inherit; }
   #panel .hd .x { display: none; }                                    /* "‹ Network" above the header closes the panel (#130) */
+  /* radio channels (issues #78, #120) */
+  svg.spec { width: 100%; max-width: 440px; display: block; margin: 4px 0 6px; background: var(--card); border-radius: 6px; }
+  svg.spec .sgrid { stroke: var(--line); stroke-width: 1; }
+  svg.spec .saxis { fill: var(--muted); font-size: 9px; text-anchor: middle; }
+  svg.spec .slbl { fill: var(--fg); font-size: 10px; }
+  svg.spec .slbl.hot { fill: var(--c-weak, #e53935); font-weight: 600; }
+  .spi { margin: 4px 0; font-size: 12px; }
 `;
 const TP_HTML = `
 <div id="wrap">
@@ -247,6 +254,16 @@ const TEXT_EN = {
   netBtn: "📊 Network",
   tabNames: { overview: "Overview", hints: "Hints", devices: "Devices", links: "Links", changes: "Changes" },
   sheetTall: "Make the panel taller", sheetLow: "Make the panel lower",
+  // radio channels (#78, #120)
+  secSpectrum: "Radio channels (2.4 GHz)", spNames: { thread: "Thread", zigbee: "Zigbee", wifi: "Wi-Fi" }, rChannels: "Other radio channels",
+  spCh: (name, ch, f) => `${name} channel ${ch} (${f} MHz)`, spWifiCh: (k, lo, hi) => `Wi-Fi channel ${k} (${lo}–${hi} MHz)`,
+  spInside: (a, w, devs) => `${a} lies within ${w}${devs ? `, used by ${devs}` : ""} – they share the radio and disturb each other.`,
+  spZigbeeFix: list => list ? `Channels clear of this Wi-Fi: ${list}. ZHA can change its channel in its settings; the devices follow by themselves (battery devices may take a while).` : "No Zigbee channel is clear of the known Wi-Fi channels.",
+  spThreadFix: list => `Changing the Thread channel is disruptive (every Thread device has to follow, not every border router can) – moving the Wi-Fi to channel ${list} is usually easier.`,
+  spSame: ch => `Thread and Zigbee use the same channel ${ch} and share its airtime.`,
+  spOk: "No overlaps between the known networks.",
+  spNoWifi: "No Matter device on 2.4 GHz Wi-Fi, so no Wi-Fi channel is known.", spNoZigbee: "No Zigbee channel (ZHA not set up).",
+  spNote: "Only the Wi-Fi channels of Matter devices on Wi-Fi are known – not your access point's other networks or the neighbours'. The channel of a Hue bridge is not available.",
   backNet: "Network",
   devTabs: { status: "Status", link: "Connection", device: "Device" }, kSignal: "Signal dBm", kMsgs: "Msgs/h", kBattery: "Battery", kRestarts: "Restarts", kChildren: "Children",
   devFilters: { all: "All", routers: "Routers", mains: "Mains", battery: "Battery", wifi: "Wi-Fi" },
@@ -415,6 +432,16 @@ const TEXT_DE = {
   netBtn: "📊 Netz",
   tabNames: { overview: "Übersicht", hints: "Hinweise", devices: "Geräte", links: "Verbindungen", changes: "Änderungen" },
   sheetTall: "Bereich vergrössern", sheetLow: "Bereich verkleinern",
+  // Funkkanäle (#78, #120)
+  secSpectrum: "Funkkanäle (2,4 GHz)", spNames: { thread: "Thread", zigbee: "Zigbee", wifi: "WLAN" }, rChannels: "Weitere Funkkanäle",
+  spCh: (name, ch, f) => `${name}-Kanal ${ch} (${f} MHz)`, spWifiCh: (k, lo, hi) => `WLAN-Kanal ${k} (${lo}–${hi} MHz)`,
+  spInside: (a, w, devs) => `${a} liegt innerhalb von ${w}${devs ? `, genutzt von ${devs}` : ""} – sie teilen sich die Funkzeit und stören sich gegenseitig.`,
+  spZigbeeFix: list => list ? `Kanäle ausserhalb dieses WLANs: ${list}. ZHA kann den Kanal in seinen Einstellungen wechseln; die Geräte folgen von selbst (Batteriegeräte brauchen evtl. etwas länger).` : "Kein Zigbee-Kanal liegt ausserhalb der bekannten WLAN-Kanäle.",
+  spThreadFix: list => `Den Thread-Kanal zu wechseln ist aufwendig (jedes Thread-Gerät muss folgen, nicht jeder Border Router kann das) – meist ist es einfacher, das WLAN auf Kanal ${list} zu legen.`,
+  spSame: ch => `Thread und Zigbee nutzen denselben Kanal ${ch} und teilen sich seine Funkzeit.`,
+  spOk: "Keine Überschneidungen zwischen den bekannten Netzen.",
+  spNoWifi: "Kein Matter-Gerät im 2,4-GHz-WLAN, daher ist kein WLAN-Kanal bekannt.", spNoZigbee: "Kein Zigbee-Kanal (ZHA nicht eingerichtet).",
+  spNote: "Bekannt sind nur die WLAN-Kanäle von Matter-Geräten im WLAN – nicht die weiteren Netze deines Access Points oder die der Nachbarn. Der Kanal einer Hue Bridge ist nicht verfügbar.",
   backNet: "Netzwerk",
   devTabs: { status: "Zustand", link: "Verbindung", device: "Gerät" }, kSignal: "Signal dBm", kMsgs: "Nachr./h", kBattery: "Batterie", kRestarts: "Neustarts", kChildren: "Kinder",
   devFilters: { all: "Alle", routers: "Router", mains: "Netzstrom", battery: "Batterie", wifi: "WLAN" },
@@ -589,6 +616,16 @@ const TEXT_ES = {
   netBtn: "📊 Red",
   tabNames: { overview: "Resumen", hints: "Consejos", devices: "Dispositivos", links: "Enlaces", changes: "Cambios" },
   sheetTall: "Ampliar el panel", sheetLow: "Reducir el panel",
+  // canales de radio (#78, #120)
+  secSpectrum: "Canales de radio (2,4 GHz)", spNames: { thread: "Thread", zigbee: "Zigbee", wifi: "Wi-Fi" }, rChannels: "Otros canales de radio",
+  spCh: (name, ch, f) => `canal ${name} ${ch} (${f} MHz)`, spWifiCh: (k, lo, hi) => `canal Wi-Fi ${k} (${lo}–${hi} MHz)`,
+  spInside: (a, w, devs) => `El ${a} está dentro del ${w}${devs ? `, usado por ${devs}` : ""} – comparten la radio y se interfieren.`,
+  spZigbeeFix: list => list ? `Canales fuera de este Wi-Fi: ${list}. ZHA puede cambiar de canal en su configuración; los dispositivos lo siguen solos (los de batería pueden tardar un poco).` : "Ningún canal Zigbee está fuera de los canales Wi-Fi conocidos.",
+  spThreadFix: list => `Cambiar el canal Thread es complicado (cada dispositivo Thread debe seguirlo, no todos los routers frontera pueden) – normalmente es más fácil mover el Wi-Fi al canal ${list}.`,
+  spSame: ch => `Thread y Zigbee usan el mismo canal ${ch} y comparten su tiempo de emisión.`,
+  spOk: "No hay solapamientos entre las redes conocidas.",
+  spNoWifi: "Ningún dispositivo Matter en Wi-Fi de 2,4 GHz, así que no se conoce el canal Wi-Fi.", spNoZigbee: "Sin canal Zigbee (ZHA no configurado).",
+  spNote: "Solo se conocen los canales Wi-Fi de los dispositivos Matter en Wi-Fi – no las otras redes de tu punto de acceso ni las de los vecinos. El canal de un puente Hue no está disponible.",
   backNet: "Red",
   devTabs: { status: "Estado", link: "Conexión", device: "Dispositivo" }, kSignal: "Señal dBm", kMsgs: "Msj/h", kBattery: "Batería", kRestarts: "Reinicios", kChildren: "Hijos",
   devFilters: { all: "Todos", routers: "Routers", mains: "Corriente", battery: "Batería", wifi: "Wi-Fi" },
@@ -763,6 +800,16 @@ const TEXT_FR = {
   netBtn: "📊 Réseau",
   tabNames: { overview: "Aperçu", hints: "Conseils", devices: "Appareils", links: "Liaisons", changes: "Changements" },
   sheetTall: "Agrandir le panneau", sheetLow: "Réduire le panneau",
+  // canaux radio (#78, #120)
+  secSpectrum: "Canaux radio (2,4 GHz)", spNames: { thread: "Thread", zigbee: "Zigbee", wifi: "Wi-Fi" }, rChannels: "Autres canaux radio",
+  spCh: (name, ch, f) => `canal ${name} ${ch} (${f} MHz)`, spWifiCh: (k, lo, hi) => `canal Wi-Fi ${k} (${lo}–${hi} MHz)`,
+  spInside: (a, w, devs) => `Le ${a} se trouve dans le ${w}${devs ? `, utilisé par ${devs}` : ""} – ils partagent la radio et se perturbent.`,
+  spZigbeeFix: list => list ? `Canaux hors de ce Wi-Fi : ${list}. ZHA peut changer de canal dans ses paramètres ; les appareils suivent d'eux-mêmes (les appareils sur pile peuvent prendre un moment).` : "Aucun canal Zigbee n'est hors des canaux Wi-Fi connus.",
+  spThreadFix: list => `Changer le canal Thread est contraignant (chaque appareil Thread doit suivre, tous les routeurs de bordure ne le peuvent pas) – déplacer le Wi-Fi sur le canal ${list} est généralement plus simple.`,
+  spSame: ch => `Thread et Zigbee utilisent le même canal ${ch} et se partagent son temps d'antenne.`,
+  spOk: "Aucun chevauchement entre les réseaux connus.",
+  spNoWifi: "Aucun appareil Matter en Wi-Fi 2,4 GHz, le canal Wi-Fi n'est donc pas connu.", spNoZigbee: "Pas de canal Zigbee (ZHA non configuré).",
+  spNote: "Seuls les canaux Wi-Fi des appareils Matter en Wi-Fi sont connus – pas les autres réseaux de votre point d'accès ni ceux des voisins. Le canal d'un pont Hue n'est pas disponible.",
   backNet: "Réseau",
   devTabs: { status: "État", link: "Connexion", device: "Appareil" }, kSignal: "Signal dBm", kMsgs: "Msg/h", kBattery: "Batterie", kRestarts: "Redémarrages", kChildren: "Enfants",
   devFilters: { all: "Tous", routers: "Routeurs", mains: "Secteur", battery: "Pile", wifi: "Wi-Fi" },
@@ -937,6 +984,16 @@ const TEXT_IT = {
   netBtn: "📊 Rete",
   tabNames: { overview: "Panoramica", hints: "Suggerimenti", devices: "Dispositivi", links: "Collegamenti", changes: "Modifiche" },
   sheetTall: "Ingrandisci il pannello", sheetLow: "Riduci il pannello",
+  // canali radio (#78, #120)
+  secSpectrum: "Canali radio (2,4 GHz)", spNames: { thread: "Thread", zigbee: "Zigbee", wifi: "Wi-Fi" }, rChannels: "Altri canali radio",
+  spCh: (name, ch, f) => `canale ${name} ${ch} (${f} MHz)`, spWifiCh: (k, lo, hi) => `canale Wi-Fi ${k} (${lo}–${hi} MHz)`,
+  spInside: (a, w, devs) => `Il ${a} si trova nel ${w}${devs ? `, usato da ${devs}` : ""} – condividono la radio e si disturbano.`,
+  spZigbeeFix: list => list ? `Canali fuori da questo Wi-Fi: ${list}. ZHA può cambiare canale nelle sue impostazioni; i dispositivi seguono da soli (quelli a batteria possono metterci un po').` : "Nessun canale Zigbee è fuori dai canali Wi-Fi noti.",
+  spThreadFix: list => `Cambiare il canale Thread è impegnativo (ogni dispositivo Thread deve seguire, non tutti i border router possono farlo) – di solito è più semplice spostare il Wi-Fi sul canale ${list}.`,
+  spSame: ch => `Thread e Zigbee usano lo stesso canale ${ch} e ne condividono il tempo di trasmissione.`,
+  spOk: "Nessuna sovrapposizione tra le reti note.",
+  spNoWifi: "Nessun dispositivo Matter su Wi-Fi 2,4 GHz, quindi il canale Wi-Fi non è noto.", spNoZigbee: "Nessun canale Zigbee (ZHA non configurato).",
+  spNote: "Sono noti solo i canali Wi-Fi dei dispositivi Matter su Wi-Fi – non le altre reti del tuo access point né quelle dei vicini. Il canale di un bridge Hue non è disponibile.",
   backNet: "Rete",
   devTabs: { status: "Stato", link: "Connessione", device: "Dispositivo" }, kSignal: "Segnale dBm", kMsgs: "Msg/h", kBattery: "Batteria", kRestarts: "Riavvii", kChildren: "Figli",
   devFilters: { all: "Tutti", routers: "Router", mains: "Rete elettrica", battery: "Batteria", wifi: "Wi-Fi" },
@@ -1111,6 +1168,16 @@ const TEXT_NL = {
   netBtn: "📊 Netwerk",
   tabNames: { overview: "Overzicht", hints: "Tips", devices: "Apparaten", links: "Verbindingen", changes: "Wijzigingen" },
   sheetTall: "Paneel groter maken", sheetLow: "Paneel kleiner maken",
+  // radiokanalen (#78, #120)
+  secSpectrum: "Radiokanalen (2,4 GHz)", spNames: { thread: "Thread", zigbee: "Zigbee", wifi: "wifi" }, rChannels: "Andere radiokanalen",
+  spCh: (name, ch, f) => `${name}-kanaal ${ch} (${f} MHz)`, spWifiCh: (k, lo, hi) => `wifi-kanaal ${k} (${lo}–${hi} MHz)`,
+  spInside: (a, w, devs) => `${a} ligt binnen ${w}${devs ? `, gebruikt door ${devs}` : ""} – ze delen de radio en storen elkaar.`,
+  spZigbeeFix: list => list ? `Kanalen buiten deze wifi: ${list}. ZHA kan het kanaal in zijn instellingen wijzigen; de apparaten volgen vanzelf (apparaten op batterij kunnen even duren).` : "Geen Zigbee-kanaal ligt buiten de bekende wifi-kanalen.",
+  spThreadFix: list => `Het Thread-kanaal wijzigen is ingrijpend (elk Thread-apparaat moet volgen, niet elke border router kan dat) – de wifi naar kanaal ${list} verplaatsen is meestal eenvoudiger.`,
+  spSame: ch => `Thread en Zigbee gebruiken hetzelfde kanaal ${ch} en delen de zendtijd.`,
+  spOk: "Geen overlap tussen de bekende netwerken.",
+  spNoWifi: "Geen Matter-apparaat op 2,4 GHz-wifi, dus het wifi-kanaal is niet bekend.", spNoZigbee: "Geen Zigbee-kanaal (ZHA niet ingesteld).",
+  spNote: "Alleen de wifi-kanalen van Matter-apparaten op wifi zijn bekend – niet de andere netwerken van je access point of die van de buren. Het kanaal van een Hue-bridge is niet beschikbaar.",
   backNet: "Netwerk",
   devTabs: { status: "Status", link: "Verbinding", device: "Apparaat" }, kSignal: "Signaal dBm", kMsgs: "Ber./u", kBattery: "Batterij", kRestarts: "Herstarts", kChildren: "Kinderen",
   devFilters: { all: "Alle", routers: "Routers", mains: "Netstroom", battery: "Batterij", wifi: "Wifi" },
@@ -1321,7 +1388,7 @@ function createThreadPulse(root, opts, host) {
   // ---------- helpers ----------
   // All colours used by the map, badges and boxes. The CSS gets the semantic ones as variables (--c-<name>), see applyColorVars().
   const COLORS = { good: "#43a047", medium: "#fb8c00", weak: "#e53935", warn: "#fb8c00", hint: "#1e88e5", battOk: "#607d8b", change: "#ab47bc",
-                   wifi: "#78909c", heat: "#ffb300", br: "#7b1fa2", router: "#1e88e5", end: "#90caf9", sleepy: "#43a047", off: "#9e9e9e", up: "#00bcd4", down: "#e91e63", update: "#00897b" };
+                   wifi: "#78909c", heat: "#ffb300", br: "#7b1fa2", router: "#1e88e5", end: "#90caf9", sleepy: "#43a047", off: "#9e9e9e", up: "#00bcd4", down: "#e91e63", update: "#00897b", zigbee: "#c0ca33" };
   const QUAL = rssi => rssi >= -65 ? [COLORS.good, "g", T.good] : rssi >= -80 ? [COLORS.medium, "o", T.medium] : [COLORS.weak, "r", T.weak];
   function applyColorVars() { for (const k of ["good", "medium", "weak", "warn", "hint"]) host.styleTarget.style.setProperty("--c-" + k, COLORS[k]); }
   const hex16 = s => BigInt(s).toString(16).padStart(16, "0");
@@ -1482,12 +1549,15 @@ function createThreadPulse(root, opts, host) {
     let brExt = null, otbr = null, datasets = [];
     try { otbr = Object.values(await hass.callWS({ type: "otbr/info" }))[0]; brExt = otbr.extended_address.toLowerCase(); } catch (e) {}   // no OTBR add-on
     try { datasets = (await hass.callWS({ type: "thread/list_datasets" })).datasets || []; } catch (e) {}
+    // Zigbee channel from ZHA (#120) – only the channel: the answer also contains the network key
+    let zigbee = null;
+    try { const z = await hass.callWS({ type: "zha/network/settings" }); const c = z && z.settings && z.settings.network_info && z.settings.network_info.channel; if (c) zigbee = { channel: c }; } catch (e) {}   // no ZHA
     // keep only what the panel shows – never the dataset TLVs, they contain the network key
     const thread = {
       otbr: otbr && { extAddr: otbr.extended_address, borderAgentId: otbr.border_agent_id, channel: otbr.channel, extPanId: otbr.extended_pan_id },
       datasets: datasets.map(d => ({ name: d.network_name, channel: d.channel, panId: d.pan_id, extPanId: d.extended_pan_id, preferred: d.preferred, source: d.source })),
     };
-    return { nodes, wifi, brExt, hass, thread };
+    return { nodes, wifi, brExt, hass, thread, zigbee };
   }
 
   // ---------- graph ----------
@@ -1533,7 +1603,7 @@ function createThreadPulse(root, opts, host) {
       }
     }
     let extras = Object.keys(extra);
-    threadInfo = model.thread || null;
+    threadInfo = model.thread || null; zigbeeInfo = model.zigbee || null;
     if (!brExt && extras.length === 1) brExt = extras[0];         // no OTBR info: a single unknown router is most likely the border router
     // the parent of a device that is not a Matter device of HA (e.g. an Apple TV / HomePod) is not in any neighbour table of
     // a Matter router when the mesh has no Matter routers: add it from the device's own neighbour table (issue #71)
@@ -2158,7 +2228,7 @@ function createThreadPulse(root, opts, host) {
         row(T.extPanId, extPanId ? `<span style="font-family:monospace">${esc(extPanId)}</span>` : "") +
         row(T.routersInMesh, T.ofMax(routers)) +
         row(T.devicesInMesh, String(nodes.length + extraIds.size)) +
-        row(T.leader, esc(leaderName)) + `</dl>` + healthHtml(true);
+        row(T.leader, esc(leaderName)) + `</dl>` + healthHtml(true) + spectrumSection();
       const o = threadInfo && threadInfo.otbr && threadInfo.otbr.extAddr && threadInfo.otbr.extAddr.toLowerCase() === id ? threadInfo.otbr : null;
       h += `<h4>${T.secBorderRouter}</h4><dl>` + row(T.brKind, o ? esc(T.brOtbr) : "") + discRows(disc, false) +
         row(T.address, `<span style="font-family:monospace">${esc(id)}</span>`) +
@@ -2580,6 +2650,76 @@ function createThreadPulse(root, opts, host) {
     return `<h4>${T.wiHead}</h4><table class="lk"><tr><th>${T.thRouter}</th><th>${T.thDepend}</th><th>${T.thNoAlt}</th></tr>` +
       rows.map(w => `<tr class="mark" data-mark="${esc(w.ids.join(","))}" title="${esc(T.markHint)}"><td>${esc(nameOf(w.failId))}</td><td>${w.total}</td>` +
         `<td class="${w.noAlt ? "o" : "g"}">${w.noAlt}</td></tr>`).join("") + `</table>` + `<div class="tnote">${T.wiTabNote}</div>`;
+  }
+  // ---------- radio spectrum (issues #78, #120) ----------
+  // Thread and Zigbee (both IEEE 802.15.4) use 2 MHz wide channels 11–26 at 2405 + 5 × (n − 11) MHz; 2.4 GHz Wi-Fi
+  // channels 1–13 are about 20 MHz wide around 2407 + 5 × k MHz (14: 2484 MHz). A Thread or Zigbee channel whose
+  // centre lies less than 11 MHz from a Wi-Fi centre is inside that Wi-Fi channel.
+  // Known: the Thread channel, the Wi-Fi channels of Matter devices on Wi-Fi (0/54/3 – 5 GHz channels are ignored)
+  // and the ZHA channel (zha/network/settings – only the channel is kept, never the network key). Unknown: the access
+  // point's other channels, neighbouring networks, a Hue bridge.
+  const f154 = c => 2405 + 5 * (c - 11);
+  const fWifi = k => k === 14 ? 2484 : 2407 + 5 * k;
+  const WIFI_HALF = 10, IN_WIFI = 11, CLEAR_WIFI = 12, COMMON_WIFI = [1, 6, 11];
+  let zigbeeInfo = null;                             // { channel } from ZHA, set by render()
+  function threadChannel() {                         // OpenThread add-on, else the preferred dataset, else what most devices report
+    const ds = ((threadInfo && threadInfo.datasets) || []).find(d => d.preferred);
+    const chs = Object.values(nodeById).map(n => ((n.info || {}).net || {}).channel).filter(c => typeof c === "number");
+    return (threadInfo && threadInfo.otbr && threadInfo.otbr.channel) || (ds && ds.channel) ||
+           chs.sort((a, b) => chs.filter(c => c === b).length - chs.filter(c => c === a).length)[0] || null;
+  }
+  function spectrumNets() {
+    const nets = [], t = threadChannel(), z = zigbeeInfo && zigbeeInfo.channel;
+    if (t >= 11 && t <= 26) nets.push({ kind: "thread", ch: t, f: f154(t) });
+    if (z >= 11 && z <= 26) nets.push({ kind: "zigbee", ch: z, f: f154(z) });
+    const wifi = {};
+    for (const w of Object.values(wifiById)) { const k = (w.info || {}).channel; if (w.kind === "wifi" && k >= 1 && k <= 14) (wifi[k] = wifi[k] || []).push(w.id); }
+    for (const [k, ids] of Object.entries(wifi).sort((a, b) => a[0] - b[0])) nets.push({ kind: "wifi", ch: Number(k), f: fWifi(Number(k)), ids });
+    return nets;
+  }
+  const chTxt = n => n.kind === "wifi" ? T.spWifiCh(n.ch, n.f - WIFI_HALF, n.f + WIFI_HALF) : T.spCh(T.spNames[n.kind], n.ch, n.f);
+  function clearChannels(avoid, wifiKnown) {         // 802.15.4 channels away from the known Wi-Fi (and from 1/6/11 if possible)
+    const free = set => [...Array(16).keys()].map(i => i + 11).filter(c => c !== avoid && set.every(k => Math.abs(f154(c) - fWifi(k)) >= CLEAR_WIFI));
+    const best = free([...new Set(wifiKnown.concat(COMMON_WIFI))]);
+    return (best.length ? best : free(wifiKnown)).slice(0, 4);
+  }
+  // overlaps as texts – nm: name function (the text report passes the anonymised one)
+  function spectrumIssues(nm = nameOf) {
+    const nets = spectrumNets(), wifi = nets.filter(n => n.kind === "wifi"), out = [];
+    const th = nets.find(n => n.kind === "thread"), zb = nets.find(n => n.kind === "zigbee");
+    for (const n of [th, zb].filter(Boolean)) for (const w of wifi) if (Math.abs(n.f - w.f) < IN_WIFI) {
+      const fix = n.kind === "zigbee" ? T.spZigbeeFix(clearChannels(th ? th.ch : null, wifi.map(x => x.ch)).join(", "))
+        : T.spThreadFix(COMMON_WIFI.filter(k => [th, zb].filter(Boolean).every(x => Math.abs(x.f - fWifi(k)) >= IN_WIFI)).join(", ") || "–");
+      const what = T.spInside(chTxt(n), chTxt(w), w.ids.map(nm).join(", "));
+      out.push({ what, fix, text: what + " " + fix, kinds: [n.kind, "wifi"], ch: [n.ch, w.ch] });
+    }
+    if (th && zb && th.ch === zb.ch) out.push({ what: T.spSame(th.ch), fix: "", text: T.spSame(th.ch), kinds: ["thread", "zigbee"], ch: [th.ch] });
+    return out;
+  }
+  // diagram: frequency axis 2400–2485 MHz, one row per network, the overlapping ones in red
+  function spectrumHtml() {
+    const nets = spectrumNets(); if (!nets.find(n => n.kind !== "wifi")) return "";
+    const bad = new Set(spectrumIssues().flatMap(x => x.kinds.map((k, i) => k + ":" + x.ch[Math.min(i, x.ch.length - 1)])));
+    const W = 340, L = 16, R = 324, x = f => L + (f - 2400) / 85 * (R - L), rowH = 22, top = 6, H = top + nets.length * rowH + 22;
+    const color = { thread: COLORS.br, zigbee: COLORS.zigbee, wifi: COLORS.wifi };
+    let s = `<svg class="spec" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(T.secSpectrum)}">`;
+    for (let f = 2400; f <= 2480; f += 20) s += `<line class="sgrid" x1="${x(f)}" x2="${x(f)}" y1="${top}" y2="${H - 18}"/><text class="saxis" x="${x(f)}" y="${H - 5}">${f}</text>`;
+    nets.forEach((n, i) => {
+      const y = top + i * rowH, half = n.kind === "wifi" ? WIFI_HALF : 1, hot = bad.has(n.kind + ":" + n.ch);
+      const x0 = x(n.f - half), w = Math.max(4, x(n.f + half) - x0), lbl = n.kind === "wifi" ? `${T.spNames.wifi} ${n.ch}` : `${T.spNames[n.kind]} ${n.ch}`;
+      s += `<rect x="${x0}" y="${y + 3}" width="${w}" height="${rowH - 8}" rx="3" fill="${hot ? COLORS.weak : color[n.kind]}" fill-opacity="${n.kind === "wifi" ? 0.35 : 1}"` +
+           `${hot && n.kind === "wifi" ? ` stroke="${COLORS.weak}"` : ""}/>`;
+      const right = x0 + w + 4 + lbl.length * 6.2 < R;
+      s += `<text class="slbl${hot ? " hot" : ""}" x="${right ? x0 + w + 4 : x0 - 4}" y="${y + rowH / 2 + 2}" text-anchor="${right ? "start" : "end"}">${esc(lbl)}</text>`;
+    });
+    return s + `</svg>`;
+  }
+  function spectrumSection() {                       // network panel (tab Links) and the border router panel
+    const nets = spectrumNets(); if (!nets.find(n => n.kind !== "wifi")) return "";
+    const issues = spectrumIssues();
+    return `<h4>${T.secSpectrum}</h4>` + spectrumHtml() +
+      (issues.length ? issues.map(x => `<div class="spi"><span class="r">${esc(x.what)}</span> ${esc(x.fix)}</div>`).join("") : `<div class="spi g">${T.spOk}</div>`) +
+      `<div class="tnote">${nets.some(n => n.kind === "wifi") ? "" : T.spNoWifi + " "}${zigbeeInfo ? "" : T.spNoZigbee + " "}${T.spNote}</div>`;
   }
   // ---------- search (issue #9) ----------
   // Matches device name and area (case and accents ignored). Matches stay bright and are selected, the rest fades out,
@@ -3350,11 +3490,10 @@ function createThreadPulse(root, opts, host) {
     if (brList.length) row(T.rBorderRouters, brList.join(", "));
     if (others.length > brs.length) row(T.rOtherRouters, String(others.length - brs.length));
     // channel: from the OpenThread add-on, else the preferred dataset, else what most devices report
-    const ds = ((threadInfo && threadInfo.datasets) || []).find(d => d.preferred);
-    const chs = nodes.map(n => ((n.info || {}).net || {}).channel).filter(c => c !== undefined && c !== null);
-    const ch = (threadInfo && threadInfo.otbr && threadInfo.otbr.channel) || (ds && ds.channel) ||
-               chs.sort((a, b) => chs.filter(c => c === b).length - chs.filter(c => c === a).length)[0];
+    const ch = threadChannel();
     if (ch) row(T.channel, String(ch));
+    const sp = spectrumNets().filter(n => n.kind !== "thread");                       // #120
+    if (sp.length) row(T.rChannels, sp.map(n => `${T.spNames[n.kind]} ${n.ch}`).join(" · "));
     const wifi = Object.keys(wifiById).length;
     if (wifi) row(T.rWifi, String(wifi));
     const health = computeHealth(nm);
@@ -3386,6 +3525,7 @@ function createThreadPulse(root, opts, host) {
     }
     const hs = computeHints(listData.parents, nm);
     const items = sorted.flatMap(n => warningsOf(n).concat(hs[n.id] || [], slowHint(n) || [], batteryHint(n) || []).map(t => `- **${md(nm(n.id))}**: ${md(t)}`));
+    for (const x of spectrumIssues(nm)) items.push(`- **${md(T.secSpectrum)}**: ${md(x.text)}`);
     L.push("", `**${T.rWarnHead}**`, "", ...(items.length ? items : [T.noHints]));
     return L.join("\n") + "\n";
   }
@@ -3442,14 +3582,16 @@ function createThreadPulse(root, opts, host) {
       for (const w of warningsOf(n)) out.push({ id: n.id, text: w, warn: true });
       for (const h of (hintsOf[n.id] || []).concat(slowHint(n) || [], batteryHint(n) || [])) out.push({ id: n.id, text: h, warn: false });
     }
-    return out.sort((a, b) => (b.warn - a.warn) || nameOf(a.id).localeCompare(nameOf(b.id), lang));
+    for (const x of spectrumIssues()) out.push({ id: "spectrum", label: T.secSpectrum, text: x.text, warn: false });   // #78, #120
+    const nm = x => x.label || nameOf(x.id);
+    return out.sort((a, b) => (b.warn - a.warn) || nm(a).localeCompare(nm(b), lang));
   }
   const muted = t => `<div class="tnote">${t}</div>`;
   const devLink = id => nodeById[id] || wifiById[id] ? `<a href="#" data-open="${esc(id)}">${esc(nameOf(id))}</a>` : esc(nameOf(id));
   function hintTable(list) {
     return `<table class="hints">${list.map(x => { const k = x.warn ? null : hintKind(x.id, x.text);
       return `<tr><td class="${x.warn ? "r" : "b"}" style="width:1.2em;vertical-align:top">${x.warn ? "⚠" : "ℹ"}</td>` +
-      `<td style="white-space:nowrap;vertical-align:top">${devLink(x.id)}</td><td>${esc(x.text)}` +
+      `<td style="white-space:nowrap;vertical-align:top">${x.label ? `<a href="#" data-tab="links">${esc(x.label)}</a>` : devLink(x.id)}</td><td>${esc(x.text)}` +
       (k ? ` <a href="#" class="more" data-dismiss="${esc(x.id + "|" + k)}">${T.hintDone}</a>` : "") + `</td></tr>`; }).join("")}</table>`;
   }
   function dismissedHtml() {                         // hints marked "Done" whose condition still applies (#24)
@@ -3528,7 +3670,7 @@ function createThreadPulse(root, opts, host) {
       `<td class="${QUAL(r)[1]}" style="white-space:nowrap">${r} dBm${self ? ` <span class="tnote" style="display:inline">${T.selfMeasured}</span>` : ""}</td></tr>`;
     if (listData.weak.length) h += `<h4>${T.weakHead} ${T.weakSub}</h4><table class="lk">${listData.weak.map(w => linkRow(w.a, w.b, w.r)).join("")}</table>`;
     if (weakParents.length) h += `<h4>${T.weakParentHead} ${T.weakSub}</h4><table class="lk">${weakParents.map(p => linkRow(p.childId, p.parentId, p.rssi, p.src === "device")).join("")}</table>`;
-    return (h || `<div>${T.noWeakLinks}</div>`) + muted(T.linksNote) + dependHtml();
+    return spectrumSection() + (h || `<div>${T.noWeakLinks}</div>`) + muted(T.linksNote) + dependHtml();
   }
   // the panel below the map – rebuilt when the data changes (refresh, border router names #71, firmware every minute)
   function renderList() {
@@ -3676,12 +3818,12 @@ function createThreadPulse(root, opts, host) {
     const wifi = [
       { id: "wifi:demo-air", kind: "wifi", name: de ? "Luftqualität" : "Air quality monitor", icon: "air-filter", available: true, area: de ? "Büro" : "Office",
         entities: [], mainEntities: [], demoValues: [["CO₂", "612 ppm", 3 * 60], ["PM2.5", "4 µg/m³", 3 * 60]],
-        demoIdentify: true, info: { vendor: "Demo Inc.", product: "Air quality monitor", sw: "1.0.4", hw: "1.0", reboots: 3, bootReason: 1, rssi: -52, channel: 6, wifiVersion: 3 } },
+        demoIdentify: true, info: { vendor: "Demo Inc.", product: "Air quality monitor", sw: "1.0.4", hw: "1.0", reboots: 3, bootReason: 1, rssi: -52, channel: 9, wifiVersion: 3 } },
       { id: "wifi:demo-tv", kind: "ethernet", name: de ? "Fernseher" : "TV", icon: "speaker", available: true, area: de ? "Wohnzimmer" : "Living room",
         entities: [], mainEntities: [], demoValues: [[T.state, T.states.on, 40 * 60]],
         info: { vendor: "Demo Inc.", product: "Smart TV", sw: "7.2", hw: "2", reboots: 41, bootReason: 1 } },
     ];
-    return { nodes: [...routers, ...ends, ...sleepy], wifi, brExt: br.id, demo: { routers, sleepy, dec, rid },
+    return { nodes: [...routers, ...ends, ...sleepy], wifi, brExt: br.id, demo: { routers, sleepy, dec, rid }, zigbee: { channel: 20 },
              routers: { [br.id]: { vendor: "Home Assistant", model: "OpenThread Border Router", name: "Home Assistant OpenThread Border Router #BEEF", version: "1.4.0", network: "demo-thread" } },
              thread: { otbr: { extAddr: br.id, borderAgentId: "00000000000000000000000000demo00", channel: 15, extPanId: "dead00beef00cafe" },
                        datasets: [{ name: "demo-thread", channel: 15, panId: "1234", extPanId: "dead00beef00cafe", preferred: true, source: "otbr" }] } };

@@ -57,11 +57,14 @@
     let brExt = null, otbr = null, datasets = [];
     try { otbr = Object.values(await hass.callWS({ type: "otbr/info" }))[0]; brExt = otbr.extended_address.toLowerCase(); } catch (e) {}   // no OTBR add-on
     try { datasets = (await hass.callWS({ type: "thread/list_datasets" })).datasets || []; } catch (e) {}
+    // Zigbee channel from ZHA (#120) – only the channel: the answer also contains the network key
+    let zigbee = null;
+    try { const z = await hass.callWS({ type: "zha/network/settings" }); const c = z && z.settings && z.settings.network_info && z.settings.network_info.channel; if (c) zigbee = { channel: c }; } catch (e) {}   // no ZHA
     // keep only what the panel shows – never the dataset TLVs, they contain the network key
     const thread = {
       otbr: otbr && { extAddr: otbr.extended_address, borderAgentId: otbr.border_agent_id, channel: otbr.channel, extPanId: otbr.extended_pan_id },
       datasets: datasets.map(d => ({ name: d.network_name, channel: d.channel, panId: d.pan_id, extPanId: d.extended_pan_id, preferred: d.preferred, source: d.source })),
     };
-    return { nodes, wifi, brExt, hass, thread };
+    return { nodes, wifi, brExt, hass, thread, zigbee };
   }
 

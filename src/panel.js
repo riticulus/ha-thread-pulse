@@ -111,7 +111,7 @@
         row(T.extPanId, extPanId ? `<span style="font-family:monospace">${esc(extPanId)}</span>` : "") +
         row(T.routersInMesh, T.ofMax(routers)) +
         row(T.devicesInMesh, String(nodes.length + extraIds.size)) +
-        row(T.leader, esc(leaderName)) + `</dl>` + healthHtml(true);
+        row(T.leader, esc(leaderName)) + `</dl>` + healthHtml(true) + spectrumSection();
       const o = threadInfo && threadInfo.otbr && threadInfo.otbr.extAddr && threadInfo.otbr.extAddr.toLowerCase() === id ? threadInfo.otbr : null;
       h += `<h4>${T.secBorderRouter}</h4><dl>` + row(T.brKind, o ? esc(T.brOtbr) : "") + discRows(disc, false) +
         row(T.address, `<span style="font-family:monospace">${esc(id)}</span>`) +
