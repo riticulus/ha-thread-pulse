@@ -7,10 +7,12 @@
 // new feature only needs its English texts – the other languages can follow later (tests/check-i18n.js lists them).
 const TEXT_CACHE = {};
 function textFor(code) {
-  const en = TEXT.en, t = TEXT[code];
+  const en = TEXT.en,
+    t = TEXT[code];
   if (!t || t === en) return en;
   if (TEXT_CACHE[code]) return TEXT_CACHE[code];
-  const isObj = v => v && typeof v === "object" && !Array.isArray(v), out = { ...en };
+  const isObj = v => v && typeof v === "object" && !Array.isArray(v),
+    out = { ...en };
   for (const [k, v] of Object.entries(t)) out[k] = isObj(v) && isObj(en[k]) ? { ...en[k], ...v } : v;
   return (TEXT_CACHE[code] = out);
 }
@@ -22,7 +24,7 @@ function createThreadPulse(root, opts, host) {
   let destroyed = false;
   const DEMO = !!opts.demo;
   const SHOW_WIFI = opts.showWifi !== false;
-  const AMBIENT = !!opts.ambient, AMBIENT_MOTION = AMBIENT && opts.ambientMotion !== false;
+  const AMBIENT = !!opts.ambient,
+    AMBIENT_MOTION = AMBIENT && opts.ambientMotion !== false;
   let lang = (opts.lang || navigator.language || "en").slice(0, 2);
   let T = textFor(lang);
-

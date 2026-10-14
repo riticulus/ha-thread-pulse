@@ -79,6 +79,18 @@ Edit only the files in `src/`; never edit the generated files by hand.
 - Open `dist/thread-pulse.html?demo` in a browser (served from a local web server, e.g. `python3 -m http.server`) – no Home Assistant needed.
 - In Home Assistant: copy `thread-pulse.html` to `/config/www/` under another name and open it in an iframe card, or replace the card file of a manual installation.
 
+## Formatting and lint
+
+The JavaScript in `src/` is formatted with [Prettier](https://prettier.io/) (line length 120, settings in `.prettierrc.json`) and checked with [ESLint](https://eslint.org/) (`eslint.config.mjs`). Both only need Node; the card itself has no npm dependencies.
+
+```bash
+npm install            # once: Prettier and ESLint (devDependencies in package.json)
+npm run format         # format src/ in place
+npm run lint           # build, then ESLint – every message points to the file and line in src/
+```
+
+Most files in `src/` are parts of one function and not valid JavaScript on their own: `tools/format.mjs` wraps them for Prettier, and `tools/lint.mjs` lints the assembled card and maps each message back to `src/`. `.editorconfig` sets the basics (UTF-8, LF, 2 spaces) for any editor.
+
 ## Tests
 
 Browser tests run against the demo mode in headless Chrome – no Home Assistant needed. Details in [`tests/README.md`](https://github.com/riticulus/ha-thread-pulse/blob/main/tests/README.md).
@@ -101,6 +113,7 @@ A GitHub action runs on every pull request:
 - **Build check:** `build.py` is run and the generated files must match `src/`
 - **Translations:** `node tests/check-i18n.js` – no unknown keys, matching types, every text function works. Keys missing in a language only give a warning: they fall back to English at runtime, so a pull request may add its texts in English only. Releases run the check with `--strict`, then every language must be complete
 - **Syntax check** of the card and the page
+- **Formatting and lint:** `npm run format:check` and `npm run lint`
 - **Browser tests:** `tests/smoke_test.py` and `tests/visual_test.py` in headless Chrome against the demo mode; when the visual test fails, its screenshots are attached to the run (*visual-test-screenshots*)
 - **User guide:** `python3 tools/wiki.py check` – every page link and image in `docs/wiki/` exists
 

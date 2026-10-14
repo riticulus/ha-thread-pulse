@@ -2,3 +2,4 @@
 __pycache__/
 *.pyc
 tests/output/
+node_modules/

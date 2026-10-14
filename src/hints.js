@@ -10,25 +10,40 @@
   const hintKind = (id, text) => hintKinds[id + "|" + text] || null;
   function computeHints(parents, nm = nameOf) {
     const kinds = {};
-    const out = {}, add = (id, t, kind) => { (out[id] = out[id] || []).push(t); if (kind) kinds[id + "|" + t] = kind; };
+    const out = {},
+      add = (id, t, kind) => {
+        (out[id] = out[id] || []).push(t);
+        if (kind) kinds[id + "|" + t] = kind;
+      };
     const isRouterId = id => (nodeById[id] && nodeById[id].type === "routing_end_device") || id === brExt;
     for (const n of Object.values(nodeById)) {
-      const i = n.info || {}, links = linksOf[n.id] || [];
+      const i = n.info || {},
+        links = linksOf[n.id] || [];
       if (n.type !== "routing_end_device") {
         const par = links.find(l => l.kind === "parent") || links.slice().sort((a, b) => b.rssi - a.rssi)[0];
         const pinfo = parents.find(p => p.childId === n.id);
         if (par && par.rssi < -80) add(n.id, T.hWeakParent(nm(par.id), par.rssi, pinfo && pinfo.src === "device"));
       } else {
-        if (powerCutOf(n) && !isDismissed(n, "power")) {          // restarts within the time window (#24)
-          const kids = links.filter(l => l.kind === "child").map(l => nm(l.id)), s = stabilityOf(n);
-          add(n.id, s.known ? T.hPowerCutRecent(s.reboots, s.days, kids) : T.hPowerCut(i.reboots, kids) + " " + T.trendUnknown, "power");
+        if (powerCutOf(n) && !isDismissed(n, "power")) {
+          // restarts within the time window (#24)
+          const kids = links.filter(l => l.kind === "child").map(l => nm(l.id)),
+            s = stabilityOf(n);
+          add(
+            n.id,
+            s.known ? T.hPowerCutRecent(s.reboots, s.days, kids) : T.hPowerCut(i.reboots, kids) + " " + T.trendUnknown,
+            "power",
+          );
         }
         const rl = links.filter(l => l.kind === "neighbour" && isRouterId(l.id));
-        if (rl.length) { const best = Math.max(...rl.map(l => l.rssi)); if (best < -80) add(n.id, T.hEdge(best)); }
+        if (rl.length) {
+          const best = Math.max(...rl.map(l => l.rssi));
+          if (best < -80) add(n.id, T.hEdge(best));
+        }
       }
       if (unstableOf(n) && !isDismissed(n, "unstable")) add(n.id, T.hUnstable, "unstable");
       if (n.dupWith) add(n.id, T.hDupAddr(n.dupWith.map(nm).join(", ")));
-      const ch = chattyHint(n); if (ch) add(n.id, ch);                  // reports unusually often (#80)
+      const ch = chattyHint(n);
+      if (ch) add(n.id, ch); // reports unusually often (#80)
     }
     if (nm === nameOf) hintKinds = kinds;
     return out;
