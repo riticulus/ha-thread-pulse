@@ -1,12 +1,12 @@
 # Detail panel
 
-Tap or click a device on the map to open its detail panel. It takes the place of the [network panel](The-List) in the column next to the map; on narrow screens (e.g. a phone) that column is below the map *(after version 1.6.0; before, the panel opened over the map)*.
+Tap or click a device on the map to open its detail panel. It takes the place of the [network panel](The-List) in the column next to the map; on narrow screens (e.g. a phone) that column is below the map *(from version 1.7.0; before, the panel opened over the map)*.
 
 ![Detail panel](images/detail-panel.png)
 
 **Close it** with **‹ Network** above the name, by tapping empty space on the map, or with the **Esc** key – the network panel comes back. You can also open it from the [network panel](The-List) (device names are links) and with **Enter** in the [search](Search).
 
-## Layout *(after version 1.6.0)*
+## Layout *(from version 1.7.0)*
 
 At the top: the name, the [warnings](Hints-and-Warnings) and a row of **key numbers** – signal in dBm (to the parent, for routers the best link to another router), messages in the last hour, battery level (or restarts for devices without a battery) and, for routers, the number of children. Below them the sections are grouped in three **tabs**; the tab you chose stays selected when you open another device:
 
@@ -24,7 +24,7 @@ The panel updates itself every 5 seconds while it is open.
 
 Icon, name, role in the Thread network and Home Assistant area. *NOT REACHABLE* is added when Home Assistant reports the device as unavailable.
 
-## Diagnosis *(after version 1.6.0)*
+## Diagnosis *(from version 1.7.0)*
 
 For a device that is **not reachable**, dropped out in the last days, or has warnings, the tab *Status* starts with a **Diagnosis**: the likely causes found in the data, each marked **Likely** or **Possible** and with what to do next. Checked in this order: drop-outs in the [change log](Change-Log), signal to the parent, the parent being unreachable or losing power, the device losing power itself, unstable connection, battery level and [forecast](#battery), [radio channel](Radio-Channels) overlap, and whether the device is in another Thread network than the others. If nothing fits, it says so and suggests checking the device itself. It is a rule of thumb from the reported data, not a measurement. The [text report](Text-Report) lists the diagnosis of unreachable devices too.
 
@@ -139,7 +139,7 @@ Tap the **border router** to see the Thread network and the border router itself
 | Live · Messages through it | Every animated message passes the border router: total, last minute, last hour, last message |
 | Thread network | Network name, channel, PAN ID, extended PAN ID, routers in the mesh (*n of max. 32* – Thread allows at most 32 routers), Thread devices, leader router |
 | Mesh health | The [mesh health](Mesh-Health) grade with its factors *(from version 1.6.0)* |
-| Radio channels | Thread, Zigbee and Wi-Fi channels and their overlaps – see [Radio channels](Radio-Channels) *(after version 1.6.0)* |
+| Radio channels | Thread, Zigbee and Wi-Fi channels and their overlaps – see [Radio channels](Radio-Channels) *(from version 1.7.0)* |
 | Border router | Type (*OpenThread Border Router (add-on)*); manufacturer, model, name and Thread version as announced on the network *(from version 1.5.0)*; Thread address, border agent ID, the Thread networks known to Home Assistant (the preferred one is marked) |
 | Thread | Neighbours and children (battery devices using the border router as parent) with signal strength |
 

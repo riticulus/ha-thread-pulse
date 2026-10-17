@@ -20,7 +20,7 @@ Each factor is **ok** (green), **check** (orange) or **problem** (red). Factors 
 | **Weak signal** – devices with a signal weaker than −80 dBm to their parent | none | 1–2, or at most 15 % | more |
 | **Hops** – the longest path from a device to the border router | up to 3 | 4 | 5 or more |
 | **Devices per router** – the most devices that use one router as parent | up to 10, spread out | 11–20, or one router carries more than 60 % of them (from 6 devices and 3 routers) | more than 20 |
-| **Stability** – devices that are not reachable, have an unstable connection or are routers that lose power – counted over the last 7 days, exactly as for the [warnings and hints](Hints-and-Warnings#counted-over-a-time-window) *(after version 1.6.0; before: totals)* | none | 1–2 | 3 or more |
+| **Stability** – devices that are not reachable, have an unstable connection or are routers that lose power – counted over the last 7 days, exactly as for the [warnings and hints](Hints-and-Warnings#counted-over-a-time-window) *(from version 1.7.0; before: totals)* | none | 1–2 | 3 or more |
 
 Each factor shows its value (e.g. *2 of 9*) and names the affected devices.
 
