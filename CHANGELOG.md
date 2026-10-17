@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.7.0] – 2026-10-17
+
 ### Added
 - Warnings and hints about restarts and unstable connections are counted over a time window: Thread Pulse keeps a history of the restart, attach and drop-off counters (stored in Home Assistant per user, `thread_pulse_counters`) and only counts the increase in the last 7 days (card option `hint_window_days`, URL `?hintdays=`). If the counters stay the same, the hint disappears by itself – before, a bulb that once lost power often kept its hint forever. *Router probably loses power* now needs 3 restarts within the window (before: 50 in total). During the first day of history the totals are used with a note. The detail panel shows the changes of the window. **Done** button for these hints: hidden until the counter increases again, with *Show again* in the tab *Hints* ([#24](https://github.com/riticulus/ha-thread-pulse/issues/24))
 - Chattiest devices: in the tab *Devices* of the network panel the ten devices with the most messages in the last hour, with ↑ reports / ↓ commands, and a sortable column *Msgs/h*. Reports of the hour before the page was opened come from Home Assistant's history (`history/history_during_period`, coalesced like the live counter); commands only count since the page was opened. New hint for battery devices that report 60 times an hour or more ([#80](https://github.com/riticulus/ha-thread-pulse/issues/80))
@@ -134,7 +136,8 @@ Thanks to @oxmo75 for testing 1.5.0 on a real Apple-only network and for the ana
 - Demo mode (`?demo`) that works without Home Assistant
 - Readable (unminified) vis-network build
 
-[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.5.2...v1.6.0
 [1.5.2]: https://github.com/riticulus/ha-thread-pulse/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/riticulus/ha-thread-pulse/compare/v1.5.0...v1.5.1
