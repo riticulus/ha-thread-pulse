@@ -2,7 +2,7 @@
 
 Tap or click a device on the map to open its detail panel. It takes the place of the [network panel](The-List) in the column next to the map; on narrow screens (e.g. a phone) that column is below the map *(from version 1.7.0; before, the panel opened over the map)*.
 
-![Detail panel](images/detail-panel.png)
+<img src="images/battery-device-1-status.png" alt="Detail panel of a battery device: warnings, key numbers, diagnosis, hints" width="380">
 
 **Close it** with **‹ Network** above the name, by tapping empty space on the map, or with the **Esc** key – the network panel comes back. You can also open it from the [network panel](The-List) (device names are links) and with **Enter** in the [search](Search).
 
@@ -64,6 +64,8 @@ Battery level (from the battery entity in Home Assistant) and battery type as re
 
 ## Thread
 
+<img src="images/battery-device-2-link.png" alt="Tab Connection: live counters, Thread data and the signal trend" width="380">
+
 | Row | Meaning |
 |---|---|
 | Role | Router, Router (leader), End device, End device (can become router), Sleepy end device |
@@ -75,6 +77,8 @@ Battery level (from the battery entity in Home Assistant) and battery type as re
 These values are what the device last reported to Home Assistant and may be outdated.
 
 ## If this router fails
+
+<img src="images/router-2-link.png" alt="Tab Connection of a router: neighbours, best router link and what happens if it fails" width="380">
 
 *From version 1.6.0.* In the panel of every router (not the border router) – an **estimate** of what would happen if this router went offline:
 
@@ -115,6 +119,8 @@ The battery chart is in the [battery section](#battery).
 | Parent changes | How often it changed its parent since its last restart |
 
 ## Device
+
+<img src="images/battery-device-3-device.png" alt="Tab Device: device data, connected systems, identify" width="380">
 
 Manufacturer, model, firmware version, hardware version and area.
 

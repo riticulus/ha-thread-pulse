@@ -141,6 +141,8 @@ A GitHub action runs on every pull request:
 
 ## User guide
 
+**Images:** `python3 tools/screenshots.py` (after `npm run build`) regenerates every image of the user guide, the README image and the tab images in `docs/screenshots/` from demo mode, in dark mode – run it after layout changes. Only `card-editor.png` (Home Assistant's card editor) and `docs/demo.gif` are made by hand.
+
 This wiki is generated from the folder [`docs/wiki`](https://github.com/riticulus/ha-thread-pulse/tree/main/docs/wiki) of the repository – one Markdown file per page, `_Sidebar.md`, `_Footer.md` and the screenshots in `docs/wiki/images/`. **Edit the files there, never in the wiki**: the next publish overwrites the wiki.
 
 - A pull request that changes behaviour also updates the pages in `docs/wiki/`. Between releases they describe the development version; the wiki keeps showing the latest release.

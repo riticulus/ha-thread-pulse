@@ -8,15 +8,21 @@ The column next to the map shows everything about the network, in **tabs**. The 
 
 ## Overview
 
+<img src="images/network-1-overview.png" alt="Tab Overview: mesh health and the most important hints" width="380">
+
 - The **[mesh health](Mesh-Health)** grade as a large card. Only the factors that need checking (orange, red) are shown; the others are folded into one line, e.g. *4 factors ok* – tap it to see them.
 - **Most important:** the first three warnings and hints, warnings first, with *All n hints →* to the hints tab.
 - A footnote: number of Thread devices and where the data comes from.
 
 ## Hints
 
+<img src="images/network-2-hints.png" alt="Tab Hints: all warnings and hints" width="380">
+
 All [warnings and hints](Hints-and-Warnings) of all devices: **⚠ warnings first** (red), then **ℹ hints** (blue) – the same as in the [detail panels](Detail-Panel). The tab shows how many there are. Device names are links to their detail panel.
 
 ## Devices
+
+<img src="images/network-3-devices.png" alt="Tab Devices: device table, most messages, firmware" width="380">
 
 One table with every device:
 
@@ -39,6 +45,8 @@ One table with every device:
 
 ## Links
 
+<img src="images/network-4-links.png" alt="Tab Links: radio channels, weak links, routers the mesh depends on" width="380">
+
 **Radio channels** *(from version 1.7.0)*: Thread, Zigbee and Wi-Fi channels on one frequency axis, overlaps in red with a suggestion – see [Radio channels](Radio-Channels).
 
 - **Weak links between routers** (below −80 dBm), weakest first
@@ -49,6 +57,8 @@ One table with every device:
 **Tap a link** to show both devices on the map: all other devices fade out, as with the [search](Search). A small note on the map (*2 marked · Show all*) ends it; so does **Esc** or a new search. *No weak links* when all links are −80 dBm or better.
 
 ## Changes
+
+<img src="images/network-5-changes.png" alt="Tab Changes: the change log" width="380">
 
 The [change log](Change-Log): latest changes with time, device and what changed. *Clear list* empties it. The tab shows how many entries are **new since you last looked** at it.
 

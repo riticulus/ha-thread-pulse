@@ -4,6 +4,8 @@
 
 One grade from **A** (nothing to check) to **E** (several problems) for the whole Thread network, always shown **together with the reasons behind it**. It is a rule of thumb from the same data as the map, not a measurement. A single letter hides details, so read the factors, not only the grade.
 
+<img src="images/network-1-overview.png" alt="Mesh health in the overview of the network panel" width="380">
+
 Where it is shown:
 - in the overview of the [network panel](The-List) – only the factors to check, the others folded; tap a factor to show its devices on the map
 - in the [detail panel of the border router](Detail-Panel#border-router-and-other-thread-routers)

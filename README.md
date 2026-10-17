@@ -59,7 +59,7 @@ It is a single HTML page that runs in your browser inside a Home Assistant dashb
 
 Tap a device on the map to open its details (shown here from the demo mode with invented devices):
 
-<img src="docs/detail-view.png" alt="Thread Pulse detail view of a device" width="372">
+<img src="docs/detail-view.png" alt="Thread Pulse detail panel of a battery device: warnings, key numbers, diagnosis and hints" width="372">
 
 ## Offline notification (blueprint)
 
