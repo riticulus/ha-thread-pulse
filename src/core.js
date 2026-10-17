@@ -17,6 +17,7 @@ import installStability from "./stability.js";
 import installHealth from "./health.js";
 import installWhatif from "./whatif.js";
 import installSpectrum from "./spectrum.js";
+import installDiagnose from "./diagnose.js";
 import installSearch from "./search.js";
 import installChanges from "./changes.js";
 import installResponse from "./response.js";
@@ -53,6 +54,7 @@ const PARTS = [
   installHealth,
   installWhatif,
   installSpectrum,
+  installDiagnose,
   installSearch,
   installChanges,
   installResponse,

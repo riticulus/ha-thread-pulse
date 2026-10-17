@@ -330,7 +330,7 @@ export default function install(tp) {
       `<button class="x" title="×" data-act="close">×</button></div>`;
     for (const w of warningsOf(n)) h += `<div class="warn">⚠ ${esc(w)}</div>`;
     add("top", h);
-    h = "";
+    h = tp.diagnoseHtml(n); // #123
     const hs = (tp.hintsOf[n.id] || []).concat(tp.slowHint(n) || [], tp.batteryHint(n) || []);
     if (hs.length)
       h +=

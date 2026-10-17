@@ -12,7 +12,7 @@
 <script>
 (() => {
   // src/styles.css
-  var styles_default = '  :root, :host { --bg: #ffffff; --fg: #1f2733; --muted: #6b7684; --card: #f6f8fb; --line: #d6dde6; }\n  @media (prefers-color-scheme: dark) { :root, :host { --bg: #111418; --fg: #e3e7ec; --muted: #9aa4b1; --card: #1c2128; --line: #2e3540; } }\n  /* layout (issue #130): toolbar and map on the left, one inspector column on the right (network panel or device panel) */\n  #wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto minmax(0, 1fr); grid-template-areas: "bar side" "stage side";\n          height: 100%; background: var(--bg); color: var(--fg);\n          font: 14px/1.4 -apple-system, "Segoe UI", Roboto, sans-serif; }\n  #wrap { container-type: inline-size; container-name: tp; }\n  /* toolbar (issue #107): one row – search, the view toggles, the list, ⋯ menu for the rest, status */\n  #bar { grid-area: bar; display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--line); }\n  #bar button, #legbtn { border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 10px; cursor: pointer; font: inherit; }\n  .tb { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }\n  .tb .badge { background: var(--c-hint, #1e88e5); color: white; border-radius: 9px; padding: 0 6px; font-size: 11px; font-weight: 600; line-height: 16px; }\n  #morebtn { font-weight: 700; letter-spacing: 1px; }\n  #bar .tb[aria-pressed=true] { background: color-mix(in srgb, var(--c-hint, #1e88e5) 16%, var(--card)); border-color: color-mix(in srgb, var(--c-hint, #1e88e5) 55%, var(--line)); }\n  #status { color: var(--muted); font-size: 12px; cursor: pointer; margin-left: 4px; }\n  #status:hover { color: var(--fg); }\n  #searchbox { display: inline-flex; align-items: center; gap: 6px; }\n  #morebox { position: relative; display: inline-flex; }\n  #moremenu { position: absolute; top: calc(100% + 4px); left: 0; z-index: 10; display: flex; flex-direction: column; gap: 4px; padding: 6px;\n              background: var(--bg); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 24px rgba(0,0,0,.25); }\n  #moremenu[hidden] { display: none; }\n  #bar #moremenu button { text-align: left; width: max-content; max-width: min(320px, calc(100vw - 40px)); border-color: transparent; background: none; padding: 5px 8px; }\n  #bar #moremenu button:hover, #bar #moremenu button:focus-visible { background: var(--card); border-color: var(--line); }\n  #moremenu .mrow { display: flex; align-items: center; gap: 8px; }\n  #moremenu .msep { border-top: 1px solid var(--line); margin: 2px 0; }\n  #moremenu .mhead, #moremenu .mver { color: var(--muted); font-size: 11px; padding: 0 4px; }\n  #moremenu .mhead { text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }\n  #volume { width: 90px; accent-color: var(--c-hint, #1e88e5); }\n  #volume[hidden] { display: none; }\n  #search { width: 200px; max-width: 60vw; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 8px; font: inherit; box-sizing: border-box; }\n  #search:focus { outline: 2px solid var(--c-hint, #1e88e5); outline-offset: -1px; }\n  #hits { color: var(--muted); font-size: 12px; }\n  /* legend (issue #107): a ? button on the map opens it as an overlay */\n  #legbtn { position: absolute; top: 8px; left: 8px; z-index: 4; width: 30px; height: 30px; padding: 0; border-radius: 50%; font-weight: 700;\n            background: color-mix(in srgb, var(--bg) 85%, transparent); }\n  #legend { position: absolute; top: 8px; left: 46px; z-index: 4; max-width: min(440px, calc(100% - 62px)); display: flex; flex-wrap: wrap; gap: 4px 12px;\n            background: color-mix(in srgb, var(--bg) 92%, transparent); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px;\n            box-shadow: 0 4px 16px rgba(0,0,0,.18); }\n  #legend.hidden { display: none; }\n  /* narrow cards and phones: icons only (the label is the tooltip), the search is an icon until it is used */\n  @container tp (max-width: 640px) {\n    #bar > .tb .lb { display: none; }\n    #bar { gap: 6px; }\n    #searchbox:not(:focus-within) #search:placeholder-shown { width: 38px; padding-right: 0; cursor: pointer; }\n    #searchbox:focus-within #search, #search:not(:placeholder-shown) { width: 100%; max-width: none; }\n    #searchbox:focus-within, #searchbox:has(#search:not(:placeholder-shown)) { flex-basis: 100%; }\n    #status { flex-basis: 100%; margin-left: 0; }\n  }\n  .lg { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }\n  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }\n  .ln { width: 18px; height: 3px; display: inline-block; border-radius: 2px; }\n  .lg[hidden] { display: none; }\n  .heatln { height: 7px; opacity: .6; filter: blur(.6px); }\n  #stage { grid-area: stage; min-height: 120px; position: relative; container-type: size; }\n  #net { position: absolute; inset: 0; touch-action: none; }   /* no browser page zoom on double tap inside the map */\n  #live { position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px); font-size: 12px; color: var(--muted);\n          background: color-mix(in srgb, var(--bg) 85%, transparent); border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; pointer-events: none; }\n  #live:empty { display: none; }\n  #live div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\n  #live b { color: var(--fg); font-weight: 600; }\n  #info { flex: 1; min-height: 0; padding: 8px 12px 14px; font-size: 13px; overflow: auto; }\n  /* network panel: tabs (issue #108) */\n  #info { padding-top: 0; }\n  #tabbar { position: sticky; top: 0; z-index: 2; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; background: var(--bg);\n            border-bottom: 1px solid var(--line); margin: 0 -12px 10px; padding: 0 8px; }\n  #tabbar::-webkit-scrollbar { display: none; }\n  #tabbar button { border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font: inherit; font-size: 13px; padding: 8px 6px 7px;\n                   cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; }\n  #tabbar button:hover { color: var(--fg); }\n  #tabbar button.on { color: var(--fg); border-bottom-color: var(--c-hint, #1e88e5); font-weight: 600; }\n  #tabbar .cnt { background: var(--line); color: var(--fg); border-radius: 9px; padding: 0 6px; font-size: 11px; font-weight: 600; line-height: 16px; }\n  #tabbar .cnt.new { background: var(--c-hint, #1e88e5); color: white; }\n  .tabp h4 { margin: 14px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; }\n  .tnote { color: var(--muted); font-size: 12px; margin: 4px 0 10px; }\n  .b { color: var(--c-hint, #1e88e5); }\n  .hcard { display: flex; align-items: center; gap: 12px; margin: 2px 0 8px; }\n  .hgrade { width: 44px; height: 44px; border-radius: 10px; color: white; font-size: 26px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex: none; }\n  tr.mark { cursor: pointer; }\n  tr.mark:hover td { background: var(--card); }\n  details.okf { margin: 4px 0; }\n  details.okf summary { cursor: pointer; color: var(--muted); font-size: 12px; padding: 3px 0; }\n  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }\n  .chips button { border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 14px; padding: 2px 10px; font: inherit; font-size: 12px; cursor: pointer; }\n  .chips button span { color: var(--muted); }\n  .chips button.on { border-color: var(--c-hint, #1e88e5); background: color-mix(in srgb, var(--c-hint, #1e88e5) 16%, var(--card)); }\n  .tscroll { overflow-x: auto; }\n  table.devs th a { color: inherit; text-decoration: none; white-space: nowrap; }\n  table.lk { width: auto; min-width: min(100%, 420px); }\n  #markchip { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); z-index: 4; font-size: 12px; white-space: nowrap;\n              background: color-mix(in srgb, var(--bg) 92%, transparent); border: 1px solid var(--c-hint, #1e88e5); border-radius: 14px; padding: 3px 10px; }\n  #markchip[hidden] { display: none; }\n  #markchip a { color: inherit; font-weight: 600; }\n  #wrap.ambient #markchip { display: none !important; }\n  .cbar { display: block; height: 8px; border-radius: 4px; background: var(--card); overflow: hidden; }\n  .cbar span { display: block; height: 100%; background: var(--c-hint, #1e88e5); border-radius: 4px; }\n  a.more { display: inline-block; margin-top: 6px; font-size: 12px; }\n  /* ambient mode (issue #11): only the pulsing mesh, dark, for wall tablets */\n  #wrap.ambient { background: #05070a !important; }\n  #wrap.ambient #side:not(:has(#panel:not([hidden]))):not(:has(#info.errshown)) { display: none; }\n  #wrap.ambient #bar, #wrap.ambient #live, #wrap.ambient #legbtn, #wrap.ambient #legend, #wrap.ambient #info:not(.errshown) { display: none !important; }\n  #wrap.ambient #info.errshown { display: block !important; }\n  table { border-collapse: collapse; width: 100%; }\n  td, th { text-align: left; padding: 3px 6px; border-bottom: 1px solid var(--line); }\n  th { color: var(--muted); font-weight: 600; }\n  /* text colours: darker variants of COLORS.good / medium / weak, readable on light and dark backgrounds */\n  .g { color: #2e7d32; } .o { color: #ef6c00; } .r { color: #c62828; }\n  #err { color: #c62828; padding: 12px; white-space: pre-wrap; }\n  #side { grid-area: side; width: 410px; min-height: 0; display: flex; flex-direction: column; border-left: 1px solid var(--line); background: var(--bg); }\n  #side:has(#panel:not([hidden])) #info { display: none; }\n  #panel { flex: 1; min-height: 0; overflow: auto; padding: 10px 14px 14px; font-size: 13px; }\n  #panel[hidden] { display: none; }\n  #panel .back { border: 0; background: none; color: var(--c-hint, #1e88e5); font: inherit; font-size: 12px; padding: 0 0 6px; cursor: pointer; }\n  #panel .keys { display: grid; grid-template-columns: repeat(auto-fit, minmax(64px, 1fr)); gap: 6px; margin: 8px 0 4px; }\n  #panel .keys div { background: var(--card); border-radius: 8px; padding: 6px 8px; display: flex; flex-direction: column; min-width: 0; }\n  #panel .keys span { color: var(--muted); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\n  #panel .keys b { font-size: 16px; }\n  #panel .dtabs { display: flex; position: sticky; top: -10px; z-index: 1; background: var(--bg); border-bottom: 1px solid var(--line); margin: 6px -14px 4px; padding: 0 8px; }\n  #panel .dtabs button { flex: 1; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font: inherit; padding: 8px 4px 7px; cursor: pointer; }\n  #panel .dtabs button:hover { color: var(--fg); }\n  #panel .dtabs button.on { color: var(--fg); border-bottom-color: var(--c-hint, #1e88e5); font-weight: 600; }\n  #panel .dtab > h4:first-child { margin-top: 8px; }\n  /* narrow cards and phones: the column is a sheet below the map; the handle makes it tall or low */\n  #sheetbtn { display: none; }\n  #wrap.narrow { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) minmax(0, 42%); grid-template-areas: "bar" "stage" "side"; }\n  #wrap.narrow.sheet-tall { grid-template-rows: auto minmax(0, 1fr) minmax(0, 72%); }\n  #wrap.narrow.sheet-tall #live, #wrap.narrow.sheet-tall #legbtn, #wrap.narrow.sheet-tall #legend { display: none; }\n  #wrap.narrow #side { width: auto; border-left: 0; border-top: 1px solid var(--line); border-radius: 14px 14px 0 0; box-shadow: 0 -4px 16px rgba(0,0,0,.15); }\n  #wrap.narrow #sheetbtn { display: flex; justify-content: center; align-items: center; flex: none; height: 22px; border: 0; background: none; cursor: pointer; padding: 0; }\n  #wrap.narrow #sheetbtn::before { content: ""; width: 40px; height: 4px; border-radius: 2px; background: var(--line); }\n  #wrap.narrow #sheetbtn:hover::before { background: var(--muted); }\n  /* text report (issue #85): over the map, above the detail panel */\n  #report { position: absolute; inset: 8px; z-index: 6; display: flex; flex-direction: column; gap: 8px; max-width: 760px; margin: 0 auto;\n            background: var(--bg); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.25); padding: 12px 14px; font-size: 13px; }\n  #report[hidden] { display: none; }\n  /* mesh health (issue #84) */\n  .grade { display: inline-block; min-width: 1.6em; text-align: center; color: white; border-radius: 6px; padding: 0 5px; font-weight: 700; }\n  .health table { margin-top: 4px; }\n  #panel .health td { font-size: 12px; }\n  #report .hd { display: flex; align-items: center; font-size: 15px; }\n  #report .x { margin-left: auto; border: 0; background: none; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; padding: 0 2px; }\n  #report .chk { display: flex; align-items: center; gap: 6px; cursor: pointer; }\n  #report textarea { flex: 1; min-height: 120px; resize: none; width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: 8px;\n                     background: var(--card); color: var(--fg); padding: 8px; font: 12px/1.45 ui-monospace, Menlo, Consolas, monospace; white-space: pre; }\n  #report .btn { border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 12px; cursor: pointer; font: inherit; }\n  #report .note { color: var(--muted); font-size: 11px; }\n  #panel .hd { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }\n  #panel .hd img { width: 40px; height: 40px; flex: none; }\n  #panel .hd .t { font-size: 16px; font-weight: 600; line-height: 1.2; }\n  #panel .hd .s { color: var(--muted); font-size: 12px; }\n  #panel .x { margin-left: auto; align-self: flex-start; border: 0; background: none; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; padding: 0 2px; }\n  #panel h4 { margin: 12px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; }\n  #panel dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 0; }\n  #panel dt { color: var(--muted); } #panel dd { margin: 0; overflow-wrap: anywhere; }\n  #panel .warn { background: color-mix(in srgb, var(--c-warn, #fb8c00) 18%, transparent); border: 1px solid var(--c-warn, #fb8c00); border-radius: 8px; padding: 6px 8px; margin: 6px 0; }\n  #panel .hint { background: color-mix(in srgb, var(--c-hint, #1e88e5) 14%, transparent); border: 1px solid var(--c-hint, #1e88e5); border-radius: 8px; padding: 6px 8px; margin: 6px 0; }\n  #info a { color: inherit; }\n  #panel .note { color: var(--muted); font-size: 11px; margin-top: 2px; }\n  #panel .ident { margin-top: 12px; }\n  #panel ul.wi { margin: 4px 0 6px; padding-left: 18px; }\n  #panel ul.wi li { margin: 2px 0; }\n  /* trends (issue #38) */\n  #panel .trend { margin: 6px 0 2px; }\n  #panel .trend svg { width: 100%; height: 56px; display: block; background: var(--card); border-radius: 6px; touch-action: pan-y; cursor: crosshair; }\n  #panel .trend .tline { fill: none; stroke: var(--c-hint, #1e88e5); stroke-width: 1.6; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; }\n  #panel .trend .tline.dots { stroke-width: 4; }\n  #panel .trend .tguide { stroke: var(--c-weak, #e53935); stroke-dasharray: 3 3; stroke-width: 1; vector-effect: non-scaling-stroke; opacity: .6; }\n  #panel .trend .tday { stroke: var(--line); stroke-width: 1; vector-effect: non-scaling-stroke; }\n  #panel .trend .tdot { fill: var(--fg); }\n  #panel .trend .tread { font-size: 11px; color: var(--muted); min-height: 1.3em; }\n  #panel .ident .btn { margin-top: 0; }\n  #panel .btn.small { margin-top: 6px; padding: 2px 10px; font-size: 12px; }\n  #panel .btn:disabled { opacity: .55; cursor: default; }\n  #panel .btn { display: inline-block; margin-top: 12px; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 10px; cursor: pointer; font: inherit; }\n  #panel .hd .x { display: none; }                                    /* "‹ Network" above the header closes the panel (#130) */\n  /* radio channels (issues #78, #120) */\n  svg.spec { width: 100%; max-width: 440px; display: block; margin: 4px 0 6px; background: var(--card); border-radius: 6px; }\n  svg.spec .sgrid { stroke: var(--line); stroke-width: 1; }\n  svg.spec .saxis { fill: var(--muted); font-size: 9px; text-anchor: middle; }\n  svg.spec .slbl { fill: var(--fg); font-size: 10px; }\n  svg.spec .slbl.hot { fill: var(--c-weak, #e53935); font-weight: 600; }\n  .spi { margin: 4px 0; font-size: 12px; }\n';
+  var styles_default = '  :root, :host { --bg: #ffffff; --fg: #1f2733; --muted: #6b7684; --card: #f6f8fb; --line: #d6dde6; }\n  @media (prefers-color-scheme: dark) { :root, :host { --bg: #111418; --fg: #e3e7ec; --muted: #9aa4b1; --card: #1c2128; --line: #2e3540; } }\n  /* layout (issue #130): toolbar and map on the left, one inspector column on the right (network panel or device panel) */\n  #wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto minmax(0, 1fr); grid-template-areas: "bar side" "stage side";\n          height: 100%; background: var(--bg); color: var(--fg);\n          font: 14px/1.4 -apple-system, "Segoe UI", Roboto, sans-serif; }\n  #wrap { container-type: inline-size; container-name: tp; }\n  /* toolbar (issue #107): one row – search, the view toggles, the list, ⋯ menu for the rest, status */\n  #bar { grid-area: bar; display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--line); }\n  #bar button, #legbtn { border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 10px; cursor: pointer; font: inherit; }\n  .tb { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }\n  .tb .badge { background: var(--c-hint, #1e88e5); color: white; border-radius: 9px; padding: 0 6px; font-size: 11px; font-weight: 600; line-height: 16px; }\n  #morebtn { font-weight: 700; letter-spacing: 1px; }\n  #bar .tb[aria-pressed=true] { background: color-mix(in srgb, var(--c-hint, #1e88e5) 16%, var(--card)); border-color: color-mix(in srgb, var(--c-hint, #1e88e5) 55%, var(--line)); }\n  #status { color: var(--muted); font-size: 12px; cursor: pointer; margin-left: 4px; }\n  #status:hover { color: var(--fg); }\n  #searchbox { display: inline-flex; align-items: center; gap: 6px; }\n  #morebox { position: relative; display: inline-flex; }\n  #moremenu { position: absolute; top: calc(100% + 4px); left: 0; z-index: 10; display: flex; flex-direction: column; gap: 4px; padding: 6px;\n              background: var(--bg); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 24px rgba(0,0,0,.25); }\n  #moremenu[hidden] { display: none; }\n  #bar #moremenu button { text-align: left; width: max-content; max-width: min(320px, calc(100vw - 40px)); border-color: transparent; background: none; padding: 5px 8px; }\n  #bar #moremenu button:hover, #bar #moremenu button:focus-visible { background: var(--card); border-color: var(--line); }\n  #moremenu .mrow { display: flex; align-items: center; gap: 8px; }\n  #moremenu .msep { border-top: 1px solid var(--line); margin: 2px 0; }\n  #moremenu .mhead, #moremenu .mver { color: var(--muted); font-size: 11px; padding: 0 4px; }\n  #moremenu .mhead { text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }\n  #volume { width: 90px; accent-color: var(--c-hint, #1e88e5); }\n  #volume[hidden] { display: none; }\n  #search { width: 200px; max-width: 60vw; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 4px 8px; font: inherit; box-sizing: border-box; }\n  #search:focus { outline: 2px solid var(--c-hint, #1e88e5); outline-offset: -1px; }\n  #hits { color: var(--muted); font-size: 12px; }\n  /* legend (issue #107): a ? button on the map opens it as an overlay */\n  #legbtn { position: absolute; top: 8px; left: 8px; z-index: 4; width: 30px; height: 30px; padding: 0; border-radius: 50%; font-weight: 700;\n            background: color-mix(in srgb, var(--bg) 85%, transparent); }\n  #legend { position: absolute; top: 8px; left: 46px; z-index: 4; max-width: min(440px, calc(100% - 62px)); display: flex; flex-wrap: wrap; gap: 4px 12px;\n            background: color-mix(in srgb, var(--bg) 92%, transparent); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px;\n            box-shadow: 0 4px 16px rgba(0,0,0,.18); }\n  #legend.hidden { display: none; }\n  /* narrow cards and phones: icons only (the label is the tooltip), the search is an icon until it is used */\n  @container tp (max-width: 640px) {\n    #bar > .tb .lb { display: none; }\n    #bar { gap: 6px; }\n    #searchbox:not(:focus-within) #search:placeholder-shown { width: 38px; padding-right: 0; cursor: pointer; }\n    #searchbox:focus-within #search, #search:not(:placeholder-shown) { width: 100%; max-width: none; }\n    #searchbox:focus-within, #searchbox:has(#search:not(:placeholder-shown)) { flex-basis: 100%; }\n    #status { flex-basis: 100%; margin-left: 0; }\n  }\n  .lg { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }\n  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }\n  .ln { width: 18px; height: 3px; display: inline-block; border-radius: 2px; }\n  .lg[hidden] { display: none; }\n  .heatln { height: 7px; opacity: .6; filter: blur(.6px); }\n  #stage { grid-area: stage; min-height: 120px; position: relative; container-type: size; }\n  #net { position: absolute; inset: 0; touch-action: none; }   /* no browser page zoom on double tap inside the map */\n  #live { position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px); font-size: 12px; color: var(--muted);\n          background: color-mix(in srgb, var(--bg) 85%, transparent); border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; pointer-events: none; }\n  #live:empty { display: none; }\n  #live div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\n  #live b { color: var(--fg); font-weight: 600; }\n  #info { flex: 1; min-height: 0; padding: 8px 12px 14px; font-size: 13px; overflow: auto; }\n  /* network panel: tabs (issue #108) */\n  #info { padding-top: 0; }\n  #tabbar { position: sticky; top: 0; z-index: 2; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; background: var(--bg);\n            border-bottom: 1px solid var(--line); margin: 0 -12px 10px; padding: 0 8px; }\n  #tabbar::-webkit-scrollbar { display: none; }\n  #tabbar button { border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font: inherit; font-size: 13px; padding: 8px 6px 7px;\n                   cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; }\n  #tabbar button:hover { color: var(--fg); }\n  #tabbar button.on { color: var(--fg); border-bottom-color: var(--c-hint, #1e88e5); font-weight: 600; }\n  #tabbar .cnt { background: var(--line); color: var(--fg); border-radius: 9px; padding: 0 6px; font-size: 11px; font-weight: 600; line-height: 16px; }\n  #tabbar .cnt.new { background: var(--c-hint, #1e88e5); color: white; }\n  .tabp h4 { margin: 14px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; }\n  .tnote { color: var(--muted); font-size: 12px; margin: 4px 0 10px; }\n  .b { color: var(--c-hint, #1e88e5); }\n  .hcard { display: flex; align-items: center; gap: 12px; margin: 2px 0 8px; }\n  .hgrade { width: 44px; height: 44px; border-radius: 10px; color: white; font-size: 26px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex: none; }\n  tr.mark { cursor: pointer; }\n  tr.mark:hover td { background: var(--card); }\n  details.okf { margin: 4px 0; }\n  details.okf summary { cursor: pointer; color: var(--muted); font-size: 12px; padding: 3px 0; }\n  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }\n  .chips button { border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 14px; padding: 2px 10px; font: inherit; font-size: 12px; cursor: pointer; }\n  .chips button span { color: var(--muted); }\n  .chips button.on { border-color: var(--c-hint, #1e88e5); background: color-mix(in srgb, var(--c-hint, #1e88e5) 16%, var(--card)); }\n  .tscroll { overflow-x: auto; }\n  table.devs th a { color: inherit; text-decoration: none; white-space: nowrap; }\n  table.lk { width: auto; min-width: min(100%, 420px); }\n  #markchip { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); z-index: 4; font-size: 12px; white-space: nowrap;\n              background: color-mix(in srgb, var(--bg) 92%, transparent); border: 1px solid var(--c-hint, #1e88e5); border-radius: 14px; padding: 3px 10px; }\n  #markchip[hidden] { display: none; }\n  #markchip a { color: inherit; font-weight: 600; }\n  #wrap.ambient #markchip { display: none !important; }\n  .cbar { display: block; height: 8px; border-radius: 4px; background: var(--card); overflow: hidden; }\n  .cbar span { display: block; height: 100%; background: var(--c-hint, #1e88e5); border-radius: 4px; }\n  a.more { display: inline-block; margin-top: 6px; font-size: 12px; }\n  /* ambient mode (issue #11): only the pulsing mesh, dark, for wall tablets */\n  #wrap.ambient { background: #05070a !important; }\n  #wrap.ambient #side:not(:has(#panel:not([hidden]))):not(:has(#info.errshown)) { display: none; }\n  #wrap.ambient #bar, #wrap.ambient #live, #wrap.ambient #legbtn, #wrap.ambient #legend, #wrap.ambient #info:not(.errshown) { display: none !important; }\n  #wrap.ambient #info.errshown { display: block !important; }\n  table { border-collapse: collapse; width: 100%; }\n  td, th { text-align: left; padding: 3px 6px; border-bottom: 1px solid var(--line); }\n  th { color: var(--muted); font-weight: 600; }\n  /* text colours: darker variants of COLORS.good / medium / weak, readable on light and dark backgrounds */\n  .g { color: #2e7d32; } .o { color: #ef6c00; } .r { color: #c62828; }\n  #err { color: #c62828; padding: 12px; white-space: pre-wrap; }\n  #side { grid-area: side; width: 410px; min-height: 0; display: flex; flex-direction: column; border-left: 1px solid var(--line); background: var(--bg); }\n  #side:has(#panel:not([hidden])) #info { display: none; }\n  #panel { flex: 1; min-height: 0; overflow: auto; padding: 10px 14px 14px; font-size: 13px; }\n  #panel[hidden] { display: none; }\n  #panel .back { border: 0; background: none; color: var(--c-hint, #1e88e5); font: inherit; font-size: 12px; padding: 0 0 6px; cursor: pointer; }\n  #panel .keys { display: grid; grid-template-columns: repeat(auto-fit, minmax(64px, 1fr)); gap: 6px; margin: 8px 0 4px; }\n  #panel .keys div { background: var(--card); border-radius: 8px; padding: 6px 8px; display: flex; flex-direction: column; min-width: 0; }\n  #panel .keys span { color: var(--muted); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\n  #panel .keys b { font-size: 16px; }\n  #panel .dtabs { display: flex; position: sticky; top: -10px; z-index: 1; background: var(--bg); border-bottom: 1px solid var(--line); margin: 6px -14px 4px; padding: 0 8px; }\n  #panel .dtabs button { flex: 1; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font: inherit; padding: 8px 4px 7px; cursor: pointer; }\n  #panel .dtabs button:hover { color: var(--fg); }\n  #panel .dtabs button.on { color: var(--fg); border-bottom-color: var(--c-hint, #1e88e5); font-weight: 600; }\n  #panel .dtab > h4:first-child { margin-top: 8px; }\n  /* narrow cards and phones: the column is a sheet below the map; the handle makes it tall or low */\n  #sheetbtn { display: none; }\n  #wrap.narrow { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) minmax(0, 42%); grid-template-areas: "bar" "stage" "side"; }\n  #wrap.narrow.sheet-tall { grid-template-rows: auto minmax(0, 1fr) minmax(0, 72%); }\n  #wrap.narrow.sheet-tall #live, #wrap.narrow.sheet-tall #legbtn, #wrap.narrow.sheet-tall #legend { display: none; }\n  #wrap.narrow #side { width: auto; border-left: 0; border-top: 1px solid var(--line); border-radius: 14px 14px 0 0; box-shadow: 0 -4px 16px rgba(0,0,0,.15); }\n  #wrap.narrow #sheetbtn { display: flex; justify-content: center; align-items: center; flex: none; height: 22px; border: 0; background: none; cursor: pointer; padding: 0; }\n  #wrap.narrow #sheetbtn::before { content: ""; width: 40px; height: 4px; border-radius: 2px; background: var(--line); }\n  #wrap.narrow #sheetbtn:hover::before { background: var(--muted); }\n  /* text report (issue #85): over the map, above the detail panel */\n  #report { position: absolute; inset: 8px; z-index: 6; display: flex; flex-direction: column; gap: 8px; max-width: 760px; margin: 0 auto;\n            background: var(--bg); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.25); padding: 12px 14px; font-size: 13px; }\n  #report[hidden] { display: none; }\n  /* mesh health (issue #84) */\n  .grade { display: inline-block; min-width: 1.6em; text-align: center; color: white; border-radius: 6px; padding: 0 5px; font-weight: 700; }\n  .health table { margin-top: 4px; }\n  #panel .health td { font-size: 12px; }\n  #report .hd { display: flex; align-items: center; font-size: 15px; }\n  #report .x { margin-left: auto; border: 0; background: none; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; padding: 0 2px; }\n  #report .chk { display: flex; align-items: center; gap: 6px; cursor: pointer; }\n  #report textarea { flex: 1; min-height: 120px; resize: none; width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: 8px;\n                     background: var(--card); color: var(--fg); padding: 8px; font: 12px/1.45 ui-monospace, Menlo, Consolas, monospace; white-space: pre; }\n  #report .btn { border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 12px; cursor: pointer; font: inherit; }\n  #report .note { color: var(--muted); font-size: 11px; }\n  #panel .hd { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }\n  #panel .hd img { width: 40px; height: 40px; flex: none; }\n  #panel .hd .t { font-size: 16px; font-weight: 600; line-height: 1.2; }\n  #panel .hd .s { color: var(--muted); font-size: 12px; }\n  #panel .x { margin-left: auto; align-self: flex-start; border: 0; background: none; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; padding: 0 2px; }\n  #panel h4 { margin: 12px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; }\n  #panel dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 0; }\n  #panel dt { color: var(--muted); } #panel dd { margin: 0; overflow-wrap: anywhere; }\n  #panel .warn { background: color-mix(in srgb, var(--c-warn, #fb8c00) 18%, transparent); border: 1px solid var(--c-warn, #fb8c00); border-radius: 8px; padding: 6px 8px; margin: 6px 0; }\n  #panel .hint { background: color-mix(in srgb, var(--c-hint, #1e88e5) 14%, transparent); border: 1px solid var(--c-hint, #1e88e5); border-radius: 8px; padding: 6px 8px; margin: 6px 0; }\n  #info a { color: inherit; }\n  #panel .note { color: var(--muted); font-size: 11px; margin-top: 2px; }\n  #panel .ident { margin-top: 12px; }\n  #panel ul.wi { margin: 4px 0 6px; padding-left: 18px; }\n  #panel ul.wi li { margin: 2px 0; }\n  /* trends (issue #38) */\n  #panel .trend { margin: 6px 0 2px; }\n  #panel .trend svg { width: 100%; height: 56px; display: block; background: var(--card); border-radius: 6px; touch-action: pan-y; cursor: crosshair; }\n  #panel .trend .tline { fill: none; stroke: var(--c-hint, #1e88e5); stroke-width: 1.6; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; }\n  #panel .trend .tline.dots { stroke-width: 4; }\n  #panel .trend .tguide { stroke: var(--c-weak, #e53935); stroke-dasharray: 3 3; stroke-width: 1; vector-effect: non-scaling-stroke; opacity: .6; }\n  #panel .trend .tday { stroke: var(--line); stroke-width: 1; vector-effect: non-scaling-stroke; }\n  #panel .trend .tdot { fill: var(--fg); }\n  #panel .trend .tread { font-size: 11px; color: var(--muted); min-height: 1.3em; }\n  #panel .ident .btn { margin-top: 0; }\n  #panel .btn.small { margin-top: 6px; padding: 2px 10px; font-size: 12px; }\n  #panel .btn:disabled { opacity: .55; cursor: default; }\n  #panel .btn { display: inline-block; margin-top: 12px; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; padding: 5px 10px; cursor: pointer; font: inherit; }\n  #panel .hd .x { display: none; }                                    /* "‹ Network" above the header closes the panel (#130) */\n  /* radio channels (issues #78, #120) */\n  svg.spec { width: 100%; max-width: 440px; display: block; margin: 4px 0 6px; background: var(--card); border-radius: 6px; }\n  svg.spec .sgrid { stroke: var(--line); stroke-width: 1; }\n  svg.spec .saxis { fill: var(--muted); font-size: 9px; text-anchor: middle; }\n  svg.spec .slbl { fill: var(--fg); font-size: 10px; }\n  svg.spec .slbl.hot { fill: var(--c-weak, #e53935); font-weight: 600; }\n  .spi { margin: 4px 0; font-size: 12px; }\n  #panel .dg { margin: 4px 0 6px; }\n';
 
   // src/markup.html
   var markup_default = '<div id="wrap">\n  <div id="bar">\n    <span id="searchbox"><input id="search" type="search" autocomplete="off" spellcheck="false"><span id="hits"></span></span>\n    <button id="livebtn" class="tb"></button>\n    <button id="heatbtn" class="tb"></button>\n    <button id="roombtn" class="tb"></button>\n    <span id="morebox"><button id="morebtn" class="tb" aria-haspopup="true" aria-expanded="false">⋯</button><span id="moremenu" hidden>\n      <button id="reload"></button>\n      <span class="mrow"><button id="soundbtn"></button><input id="volume" type="range" min="0" max="1" step="0.05" hidden></span>\n      <button id="respbtn"></button>\n      <span class="msep"></span><span class="mhead" id="exporthead"></span>\n      <button data-act="export"></button><button data-act="exportanon"></button><button data-act="report"></button>\n      <span class="msep"></span><span class="mver" id="version"></span>\n    </span></span>\n    <span id="status" role="button" tabindex="0"></span>\n  </div>\n  <div id="stage"><div id="net"></div><button id="legbtn" aria-expanded="false">?</button><div id="legend" class="hidden"></div><div id="markchip" hidden></div><div id="live"></div><div id="report" hidden></div></div>\n  <div id="side"><button id="sheetbtn" aria-expanded="false"></button><div id="panel" hidden></div><div id="info"></div></div>\n</div>\n';
@@ -92,6 +92,32 @@
     dcTrendParent: "Signal to the parent · 7 days",
     dcTrendRouter: "Best router link · 7 days",
     dcNoTrend: "No signal history yet – Thread Pulse records it while its map is open.",
+    // diagnosis (#123)
+    secDiag: "Diagnosis",
+    dgLikely: "Likely",
+    dgPossible: "Possible",
+    dgNow: "Not reachable right now.",
+    dgOffline: (n, d) => `Dropped out ${n}× in the last ${d} days.`,
+    dgNothing: "No likely cause in the data.",
+    dgWeak: (p, r) => `weak signal to its parent ${p} (${r} dBm).`,
+    dgWeakTodo: "Place a mains-powered Thread device (plug, bulb) between the two, or move the device closer.",
+    dgParentDown: (p) => `its parent ${p} is not reachable – the device has to find another one.`,
+    dgParentDownTodo: "Check the parent's power; the device usually reconnects by itself within minutes.",
+    dgParentPower: (p, n) => `its parent ${p} loses power (${n} restarts in the window).`,
+    dgPowerTodo: "Leave it powered (e.g. no wall switch for a bulb) and switch it via Home Assistant.",
+    dgOwnPower: (n) => `it loses power itself (${n} restarts in the window).`,
+    dgUnstable: (a, d) => `unstable connection (${a} attach attempts, ${d} drop-offs).`,
+    dgUnstableTodo: "Look for interference (Wi-Fi router, microwave, metal) and a better-placed router nearby.",
+    dgBattery: (b) => `battery low (${b} %).`,
+    dgBatteryTodo: "Replace the battery.",
+    dgBatterySoon: (d) => `battery will probably be empty in about ${d} days.`,
+    dgChannel: "the Thread channel overlaps a Wi-Fi or Zigbee channel – see Radio channels.",
+    dgChannelTodo: "Move the Wi-Fi (or Zigbee) to another channel.",
+    dgOtherNet: (name) => `it is in another Thread network ("${name}") than the other devices.`,
+    dgOtherNetTodo: "Share it into the main network again (Matter pairing) – two networks do not help each other.",
+    dgUnknown: "no cause in the data – it may be without power, removed, or its battery died without warning.",
+    dgUnknownTodo: "Check the device itself: power, battery, distance.",
+    dgNote: "A rule-of-thumb estimate from the data the devices report – not a measurement.",
     backNet: "Network",
     devTabs: { status: "Status", link: "Connection", device: "Device" },
     kSignal: "Signal dBm",
@@ -460,6 +486,32 @@
     dcTrendParent: "Signal zum Parent · 7 Tage",
     dcTrendRouter: "Beste Router-Verbindung · 7 Tage",
     dcNoTrend: "Noch kein Signalverlauf – Thread Pulse zeichnet ihn auf, solange seine Karte offen ist.",
+    // Diagnose (#123)
+    secDiag: "Diagnose",
+    dgLikely: "Wahrscheinlich",
+    dgPossible: "Möglich",
+    dgNow: "Zurzeit nicht erreichbar.",
+    dgOffline: (n, d) => `In den letzten ${d} Tagen ${n}× ausgefallen.`,
+    dgNothing: "Keine wahrscheinliche Ursache in den Daten.",
+    dgWeak: (p, r) => `schwaches Signal zum Parent ${p} (${r} dBm).`,
+    dgWeakTodo: "Ein Thread-Gerät mit Netzstrom (Steckdose, Lampe) dazwischen platzieren oder das Gerät näher stellen.",
+    dgParentDown: (p) => `sein Parent ${p} ist nicht erreichbar – das Gerät muss einen anderen finden.`,
+    dgParentDownTodo: "Strom beim Parent prüfen; meist verbindet sich das Gerät nach einigen Minuten von selbst neu.",
+    dgParentPower: (p, n) => `sein Parent ${p} ist zeitweise stromlos (${n} Neustarts im Zeitraum).`,
+    dgPowerTodo: "Am Strom lassen (z. B. Lampe nicht am Wandschalter ausschalten) und über Home Assistant schalten.",
+    dgOwnPower: (n) => `es ist selbst zeitweise stromlos (${n} Neustarts im Zeitraum).`,
+    dgUnstable: (a, d) => `instabile Verbindung (${a} Verbindungsversuche, ${d} Abbrüche).`,
+    dgUnstableTodo: "Nach Störquellen suchen (WLAN-Router, Mikrowelle, Metall) und nach einem besser platzierten Router in der Nähe.",
+    dgBattery: (b) => `Batterie schwach (${b} %).`,
+    dgBatteryTodo: "Batterie wechseln.",
+    dgBatterySoon: (d) => `Batterie voraussichtlich in ca. ${d} Tagen leer.`,
+    dgChannel: "der Thread-Kanal überschneidet sich mit einem WLAN- oder Zigbee-Kanal – siehe Funkkanäle.",
+    dgChannelTodo: "WLAN (oder Zigbee) auf einen anderen Kanal legen.",
+    dgOtherNet: (name) => `es ist in einem anderen Thread-Netz („${name}“) als die übrigen Geräte.`,
+    dgOtherNetTodo: "Wieder ins Hauptnetz teilen (Matter-Kopplung) – zwei Netze helfen sich nicht gegenseitig.",
+    dgUnknown: "keine Ursache in den Daten – vielleicht ohne Strom, entfernt oder die Batterie ist ohne Warnung leer.",
+    dgUnknownTodo: "Das Gerät selbst prüfen: Strom, Batterie, Abstand.",
+    dgNote: "Eine Faustregel aus den Daten, die die Geräte melden – keine Messung.",
     backNet: "Netzwerk",
     devTabs: { status: "Zustand", link: "Verbindung", device: "Gerät" },
     kSignal: "Signal dBm",
@@ -3914,7 +3966,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
       let h = `<div class="hd"><img src="${iconImg(n.icon, color, 80)}" alt=""><div><div class="t">${esc(n.name)}</div><div class="s">${esc(tp.T.roles[n.role] || tp.T.types[n.type] || "")}${n.area ? " · " + esc(n.area) : ""}${n.available ? "" : esc(tp.T.unreachable)}</div></div><button class="x" title="×" data-act="close">×</button></div>`;
       for (const w of warningsOf(n)) h += `<div class="warn">⚠ ${esc(w)}</div>`;
       add("top", h);
-      h = "";
+      h = tp.diagnoseHtml(n);
       const hs = (tp.hintsOf[n.id] || []).concat(tp.slowHint(n) || [], tp.batteryHint(n) || []);
       if (hs.length)
         h += `<h4>${tp.T.secHints}</h4>` + hs.map((t) => {
@@ -4531,8 +4583,65 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
     }
   }
 
-  // src/search.js
+  // src/diagnose.js
   function install17(tp) {
+    const { esc, nameOf } = tp;
+    Object.assign(tp, { diagnose, diagnoseHtml });
+    const DAY_MS = 864e5;
+    function mainNetwork() {
+      const ids = Object.values(tp.nodeById).map((n) => ((n.info || {}).net || {}).extPanId).filter((x) => x !== void 0 && x !== null).map(String);
+      return ids.sort((a, b) => ids.filter((x) => x === b).length - ids.filter((x) => x === a).length)[0] || null;
+    }
+    function diagnose(n, nm = nameOf) {
+      const T = tp.T, days = tp.HINT_DAYS, since = Date.now() - days * DAY_MS, out = [];
+      const add = (level, text, todo) => out.push({ level, text, todo });
+      const offline = (tp.changes || []).filter((c) => c.id === n.id && c.kind === "offline" && c.t >= since).length;
+      if (n.type !== "routing_end_device" && tp.listData) {
+        const p = tp.listData.parents.find((x) => x.childId === n.id);
+        if (p) {
+          if (p.rssi < -80) add("likely", T.dgWeak(nm(p.parentId), p.rssi), T.dgWeakTodo);
+          else if (p.rssi < -75) add("possible", T.dgWeak(nm(p.parentId), p.rssi), T.dgWeakTodo);
+          const parent2 = tp.nodeById[p.parentId];
+          if (parent2 && !parent2.available) add("likely", T.dgParentDown(nm(p.parentId)), T.dgParentDownTodo);
+          else if (parent2 && tp.powerCutOf(parent2)) {
+            const s = tp.stabilityOf(parent2);
+            add("likely", T.dgParentPower(nm(p.parentId), s.reboots), T.dgPowerTodo);
+          }
+        }
+      }
+      if (n.type === "routing_end_device" && tp.powerCutOf(n))
+        add("likely", T.dgOwnPower(tp.stabilityOf(n).reboots), T.dgPowerTodo);
+      if (tp.unstableOf(n) && !out.length) {
+        const s = tp.stabilityOf(n);
+        add("possible", T.dgUnstable(s.attach, s.detached), T.dgUnstableTodo);
+      }
+      const b = tp.battOf[n.id], f = tp.battForecast[n.id];
+      if (b !== void 0 && b < 20) add("likely", T.dgBattery(b), T.dgBatteryTodo);
+      else if (f && f.state === "ok" && f.days <= 30) add("possible", T.dgBatterySoon(f.days), T.dgBatteryTodo);
+      if (tp.spectrumIssues().some((x) => x.kinds.includes("thread"))) add("possible", T.dgChannel, T.dgChannelTodo);
+      const own = ((n.info || {}).net || {}).extPanId, main = mainNetwork();
+      if (own !== void 0 && own !== null && main && String(own) !== main)
+        add("likely", T.dgOtherNet(((n.info || {}).net || {}).name || "?"), T.dgOtherNetTodo);
+      if (!n.available && !out.length) add("possible", T.dgUnknown, T.dgUnknownTodo);
+      out.sort((a, c) => a.level === c.level ? 0 : a.level === "likely" ? -1 : 1);
+      return { offline, days, findings: out };
+    }
+    function diagnoseHtml(n) {
+      const d = diagnose(n);
+      if (n.available && !d.offline && !d.findings.length) return "";
+      const T = tp.T;
+      let h = `<h4>${T.secDiag}</h4>`;
+      if (!n.available) h += `<div><b class="r">${esc(T.dgNow)}</b></div>`;
+      if (d.offline) h += `<div>${esc(T.dgOffline(d.offline, d.days))}</div>`;
+      if (!d.findings.length) h += `<div>${esc(T.dgNothing)}</div>`;
+      for (const x of d.findings)
+        h += `<div class="dg"><b class="${x.level === "likely" ? "r" : "o"}">${esc(x.level === "likely" ? T.dgLikely : T.dgPossible)}:</b> ${esc(x.text)}<div class="note">→ ${esc(x.todo)}</div></div>`;
+      return h + `<div class="note">${T.dgNote}</div>`;
+    }
+  }
+
+  // src/search.js
+  function install18(tp) {
     const { $, esc, host, openPanel } = tp;
     Object.assign(tp, { applySearch, clearMarks, markDevices });
     const norm = (t) => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -4616,7 +4725,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
 
   // src/changes.js
-  function install18(tp) {
+  function install19(tp) {
     const { $, COLORS, DEMO, QUAL, esc, every, extraName, loadHa, prefs, render, trackGrade } = tp;
     Object.assign(tp, {
       clearChanges,
@@ -4838,7 +4947,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
 
   // src/response.js
-  function install19(tp) {
+  function install20(tp) {
     const { $, COLORS, pill, prefs, renderPanel, root } = tp;
     Object.assign(tp, { drawResponseRings, recordResponse, respSummary, setRespView, slowHint });
     const RESP_WINDOW = 1e4, SLOW_MS = 1e3, SLOW_MIN = 3;
@@ -4952,7 +5061,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
 
   // src/battery.js
-  function install20(tp) {
+  function install21(tp) {
     const { DEMO, esc, every, freshHass, renderPanel } = tp;
     Object.assign(tp, { batteryHint, forecastText, loadBatteryForecasts });
     const BF_SOON = 30;
@@ -5023,7 +5132,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   );
 
   // src/trends.js
-  function install21(tp) {
+  function install22(tp) {
     const { DEMO, QUAL, esc, every, freshHass, prefs, renderPanel, root } = tp;
     Object.assign(tp, { batteryTrendHtml, recordSignal, signalTrendHtml });
     const SIG_SAVE_MS = 15 * 6e4;
@@ -5228,7 +5337,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
 
   // src/firmware.js
-  function install22(tp) {
+  function install23(tp) {
     const { COLORS, DEMO, esc, every, freshHass, renderChanges } = tp;
     Object.assign(tp, { drawUpdateBadge, firmwareListHtml, refreshFirmware, updateOf, updateText });
     tp.fwOf = {};
@@ -5314,7 +5423,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
 
   // src/fabrics.js
-  function install23(tp) {
+  function install24(tp) {
     const { DEMO, esc, freshHass, renderPanel, row } = tp;
     Object.assign(tp, { fabricsHtml });
     const fabricsOf = {};
@@ -5349,7 +5458,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
 
   // src/wifi.js
-  function install24(tp) {
+  function install25(tp) {
     const {
       $,
       COLORS,
@@ -5431,7 +5540,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
 
   // src/sound.js
-  function install25(tp) {
+  function install26(tp) {
     const { $, prefs, root } = tp;
     Object.assign(tp, { playTick, setSound });
     const SOUND_GAP_MS = 150, SOUND_MAX_PER_S = 5;
@@ -5487,7 +5596,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
 
   // src/export.js
-  function install26(tp) {
+  function install27(tp) {
     const { $, host, roomsOf, root, usefulModel } = tp;
     Object.assign(tp, { anonLabels, anonRoomMap, exportImage, setMoreMenu });
     let anonRooms = null;
@@ -5602,7 +5711,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
 
   // src/report.js
-  function install27(tp) {
+  function install28(tp) {
     const {
       $,
       DEMO,
@@ -5718,6 +5827,11 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
       const items = sorted.flatMap(
         (n) => warningsOf(n).concat(hs[n.id] || [], slowHint(n) || [], batteryHint(n) || []).map((t) => `- **${md(nm(n.id))}**: ${md(t)}`)
       );
+      for (const n of sorted.filter((n2) => !n2.available))
+        for (const f of tp.diagnose(n, nm).findings)
+          items.push(
+            `- **${md(nm(n.id))}**: ${md(f.level === "likely" ? tp.T.dgLikely : tp.T.dgPossible)}: ${md(f.text)} → ${md(f.todo)}`
+          );
       for (const x of spectrumIssues(nm)) items.push(`- **${md(tp.T.secSpectrum)}**: ${md(x.text)}`);
       L.push("", `**${tp.T.rWarnHead}**`, "", ...items.length ? items : [tp.T.noHints]);
       return L.join("\n") + "\n";
@@ -5765,7 +5879,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
 
   // src/tabs.js
-  function install28(tp) {
+  function install29(tp) {
     const {
       $,
       HEALTH_COLOR,
@@ -5973,7 +6087,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
 
   // src/layout.js
-  function install29(tp) {
+  function install30(tp) {
     const { $, QUAL, esc, msgsLastHour, powerCutOf, root, stabilityOf } = tp;
     Object.assign(tp, { panelLayout, setSheet });
     const DEV_TABS = ["status", "link", "device"];
@@ -6052,7 +6166,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
 
   // src/demo.js
-  function install30(tp) {
+  function install31(tp) {
     const { esc, every, launch, localName, opts, recordResponse, showTicker } = tp;
     Object.assign(tp, { demoModel, demoMutate, demoTraffic });
     function demoModel() {
@@ -6460,7 +6574,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
 
   // src/ui.js
-  function install31(tp) {
+  function install32(tp) {
     const {
       $,
       DEMO,
@@ -6576,7 +6690,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
 
   // src/ambient.js
-  function install32(tp) {
+  function install33(tp) {
     const { $, AMBIENT, AMBIENT_MOTION, every, root } = tp;
     if (AMBIENT) {
       $("wrap").classList.add("ambient");
@@ -6613,7 +6727,7 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
 
   // src/start.js
-  function install33(tp) {
+  function install34(tp) {
     const {
       $,
       DEMO,
@@ -6764,7 +6878,8 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
     install29,
     install30,
     install31,
-    install32
+    install32,
+    install33
   ];
   function createThreadPulse(root, opts, host) {
     const tp = { root, opts, host };
@@ -6786,8 +6901,8 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
     tp.AMBIENT = AMBIENT;
     tp.lang = (opts.lang || navigator.language || "en").slice(0, 2);
     tp.T = textFor(tp.lang);
-    for (const install34 of PARTS) install34(tp);
-    return install33(tp);
+    for (const install35 of PARTS) install35(tp);
+    return install34(tp);
   }
 
   // src/standalone.js

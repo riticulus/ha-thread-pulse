@@ -120,6 +120,7 @@ async def main_page(r, quick):
             r.check(f"device panel has section '{s}'", s in sections, str(sections))
         r.check("battery forecast row", await b.js("[...document.querySelectorAll('#panel dt')].some(d => d.textContent === 'Forecast')"))
         r.check("warning box shown (unstable demo device)", await b.js("!!document.querySelector('#panel .warn')"))
+        r.check("diagnosis names the low battery as likely cause (#123)", "Likely: battery low (15 %)" in await b.js(f"{G}('panel').textContent"))
         # device panel (issue #130): key numbers, three tabs, network panel hidden while a device is shown
         r.check("device panel: key numbers on top", await b.js("document.querySelectorAll('#panel .keys > div').length") >= 3)
         r.check("device panel: three tabs, Status shown first", await b.js("[...document.querySelectorAll('#panel [data-devtab]')].map(t => t.dataset.devtab).join()") == "status,link,device"
@@ -162,6 +163,8 @@ async def main_page(r, quick):
             if await b.js(PANEL_TITLE) == "Bedside button": break
             await asyncio.sleep(2)
         r.check("no identify button on an unreachable device", await b.js(PANEL_TITLE) == "Bedside button" and await b.js("!document.querySelector('#panel [data-identify]')"))
+        dg = await b.js(f"{G}('panel').textContent")
+        r.check("diagnosis for an unreachable device (#123)", "Diagnosis" in dg and "Not reachable right now" in dg and ("Likely:" in dg or "Possible:" in dg) and "rule-of-thumb" in dg, dg[dg.find("Diagnosis"):][:160])
         await b.js(CLOSE)
 
         # connected systems (demo: Floor lamp is also in Google Home)

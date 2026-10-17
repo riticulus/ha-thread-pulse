@@ -24,6 +24,10 @@ The panel updates itself every 5 seconds while it is open.
 
 Icon, name, role in the Thread network and Home Assistant area. *NOT REACHABLE* is added when Home Assistant reports the device as unavailable.
 
+## Diagnosis *(after version 1.6.0)*
+
+For a device that is **not reachable**, dropped out in the last days, or has warnings, the tab *Status* starts with a **Diagnosis**: the likely causes found in the data, each marked **Likely** or **Possible** and with what to do next. Checked in this order: drop-outs in the [change log](Change-Log), signal to the parent, the parent being unreachable or losing power, the device losing power itself, unstable connection, battery level and [forecast](#battery), [radio channel](Radio-Channels) overlap, and whether the device is in another Thread network than the others. If nothing fits, it says so and suggests checking the device itself. It is a rule of thumb from the reported data, not a measurement. The [text report](Text-Report) lists the diagnosis of unreachable devices too.
+
 ## Warnings and hints
 
 Orange boxes (**⚠**) are warnings, blue boxes (**💡**) are hints. See [Hints and warnings](Hints-and-Warnings).
