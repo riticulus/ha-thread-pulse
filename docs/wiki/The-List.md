@@ -2,7 +2,7 @@
 
 The column next to the map shows everything about the network, in **tabs**. The tab *Hints* shows the number of warnings and hints. Which tab you chose is remembered by the browser. While a device is selected, its [detail panel](Detail-Panel) takes the place of the network panel; **‹ Network** brings it back. On narrow screens (e.g. a phone) the column is below the map; the handle at its top makes it taller or lower again.
 
-*After version 1.6.0.* In version 1.6.0 the panel is below the map and opens with **📊 Network** in the toolbar; up to version 1.5.2 the button is called **☰ Show list** and the panel is one long list with all sections below each other.
+*From version 1.7.0.* In version 1.6.0 the panel is below the map and opens with **📊 Network** in the toolbar; up to version 1.5.2 the button is called **☰ Show list** and the panel is one long list with all sections below each other.
 
 ![Network panel](images/list.png)
 
@@ -28,18 +28,18 @@ One table with every device:
 | Signal | Signal to the parent; for routers the best link to another router. Colours as on the map; **\*** = measured only by the device itself, unreliable |
 | Firmware | Installed version; **→ 1.4.0** in orange when an update is available or being installed |
 
-| Msgs/h | Messages of the device in the last hour (reports and commands) *(after version 1.6.0)* |
+| Msgs/h | Messages of the device in the last hour (reports and commands) *(from version 1.7.0)* |
 
 - **Sort:** tap a column header (tap again to reverse).
 - **Filter:** *All*, *Routers*, *Mains*, *Battery*, *Wi-Fi* – with the number of devices.
-- Below the table: **Most messages in the last hour** *(after version 1.6.0)* – the ten devices that sent or received the most messages, with a bar and the split **↑** reports to Home Assistant / **↓** commands from Home Assistant. Tap a name to open the device.
+- Below the table: **Most messages in the last hour** *(from version 1.7.0)* – the ten devices that sent or received the most messages, with a bar and the split **↑** reports to Home Assistant / **↓** commands from Home Assistant. Tap a name to open the device.
   - Reports of the hour before the page was opened come from Home Assistant's **history** (each state change counts; changes of several entities within 0.4 s count as one radio message, like the live counter). Commands are not in the history – they only count since the page was opened.
   - **Plugs that measure power report every few seconds** – several hundred to a thousand messages an hour are normal for them. Battery devices normally send a few to about 20 an hour.
 - Below that: the **firmware** overview – devices with an update (available, skipped or being installed) and models whose devices run **different firmware versions**, e.g. *MYGGBETT door/window sensor: 1.0.9 (4) · 1.1.4 (Front door)*.
 
 ## Links
 
-**Radio channels** *(after version 1.6.0)*: Thread, Zigbee and Wi-Fi channels on one frequency axis, overlaps in red with a suggestion – see [Radio channels](Radio-Channels).
+**Radio channels** *(from version 1.7.0)*: Thread, Zigbee and Wi-Fi channels on one frequency axis, overlaps in red with a suggestion – see [Radio channels](Radio-Channels).
 
 - **Weak links between routers** (below −80 dBm), weakest first
 - **Weak signal to the parent** (below −80 dBm)

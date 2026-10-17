@@ -96,6 +96,37 @@ export const TEXT_IT = {
   dcTrendParent: "Segnale verso il parent · 7 giorni",
   dcTrendRouter: "Miglior collegamento router · 7 giorni",
   dcNoTrend: "Ancora nessuno storico del segnale – Thread Pulse lo registra mentre la sua mappa è aperta.",
+  // diagnosi (#123)
+  secDiag: "Diagnosi",
+  dgLikely: "Probabile",
+  dgPossible: "Possibile",
+  dgNow: "Non raggiungibile in questo momento.",
+  dgOffline: (n, d) => `Disconnesso ${n}× negli ultimi ${d} giorni.`,
+  dgNothing: "Nessuna causa probabile nei dati.",
+  dgWeak: (p, r) => `segnale debole verso il parent ${p} (${r} dBm).`,
+  dgWeakTodo:
+    "Mettere un dispositivo Thread alimentato a rete (presa, lampadina) tra i due, o avvicinare il dispositivo.",
+  dgParentDown: p => `il suo parent ${p} non è raggiungibile – il dispositivo deve trovarne un altro.`,
+  dgParentDownTodo:
+    "Controllare l'alimentazione del parent; di solito il dispositivo si ricollega da solo in pochi minuti.",
+  dgParentPower: (p, n) => `il suo parent ${p} perde l'alimentazione (${n} riavvii nel periodo).`,
+  dgPowerTodo:
+    "Lasciarlo alimentato (p. es. niente interruttore a muro per una lampadina) e comandarlo da Home Assistant.",
+  dgOwnPower: n => `perde lui stesso l'alimentazione (${n} riavvii nel periodo).`,
+  dgUnstable: (a, d) => `connessione instabile (${a} tentativi di connessione, ${d} disconnessioni).`,
+  dgUnstableTodo:
+    "Cercare fonti di disturbo (router Wi-Fi, microonde, metallo) e un router meglio posizionato nelle vicinanze.",
+  dgBattery: b => `batteria scarica (${b} %).`,
+  dgBatteryTodo: "Sostituire la batteria.",
+  dgBatterySoon: d => `batteria probabilmente scarica tra circa ${d} giorni.`,
+  dgChannel: "il canale Thread si sovrappone a un canale Wi-Fi o Zigbee – vedi Canali radio.",
+  dgChannelTodo: "Spostare il Wi-Fi (o Zigbee) su un altro canale.",
+  dgOtherNet: name => `si trova in un'altra rete Thread («${name}») rispetto agli altri dispositivi.`,
+  dgOtherNetTodo:
+    "Condividerlo di nuovo nella rete principale (abbinamento Matter) – due reti non si aiutano a vicenda.",
+  dgUnknown: "nessuna causa nei dati – forse è senza corrente, rimosso, o la batteria si è scaricata senza preavviso.",
+  dgUnknownTodo: "Controllare il dispositivo stesso: alimentazione, batteria, distanza.",
+  dgNote: "Una stima empirica dai dati dei dispositivi – non una misura.",
   backNet: "Rete",
   devTabs: { status: "Stato", link: "Connessione", device: "Dispositivo" },
   kSignal: "Segnale dBm",

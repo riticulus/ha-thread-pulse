@@ -1,6 +1,6 @@
 # Device card
 
-*After version 1.6.0.*
+*From version 1.7.0.*
 
 A small card for **one Thread device** – for a room dashboard, without the whole map. It comes with Thread Pulse (same file, nothing extra to install).
 

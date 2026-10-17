@@ -1,6 +1,6 @@
 # Radio channels
 
-*After version 1.6.0.*
+*From version 1.7.0.*
 
 Thread, Zigbee and 2.4 GHz Wi-Fi share the same radio band. When a Thread or Zigbee channel lies inside a Wi-Fi channel, they compete for airtime – devices then lose messages, reconnect more often or drop off. Thread Pulse shows the channels it knows on one frequency axis and warns about overlaps.
 

@@ -15,15 +15,15 @@ A device shows the **i** badge only if it has no warning. All warnings and hints
 
 | Warning | Condition |
 |---|---|
-| Unstable connection | **5 or more attach attempts** in the last 7 days *(after version 1.6.0; before: since the device's last restart)* |
-| Dropped off the network | **3 or more** times in the last 7 days *(after version 1.6.0; before: since the device's last restart)* |
+| Unstable connection | **5 or more attach attempts** in the last 7 days *(from version 1.7.0; before: since the device's last restart)* |
+| Dropped off the network | **3 or more** times in the last 7 days *(from version 1.7.0; before: since the device's last restart)* |
 | Battery low | Battery level **below 20 %** |
 
 The thresholds come from a real network of about 20 devices, where healthy devices showed 0–2 attach attempts and 1–2 drop-offs.
 
 ### Counted over a time window
 
-*After version 1.6.0.* The devices report restarts over their whole lifetime and attach attempts and drop-offs since their last restart. Taken as totals, a warning or hint about them would never go away – a bulb with 376 restarts would keep its hint forever, even if it has not lost power for months.
+*From version 1.7.0.* The devices report restarts over their whole lifetime and attach attempts and drop-offs since their last restart. Taken as totals, a warning or hint about them would never go away – a bulb with 376 restarts would keep its hint forever, even if it has not lost power for months.
 
 Thread Pulse therefore keeps a **history of these counters** and only counts what happened **in the last 7 days** (the time window can be changed, see [Configuration](Configuration)):
 
@@ -52,7 +52,7 @@ The hints *Router probably loses power* and *Unstable connection* have a **Done*
 
 ### Router probably loses power
 
-**When:** a router has restarted **3 times or more in the last 7 days** *(after version 1.6.0; before: 50 times or more in total)*.
+**When:** a router has restarted **3 times or more in the last 7 days** *(from version 1.7.0; before: 50 times or more in total)*.
 
 **Meaning:** it probably loses power from time to time – typically a bulb on a wall switch, or a plug that gets unplugged. While it is off, it cannot forward messages, and battery devices using it as their parent (named in the hint) have to find a new one.
 
@@ -60,7 +60,7 @@ The hints *Router probably loses power* and *Unstable connection* have a **Done*
 
 ### Battery device reports very often
 
-*After version 1.6.0.*
+*From version 1.7.0.*
 
 **When:** a battery device sent **60 or more** messages in the last hour (one a minute), counted over at least 30 minutes. Normal is a few to about 20 an hour.
 
@@ -109,7 +109,7 @@ So these hints can stay visible after the problem is gone – until the device r
 
 ### Radio channels overlap
 
-*After version 1.6.0.*
+*From version 1.7.0.*
 
 **When:** the Thread or Zigbee (ZHA) channel lies inside the Wi-Fi channel of a Matter device on Wi-Fi, or Thread and Zigbee use the same channel. Listed in the tab *Hints* as *Radio channels*, not tied to a device.
 

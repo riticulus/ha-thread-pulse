@@ -31,7 +31,7 @@ Matter over Thread usually confirms commands in well under a second. In a real n
 
 ## On the map
 
-*After version 1.6.0.* **⋯ → ⏱ Response times on the map** shows the measurements on the map:
+*From version 1.7.0.* **⋯ → ⏱ Response times on the map** shows the measurements on the map:
 
 - A **ring** around every device with measurements, coloured by the median: **green** below 0.5 s, **orange** 0.5–1 s, **red** 1 s or more (the same limit as the *slow* hint). The median is written above the device, e.g. *234 ms* or *1.4 s*.
 - Devices **without measurements** stay as they are – no ring. (They are not shown grey on purpose: grey means *not reachable*.)

@@ -14,7 +14,7 @@
 | **⏸ Pause live / ▶ Resume live** | Stop or restart the [live animation](Live-Data-Flow). Counting continues while paused |
 | **≋ Traffic / Traffic off** | Switch the [traffic heat](Live-Data-Flow#traffic-heat) on or off |
 | **⌂ Rooms / Rooms off** | Switch the [room view](Room-View) on or off |
-| **⋯** | Menu: **↻ Reload** (load the network data again and redraw the map, also compares with the previous state for the [change log](Change-Log)), **🔇 Sound** with its volume slider (see [sound](Live-Data-Flow#sound)), **⏱ Response times on the map** (see [response time](Response-Time#on-the-map), after version 1.6.0), **Export**: [save the map as an image](Saving-an-Image) with names or anonymised, or copy a [text report](Text-Report), and the installed version |
+| **⋯** | Menu: **↻ Reload** (load the network data again and redraw the map, also compares with the previous state for the [change log](Change-Log)), **🔇 Sound** with its volume slider (see [sound](Live-Data-Flow#sound)), **⏱ Response times on the map** (see [response time](Response-Time#on-the-map), from version 1.7.0), **Export**: [save the map as an image](Saving-an-Image) with names or anonymised, or copy a [text report](Text-Report), and the installed version |
 | Status line | Time of the last update and number of devices; *Tap a device for details* until you have opened a device once. **Tap the status line to reload** |
 | **?** (top left on the map) | Show or hide the colour legend |
 
@@ -81,4 +81,4 @@ The box in the bottom left shows how many messages arrived in the last minute an
 
 ![Phone](images/phone.png)
 
-On narrow screens (a card narrower than 640 px, e.g. a phone) the toolbar buttons show **icons only** – the highlighted ones are on – and the search is a 🔍 icon that widens when you tap it. The [network panel](The-List) and the [detail panel](Detail-Panel) are in a sheet below the map; the handle at its top makes it taller or lower *(after version 1.6.0; before, the detail panel slid up from the bottom)*.
+On narrow screens (a card narrower than 640 px, e.g. a phone) the toolbar buttons show **icons only** – the highlighted ones are on – and the search is a 🔍 icon that widens when you tap it. The [network panel](The-List) and the [detail panel](Detail-Panel) are in a sheet below the map; the handle at its top makes it taller or lower *(from version 1.7.0; before, the detail panel slid up from the bottom)*.
