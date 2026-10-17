@@ -4,7 +4,7 @@ Thread Pulse notices when something changes in your Thread network and lists it 
 
 > The change log only works while a Thread Pulse page is open. For a message on your phone when a device goes offline, use the [offline notification blueprint](Offline-Notification).
 
-![Network panel](images/list.png)
+<img src="images/network-5-changes.png" alt="The change log in the network panel" width="380">
 
 ## What is detected
 

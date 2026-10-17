@@ -1,7 +1,7 @@
 # Screenshots
 
 Images of the tabs next to the map, from demo mode in dark mode (2× resolution), for posts, the wiki and the README.
-Regenerate them after layout changes.
+Regenerate them (and the wiki images) with `python3 tools/screenshots.py` after layout changes.
 
 | File | Shows |
 |---|---|
