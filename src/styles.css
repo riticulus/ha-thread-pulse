@@ -179,3 +179,4 @@
   svg.spec .slbl { fill: var(--fg); font-size: 10px; }
   svg.spec .slbl.hot { fill: var(--c-weak, #e53935); font-weight: 600; }
   .spi { margin: 4px 0; font-size: 12px; }
+  #panel .dg { margin: 4px 0 6px; }

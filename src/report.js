@@ -154,6 +154,11 @@ export default function install(tp) {
         .concat(hs[n.id] || [], slowHint(n) || [], batteryHint(n) || [])
         .map(t => `- **${md(nm(n.id))}**: ${md(t)}`),
     );
+    for (const n of sorted.filter(n => !n.available)) // #123: likely causes for devices that are offline
+      for (const f of tp.diagnose(n, nm).findings)
+        items.push(
+          `- **${md(nm(n.id))}**: ${md(f.level === "likely" ? tp.T.dgLikely : tp.T.dgPossible)}: ${md(f.text)} → ${md(f.todo)}`,
+        );
     for (const x of spectrumIssues(nm)) items.push(`- **${md(tp.T.secSpectrum)}**: ${md(x.text)}`);
     L.push("", `**${tp.T.rWarnHead}**`, "", ...(items.length ? items : [tp.T.noHints]));
     return L.join("\n") + "\n";
