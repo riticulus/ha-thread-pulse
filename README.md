@@ -4,7 +4,7 @@
 
 📖 **[User guide in the wiki](https://github.com/riticulus/ha-thread-pulse/wiki)** – installation, configuration, every feature explained, troubleshooting.
 
-![Thread Pulse demo: live messages on the mesh, a device panel, the room view and the network panel](docs/demo.gif)
+![Thread Pulse demo: live messages on the mesh, a device with its diagnosis and signal trend, radio channels, the room view and response times](docs/demo.gif)
 
 *Demo mode with invented devices – try it yourself: open `dist/thread-pulse.html?demo` in a browser.*
 
