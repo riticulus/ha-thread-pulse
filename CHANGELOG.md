@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 - New layout: the map with one column next to it. The column shows the network panel (tabs overview … changes) – no more **📊 Network** button and no panel below the map – or, while a device is selected, its detail panel; **‹ Network** goes back. The detail panel starts with the warnings and a row of key numbers (signal, messages per hour, battery or restarts, children of a router) and groups its sections in three tabs: *Status*, *Connection*, *Device*. On narrow cards and phones the column is a sheet below the map that can be made taller with its handle. In ambient mode the column only appears while a device is shown ([#130](https://github.com/riticulus/ha-thread-pulse/issues/130))
+- For contributors: the source is now ES modules bundled with esbuild – building needs Node (`npm install`, then `npm run build`; `python3 build.py` still works). Prettier and ESLint, and the browser tests run on every pull request; missing translations fall back to English. Start with [CONTRIBUTING.md](https://github.com/riticulus/ha-thread-pulse/blob/main/CONTRIBUTING.md). Nothing changes for installing or using the card
+
 
 ## [1.6.0] – 2026-10-12
 
