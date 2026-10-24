@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Fixed
+- Card option `height`: the value is now set as a style property of the card instead of being put into its HTML, so a value such as `600px; } </style><img …>` can no longer add markup or scripts to the card (reported in the HACS review). Valid heights work as before ([#151](https://github.com/riticulus/ha-thread-pulse/issues/151))
+
 ## [1.7.0] – 2026-10-17
 
 ### Added
