@@ -78,11 +78,21 @@ class ThreadPulseCard extends HTMLElement {
     if (this._tp || this._starting || !this._config) return;
     this._starting = true;
     const root = this.shadowRoot || this.attachShadow({ mode: "open" });
-    const h = this._config.height;
     root.innerHTML = `<style>${TP_CSS}
-      :host { display: block; height: ${h ? h : "100%"}; min-height: ${h ? "0" : "450px"}; }
+      :host { display: block; height: 100%; min-height: 450px; }
       ha-card { height: 100%; overflow: hidden; }
       #wrap { background: transparent; }</style><ha-card>${TP_HTML}</ha-card>`;
+    // the height option is set as a style property, never put into the markup, so it cannot inject anything
+    const h = this._config.height;
+    if (h) {
+      this.style.height = h;
+      this.style.minHeight = "0";
+      this._ownHeight = true;
+    } else if (this._ownHeight) {
+      this.style.removeProperty("height");
+      this.style.removeProperty("min-height");
+      this._ownHeight = false;
+    }
     let vis;
     try {
       vis = await tpLoadVis();

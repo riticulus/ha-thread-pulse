@@ -334,6 +334,15 @@ async def other_pages(r):
         S = "document.getElementById('card').shadowRoot"
         r.check("card file: loads as a module and draws the demo map", await b.js(f"!!{S} && !!{S}.querySelector('#net canvas') && {S}.getElementById('status').textContent.startsWith('DEMO')"))
         r.check("card file: network panel in the column", "Mesh health" in await b.js(f"{S}.getElementById('info').textContent"))
+        r.check("card file: without the height option the page's own height is kept", await b.js("document.getElementById('card').offsetHeight") == 700)
+        # the height option must not get into the markup (HACS review): a value that closes the <style> creates nothing
+        await b.js("""(() => { const mk = h => { const c = document.createElement('thread-pulse-card');
+            c.setConfig({ demo: true, language: 'en', height: h }); c.hass = window.__card._hass; document.body.appendChild(c); return c; };
+            window.__evil = mk('600px; } </style><img src=x onerror="window.__xss=1"><style>');
+            window.__fixed = mk('321px'); })()""")
+        await asyncio.sleep(2)
+        r.check("card file: the height option cannot inject markup", await b.js("!window.__xss && !window.__evil.shadowRoot.querySelector('img') && window.__evil.shadowRoot.querySelectorAll('style').length === 1"))
+        r.check("card file: the height option sets the card height", await b.js("window.__fixed.offsetHeight") == 321, str(await b.js("window.__fixed.offsetHeight")))
         r.errors("card file", b.errors)
     async with Browser() as b:
         await b.open("dist/thread-pulse.html?lang=en", wait=3)
