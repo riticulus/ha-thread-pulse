@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.7.1] – 2026-10-24
+
 ### Fixed
 - Card option `height`: the value is now set as a style property of the card instead of being put into its HTML, so a value such as `600px; } </style><img …>` can no longer add markup or scripts to the card (reported in the HACS review). Valid heights work as before ([#151](https://github.com/riticulus/ha-thread-pulse/issues/151))
 
@@ -139,7 +141,8 @@ Thanks to @oxmo75 for testing 1.5.0 on a real Apple-only network and for the ana
 - Demo mode (`?demo`) that works without Home Assistant
 - Readable (unminified) vis-network build
 
-[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.7.1...HEAD
+[1.7.1]: https://github.com/riticulus/ha-thread-pulse/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.5.2...v1.6.0
 [1.5.2]: https://github.com/riticulus/ha-thread-pulse/compare/v1.5.1...v1.5.2
