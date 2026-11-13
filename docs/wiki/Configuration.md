@@ -14,7 +14,7 @@ All options are optional. They can be set in the visual card editor or in YAML.
 | `ambient` | `false` | [Ambient mode](Ambient-Mode) for wall tablets: only the mesh, dark *(from version 1.4.0)* |
 | `ambient_motion` | `true` | In ambient mode: slow automatic zoom on or off *(from version 1.4.0)* |
 | `hint_window_days` | `7` | Time window in days (1–30) for warnings and hints about restarts and unstable connections – see [Hints and warnings](Hints-and-Warnings#counted-over-a-time-window) *(from version 1.7.0)* |
-| `routers` | – | Names for Thread routers that are not Matter devices of Home Assistant, and which one is the border router – see [below](#routers-that-are-not-matter-devices). YAML only *(from version 1.8.0)* |
+| `routers` | – | Names for Thread routers that are not Matter devices of Home Assistant, and which one is the border router – see [below](#routers-that-are-not-matter-devices). YAML only |
 | `demo` | `false` | Show invented devices and simulated traffic instead of your network |
 
 ### Routers that are not Matter devices

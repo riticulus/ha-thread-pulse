@@ -24,6 +24,6 @@ Add `&lang=de` (page) or `language: de` (card) for German.
 
 `?demo=apple` (standalone page only) shows a network without OpenThread add-on and without Matter routers: four battery devices whose parents are three Apple border routers, shown with their (invented) names, e.g. *HomePod Living Room · Border router …7114* – the names appear a few seconds after the map, like in a real network. Messages are animated from the device to its parent only – what you would see in such a network *(from version 1.5.0)*.
 
-`?demo=extender` (standalone page only) shows the usual network without the OpenThread add-on and with a Thread router that is not a Matter device (address `f2a0c0de0000e7e0`), which is the parent of a battery device. The border router is identified a few seconds after the map; `&router=f2a0c0de0000e7e0:Garage extender` gives the router a name *(from version 1.8.0)*.
+`?demo=extender` (standalone page only) shows the usual network without the OpenThread add-on and with a Thread router that is not a Matter device (address `f2a0c0de0000e7e0`), which is the parent of a battery device. The border router is identified a few seconds after the map; `&router=f2a0c0de0000e7e0:Garage extender` gives the router a name.
 
 Nothing in demo mode touches your Home Assistant; the demo change log is not stored.
