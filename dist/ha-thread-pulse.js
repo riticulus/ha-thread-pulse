@@ -5771,7 +5771,9 @@ function install27(tp) {
     for (const id of nodes.getIds()) {
       const n = tp.nodeById[id] || tp.wifiById[id];
       if (n) named.push({ id, name: n.name });
-      else if (tp.extraIds.has(id) && id !== tp.brExt)
+      else if (id === tp.brExt)
+        named.push({ id, label: tp.T.brLabel });
+      else if (tp.extraIds.has(id))
         named.push({
           id,
           label: tp.brInfo[id] ? usefulModel(tp.brInfo[id]) || tp.T.brLabel : tp.T.foreignLabel(id).split("\n")[0]

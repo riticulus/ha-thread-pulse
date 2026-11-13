@@ -44,7 +44,7 @@ You installed the *main* branch (a development state) through HACS. HACS then of
 ## The map loads, but no dots move
 
 - **Live is paused** – click **▶ Resume live**.
-- **The border router could not be identified** – this happens without the OpenThread Border Router add-on, e.g. if only an Apple, Google or Amazon border router is used. If exactly one unknown Thread router is found in the neighbour tables, Thread Pulse assumes it is the border router. Otherwise messages are animated only from the device to its parent router (the parent appears as *other Thread router*, also when the mesh has no Matter router at all). In versions up to 1.4.0 nothing moved in this case.
+- **The border router could not be identified** – this happens without the OpenThread Border Router add-on, e.g. if only an Apple, Google or Amazon border router is used. Thread Pulse takes the only router on the map that Home Assistant found as a border router on your local network, or else the only unknown Thread router in the neighbour tables. If neither applies (e.g. several HomePods), set it with the card option [`routers`](Configuration#routers-that-are-not-matter-devices). Otherwise messages are animated only from the device to its parent router (the parent appears as *other Thread router*, also when the mesh has no Matter router at all). In versions up to 1.4.0 nothing moved in this case.
 - **Nothing happens in the network** – at night there may be few messages. Plugs with power metering usually report every few seconds.
 
 ## A device is grey
