@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 - Border router without the OpenThread Border Router add-on: the only router on the map that Home Assistant found as a border router on the local network is now taken as the border router. Before, it was only identified while it was the single router that is not a Matter device – a second one (e.g. an OpenThread stick as range extender) made it unknown, and messages were animated to the parent only ([#117](https://github.com/riticulus/ha-thread-pulse/issues/117))
 
+### Fixed
+- For contributors: `npm run build` failed when the path of the checkout contains a space
+
 ## [1.7.1] – 2026-10-24
 
 ### Fixed
