@@ -21,6 +21,7 @@ Useful URL parameters for the demo page:
 |---|---|
 | `?demo` | Invented network with live traffic |
 | `?demo=apple` | Only Apple border routers, no OpenThread add-on, no ZHA |
+| `?demo=extender` | No OpenThread add-on, one router that is not a Matter device; name it with `&router=f2a0c0de0000e7e0:Name` |
 | `&lang=de` | Language (`en`, `de`, `fr`, `it`, `es`, `nl`) |
 | `&nowifi` | Hide Matter devices on Wi-Fi |
 | `&ambient` | Ambient mode (wall tablets) |

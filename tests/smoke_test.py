@@ -343,7 +343,24 @@ async def other_pages(r):
         await asyncio.sleep(2)
         r.check("card file: the height option cannot inject markup", await b.js("!window.__xss && !window.__evil.shadowRoot.querySelector('img') && window.__evil.shadowRoot.querySelectorAll('style').length === 1"))
         r.check("card file: the height option sets the card height", await b.js("window.__fixed.offsetHeight") == 321, str(await b.js("window.__fixed.offsetHeight")))
+        # option routers (#117): an address YAML has read as a number, or a wrong one, is a configuration error
+        cfg = await b.js("""(() => { const t = r => { try { document.createElement('thread-pulse-card').setConfig({ routers: r }); return 'ok'; } catch (e) { return e.message; } };
+            return [t([{ address: 1234567812345678, name: 'x' }]), t([{ address: 'ba10', name: 'x' }]), t([{ address: 'BA:10:71:A9:A6:F2:96:A1', name: 'x', border_router: true }]), t(undefined)]; })()""")
+        r.check("card file: wrong entries of the option routers are configuration errors", "in quotes" in cfg[0] and "16 hex digits" in cfg[1] and cfg[2] == "ok" and cfg[3] == "ok", str(cfg))
         r.errors("card file", b.errors)
+    async with Browser(init_script=CAPTURE) as b:     # a router that is not a Matter device, no OpenThread add-on (#117)
+        LABELS = "(() => { window.__texts = []; window.__rec = true; document.getElementById('heatbtn').click(); document.getElementById('heatbtn').click(); window.__rec = false; return window.__texts; })()"
+        await b.open("dist/thread-pulse.html?demo=extender&lang=en", wait=10)
+        labels = await b.js(LABELS)
+        r.check("router that is not a Matter device: shown without a name", "Other Thread router" in labels and "…e7e0" in labels, str([t for t in labels if "router" in t.lower()][:4]))
+        r.check("border router found by the discovery although another unknown router is on the map", "Border router" in labels, str([t for t in labels if "order" in t][:4]))
+        await b.open("dist/thread-pulse.html?demo=extender&lang=en&router=F2:A0:C0:DE:00:00:E7:E0:Garage%20extender", wait=10)
+        labels = await b.js(LABELS)
+        r.check("option routers: name on the map", "Garage extender" in labels and "Other Thread router" not in labels, str([t for t in labels if "xtender" in t or "router" in t.lower()][:4]))
+        r.check("option routers: name in the list of parents", "Garage extender" in await b.js(f"{G}('info').textContent"))
+        await b.js(f"{G}('morebtn').click(); document.querySelector('[data-act=report]').click()")
+        r.check("option routers: the anonymised report does not show the name", "Garage" not in await b.js(f"{G}('reporttext').value"))
+        r.errors("router that is not a Matter device", b.errors)
     async with Browser() as b:
         await b.open("dist/thread-pulse.html?lang=en", wait=3)
         err = await b.js("document.getElementById('err') ? document.getElementById('err').textContent : ''")

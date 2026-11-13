@@ -74,7 +74,7 @@ const PARTS = [
 ];
 
 // root: document or a shadow root that contains TP_HTML
-// opts: { demo, lang, ambient, ambientMotion, showWifi, hintDays }
+// opts: { demo, lang, ambient, ambientMotion, showWifi, hintDays, routers }
 // host: { embedded, hass(), themeSource(), styleTarget, navigate(path), width(), vis }
 export function createThreadPulse(root, opts, host) {
   const tp = { root, opts, host }; // the state of this card instance, shared by all parts

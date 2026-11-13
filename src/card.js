@@ -3,6 +3,7 @@ import TP_CSS from "./styles.css";
 import TP_HTML from "./markup.html";
 import { VERSION } from "./version.js";
 import { createThreadPulse } from "./core.js";
+import { parseRouters } from "./routercfg.js";
 import "./devicecard.js"; // <thread-pulse-device-card> (#126), in the same file
 
 // The graph library is loaded only when a card is actually shown, from the same folder as this file.
@@ -36,6 +37,9 @@ function dropFocusParam() {
 
 class ThreadPulseCard extends HTMLElement {
   setConfig(config) {
+    // a wrong `routers` entry is shown as a configuration error instead of being ignored silently (#117)
+    const { errors } = parseRouters(config && config.routers);
+    if (errors.length) throw new Error("Thread Pulse – " + errors[0]);
     this._config = { ...config };
     if (this._tp) this._restart();
   }
@@ -112,6 +116,7 @@ class ThreadPulseCard extends HTMLElement {
         showWifi: this._config.show_wifi !== false,
         ambientMotion: this._config.ambient_motion !== false,
         hintDays: this._config.hint_window_days,
+        routers: this._config.routers,
         focusDevice: focusParam(),
       },
       {

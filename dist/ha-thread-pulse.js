@@ -2636,11 +2636,11 @@ function install2(tp) {
       host.styleTarget.style.setProperty("--c-" + k, COLORS[k]);
   }
   tp.hex16 = hex16;
-  function setBtn(el, text, pressed = null, badge = 0, extra = "") {
-    const i = text.indexOf(" "), ic = i > 0 ? text.slice(0, i) : "", lb = i > 0 ? text.slice(i + 1) : text;
+  function setBtn(el, text2, pressed = null, badge = 0, extra = "") {
+    const i = text2.indexOf(" "), ic = i > 0 ? text2.slice(0, i) : "", lb = i > 0 ? text2.slice(i + 1) : text2;
     el.innerHTML = (ic ? `<span class="ic">${esc2(ic)}</span>` : "") + `<span class="lb">${esc2(lb)}</span>` + (badge ? `<span class="badge">${badge}</span>` : "");
     el.title = lb + extra;
-    el.setAttribute("aria-label", text + extra);
+    el.setAttribute("aria-label", text2 + extra);
     if (pressed !== null) el.setAttribute("aria-pressed", String(pressed));
   }
   const esc2 = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -2751,7 +2751,7 @@ function install2(tp) {
     root.querySelector("[data-act=export]").textContent = tp.T.exportPlain;
     root.querySelector("[data-act=exportanon]").textContent = tp.T.exportAnon;
     root.querySelector("[data-act=report]").textContent = tp.T.reportMenu;
-    const lg = (cls, color, text) => `<span class="lg"><span class="${cls}" style="background:${color}"></span>${text}</span>`;
+    const lg = (cls, color, text2) => `<span class="lg"><span class="${cls}" style="background:${color}"></span>${text2}</span>`;
     $("legend").innerHTML = lg("dot", COLORS.br, tp.T.lgBr) + lg("dot", COLORS.router, tp.T.lgRouter) + lg("dot", COLORS.end, tp.T.lgEnd) + lg("dot", COLORS.sleepy, tp.T.lgSleepy) + lg("ln", COLORS.good, tp.T.good) + lg("ln", COLORS.medium, tp.T.medium) + lg("ln", COLORS.weak, tp.T.weak) + lg("dot", COLORS.up, tp.T.lgUp) + lg("dot", COLORS.down, tp.T.lgDown) + lg("ln heatln", COLORS.heat, tp.T.lgHeat) + `<span class="lg" id="lgwifi" hidden><span class="dot" style="background:${COLORS.wifi}"></span>${tp.T.lgWifi}</span>` + [
       [COLORS.good, tp.T.lgRespFast],
       [COLORS.medium, tp.T.lgRespMid],
@@ -2961,7 +2961,7 @@ function install4(tp) {
   function render(model, keep) {
     const { nodes } = model;
     uniqueIds(nodes);
-    tp.brExt = model.brExt;
+    tp.brModel = model.brExt || null;
     const byId = Object.fromEntries(nodes.map((n) => [n.id, n]));
     const isRouter = (n) => n.type === "routing_end_device";
     const visNodes = [], edges = {}, extra = {}, parents = [];
@@ -2993,7 +2993,7 @@ ${tp.T.types[n.type] || n.type}${n.available ? "" : tp.T.unreachable}`
     let extras = Object.keys(extra);
     tp.threadInfo = model.thread || null;
     tp.zigbeeInfo = model.zigbee || null;
-    if (!tp.brExt && extras.length === 1) tp.brExt = extras[0];
+    tp.brSingle = extras.length === 1 ? extras[0] : null;
     tp.parentOf = {};
     const bestOf = (n) => [...n.neigh].sort((p, q) => q["6"] - p["6"])[0];
     for (const n of nodes.filter((n2) => !isRouter(n2))) {
@@ -3005,21 +3005,8 @@ ${tp.T.types[n.type] || n.type}${n.available ? "" : tp.T.unreachable}`
     }
     extras = Object.keys(extra);
     tp.extraIds = new Set(extras);
-    for (const id of extras) {
-      const isBr = id === tp.brExt;
-      visNodes.push({
-        id,
-        label: tp.extraLabel(id),
-        shape: "image",
-        image: iconImg(
-          isBr || tp.brInfo[id] ? "access-point-network" : "router-wireless",
-          isBr ? COLORS.br : COLORS.off,
-          64
-        ),
-        size: isBr ? 24 : 16,
-        title: tp.extraTitle(id)
-      });
-    }
+    tp.brExt = tp.chooseBr(nodes);
+    for (const id of extras) visNodes.push({ shape: "image", ...tp.extraVis(id) });
     const childRssi = {};
     for (const n of nodes.filter(isRouter))
       for (const x of n.neigh) if (x["13"]) childRssi[n.id + "|" + hex162(x["0"])] = x["6"];
@@ -3221,10 +3208,44 @@ ${w.kind === "ethernet" ? tp.T.ethSub : tp.T.wifiSub}${w.available ? "" : tp.T.u
   }
 }
 
+// src/routercfg.js
+var normalise = (a) => a.trim().toLowerCase().replace(/^0x/, "").replace(/[\s:.-]/g, "");
+var text = (v) => typeof v === "string" || typeof v === "number" ? String(v).trim() : "";
+function parseRouters(list) {
+  const out = { byId: {}, br: null, errors: [] };
+  if (list === void 0 || list === null || list === "") return out;
+  if (!Array.isArray(list)) {
+    out.errors.push("routers: must be a list of entries with an address");
+    return out;
+  }
+  list.forEach((r, i) => {
+    const where = `routers, entry ${i + 1}`;
+    if (!r || typeof r !== "object" || r.address === void 0 || r.address === null)
+      return out.errors.push(`${where}: address is missing`);
+    if (typeof r.address !== "string")
+      return out.errors.push(`${where}: put the address in quotes, e.g. address: "ba1071a9a6f296a1"`);
+    const id = normalise(r.address);
+    if (!/^[0-9a-f]{16}$/.test(id))
+      return out.errors.push(`${where}: "${r.address}" is not an extended address (16 hex digits)`);
+    if (out.byId[id]) return out.errors.push(`${where}: the address ${id} is listed twice`);
+    if (r.border_router === true) {
+      if (out.br) return out.errors.push(`${where}: only one router can be the border_router`);
+      out.br = id;
+    }
+    out.byId[id] = { name: text(r.name), area: text(r.area) };
+  });
+  return out;
+}
+
 // src/routers.js
 function install5(tp) {
-  const { COLORS, iconImg } = tp;
-  Object.assign(tp, { applyRouterNames, discoverRouters, extraLabel, extraName, extraTitle });
+  const { COLORS, iconImg, opts } = tp;
+  Object.assign(tp, { applyRouterNames, chooseBr, discoverRouters, extraLabel, extraName, extraTitle, extraVis });
+  const cfg = parseRouters(opts.routers);
+  for (const e of cfg.errors) console.warn("Thread Pulse:", e);
+  const ownName = (id) => (cfg.byId[id] || {}).name || "";
+  tp.routerName = ownName;
+  tp.routerArea = (id) => (cfg.byId[id] || {}).area || "";
   tp.brInfo = {};
   tp.brUnsub = null;
   const short = (id) => "…" + id.slice(-4);
@@ -3237,20 +3258,61 @@ function install5(tp) {
   const nameOf = (id) => (tp.nodeById[id] || tp.wifiById[id] || {}).name || extraName(id);
   tp.nameOf = nameOf;
   function extraName(id) {
+    if (ownName(id)) return ownName(id);
     if (id === tp.brExt) return tp.T.brLabel;
     const d = tp.brInfo[id];
     return d ? `${brTitleOf(d)} ${short(id)}` : short(id);
   }
   function extraLabel(id) {
+    if (ownName(id)) return ownName(id);
     if (id === tp.brExt) return tp.T.brLabel;
     const d = tp.brInfo[id];
     return d ? `${brTitleOf(d)}
 ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
   function extraTitle(id) {
-    if (id === tp.brExt) return tp.T.brTitle;
     const d = tp.brInfo[id];
-    return d ? [d.vendor, d.model, d.name].filter(Boolean).join(" · ") + "\n" + tp.T.brOtherTitle : tp.T.foreignTitle;
+    const t = id === tp.brExt ? tp.T.brTitle : d ? [d.vendor, d.model, d.name].filter(Boolean).join(" · ") + "\n" + tp.T.brOtherTitle : tp.T.foreignTitle;
+    return ownName(id) ? ownName(id) + "\n" + t : t;
+  }
+  function extraVis(id) {
+    const isBr = id === tp.brExt;
+    return {
+      id,
+      label: extraLabel(id),
+      title: extraTitle(id),
+      image: iconImg(
+        isBr || tp.brInfo[id] ? "access-point-network" : "router-wireless",
+        isBr ? COLORS.br : COLORS.off,
+        64
+      ),
+      size: isBr ? 24 : 16
+    };
+  }
+  tp.brModel = null;
+  tp.brSingle = null;
+  tp.brFound = null;
+  tp.meshXpan = "";
+  const xpanHex = (v) => /^\d+$/.test(String(v)) ? BigInt(v).toString(16).padStart(16, "0") : String(v).toLowerCase();
+  function xpanOf(nodes) {
+    const count = {};
+    for (const n of nodes) {
+      const v = ((n.info || {}).net || {}).extPanId;
+      if (v !== void 0 && v !== null && v !== "") count[xpanHex(v)] = (count[xpanHex(v)] || 0) + 1;
+    }
+    return Object.keys(count).sort((a, b) => count[b] - count[a])[0] || "";
+  }
+  function chooseBr(nodes) {
+    if (nodes) tp.meshXpan = xpanOf(nodes);
+    if (cfg.br) return cfg.br;
+    if (tp.brModel) return tp.brModel;
+    const found = [...tp.extraIds].filter((id) => {
+      const d = tp.brInfo[id];
+      return d && (!d.extPanId || !tp.meshXpan || d.extPanId === tp.meshXpan);
+    });
+    if (found.length === 1) tp.brFound = found[0];
+    else if (found.length > 1 || !tp.extraIds.has(tp.brFound)) tp.brFound = null;
+    return tp.brFound || tp.brSingle;
   }
   let namesTimer = null;
   function applyRouterNames() {
@@ -3259,13 +3321,11 @@ ${tp.T.brOther(id.slice(-4))}` : tp.T.foreignLabel(id);
   }
   function applyRouterNamesNow() {
     if (!tp.network || tp.destroyed) return;
-    const upd = [...tp.extraIds].filter((id) => id !== tp.brExt).map((id) => ({
-      id,
-      label: extraLabel(id),
-      title: extraTitle(id),
-      image: iconImg(tp.brInfo[id] ? "access-point-network" : "router-wireless", COLORS.off, 64)
-    }));
+    const was = tp.brExt;
+    tp.brExt = chooseBr();
+    const upd = [...tp.extraIds].map(extraVis);
     if (upd.length) tp.network.body.data.nodes.update(upd);
+    if (was !== tp.brExt && tp.lastSnap) tp.lastSnap.grade = (tp.computeHealth() || {}).grade;
     tp.renderList();
     tp.renderChanges();
     if (tp.panelNode) tp.renderPanel();
@@ -3673,6 +3733,7 @@ function install9(tp) {
   const roomsOf = () => {
     const m = {};
     for (const n of Object.values(tp.nodeById)) if (n.area) (m[n.area] = m[n.area] || []).push(n.id);
+    for (const id of tp.extraIds) if (tp.routerArea(id)) (m[tp.routerArea(id)] = m[tp.routerArea(id)] || []).push(id);
     return m;
   };
   tp.roomsOf = roomsOf;
@@ -3884,9 +3945,9 @@ function install10(tp) {
     if (tp.battOf[n.id] !== void 0 && tp.battOf[n.id] < 20) w.push(tp.T.warnBattery(tp.battOf[n.id]));
     return w;
   }
-  function pill(ctx, x, y, text, bg) {
+  function pill(ctx, x, y, text2, bg) {
     ctx.font = "600 10px -apple-system, Segoe UI, Roboto, sans-serif";
-    const w = ctx.measureText(text).width + 8;
+    const w = ctx.measureText(text2).width + 8;
     ctx.fillStyle = bg;
     ctx.strokeStyle = "white";
     ctx.lineWidth = 1;
@@ -3896,7 +3957,7 @@ function install10(tp) {
     ctx.stroke();
     ctx.fillStyle = "white";
     ctx.textBaseline = "middle";
-    ctx.fillText(text, x + 4, y + 0.5);
+    ctx.fillText(text2, x + 4, y + 0.5);
   }
   function drawBadges(ctx) {
     const pos = tp.network.getPositions();
@@ -4164,9 +4225,9 @@ function install11(tp) {
     if (!dev) return;
     const hass = DEMO ? null : freshHass(), ent = identifyEntity(dev, hass);
     if (!ent || identifyState && identifyState.id === id && Date.now() < identifyState.until) return;
-    const done = (ok, text) => {
+    const done = (ok, text2) => {
       const ms = ok ? IDENTIFY_LOCK : 8e3;
-      identifyState = { id, until: Date.now() + ms, text, ok };
+      identifyState = { id, until: Date.now() + ms, text: text2, ok };
       if (tp.panelNode === id) renderPanel();
       setTimeout(() => {
         if (!tp.destroyed && tp.panelNode === id) renderPanel();
@@ -4193,7 +4254,7 @@ function install12(tp) {
   const { chattyHint, nameOf } = tp;
   Object.assign(tp, { computeHints });
   let hintKinds = {};
-  const hintKind = (id, text) => hintKinds[id + "|" + text] || null;
+  const hintKind = (id, text2) => hintKinds[id + "|" + text2] || null;
   tp.hintKind = hintKind;
   function computeHints(parents, nm = nameOf) {
     const kinds = {};
@@ -4407,7 +4468,7 @@ function install14(tp) {
     const isRouterId = (id) => tp.nodeById[id] && tp.nodeById[id].type === "routing_end_device" || tp.extraIds.has(id);
     const list = (ids) => ids.map(nm).join(", ");
     const factors = [];
-    const add = (key, level, value, text, ids = []) => factors.push({ key, level, value, text, ids });
+    const add = (key, level, value, text2, ids = []) => factors.push({ key, level, value, text: text2, ids });
     const nR = routerCount();
     add(
       "routers",
@@ -4686,7 +4747,7 @@ function install17(tp) {
   }
   function diagnose(n, nm = nameOf) {
     const T = tp.T, days = tp.HINT_DAYS, since = Date.now() - days * DAY_MS, out = [];
-    const add = (level, text, todo) => out.push({ level, text, todo });
+    const add = (level, text2, todo) => out.push({ level, text: text2, todo });
     const offline = (tp.changes || []).filter((c) => c.id === n.id && c.kind === "offline" && c.t >= since).length;
     if (n.type !== "routing_end_device" && tp.listData) {
       const p = tp.listData.parents.find((x) => x.childId === n.id);
@@ -4971,8 +5032,8 @@ function install19(tp) {
     gradeUp: COLORS.good,
     gradeDown: COLORS.weak
   };
-  function logChange(id, name, text, kind) {
-    tp.changes = mergeChanges([{ t: Date.now(), id, name, text, kind }], tp.changes);
+  function logChange(id, name, text2, kind) {
+    tp.changes = mergeChanges([{ t: Date.now(), id, name, text: text2, kind }], tp.changes);
     saveChanges();
     flashes.push({ id, t0: performance.now(), color: CH_COLOR[kind] || COLORS.change });
     if (!flashing) {
@@ -5832,6 +5893,7 @@ function install28(tp) {
     else for (const id of Object.keys(tp.nodeById).concat(Object.keys(tp.wifiById))) names[id] = nameOf(id);
     const extras = [...tp.extraIds].filter((id) => id !== tp.brExt).map((id) => {
       const d = tp.brInfo[id];
+      if (!anon && tp.routerName(id)) return { id, label: tp.routerName(id) };
       return {
         id,
         label: d ? anon ? usefulModel(d) || tp.T.brLabel : brTitleOf(d) : tp.T.foreignLabel(id).split("\n")[0]
@@ -5841,7 +5903,7 @@ function install28(tp) {
     for (const x of extras) count[x.label] = (count[x.label] || 0) + 1;
     for (const x of extras)
       names[x.id] = count[x.label] > 1 ? `${x.label} ${seen[x.label] = (seen[x.label] || 0) + 1}` : x.label;
-    if (tp.brExt) names[tp.brExt] = tp.T.brLabel;
+    if (tp.brExt) names[tp.brExt] = !anon && tp.routerName(tp.brExt) || tp.T.brLabel;
     return (id) => names[id] || tp.T.foreignLabel(id).split("\n")[0];
   }
   function reportText(anon) {
@@ -6472,10 +6534,19 @@ function install31(tp) {
         info: { vendor: "Demo Inc.", product: "Smart TV", sw: "7.2", hw: "2", reboots: 41, bootReason: 1 }
       }
     ];
+    const extender = opts.demo === "extender";
+    if (extender) {
+      const x = "f2a0c0de0000e7e0", xr = 31, s = sleepy[0];
+      routers[0].neigh = routers[0].neigh.filter((n) => n["0"] !== dec(s.id));
+      routers[0].neigh.push({ 0: dec(x), 6: -62, 11: true, 13: false });
+      routers[0].routes.push({ 0: dec(x), 2: xr, 3: 63, 4: 1, 5: 3, 6: 3, 9: true });
+      s.neigh = [{ 0: dec(x), 6: -58 }];
+      s.routes = [{ 0: dec(x), 2: xr, 3: 0, 4: 0, 9: true }];
+    }
     return {
       nodes: [...routers, ...ends, ...sleepy],
       wifi,
-      brExt: br.id,
+      brExt: extender ? null : br.id,
       demo: { routers, sleepy, dec, rid },
       zigbee: { channel: 20 },
       routers: {
@@ -6484,11 +6555,12 @@ function install31(tp) {
           model: "OpenThread Border Router",
           name: "Home Assistant OpenThread Border Router #BEEF",
           version: "1.4.0",
-          network: "demo-thread"
+          network: "demo-thread",
+          extPanId: "dead00beef00cafe"
         }
       },
       thread: {
-        otbr: {
+        otbr: !extender && {
           extAddr: br.id,
           borderAgentId: "00000000000000000000000000demo00",
           channel: 15,
@@ -7350,6 +7422,8 @@ function dropFocusParam() {
 }
 var ThreadPulseCard = class extends HTMLElement {
   setConfig(config) {
+    const { errors } = parseRouters(config && config.routers);
+    if (errors.length) throw new Error("Thread Pulse – " + errors[0]);
     this._config = { ...config };
     if (this._tp) this._restart();
   }
@@ -7425,6 +7499,7 @@ var ThreadPulseCard = class extends HTMLElement {
         showWifi: this._config.show_wifi !== false,
         ambientMotion: this._config.ambient_motion !== false,
         hintDays: this._config.hint_window_days,
+        routers: this._config.routers,
         focusDevice: focusParam()
       },
       {

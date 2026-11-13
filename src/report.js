@@ -44,6 +44,7 @@ export default function install(tp) {
       .filter(id => id !== tp.brExt)
       .map(id => {
         const d = tp.brInfo[id];
+        if (!anon && tp.routerName(id)) return { id, label: tp.routerName(id) }; // card option `routers` (#117)
         return {
           id,
           label: d ? (anon ? usefulModel(d) || tp.T.brLabel : brTitleOf(d)) : tp.T.foreignLabel(id).split("\n")[0],
@@ -54,7 +55,7 @@ export default function install(tp) {
     for (const x of extras) count[x.label] = (count[x.label] || 0) + 1;
     for (const x of extras)
       names[x.id] = count[x.label] > 1 ? `${x.label} ${(seen[x.label] = (seen[x.label] || 0) + 1)}` : x.label;
-    if (tp.brExt) names[tp.brExt] = tp.T.brLabel;
+    if (tp.brExt) names[tp.brExt] = (!anon && tp.routerName(tp.brExt)) || tp.T.brLabel;
     return id => names[id] || tp.T.foreignLabel(id).split("\n")[0];
   }
   function reportText(anon) {

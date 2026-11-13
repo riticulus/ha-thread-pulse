@@ -236,10 +236,24 @@ export default function install(tp) {
         info: { vendor: "Demo Inc.", product: "Smart TV", sw: "7.2", hw: "2", reboots: 41, bootReason: 1 },
       },
     ];
+    // ?demo=extender (issue #117, for tests): no OpenThread integration, and a Thread router that is not a Matter device
+    // (e.g. an OpenThread stick used as range extender) with a battery device as its child. The border router is found
+    // by the discovery a few seconds after the map; the extender can be named with ?router=<address>:<name>.
+    const extender = opts.demo === "extender";
+    if (extender) {
+      const x = "f2a0c0de0000e7e0",
+        xr = 31,
+        s = sleepy[0];
+      routers[0].neigh = routers[0].neigh.filter(n => n["0"] !== dec(s.id));
+      routers[0].neigh.push({ 0: dec(x), 6: -62, 11: true, 13: false });
+      routers[0].routes.push({ 0: dec(x), 2: xr, 3: 63, 4: 1, 5: 3, 6: 3, 9: true });
+      s.neigh = [{ 0: dec(x), 6: -58 }];
+      s.routes = [{ 0: dec(x), 2: xr, 3: 0, 4: 0, 9: true }];
+    }
     return {
       nodes: [...routers, ...ends, ...sleepy],
       wifi,
-      brExt: br.id,
+      brExt: extender ? null : br.id,
       demo: { routers, sleepy, dec, rid },
       zigbee: { channel: 20 },
       routers: {
@@ -249,10 +263,11 @@ export default function install(tp) {
           name: "Home Assistant OpenThread Border Router #BEEF",
           version: "1.4.0",
           network: "demo-thread",
+          extPanId: "dead00beef00cafe",
         },
       },
       thread: {
-        otbr: {
+        otbr: !extender && {
           extAddr: br.id,
           borderAgentId: "00000000000000000000000000demo00",
           channel: 15,

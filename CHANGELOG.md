@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+- Card option `routers`: names for Thread routers that are not Matter devices of Home Assistant (an OpenThread stick used as a range extender, an ESPHome device on Thread, the border router of another system), by extended address – with an optional area for the room view, and `border_router: true` for the border router Home Assistant uses. The name is used on the map, in the lists, the detail panel and the text report with names. A wrong entry is shown as a configuration error. Standalone page: `?router=<address>:<name>`, `?br=<address>` ([#117](https://github.com/riticulus/ha-thread-pulse/issues/117))
+
+### Changed
+- Border router without the OpenThread Border Router add-on: the only router on the map that Home Assistant found as a border router on the local network is now taken as the border router. Before, it was only identified while it was the single router that is not a Matter device – a second one (e.g. an OpenThread stick as range extender) made it unknown, and messages were animated to the parent only ([#117](https://github.com/riticulus/ha-thread-pulse/issues/117))
+
 ## [1.7.1] – 2026-10-24
 
 ### Fixed

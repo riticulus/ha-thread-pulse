@@ -26,6 +26,8 @@ export default function install(tp) {
   const roomsOf = () => {
     const m = {};
     for (const n of Object.values(tp.nodeById)) if (n.area) (m[n.area] = m[n.area] || []).push(n.id);
+    // routers that are not Matter devices of Home Assistant: area from the card option `routers` (#117)
+    for (const id of tp.extraIds) if (tp.routerArea(id)) (m[tp.routerArea(id)] = m[tp.routerArea(id)] || []).push(id);
     return m;
   };
   tp.roomsOf = roomsOf;
