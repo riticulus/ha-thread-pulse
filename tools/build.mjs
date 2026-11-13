@@ -5,9 +5,10 @@
 // The output is not minified, so the installed card stays readable.
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import * as esbuild from "esbuild";
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."); // also with spaces in the path
 const src = f => path.join(ROOT, "src", f), dist = f => path.join(ROOT, "dist", f);
 const version = fs.readFileSync(src("version.js"), "utf8").match(/export const VERSION = "([^"]+)"/)[1];
 const common = {

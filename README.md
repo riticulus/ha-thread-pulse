@@ -100,6 +100,7 @@ HACS shows updates like for any other card. HACS installs from the latest *relea
 | `ambient` | `false` | Ambient mode for wall tablets: only the mesh, dark, slow automatic zoom |
 | `ambient_motion` | `true` | In ambient mode: slow automatic zoom on (`true`) or off (`false`) |
 | `hint_window_days` | `7` | Time window in days (1–30) for warnings and hints about restarts and unstable connections |
+| `routers` | – | Names for Thread routers that are not Matter devices (by extended address) and which one is the border router – YAML only, see [Configuration](https://github.com/riticulus/ha-thread-pulse/wiki/Configuration#routers-that-are-not-matter-devices) |
 | `demo` | `false` | Show invented devices instead of your network |
 
 ```yaml

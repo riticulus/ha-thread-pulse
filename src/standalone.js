@@ -3,6 +3,7 @@
 import TP_CSS from "./styles.css";
 import TP_HTML from "./markup.html";
 import { createThreadPulse } from "./core.js";
+import { routersFromParams } from "./routercfg.js";
 
 const params = new URLSearchParams(location.search);
 const style = document.createElement("style");
@@ -22,6 +23,7 @@ createThreadPulse(
     showWifi: !params.has("nowifi"),
     ambientMotion: !params.has("still"),
     hintDays: params.get("hintdays"),
+    routers: routersFromParams(params),
     focusDevice: params.get("device"),
   },
   {

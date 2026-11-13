@@ -16,7 +16,7 @@ The image contains what the map shows at that moment: the current zoom and posit
 ## Anonymised images
 
 - Devices are numbered by their **position on the map** (top left to bottom right), not by name, so the numbers do not hint at the real names.
-- The suffix of the address of *other Thread routers* is removed. The border router keeps its label.
+- The suffix of the address of *other Thread routers* is removed. The border router keeps its label. Names from the card option [`routers`](Configuration#routers-that-are-not-matter-devices) are not shown.
 - Still visible: the **icons** (what kind of device it is), battery levels, signal colours and the structure of the mesh – that is what the image is for.
 - The names are replaced only for the moment the image is drawn; the map on the screen keeps the real names.
 
