@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Border router without the OpenThread Border Router add-on: the only router on the map that Home Assistant found as a border router on the local network is now taken as the border router. Before, it was only identified while it was the single router that is not a Matter device – a second one (e.g. an OpenThread stick as range extender) made it unknown, and messages were animated to the parent only ([#117](https://github.com/riticulus/ha-thread-pulse/issues/117))
 
 ### Fixed
+- Home Assistant 2026.9 and later: the map and the device card stayed empty with the error *can't access property "includes", d.config_entries is undefined* as soon as the device registry contained a child device (of any integration). Matter devices are now found by the new field `config_entry_id` (the old list `config_entries` is deprecated and will be removed in Home Assistant 2027.8), child devices are skipped, and their entities count for their parent device ([#155](https://github.com/riticulus/ha-thread-pulse/issues/155))
 - For contributors: `npm run build` failed when the path of the checkout contains a space
 
 ## [1.7.1] – 2026-10-24

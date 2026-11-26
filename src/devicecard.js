@@ -6,7 +6,7 @@
 // history the map stores in Home Assistant, and the battery statistics. All device cards on a page share one load,
 // refreshed at most every 5 minutes – like the map, nothing is queried from the devices themselves.
 import { textFor } from "./i18n/index.js";
-import { fetchDiagnostics, hex16, threadAddressOf, typeOfRole } from "./matter.js";
+import { fetchDiagnostics, hex16, matterDevices, threadAddressOf, typeOfRole } from "./matter.js";
 import { batteryStatistics, forecastFrom } from "./forecast.js";
 import { SIG_KEY, TREND_H, hourNow, unpackSig } from "./signalstore.js";
 
@@ -21,39 +21,38 @@ async function loadMesh(hass) {
   if (!entries.length) throw Object.assign(new Error("no matter"), { code: "noMatter" });
   const entry = entries[0].entry_id;
   const devReg = await hass.callWS({ type: "config/device_registry/list" });
+  const { devices, ownerOf } = matterDevices(devReg, entry);
   const devs = {},
     byExt = {};
   await Promise.all(
-    devReg
-      .filter(d => d.config_entries.includes(entry))
-      .map(async d => {
-        let node;
-        try {
-          node = await fetchDiagnostics(hass, entry, d.id);
-        } catch (e) {
-          if (e.status === 401 || e.status === 403) throw Object.assign(e, { code: "notAdmin" });
-          return; // one device without diagnostics does not stop the others
-        }
-        const ext = threadAddressOf(node),
-          a = node.attributes || {};
-        devs[d.id] = {
-          id: d.id,
-          name: d.name_by_user || d.name,
-          areaId: d.area_id,
-          available: node.available,
-          ext,
-          type: ext ? typeOfRole(a["0/53/1"]) : null,
-          role: a["0/53/1"],
-          neigh: a["0/53/7"] || [],
-        };
-        if (ext) byExt[ext] = d.id;
-      }),
+    devices.map(async d => {
+      let node;
+      try {
+        node = await fetchDiagnostics(hass, entry, d.id);
+      } catch (e) {
+        if (e.status === 401 || e.status === 403) throw Object.assign(e, { code: "notAdmin" });
+        return; // one device without diagnostics does not stop the others
+      }
+      const ext = threadAddressOf(node),
+        a = node.attributes || {};
+      devs[d.id] = {
+        id: d.id,
+        name: d.name_by_user || d.name,
+        areaId: d.area_id,
+        available: node.available,
+        ext,
+        type: ext ? typeOfRole(a["0/53/1"]) : null,
+        role: a["0/53/1"],
+        neigh: a["0/53/7"] || [],
+      };
+      if (ext) byExt[ext] = d.id;
+    }),
   );
   let brExt = null;
   try {
     brExt = Object.values(await hass.callWS({ type: "otbr/info" }))[0].extended_address.toLowerCase();
   } catch (e) {} // no OpenThread add-on
-  return { devs, byExt, brExt };
+  return { devs, byExt, brExt, ownerOf };
 }
 function cached(slot, ms, load) {
   if (!slot.v || Date.now() - slot.v.t > ms) {
@@ -201,10 +200,10 @@ class ThreadPulseDeviceCard extends HTMLElement {
     return textFor(l.slice(0, 2));
   }
   _deviceId() {
-    const d = this._config.device || "";
+    let d = this._config.device || "";
     if (d.includes(".") && this._hass && this._hass.entities && this._hass.entities[d])
-      return this._hass.entities[d].device_id;
-    return d;
+      d = this._hass.entities[d].device_id;
+    return (this._mesh && this._mesh.ownerOf[d]) || d; // a child device (or its entity) stands for its parent
   }
   async _refresh() {
     if (!this._hass || !this._config || this._config.demo) return this._render();
@@ -222,7 +221,7 @@ class ThreadPulseDeviceCard extends HTMLElement {
   _batteryEntity(devId) {
     const h = this._hass;
     for (const e of Object.values(h.entities || {})) {
-      if (e.device_id !== devId) continue;
+      if (((this._mesh && this._mesh.ownerOf[e.device_id]) || e.device_id) !== devId) continue;
       const st = h.states[e.entity_id];
       if (st && st.attributes.device_class === "battery" && st.attributes.unit_of_measurement === "%") return st;
     }
