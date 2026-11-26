@@ -51,7 +51,7 @@ export default function install(tp) {
     // keep: positions of the previous map (refresh without layout jump)
     const { nodes } = model;
     uniqueIds(nodes);
-    tp.brExt = model.brExt;
+    tp.brModel = model.brExt || null;
     const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
     const isRouter = n => n.type === "routing_end_device";
     const visNodes = [],
@@ -92,7 +92,7 @@ export default function install(tp) {
     let extras = Object.keys(extra);
     tp.threadInfo = model.thread || null;
     tp.zigbeeInfo = model.zigbee || null;
-    if (!tp.brExt && extras.length === 1) tp.brExt = extras[0]; // no OTBR info: a single unknown router is most likely the border router
+    tp.brSingle = extras.length === 1 ? extras[0] : null; // no OTBR info: a single unknown router is most likely the border router
     // the parent of a device that is not a Matter device of HA (e.g. an Apple TV / HomePod) is not in any neighbour table of
     // a Matter router when the mesh has no Matter routers: add it from the device's own neighbour table (issue #71)
     tp.parentOf = {};
@@ -106,21 +106,8 @@ export default function install(tp) {
     }
     extras = Object.keys(extra);
     tp.extraIds = new Set(extras);
-    for (const id of extras) {
-      const isBr = id === tp.brExt;
-      visNodes.push({
-        id,
-        label: tp.extraLabel(id),
-        shape: "image",
-        image: iconImg(
-          isBr || tp.brInfo[id] ? "access-point-network" : "router-wireless",
-          isBr ? COLORS.br : COLORS.off,
-          64,
-        ),
-        size: isBr ? 24 : 16,
-        title: tp.extraTitle(id),
-      });
-    }
+    tp.brExt = tp.chooseBr(nodes); // card option, OpenThread integration, discovery or the single unknown router (#117)
+    for (const id of extras) visNodes.push({ shape: "image", ...tp.extraVis(id) });
     // child signal as measured by the parent router (sleepy devices report their own RSSI unreliably)
     const childRssi = {};
     for (const n of nodes.filter(isRouter))

@@ -18,7 +18,8 @@ All source code is in `src/`, one ES module per topic. [esbuild](https://esbuild
 | `src/graph.js` | Building and drawing the map |
 | `src/tabs.js` | Network panel (tabs) |
 | `src/layout.js` | Inspector column: tabbed device panel with key numbers, sheet below the map on narrow cards |
-| `src/routers.js` | Names of other border routers from Home Assistant's border router discovery |
+| `src/routers.js` | Routers that are not Matter devices: names from Home Assistant's border router discovery and the card option `routers`, which one is the border router |
+| `src/routercfg.js` | Card option `routers`: reading and checking the entries – shared by `routers.js` and the shells |
 | `src/live.js` | Routing tables, path calculation, animated messages, ticker, subscription to Home Assistant events |
 | `src/heat.js` | Traffic heat |
 | `src/chatty.js` | Chattiest devices (messages per hour) |

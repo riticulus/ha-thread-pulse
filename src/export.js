@@ -31,7 +31,9 @@ export default function install(tp) {
     for (const id of nodes.getIds()) {
       const n = tp.nodeById[id] || tp.wifiById[id];
       if (n) named.push({ id, name: n.name });
-      else if (tp.extraIds.has(id) && id !== tp.brExt)
+      else if (id === tp.brExt)
+        named.push({ id, label: tp.T.brLabel }); // not a name from the card option `routers` (#117)
+      else if (tp.extraIds.has(id))
         // model name only – the name of a border router can be personal
         named.push({
           id,

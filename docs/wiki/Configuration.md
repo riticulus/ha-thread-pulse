@@ -14,7 +14,31 @@ All options are optional. They can be set in the visual card editor or in YAML.
 | `ambient` | `false` | [Ambient mode](Ambient-Mode) for wall tablets: only the mesh, dark *(from version 1.4.0)* |
 | `ambient_motion` | `true` | In ambient mode: slow automatic zoom on or off *(from version 1.4.0)* |
 | `hint_window_days` | `7` | Time window in days (1–30) for warnings and hints about restarts and unstable connections – see [Hints and warnings](Hints-and-Warnings#counted-over-a-time-window) *(from version 1.7.0)* |
+| `routers` | – | Names for Thread routers that are not Matter devices of Home Assistant, and which one is the border router – see [below](#routers-that-are-not-matter-devices). YAML only |
 | `demo` | `false` | Show invented devices and simulated traffic instead of your network |
+
+### Routers that are not Matter devices
+
+A Thread router that is not a Matter device of Home Assistant – an OpenThread stick used as a range extender, an ESPHome device on Thread, the border router of another system – is shown as *Other Thread router …96a1*. With `routers` you give it a name by its **extended address** (the 16 hex digits in its detail panel, row *Address*):
+
+```yaml
+type: custom:thread-pulse-card
+routers:
+  - address: "ba1071a9a6f296a1"
+    name: Dongle-E Extender
+    area: Office
+  - address: "b215681f96ce0197"
+    border_router: true
+```
+
+| Key | Description |
+|---|---|
+| `address` | Extended address, **in quotes**. `BA:10:71:A9:A6:F2:96:A1` and `0xba1071a9a6f296a1` are understood too |
+| `name` | Name on the map, in the lists, the detail panel and the text report with names |
+| `area` | Room for the [room view](Room-View) |
+| `border_router` | `true` for the border router Home Assistant uses. Only needed when Thread Pulse cannot tell by itself (see [Limitations](Limitations)); one entry at most |
+
+The address needs quotes because YAML reads some addresses as numbers and changes them. A wrong entry is shown as a configuration error of the card. On the standalone page: `?router=<address>:<name>` (may be repeated) and `?br=<address>`.
 
 ### Minimal card
 
