@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.8.0] – 2026-11-26
+
 ### Added
 - Card option `routers`: names for Thread routers that are not Matter devices of Home Assistant (an OpenThread stick used as a range extender, an ESPHome device on Thread, the border router of another system), by extended address – with an optional area for the room view, and `border_router: true` for the border router Home Assistant uses. The name is used on the map, in the lists, the detail panel and the text report with names. A wrong entry is shown as a configuration error. Standalone page: `?router=<address>:<name>`, `?br=<address>` ([#117](https://github.com/riticulus/ha-thread-pulse/issues/117))
 
@@ -151,7 +153,8 @@ Thanks to @oxmo75 for testing 1.5.0 on a real Apple-only network and for the ana
 - Demo mode (`?demo`) that works without Home Assistant
 - Readable (unminified) vis-network build
 
-[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.7.1...HEAD
+[Unreleased]: https://github.com/riticulus/ha-thread-pulse/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.7.1...v1.8.0
 [1.7.1]: https://github.com/riticulus/ha-thread-pulse/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/riticulus/ha-thread-pulse/compare/v1.5.2...v1.6.0
