@@ -1,7 +1,7 @@
 // Loading the data from Home Assistant (registries, cached Matter diagnostics, border router).
 // Installed by createThreadPulse() (core.js); shared state and functions are on tp.
 
-import { threadAddressOf, typeOfRole } from "./matter.js";
+import { matterDevices, threadAddressOf, typeOfRole } from "./matter.js";
 
 export default function install(tp) {
   const { $, diag, getHass, iconFor, setLanguage } = tp;
@@ -26,14 +26,16 @@ export default function install(tp) {
       hass.callWS({ type: "config/area_registry/list" }).catch(() => []),
     ]);
     const areaName = Object.fromEntries(areaReg.map(x => [x.area_id, x.name]));
-    const devs = devReg.filter(d => d.config_entries.includes(entry));
+    const { devices: devs, ownerOf } = matterDevices(devReg, entry);
+    tp.devOwner = ownerOf; // service calls can target a child device (live.js)
     const entsByDev = {};
     const mainEnts = {}; // entities a user would look at (no diagnostic/config entities, not hidden or disabled)
     for (const e of entReg)
       if (e.device_id) {
-        (entsByDev[e.device_id] = entsByDev[e.device_id] || []).push(e.entity_id);
+        const dev = ownerOf[e.device_id] || e.device_id; // entities of a child device belong to its parent
+        (entsByDev[dev] = entsByDev[dev] || []).push(e.entity_id);
         if (!e.entity_category && !e.hidden_by && !e.disabled_by)
-          (mainEnts[e.device_id] = mainEnts[e.device_id] || []).push(e.entity_id);
+          (mainEnts[dev] = mainEnts[dev] || []).push(e.entity_id);
       }
     const st = $("status");
     const nodes = [],

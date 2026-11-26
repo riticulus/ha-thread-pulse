@@ -2596,6 +2596,17 @@ async function fetchDiagnostics(hass, entry, devId) {
   const txt = (await r.text()).replace(/"0":\s*(\d{15,})/g, '"0":"$1"').replace(/"0\/53\/4":\s*(\d+)/, '"0/53/4":"$1"');
   return JSON.parse(txt).data.node;
 }
+function matterDevices(devReg, entry) {
+  const ofEntry = (d) => d.config_entry_id === entry || (d.config_entries || []).includes(entry);
+  const byId = Object.fromEntries(devReg.map((d) => [d.id, d]));
+  const ownerOf = {};
+  for (const d of devReg) {
+    let o = d;
+    for (let i = 0; o.parent_device_id && byId[o.parent_device_id] && i < 10; i++) o = byId[o.parent_device_id];
+    ownerOf[d.id] = o.id;
+  }
+  return { devices: devReg.filter((d) => ofEntry(d) && !d.parent_device_id), ownerOf };
+}
 var hex16 = (s) => BigInt(s).toString(16).padStart(16, "0");
 function threadAddressOf(node) {
   const iface = ((node.attributes || {})["0/51/0"] || []).find((x) => x["7"] === 4);
@@ -2786,14 +2797,16 @@ function install3(tp) {
       hass.callWS({ type: "config/area_registry/list" }).catch(() => [])
     ]);
     const areaName = Object.fromEntries(areaReg.map((x) => [x.area_id, x.name]));
-    const devs = devReg.filter((d) => d.config_entries.includes(entry));
+    const { devices: devs, ownerOf } = matterDevices(devReg, entry);
+    tp.devOwner = ownerOf;
     const entsByDev = {};
     const mainEnts = {};
     for (const e of entReg)
       if (e.device_id) {
-        (entsByDev[e.device_id] = entsByDev[e.device_id] || []).push(e.entity_id);
+        const dev = ownerOf[e.device_id] || e.device_id;
+        (entsByDev[dev] = entsByDev[dev] || []).push(e.entity_id);
         if (!e.entity_category && !e.hidden_by && !e.disabled_by)
-          (mainEnts[e.device_id] = mainEnts[e.device_id] || []).push(e.entity_id);
+          (mainEnts[dev] = mainEnts[dev] || []).push(e.entity_id);
       }
     const st = $("status");
     const nodes = [], wifi = [];
@@ -3558,7 +3571,10 @@ function install6(tp) {
       const targets = new Set(
         [].concat(sd.entity_id || []).map((e) => tp.entToNode[e]).filter(Boolean)
       );
-      for (const dv of [].concat(sd.device_id || [])) if (tp.devToNode[dv]) targets.add(tp.devToNode[dv]);
+      for (const id of [].concat(sd.device_id || [])) {
+        const dv = (tp.devOwner || {})[id] || id;
+        if (tp.devToNode[dv]) targets.add(tp.devToNode[dv]);
+      }
       for (const n of targets)
         launch(n, true, `HA → <b>${esc2(tp.nodeName[n])}</b>: ${esc2(ev.data.domain + "." + ev.data.service)}`);
     }, "call_service");
@@ -7081,9 +7097,10 @@ async function loadMesh(hass) {
   if (!entries.length) throw Object.assign(new Error("no matter"), { code: "noMatter" });
   const entry = entries[0].entry_id;
   const devReg = await hass.callWS({ type: "config/device_registry/list" });
+  const { devices, ownerOf } = matterDevices(devReg, entry);
   const devs = {}, byExt = {};
   await Promise.all(
-    devReg.filter((d) => d.config_entries.includes(entry)).map(async (d) => {
+    devices.map(async (d) => {
       let node;
       try {
         node = await fetchDiagnostics(hass, entry, d.id);
@@ -7110,7 +7127,7 @@ async function loadMesh(hass) {
     brExt = Object.values(await hass.callWS({ type: "otbr/info" }))[0].extended_address.toLowerCase();
   } catch (e) {
   }
-  return { devs, byExt, brExt };
+  return { devs, byExt, brExt, ownerOf };
 }
 function cached(slot, ms, load) {
   if (!slot.v || Date.now() - slot.v.t > ms) {
@@ -7229,10 +7246,10 @@ var ThreadPulseDeviceCard = class extends HTMLElement {
     return textFor(l.slice(0, 2));
   }
   _deviceId() {
-    const d = this._config.device || "";
+    let d = this._config.device || "";
     if (d.includes(".") && this._hass && this._hass.entities && this._hass.entities[d])
-      return this._hass.entities[d].device_id;
-    return d;
+      d = this._hass.entities[d].device_id;
+    return this._mesh && this._mesh.ownerOf[d] || d;
   }
   async _refresh() {
     if (!this._hass || !this._config || this._config.demo) return this._render();
@@ -7250,7 +7267,7 @@ var ThreadPulseDeviceCard = class extends HTMLElement {
   _batteryEntity(devId) {
     const h = this._hass;
     for (const e of Object.values(h.entities || {})) {
-      if (e.device_id !== devId) continue;
+      if ((this._mesh && this._mesh.ownerOf[e.device_id] || e.device_id) !== devId) continue;
       const st = h.states[e.entity_id];
       if (st && st.attributes.device_class === "battery" && st.attributes.unit_of_measurement === "%") return st;
     }

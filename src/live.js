@@ -259,7 +259,10 @@ export default function install(tp) {
           .map(e => tp.entToNode[e])
           .filter(Boolean),
       );
-      for (const dv of [].concat(sd.device_id || [])) if (tp.devToNode[dv]) targets.add(tp.devToNode[dv]);
+      for (const id of [].concat(sd.device_id || [])) {
+        const dv = (tp.devOwner || {})[id] || id; // a child device stands for its parent
+        if (tp.devToNode[dv]) targets.add(tp.devToNode[dv]);
+      }
       for (const n of targets)
         launch(n, true, `HA → <b>${esc(tp.nodeName[n])}</b>: ${esc(ev.data.domain + "." + ev.data.service)}`);
     }, "call_service");
