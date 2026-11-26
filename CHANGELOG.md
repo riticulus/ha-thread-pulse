@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+- Thread Pulse is in the default list of HACS: the installation in the README and the user guide now starts with searching for Thread Pulse in HACS instead of adding a custom repository ([hacs/default#11850](https://github.com/hacs/default/pull/11850))
+
 ## [1.8.0] – 2026-11-26
 
 ### Added

@@ -17,20 +17,15 @@ Thread Pulse can be used in three ways. All three show the same map with the sam
 
 ## A) Dashboard card via HACS (recommended)
 
-**The quick way:**
+Thread Pulse is in the default list of HACS – no custom repository needed.
 
-[![Open your Home Assistant instance and open Thread Pulse in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=riticulus&repository=ha-thread-pulse&category=plugin)
+1. Open **HACS** in Home Assistant and search for **Thread Pulse**.
+   Or click the button: it opens Thread Pulse directly in HACS in your Home Assistant (the first time, [My Home Assistant](https://my.home-assistant.io/) asks for the address of your Home Assistant).
 
-The button opens Thread Pulse directly in HACS in your Home Assistant – the first time, [My Home Assistant](https://my.home-assistant.io/) asks for the address of your Home Assistant. Confirm adding the repository, click **Download**, reload the browser when HACS asks for it, and continue with step 6 below.
-
-**By hand:**
-
-1. Open **HACS** in Home Assistant.
-2. Click **⋮** (top right) → **Custom repositories**.
-3. Enter `https://github.com/riticulus/ha-thread-pulse`, choose the type **Dashboard** and click **Add**.
-4. Search for **Thread Pulse** in HACS, open it and click **Download**.
-5. **Reload the browser** when HACS asks for it (on phones: close and reopen the Companion app).
-6. Edit a dashboard → **Add card** → search for **Thread Pulse**.
+   [![Open your Home Assistant instance and open Thread Pulse in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=riticulus&repository=ha-thread-pulse&category=plugin)
+2. Open it and click **Download**.
+3. **Reload the browser** when HACS asks for it (on phones: close and reopen the Companion app).
+4. Edit a dashboard → **Add card** → search for **Thread Pulse**.
 
 HACS registers the card as a dashboard resource automatically. Continue with [Configuration](Configuration).
 
@@ -51,7 +46,7 @@ HACS shows new releases as an update like for any other card. Install it and rel
 3. **Settings → Dashboards → ⋮ → Resources → Add resource**
    - URL: `/local/ha-thread-pulse.js`
    - Resource type: **JavaScript module**
-4. Reload the browser and add the card as described in A), step 6.
+4. Reload the browser and add the card as described in A), step 4.
 
 **Updating:** replace both files and reload the browser. If an old version keeps showing, add or raise a version parameter in the resource URL, e.g. `/local/ha-thread-pulse.js?v=2`.
 
